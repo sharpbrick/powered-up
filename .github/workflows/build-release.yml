@@ -1,0 +1,70 @@
+name: Build-Release
+
+on:
+  push:
+    tags: v*
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build Version
+      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
+    - name: Build Project
+      run: dotnet build --configuration Release -p:Version=$RELEASE_VERSION
+    - name: Test Project
+      run: dotnet test --no-build --configuration Release --logger trx
+    - name: Pack Project
+      run: dotnet pack --no-build --output ./artifacts --configuration Release -p:Version=$RELEASE_VERSION
+    - uses: actions/upload-artifact@v1
+      with:
+        name: artifacts
+        path: ./artifacts
+  publish-github:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+        source-url: https://nuget.pkg.github.com/sharpbrick/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - uses: actions/download-artifact@v1
+      with:
+        name: artifacts
+        path: ./artifacts
+    - name: Upload to GitHub Package Registry
+      run:  dotnet nuget push ./artifacts/**/*.nupkg --skip-duplicate -n true
+  publish-nuget:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      NUGET_AUTH_TOKEN: ${{ secrets.NUGET_APIKEY }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+        source-url: https://api.nuget.org/v3/index.json
+    - uses: actions/download-artifact@v1
+      with:
+        name: artifacts
+        path: ./artifacts
+    - name: Upload to NuGet
+      run:  dotnet nuget push ./artifacts/**/*.nupkg --skip-duplicate -n true -k $NUGET_AUTH_TOKEN
