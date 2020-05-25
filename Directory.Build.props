@@ -1,0 +1,11 @@
+
+<Project>
+ <PropertyGroup>
+   <Authors>thiery</Authors>
+   <Description>LEGO PoweredUp Library</Description>
+   <PackageTags></PackageTags>
+   <PackageProjectUrl>https://github.com/sharpbrick/powered-up</PackageProjectUrl>
+   <RepositoryUrl>https://github.com/sharpbrick/powered-up</RepositoryUrl>
+   <PackageLicenseUrl>https://github.com/sharpbrick/powered-up/blob/master/LICENSE</PackageLicenseUrl>
+ </PropertyGroup>
+</Project>

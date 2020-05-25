@@ -2,6 +2,11 @@
 
 SharpBrick.PoweredUp is a .NET implementation of the BlueTooth Low Energy Protocol for Lego Powered Up products. [Specification](https://lego.github.io/lego-ble-wireless-protocol-docs/) and the [node-poweredup](https://github.com/nathankellenicki/node-poweredup) protocol implementation.
 
+![Build-Release](https://github.com/sharpbrick/powered-up/workflows/Build-Release/badge.svg)
+![Build-CI](https://github.com/sharpbrick/powered-up/workflows/Build-CI/badge.svg)
+![license:MIT](https://img.shields.io/github/license/violetgrass/middleware?style=flat-square)
+[![Nuget](https://img.shields.io/nuget/v/SharpBrick.PoweredUp?style=flat-square)](https://www.nuget.org/packages/SharpBrick.PoweredUp/)
+
 ## Other Languages
 
 - JavaScript (Node + Browser): 
