@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{62C31C3D-8AC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp", "src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj", "{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{39B30145-497F-4AEB-A014-BBF27DA0651A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.Test", "test\SharpBrick.PoweredUp.Test\SharpBrick.PoweredUp.Test.csproj", "{99DD765B-CEF4-49CA-B613-A44805C63D6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +36,21 @@ Global
 		{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}.Release|x64.Build.0 = Release|Any CPU
 		{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}.Release|x86.Build.0 = Release|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Debug|x64.Build.0 = Debug|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Debug|x86.Build.0 = Debug|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Release|x64.ActiveCfg = Release|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Release|x64.Build.0 = Release|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Release|x86.ActiveCfg = Release|Any CPU
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67} = {62C31C3D-8ACF-4ED3-A3D8-225536F3AC6D}
+		{99DD765B-CEF4-49CA-B613-A44805C63D6E} = {39B30145-497F-4AEB-A014-BBF27DA0651A}
 	EndGlobalSection
 EndGlobal

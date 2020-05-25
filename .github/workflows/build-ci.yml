@@ -1,0 +1,25 @@
+name: Build-CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '!v*'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build SharpBrick.PoweredUp
+      run: dotnet build --configuration Release
+    - name: Test SharpBrick.PoweredUp
+      run: dotnet test --no-build --configuration Release --logger trx
