@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpBrick.PoweredUp.Messages
+namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.1
     public class CommonMessageHeader

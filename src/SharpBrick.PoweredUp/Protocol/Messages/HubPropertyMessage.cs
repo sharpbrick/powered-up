@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Messages
+namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.5.2
     public class HubPropertyMessage : CommonMessageHeader
