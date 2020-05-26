@@ -1,7 +1,7 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.20.1
-    public abstract class PortModeInformationCommonMessageHeader : CommonMessageHeader
+    public abstract class PortModeInformationMessage : CommonMessageHeader
     {
         public byte PortId { get; set; }
         public byte Mode { get; set; }
@@ -9,58 +9,58 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForNameMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForNameMessage : PortModeInformationMessage
     {
         public byte[] Name { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForRawMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForRawMessage : PortModeInformationMessage
     {
         public float RawMin { get; set; }
         public float RawMax { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForPctMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForPctMessage : PortModeInformationMessage
     {
         public float PctMin { get; set; }
         public float PctMax { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForSiMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForSiMessage : PortModeInformationMessage
     {
         public float SiMin { get; set; }
         public float SiMax { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForSymbolMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForSymbolMessage : PortModeInformationMessage
     {
         public byte[] Symbol { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForMappingMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForMappingMessage : PortModeInformationMessage
     {
         public ushort Mapping { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForMotorBiasMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForMotorBiasMessage : PortModeInformationMessage
     {
         public byte MotorBias { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForCapabilityBitsMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForCapabilityBitsMessage : PortModeInformationMessage
     {
         public byte[] CapabilityBits { get; set; }
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForValueFormatMessage : PortModeInformationCommonMessageHeader
+    public class PortModeInformationForValueFormatMessage : PortModeInformationMessage
     {
         public byte[] ValueFormat { get; set; }
     }

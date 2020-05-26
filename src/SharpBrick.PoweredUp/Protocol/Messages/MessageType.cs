@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Protocol
+namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.3
     public enum MessageType : byte

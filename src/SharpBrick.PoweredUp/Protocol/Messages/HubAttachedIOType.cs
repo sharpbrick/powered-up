@@ -1,7 +1,7 @@
-namespace SharpBrick.PoweredUp.Protocol
+namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.8.4
-    public enum IOType
+    public enum HubAttachedIOType
     {
         Motor = 0x0001,
         SystemTrainMotor = 0x0002,

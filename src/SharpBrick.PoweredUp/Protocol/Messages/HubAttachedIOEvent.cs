@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Protocol
+namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.8.3
     public enum HubAttachedIOEvent : byte

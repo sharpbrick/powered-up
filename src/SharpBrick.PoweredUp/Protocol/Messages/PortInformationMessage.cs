@@ -1,14 +1,14 @@
 ﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.19.1
-    public abstract class PortInformationCommonMessageHeader : CommonMessageHeader
+    public abstract class PortInformationMessage : CommonMessageHeader
     {
         public byte PortId { get; set; }
         public byte InformationType { get; set; }
     }
 
     // spec chapter: 3.19.1
-    public class PortInformationForModeInfoMessage : PortInformationCommonMessageHeader
+    public class PortInformationForModeInfoMessage : PortInformationMessage
     {
         public byte Capabilities { get; set; }
         public byte TotalModeCount { get; set; }
@@ -17,7 +17,7 @@
     }
 
     // spec chapter: 3.19.1
-    public class PortInformationForPossibleModeCombinationsMessage : PortInformationCommonMessageHeader
+    public class PortInformationForPossibleModeCombinationsMessage : PortInformationMessage
     {
         public ushort[] ModeCombinations { get; set; }
     }
