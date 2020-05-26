@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Protocol
+﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.6.2
     public enum HubAction : byte
