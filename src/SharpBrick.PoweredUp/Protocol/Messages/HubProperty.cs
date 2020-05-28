@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         RadioFirmwareVersion = 0x09,
         LegoWirelessProtocolVersion = 0x0A,
         SystemTypeId = 0x0B,
-        HwNetworkId = 0x0C,
+        HardwareNetworkId = 0x0C,
         PrimaryMacAddress = 0x0D,
         SecondaryMacAddress = 0x0E,
         HardwareNetworkFamily = 0x0F,

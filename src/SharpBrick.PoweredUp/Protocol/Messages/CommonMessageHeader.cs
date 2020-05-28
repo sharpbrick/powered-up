@@ -9,6 +9,6 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         // encoded as byte or ushort
         public ushort Length { get; set; }
         public byte HubId { get; set; }
-        public byte MessageType { get; set; }
+        public MessageType MessageType { get; set; }
     }
 }
