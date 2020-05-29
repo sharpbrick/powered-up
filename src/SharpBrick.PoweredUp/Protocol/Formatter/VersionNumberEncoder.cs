@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
-    public static class PropertyVersionNumberEncoding
+    public static class VersionNumberEncoder
     {
         // spec chapter: 3.5.6
-        public static Version DecodeVersion(int data)
+        public static Version Decode(int data)
         {
             var major = (data & 0b0111_0000___0000_0000___0000_0000___0000_0000) >> 28;
             var minor = (data & 0b0000_1111___0000_0000___0000_0000___0000_0000) >> 24;

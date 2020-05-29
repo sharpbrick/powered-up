@@ -1,9 +1,10 @@
 ﻿using System;
+using SharpBrick.PoweredUp.Protocol.Formatter;
 using Xunit;
 
-namespace SharpBrick.PoweredUp.Protocol.Parsers
+namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
-    public class CommonMessageHeaderParserTest
+    public class CommonMessageHeaderEncoderTest
     {
         [Theory]
         [InlineData(new byte[] { 0b0000_1001, 0b0000_0100, 0b0000_0101 }, 9, 4, 5, 3)]
@@ -13,7 +14,7 @@ namespace SharpBrick.PoweredUp.Protocol.Parsers
         [InlineData(new byte[] { 0b1000_0010, 0b0000_0001, 0b0000_0100, 0b0000_0101 }, 130, 4, 5, 4)]
         public void CommonMessageHeaderParser_Parse(byte[] data, ushort expectedLength, byte expectedHubId, byte expectedMessageType, ushort expectedHeaderLength)
         {
-            var (length, hubId, messageType, headerLength) = CommonMessageHeaderParser.ParseCommonHeader(data);
+            var (length, hubId, messageType, headerLength) = CommonMessageHeaderEncoder.ParseCommonHeader(data);
 
             Assert.Equal(expectedLength, length);
             Assert.Equal(expectedHubId, hubId);

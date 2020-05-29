@@ -43,7 +43,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                     await characteristic.NotifyValueChangeAsync(async data =>
                     {
-                        var message = MessageParser.ParseMessage(data);
+                        var message = MessageParser.Decode(data);
 
                         string messageAsString = message switch
                         {

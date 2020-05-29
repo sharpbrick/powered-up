@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using Xunit;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
-    public class PropertyVersionNumberEncodingTest
+    public class VersionNumberEncoderTest
     {
         [Theory]
         [InlineData(0b0001_0000___0000_0000___0000_0000___0000_0000, "1.0.0.0")]
@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         [InlineData(0x1_7_37_1510, "1.7.37.1510")]
         public void PropertyVersionNumberEncoding_DecodeVersion(int input, string expectedVersionAsString)
         {
-            var actual = PropertyVersionNumberEncoding.DecodeVersion(input);
+            var actual = VersionNumberEncoder.Decode(input);
 
             Assert.Equal(Version.Parse(expectedVersionAsString), actual);
         }
