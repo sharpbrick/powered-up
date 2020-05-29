@@ -12,9 +12,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             {
                 HubAttachedIOEvent.AttachedIO => new HubAttachedIOForAttachedDeviceMessage()
                 {
-                    IOTypeId = (HubAttachedIOType)data[2],
-                    HardwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(3, 4))),
-                    SoftwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(7, 4))),
+                    IOTypeId = (HubAttachedIOType)BitConverter.ToUInt16(data.Slice(2, 2)),
+                    HardwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(4, 4))),
+                    SoftwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(8, 4))),
                 },
                 HubAttachedIOEvent.AttachedVirtualIO => new HubAttachedIOForAttachedVirtualDeviceMessage()
                 {
@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 HubAttachedIOEvent.DetachedIO => new HubAttachedIOForDetachedDeviceMessage(),
             };
 
-            CommonMessageHeaderEncoder.DecodeAndApply(data, message);
+            //CommonMessageHeaderEncoder.DecodeAndApply(data, message); // header was cut before
             message.PortId = portId;
             message.Event = ev;
 

@@ -32,7 +32,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => throw new InvalidOperationException(),
             };
 
-            CommonMessageHeaderEncoder.DecodeAndApply(data, message);
+            //CommonMessageHeaderEncoder.DecodeAndApply(data, message); // header was cut before
             message.Property = (HubProperty)data[0];
             message.Operation = (HubPropertyOperation)data[1];
 
