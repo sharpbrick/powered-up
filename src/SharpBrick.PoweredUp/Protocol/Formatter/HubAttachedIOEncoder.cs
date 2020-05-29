@@ -2,9 +2,15 @@ using System;
 using SharpBrick.PoweredUp.Protocol.Messages;
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
-    public static class HubAttachedIOEncoder
+    public class HubAttachedIOEncoder : IMessageContentEncoder
     {
-        public static HubAttachedIOMessage Decode(in Span<byte> data)
+        public ushort CalculateContentLength(CommonMessageHeader message)
+            => throw new NotImplementedException();
+
+        public void Encode(CommonMessageHeader message, in Span<byte> data)
+            => throw new NotImplementedException();
+
+        public CommonMessageHeader Decode(in Span<byte> data)
         {
             byte portId = data[0];
             HubAttachedIOEvent ev = (HubAttachedIOEvent)data[1];
@@ -31,5 +37,6 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             return message;
         }
+
     }
 }

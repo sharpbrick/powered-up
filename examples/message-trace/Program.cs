@@ -60,16 +60,12 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                         };
 
                         Console.WriteLine(messageAsString);
+                        Console.WriteLine(DataToString(data));
                     });
 
-                    await characteristic.WriteValueAsync(new byte[] {
-                        0x05, //TODO length
-                        0x00, // static hubid
-                        0x01, // hub properties request
-
-                        0x02, // Property: xxx
-                        0x02, // Operation: Request Update
-                    });
+                    byte[] request = MessageParser.Encode(new HubPropertyMessage() { Property = HubProperty.AdvertisingName, Operation = HubPropertyOperation.RequestUpdate });
+                    Console.WriteLine($"Request: {DataToString(request)}");
+                    await characteristic.WriteValueAsync(request);
 
                     Console.ReadLine();
                 }

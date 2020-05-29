@@ -24,7 +24,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = StringToData(messageAsString).AsSpan().Slice(3);
 
             // act
-            var message = HubAttachedIOEncoder.Decode(data) as HubAttachedIOForAttachedDeviceMessage;
+            var message = new HubAttachedIOEncoder().Decode(data) as HubAttachedIOForAttachedDeviceMessage;
 
             // assert
             Assert.Equal(expectedPortId, message.PortId);

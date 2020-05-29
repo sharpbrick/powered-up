@@ -3,13 +3,68 @@ using System.Text;
 using SharpBrick.PoweredUp.Protocol.Messages;
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
-    public static class HubPropertiesEncoder
+    public class HubPropertiesEncoder : IMessageContentEncoder
     {
-        public static byte[] Encode(HubPropertyMessage message)
+        public ushort CalculateContentLength(CommonMessageHeader message)
+            => CalculateMessageLength(message as HubPropertyMessage ?? throw new ArgumentException(nameof(message)));
+
+        public ushort CalculateMessageLength(HubPropertyMessage message)
         {
-            return null;
+            int messagePayloadLength = message.Operation switch
+            {
+                HubPropertyOperation.Set => message switch
+                {
+                    HubPropertyMessage<string> msg => msg.Payload.Length,
+                    HubPropertyMessage<byte[]> msg => msg.Payload.Length,
+                    HubPropertyMessage<Version> msg => msg.Property switch
+                    {
+                        HubProperty.LegoWirelessProtocolVersion => 2, // special
+                        _ => 4, // default version in int
+                    },
+                    _ => 1,
+                },
+                HubPropertyOperation.EnableUpdates => 0,
+                HubPropertyOperation.DisableUpdates => 0,
+                HubPropertyOperation.Reset => 0,
+                HubPropertyOperation.RequestUpdate => 0,
+                HubPropertyOperation.Update => throw new NotImplementedException(),
+                _ => 0,
+            };
+
+            int length = 2 + messagePayloadLength;
+            return (ushort)length;
         }
-        public static HubPropertyMessage Decode(in Span<byte> data)
+
+        public void Encode(CommonMessageHeader message, in Span<byte> data)
+            => Encode(message as HubPropertyMessage ?? throw new ArgumentException(nameof(message)), data);
+
+        public void Encode(HubPropertyMessage message, Span<byte> data)
+        {
+            data[0] = (byte)message.Property;
+            data[1] = (byte)message.Operation;
+
+            if (message.Operation == HubPropertyOperation.Set)
+            {
+                switch (message)
+                {
+                    case HubPropertyMessage<string> msg:
+                        byte[] stringAsBytes = Encoding.ASCII.GetBytes(msg.Payload);
+                        stringAsBytes.CopyTo(data.Slice(2, stringAsBytes.Length));
+                        break;
+                    case HubPropertyMessage<bool> msg:
+                        throw new NotImplementedException(); //data[2] = (byte)(msg.Payload ? 0x01 : 0x00);
+                    case HubPropertyMessage<Version> msg:
+                        throw new NotImplementedException();
+                    case HubPropertyMessage<sbyte> msg:
+                        throw new NotImplementedException(); //data[2] = (byte)msg.Payload;
+                    case HubPropertyMessage<byte> msg:
+                        data[2] = msg.Payload;
+                        break;
+                }
+            }
+        }
+
+        public CommonMessageHeader Decode(in Span<byte> data)
         {
             HubPropertyMessage message = (HubProperty)data[0] switch
             {
@@ -32,11 +87,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => throw new InvalidOperationException(),
             };
 
-            //CommonMessageHeaderEncoder.DecodeAndApply(data, message); // header was cut before
             message.Property = (HubProperty)data[0];
             message.Operation = (HubPropertyOperation)data[1];
 
             return message;
         }
+
     }
 }
