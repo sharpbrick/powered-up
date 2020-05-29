@@ -2,9 +2,9 @@
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp.Protocol.Parsers
+namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
-    public class MessageParser
+    public class MessageEncoder
     {
         public static byte[] Encode(CommonMessageHeader message)
         {
@@ -12,6 +12,8 @@ namespace SharpBrick.PoweredUp.Protocol.Parsers
             {
                 HubPropertyMessage msg => MessageType.HubProperties,
                 HubAttachedIOMessage msg => MessageType.HubAttachedIO,
+                HubActionMessage msg => MessageType.HubActions,
+                HubAlertMessage msg => MessageType.HubAlerts,
                 _ => throw new NotImplementedException(),
             };
 
@@ -33,6 +35,8 @@ namespace SharpBrick.PoweredUp.Protocol.Parsers
             => messageType switch
             {
                 MessageType.HubProperties => new HubPropertiesEncoder(),
+                MessageType.HubActions => new HubActionEncoder(),
+                MessageType.HubAlerts => new HubAlertEncoder(),
                 MessageType.HubAttachedIO => new HubAttachedIOEncoder(),
                 _ => throw new NotImplementedException(),
             };

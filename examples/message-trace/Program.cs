@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Protocol.Messages;
-using SharpBrick.PoweredUp.Protocol.Parsers;
+using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.WinRT;
 
 namespace SharpBrick.PoweredUp.Examples.MessageTrace
@@ -43,7 +43,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                     await characteristic.NotifyValueChangeAsync(async data =>
                     {
-                        var message = MessageParser.Decode(data);
+                        var message = MessageEncoder.Decode(data);
 
                         string messageAsString = message switch
                         {
@@ -55,6 +55,8 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             HubPropertyMessage<sbyte> msg => $"Hub Property {msg.Property}: {msg.Payload}",
                             HubPropertyMessage<byte> msg => $"Hub Property {msg.Property}: {msg.Payload}",
                             HubPropertyMessage<byte[]> msg => $"Hub Property {msg.Property}: {DataToString(msg.Payload)}",
+                            HubActionMessage msg => $"Hub Action {msg.Action}",
+                            ErrorMessage msg => $"Error {msg.ErrorCode} from {(MessageType)msg.CommandType}",
                             UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {DataToString(data)}",
                             var foo => $"{foo.MessageType} (not yet formatted)",
                         };
@@ -63,7 +65,14 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                         Console.WriteLine(DataToString(data));
                     });
 
-                    byte[] request = MessageParser.Encode(new HubPropertyMessage() { Property = HubProperty.AdvertisingName, Operation = HubPropertyOperation.RequestUpdate });
+                    byte[] request = MessageEncoder.Encode(new HubPropertyMessage() { Property = HubProperty.BatteryVoltage, Operation = HubPropertyOperation.RequestUpdate });
+                    Console.WriteLine($"Request: {DataToString(request)}");
+                    await characteristic.WriteValueAsync(request);
+
+                    Console.ReadLine();
+
+                    Console.WriteLine("Switch off device");
+                    request = MessageEncoder.Encode(new HubActionMessage() { Action = HubAction.SwitchOffHub });
                     Console.WriteLine($"Request: {DataToString(request)}");
                     await characteristic.WriteValueAsync(request);
 

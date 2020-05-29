@@ -9,7 +9,7 @@
         VccPortControlOn = 0x03,
         VccPortControlOff = 0x04,
         ActivateBusyIndication = 0x05,
-        sResetBUSYIndication = 0x06,
+        ResetBusyIndication = 0x06,
         ProductionShutdown = 0X2F,
 
         // Upstream

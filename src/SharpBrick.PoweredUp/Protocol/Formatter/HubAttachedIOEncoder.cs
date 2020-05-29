@@ -31,7 +31,6 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 HubAttachedIOEvent.DetachedIO => new HubAttachedIOForDetachedDeviceMessage(),
             };
 
-            //CommonMessageHeaderEncoder.DecodeAndApply(data, message); // header was cut before
             message.PortId = portId;
             message.Event = ev;
 

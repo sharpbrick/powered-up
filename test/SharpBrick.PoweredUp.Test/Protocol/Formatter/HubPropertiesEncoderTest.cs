@@ -48,6 +48,22 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubPropertiesEncoder_Decode_UpdateUpstream_StringShim(string messageAsString, HubProperty expectedProperty, HubPropertyOperation expectedPropertyOperation, string payload)
             => HubPropertiesEncoder_Decode_UpdateUpstream(messageAsString, expectedProperty, expectedPropertyOperation, payload);
 
+
+        [Theory]
+        [InlineData(HubProperty.Button, HubPropertyOperation.RequestUpdate, "05-00-01-02-05")]
+        [InlineData(HubProperty.Button, HubPropertyOperation.EnableUpdates, "05-00-01-02-02")]
+        [InlineData(HubProperty.Button, HubPropertyOperation.DisableUpdates, "05-00-01-02-03")]
+        public void HubPropertiesEncoder_Encode_Downstream(HubProperty property, HubPropertyOperation operation, string expectedData)
+        {
+            // act
+            var data = MessageEncoder.Encode(new HubPropertyMessage() { Property = property, Operation = operation });
+
+            // assert
+            Assert.Equal(expectedData, DataToString(data));
+        }
+
+        public static string DataToString(byte[] data)
+            => string.Join("-", data.Select(b => $"{b:X2}"));
         private byte[] StringToData(string messageAsString)
             => messageAsString.Split("-").Select(s => byte.Parse(s, NumberStyles.HexNumber)).ToArray();
     }
