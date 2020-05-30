@@ -1,7 +1,7 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.16.2
-    public enum PortModeInformationRequestType : byte
+    public enum PortModeInformationType : byte
     {
         Name = 0x00, // Mode Name
         Raw = 0x01, // Raw Range

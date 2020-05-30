@@ -4,6 +4,6 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortInformationRequestMessage : CommonMessageHeader
     {
         public byte PortId { get; set; }
-        public byte InformationType { get; set; }
+        public PortInformationType InformationType { get; set; }
     }
 }

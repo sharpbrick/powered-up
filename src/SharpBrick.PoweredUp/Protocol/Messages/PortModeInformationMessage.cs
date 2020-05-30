@@ -5,13 +5,13 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     {
         public byte PortId { get; set; }
         public byte Mode { get; set; }
-        public byte InformationType { get; set; }
+        public PortModeInformationType InformationType { get; set; }
     }
 
     // spec chapter: 3.20.1
     public class PortModeInformationForNameMessage : PortModeInformationMessage
     {
-        public byte[] Name { get; set; }
+        public string Name { get; set; }
     }
 
     // spec chapter: 3.20.1
@@ -38,7 +38,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.20.1
     public class PortModeInformationForSymbolMessage : PortModeInformationMessage
     {
-        public byte[] Symbol { get; set; }
+        public string Symbol { get; set; }
     }
 
     // spec chapter: 3.20.1

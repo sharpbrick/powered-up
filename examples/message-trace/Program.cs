@@ -7,6 +7,7 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.WinRT;
 using Microsoft.Extensions.Logging;
+using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Examples.MessageTrace
 {
@@ -51,24 +52,34 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                     string messageAsString = message switch
                     {
-                        HubAttachedIOForAttachedDeviceMessage msg => $"Attached IO at Port {msg.PortId} of type {msg.IOTypeId} (HW: {msg.HardwareRevision} / SW: {msg.SoftwareRevision})",
-                        HubAttachedIOForDetachedDeviceMessage msg => $"Dettached IO at Port {msg.PortId}",
-                        HubPropertyMessage<Version> msg => $"Hub Property {msg.Property}: {msg.Payload}",
-                        HubPropertyMessage<string> msg => $"Hub Property {msg.Property}: {msg.Payload}",
-                        HubPropertyMessage<bool> msg => $"Hub Property {msg.Property}: {msg.Payload}",
-                        HubPropertyMessage<sbyte> msg => $"Hub Property {msg.Property}: {msg.Payload}",
-                        HubPropertyMessage<byte> msg => $"Hub Property {msg.Property}: {msg.Payload}",
-                        HubPropertyMessage<byte[]> msg => $"Hub Property {msg.Property}: {DataToString(msg.Payload)}",
-                        HubActionMessage msg => $"Hub Action {msg.Action}",
-                        ErrorMessage msg => $"Error {msg.ErrorCode} from {(MessageType)msg.CommandType}",
-                        UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {DataToString(data)}",
-                        var foo => $"{foo.MessageType} (not yet formatted)",
+                        HubPropertyMessage<Version> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
+                        HubPropertyMessage<string> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
+                        HubPropertyMessage<bool> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
+                        HubPropertyMessage<sbyte> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
+                        HubPropertyMessage<byte> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
+                        HubPropertyMessage<byte[]> msg => $"Hub Property - {msg.Property}: {BytesStringUtil.DataToString(msg.Payload)}",
+                        HubActionMessage msg => $"Hub Action - {msg.Action}",
+                        HubAttachedIOForAttachedDeviceMessage msg => $"Attached IO - Port {msg.PortId} of type {msg.IOTypeId} (HW: {msg.HardwareRevision} / SW: {msg.SoftwareRevision})",
+                        HubAttachedIOForDetachedDeviceMessage msg => $"Dettached IO - Port {msg.PortId}",
+                        GenericErrorMessage msg => $"Error - {msg.ErrorCode} from {(MessageType)msg.CommandType}",
+                        PortInformationForModeInfoMessage msg => $"Port Information - Port {msg.PortId} Total Modes {msg.TotalModeCount} / Capabilities Output:{msg.OutputCapability}, Input:{msg.InputCapability}, LogicalCombinable:{msg.LogicalCombinableCapability}, LogicalSynchronizable:{msg.LogicalSynchronizableCapability} / InputModes: {msg.InputModes:X}, OutputModes: {msg.InputModes:X}",
+                        PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
+                        UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {BytesStringUtil.DataToString(data)}",
+                        var unknown => $"{unknown.MessageType} (not yet formatted)",
                     };
 
                     logger.LogInformation(messageAsString);
                 });
 
                 byte[] request = MessageEncoder.Encode(new HubPropertyMessage() { Property = HubProperty.BatteryVoltage, Operation = HubPropertyOperation.RequestUpdate });
+                await kernel.SendBytesAsync(request);
+
+                logger.LogInformation("Request PortInformation (ModeInfo)");
+                request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.ModeInfo });
+                await kernel.SendBytesAsync(request);
+
+                logger.LogInformation("Request PortInformation (ModeCombinations)");
+                request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.PossibleModeCombinations });
                 await kernel.SendBytesAsync(request);
 
                 Console.ReadLine();
@@ -80,8 +91,5 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 Console.ReadLine();
             }
         }
-
-        public static string DataToString(byte[] data)
-                => string.Join("-", data.Select(b => $"{b:X2}"));
     }
 }

@@ -5,6 +5,6 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     {
         public byte PortId { get; set; }
         public byte Mode { get; set; }
-        public byte InformationType { get; set; }
+        public PortModeInformationType InformationType { get; set; }
     }
 }

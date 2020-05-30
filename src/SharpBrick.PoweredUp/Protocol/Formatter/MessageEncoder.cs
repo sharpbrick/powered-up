@@ -10,9 +10,15 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var messageType = message switch
             {
                 HubPropertyMessage msg => MessageType.HubProperties,
-                HubAttachedIOMessage msg => MessageType.HubAttachedIO,
                 HubActionMessage msg => MessageType.HubActions,
                 HubAlertMessage msg => MessageType.HubAlerts,
+                HubAttachedIOMessage msg => MessageType.HubAttachedIO,
+                GenericErrorMessage msg => MessageType.GenericErrorMessages,
+
+                PortInformationRequestMessage msg => MessageType.PortInformationRequest,
+                PortModeInformationRequestMessage msg => MessageType.PortModeInformationRequest,
+                PortInformationMessage msg => MessageType.PortInformation,
+                PortModeInformationMessage msg => MessageType.PortModeInformation,
                 _ => throw new NotImplementedException(),
             };
 
@@ -37,6 +43,12 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 MessageType.HubActions => new HubActionEncoder(),
                 MessageType.HubAlerts => new HubAlertEncoder(),
                 MessageType.HubAttachedIO => new HubAttachedIOEncoder(),
+                MessageType.GenericErrorMessages => new GenericErrorMessageEncoder(),
+
+                MessageType.PortInformationRequest => new PortInformationRequestEncoder(),
+                MessageType.PortModeInformationRequest => new PortModeInformationRequestEncoder(),
+                MessageType.PortInformation => new PortInformationEncoder(),
+                //MessageType.PortModeInformation => new PortModeInformationEncoder(),
                 _ => throw new NotImplementedException(),
             };
 
@@ -48,7 +60,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             var content = data.Slice(headerLength);
 
-            return encoder?.Decode(content) ?? throw new InvalidOperationException();
+            var message = encoder?.Decode(content) ?? throw new InvalidOperationException();
+
+            message.Length = length;
+            message.HubId = hubId;
+            message.MessageType = (MessageType)messageType;
+
+            return message;
         }
     }
 }

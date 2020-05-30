@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Bluetooth
 {
@@ -51,7 +52,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
                 throw new InvalidOperationException($"Cannot invoke {nameof(SendBytesAsync)} when device is not connected ({nameof(_characteristic)} is null)");
             }
 
-            _logger?.LogDebug($"BluetoothKernel: > {DataToString(data)}");
+            _logger?.LogDebug($"BluetoothKernel: > {BytesStringUtil.DataToString(data)}");
 
             await _characteristic.WriteValueAsync(data);
 
@@ -66,16 +67,13 @@ namespace SharpBrick.PoweredUp.Bluetooth
 
             await _characteristic.NotifyValueChangeAsync(async data =>
             {
-                _logger?.LogDebug($"BluetoothKernel: < {DataToString(data)}");
+                _logger?.LogDebug($"BluetoothKernel: < {BytesStringUtil.DataToString(data)}");
 
                 await handler(data);
             });
 
             _logger?.LogInformation("BluetoothKernel: Registered Receive Handler");
         }
-
-        public static string DataToString(byte[] data)
-                => string.Join("-", data.Select(b => $"{b:X2}"));
 
         #region Dispose
         private bool disposedValue;

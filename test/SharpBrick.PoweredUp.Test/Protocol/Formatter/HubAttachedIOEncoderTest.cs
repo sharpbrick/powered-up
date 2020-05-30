@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
+using SharpBrick.PoweredUp.Utils;
 using Xunit;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter
@@ -21,7 +22,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAttachedIOEncoder_Decode_Attached<T>(string messageAsString, HubAttachedIOType expectedType, byte expectedPortId, string expectedHwVersion, string expectedSwVersion)
         {
             // arrange
-            var data = StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
 
             // act
             var message = new HubAttachedIOEncoder().Decode(data) as HubAttachedIOForAttachedDeviceMessage;
@@ -32,8 +33,5 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(new Version(expectedHwVersion), message.HardwareRevision);
             Assert.Equal(new Version(expectedSwVersion), message.SoftwareRevision);
         }
-
-        private byte[] StringToData(string messageAsString)
-            => messageAsString.Split("-").Select(s => byte.Parse(s, NumberStyles.HexNumber)).ToArray();
     }
 }

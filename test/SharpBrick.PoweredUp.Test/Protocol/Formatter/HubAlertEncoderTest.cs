@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
+using SharpBrick.PoweredUp.Utils;
 using Xunit;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter
@@ -25,7 +26,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = MessageEncoder.Encode(message);
 
             // assert
-            Assert.Equal(expectedData, DataToString(data));
+            Assert.Equal(expectedData, BytesStringUtil.DataToString(data));
         }
 
         [Theory]
@@ -40,7 +41,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAlertEncoder_Decode(HubAlert expectedAlert, HubAlertOperation expectedOperation, byte expectedPayload, string dataAsString)
         {
             // arrange
-            var data = StringToData(dataAsString);
+            var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
             var message = MessageEncoder.Decode(data) as HubAlertMessage;
@@ -50,10 +51,5 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(expectedOperation, message.Operation);
             Assert.Equal(expectedPayload, message.DownstreamPayload);
         }
-
-        public static string DataToString(byte[] data)
-            => string.Join("-", data.Select(b => $"{b:X2}"));
-        private byte[] StringToData(string messageAsString)
-            => messageAsString.Split("-").Select(s => byte.Parse(s, NumberStyles.HexNumber)).ToArray();
     }
 }
