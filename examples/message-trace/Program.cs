@@ -42,6 +42,9 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             // ulong bluetoothAddress = 158897336311065;
 
+            if (bluetoothAddress == 0)
+                return;
+
             using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
             {
                 await kernel.ConnectAsync();
@@ -71,22 +74,39 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                     logger.LogInformation(messageAsString);
                 });
 
-                byte[] request = MessageEncoder.Encode(new HubPropertyMessage() { Property = HubProperty.BatteryVoltage, Operation = HubPropertyOperation.RequestUpdate });
-                await kernel.SendBytesAsync(request);
+                // byte[] request = MessageEncoder.Encode(new HubPropertyMessage() { Property = HubProperty.BatteryVoltage, Operation = HubPropertyOperation.RequestUpdate });
+                // await kernel.SendBytesAsync(request);
 
-                logger.LogInformation("Request PortInformation (ModeInfo)");
-                request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.ModeInfo });
-                await kernel.SendBytesAsync(request);
+                // logger.LogInformation("Request PortInformation (ModeInfo)");
+                // request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.ModeInfo });
+                // await kernel.SendBytesAsync(request);
 
-                logger.LogInformation("Request PortInformation (ModeCombinations)");
-                request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.PossibleModeCombinations });
-                await kernel.SendBytesAsync(request);
+                // logger.LogInformation("Request PortInformation (ModeCombinations)");
+                // request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.PossibleModeCombinations });
+                // await kernel.SendBytesAsync(request);
+
+                logger.LogInformation("Request PortModeInformation(s)");
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.ValueFormat }));
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 1, InformationType = PortModeInformationType.ValueFormat }));
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 2, InformationType = PortModeInformationType.ValueFormat }));
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 3, InformationType = PortModeInformationType.ValueFormat }));
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 4, InformationType = PortModeInformationType.ValueFormat }));
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 5, InformationType = PortModeInformationType.ValueFormat }));
+
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Raw }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Pct }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.SI }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Symbol }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Mapping }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.InternalUse }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.MotorBias }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.CapabilityBits }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.ValueFormat }));
 
                 Console.ReadLine();
 
                 logger.LogInformation("Switch off device");
-                request = MessageEncoder.Encode(new HubActionMessage() { Action = HubAction.SwitchOffHub });
-                await kernel.SendBytesAsync(request);
+                await kernel.SendBytesAsync(MessageEncoder.Encode(new HubActionMessage() { Action = HubAction.SwitchOffHub }));
 
                 Console.ReadLine();
             }

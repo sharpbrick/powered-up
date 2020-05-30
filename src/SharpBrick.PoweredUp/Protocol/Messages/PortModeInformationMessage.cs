@@ -29,10 +29,10 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     }
 
     // spec chapter: 3.20.1
-    public class PortModeInformationForSiMessage : PortModeInformationMessage
+    public class PortModeInformationForSIMessage : PortModeInformationMessage
     {
-        public float SiMin { get; set; }
-        public float SiMax { get; set; }
+        public float SIMin { get; set; }
+        public float SIMax { get; set; }
     }
 
     // spec chapter: 3.20.1
@@ -44,7 +44,17 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.20.1
     public class PortModeInformationForMappingMessage : PortModeInformationMessage
     {
-        public ushort Mapping { get; set; }
+        public bool InputSupportsNull { get; set; }
+        public bool InputSupportFunctionalMapping20 { get; set; }
+        public bool InputAbsolute { get; set; }
+        public bool InputRelative { get; set; }
+        public bool InputDiscrete { get; set; }
+
+        public bool OutputSupportsNull { get; set; }
+        public bool OutputSupportFunctionalMapping20 { get; set; }
+        public bool OutputAbsolute { get; set; }
+        public bool OutputRelative { get; set; }
+        public bool OutputDiscrete { get; set; }
     }
 
     // spec chapter: 3.20.1
@@ -62,6 +72,9 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.20.1
     public class PortModeInformationForValueFormatMessage : PortModeInformationMessage
     {
-        public byte[] ValueFormat { get; set; }
+        public byte NumberOfDatasets { get; set; }
+        public PortModeInformationDataType DatasetType { get; set; }
+        public byte TotalFigures { get; set; }
+        public byte Decimals { get; set; }
     }
 }

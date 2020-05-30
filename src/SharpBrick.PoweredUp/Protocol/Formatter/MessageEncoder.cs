@@ -48,7 +48,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 MessageType.PortInformationRequest => new PortInformationRequestEncoder(),
                 MessageType.PortModeInformationRequest => new PortModeInformationRequestEncoder(),
                 MessageType.PortInformation => new PortInformationEncoder(),
-                //MessageType.PortModeInformation => new PortModeInformationEncoder(),
+                MessageType.PortModeInformation => new PortModeInformationEncoder(),
                 _ => throw new NotImplementedException(),
             };
 
