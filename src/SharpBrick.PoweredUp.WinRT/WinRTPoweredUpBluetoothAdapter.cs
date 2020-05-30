@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Bluetooth;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
+using Windows.Storage.Streams;
 
 namespace SharpBrick.PoweredUp.WinRT
 {
@@ -28,6 +29,15 @@ namespace SharpBrick.PoweredUp.WinRT
             void ReceivedHandler(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
             {
                 var info = new PoweredUpBluetoothDeviceInfo();
+
+                if (eventArgs.Advertisement.ManufacturerData.Count > 0)
+                {
+                    var reader = DataReader.FromBuffer(eventArgs.Advertisement.ManufacturerData[0].Data);
+                    var data = new byte[reader.UnconsumedBufferLength];
+                    reader.ReadBytes(data);
+
+                    info.ManufacturerData = data;
+                }
 
                 info.BluetoothAddress = eventArgs.BluetoothAddress;
 
