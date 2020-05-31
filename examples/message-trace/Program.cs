@@ -70,6 +70,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             PortInformationForModeInfoMessage msg => $"Port Information - Port {msg.PortId} Total Modes {msg.TotalModeCount} / Capabilities Output:{msg.OutputCapability}, Input:{msg.InputCapability}, LogicalCombinable:{msg.LogicalCombinableCapability}, LogicalSynchronizable:{msg.LogicalSynchronizableCapability} / InputModes: {msg.InputModes:X}, OutputModes: {msg.InputModes:X}",
                             PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
+                            PortInputFormatCombinedModeMessage msg => $"Port Input Format (Combined Mode) - Port {msg.PortId} UsedCombinationIndex {msg.UsedCombinationIndex} Enabled {msg.MultiUpdateEnabled} Configured Modes {string.Join(",", msg.ConfiguredModeDataSetIndex)}",
                             UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {BytesStringUtil.DataToString(data)}",
                             var unknown => $"{unknown.MessageType} (not yet formatted)",
                         };
@@ -86,12 +87,10 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 // await kernel.SendBytesAsync(request);
 
                 // logger.LogInformation("Request PortInformation (ModeInfo)");
-                // request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.ModeInfo });
-                // await kernel.SendBytesAsync(request);
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 99, InformationType = PortInformationType.ModeInfo }));
 
                 // logger.LogInformation("Request PortInformation (ModeCombinations)");
-                // request = MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 0, InformationType = PortInformationType.PossibleModeCombinations });
-                // await kernel.SendBytesAsync(request);
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInformationRequestMessage() { PortId = 99, InformationType = PortInformationType.PossibleModeCombinations }));
 
                 // logger.LogInformation("Request PortModeInformation(s)");
                 // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.ValueFormat }));
@@ -113,7 +112,9 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 // await kernel.SendBytesAsync(BytesStringUtil.StringToData("09-00-81-00-11-07-64-64-00")); // 3.27.5
 
-                await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupSingleMessage() { PortId = 0, Mode = 0x03, DeltaInterval = 5, NotificationEnabled = true }));
+                // await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupSingleMessage() { PortId = 0, Mode = 0x03, DeltaInterval = 5, NotificationEnabled = true }));
+
+                await SetupPortInCombinedMode(kernel);
 
                 Console.ReadLine();
 
@@ -122,6 +123,59 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 Console.ReadLine();
             }
+        }
+
+        private static async Task SetupPortInCombinedMode(BluetoothKernel kernel)
+        {
+            await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupCombinedModeMessage()
+            {
+                PortId = 0,
+                SubCommand = PortInputFormatSetupCombinedSubCommand.LockDeviceForSetup,
+            }));
+
+            await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
+            {
+                PortId = 0,
+                SubCommand = PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination,
+                CombinationIndex = 0, // should refer 0b0000_0000_0000_1110 => SPEED POS APOS
+                ModeDataSets = new PortInputFormatSetupCombinedModeModeDataSet[] {
+                        new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x01, DataSet = 0, },
+                        new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x02, DataSet = 0, },
+                        new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x03, DataSet = 0, },
+                    }
+            }));
+
+            await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupSingleMessage()
+            {
+                PortId = 0,
+                Mode = 0x01,
+                DeltaInterval = 10,
+                NotificationEnabled = true,
+            }));
+
+            await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupSingleMessage()
+            {
+                PortId = 0,
+                Mode = 0x02,
+                DeltaInterval = 10,
+                NotificationEnabled = true,
+            }));
+
+
+            await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupSingleMessage()
+            {
+                PortId = 0,
+                Mode = 0x03,
+                DeltaInterval = 10,
+                NotificationEnabled = true,
+            }));
+
+
+            await kernel.SendBytesAsync(MessageEncoder.Encode(new PortInputFormatSetupCombinedModeMessage()
+            {
+                PortId = 0,
+                SubCommand = PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateEnabled,
+            }));
         }
     }
 }

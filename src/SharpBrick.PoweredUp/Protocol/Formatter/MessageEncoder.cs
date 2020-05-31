@@ -18,9 +18,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 PortInformationRequestMessage msg => MessageType.PortInformationRequest,
                 PortModeInformationRequestMessage msg => MessageType.PortModeInformationRequest,
                 PortInputFormatSetupSingleMessage msg => MessageType.PortInputFormatSetupSingle,
+                PortInputFormatSetupCombinedModeMessage msg => MessageType.PortInputFormatSetupCombinedMode,
                 PortInformationMessage msg => MessageType.PortInformation,
                 PortModeInformationMessage msg => MessageType.PortModeInformation,
                 PortInputFormatSingleMessage msg => MessageType.PortInputFormatSingle,
+                PortInputFormatCombinedModeMessage msg => MessageType.PortInputFormatCombinedMode,
                 _ => throw new NotImplementedException(),
             };
 
@@ -50,9 +52,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 MessageType.PortInformationRequest => new PortInformationRequestEncoder(),
                 MessageType.PortModeInformationRequest => new PortModeInformationRequestEncoder(),
                 MessageType.PortInputFormatSetupSingle => new PortInputFormatSetupSingleEncoder(),
+                MessageType.PortInputFormatSetupCombinedMode => new PortInputFormatSetupCombinedModeEncoder(),
                 MessageType.PortInformation => new PortInformationEncoder(),
                 MessageType.PortModeInformation => new PortModeInformationEncoder(),
                 MessageType.PortInputFormatSingle => new PortInputFormatSingleEncoder(),
+                MessageType.PortInputFormatCombinedMode => new PortInputFormatCombinedModeEncoder(),
                 _ => null,
             };
 
