@@ -82,7 +82,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             }
             else
             {
-                result = new UnknownMessage();
+                result = new UnknownMessage() { Data = data.ToArray() };
             }
 
             return result;

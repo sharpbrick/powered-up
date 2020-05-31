@@ -1,5 +1,6 @@
 using System;
 using SharpBrick.PoweredUp.Protocol.Messages;
+
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class HubAttachedIOEncoder : IMessageContentEncoder
@@ -29,6 +30,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     PortIdB = data[4],
                 },
                 HubAttachedIOEvent.DetachedIO => new HubAttachedIOForDetachedDeviceMessage(),
+                _ => throw new NotImplementedException(),
             };
 
             message.PortId = portId;

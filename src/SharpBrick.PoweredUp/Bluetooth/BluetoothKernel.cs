@@ -34,7 +34,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
         }
 
 
-        public async Task DisconnectAsync()
+        public Task DisconnectAsync()
         {
             _characteristic = null;
             _service?.Dispose();
@@ -43,6 +43,8 @@ namespace SharpBrick.PoweredUp.Bluetooth
             _device = null;
 
             _logger?.LogInformation("BluetoothKernel: Disconnected");
+
+            return Task.CompletedTask;
         }
 
         public async Task SendBytesAsync(byte[] data)

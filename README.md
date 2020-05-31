@@ -148,6 +148,6 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
 
 ## Contribution
 
-SharpBrick is an organization intended to host volunteers willing to contribute to the SharpBrick.PoweredUp and related projects. Everyone is welcome (private and commercial entities), [Code of Conduct](CODE_OF_CONDUCT.md) included.
+SharpBrick is an organization intended to host volunteers willing to contribute to the SharpBrick.PoweredUp and related projects. Everyone is welcome (private and commercial entities). Please read our **[Code of Conduct](CODE_OF_CONDUCT.md)** before participating in our project.
 
 The product is licensed under **MIT License** to allow a easy and wide adoption into prviate and commercial products.
