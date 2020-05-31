@@ -6,10 +6,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class PortModeInformationEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(CommonMessageHeader message)
+        public ushort CalculateContentLength(PoweredUpMessage message)
             => throw new NotImplementedException();
 
-        public CommonMessageHeader Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(in Span<byte> data)
         {
             var portId = data[0];
             var mode = data[1];
@@ -96,7 +96,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 Decimals = data[3],
             };
 
-        public void Encode(CommonMessageHeader message, in Span<byte> data)
+        public void Encode(PoweredUpMessage message, in Span<byte> data)
             => throw new NotImplementedException();
     }
 }

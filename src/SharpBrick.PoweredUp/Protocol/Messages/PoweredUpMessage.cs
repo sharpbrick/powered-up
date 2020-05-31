@@ -3,7 +3,7 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.1
-    public class CommonMessageHeader
+    public abstract class PoweredUpMessage
     {
         // spec chapter: 3.2
         // encoded as byte or ushort

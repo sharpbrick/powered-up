@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class HubPropertiesEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(CommonMessageHeader message)
+        public ushort CalculateContentLength(PoweredUpMessage message)
             => CalculateMessageLength(message as HubPropertyMessage ?? throw new ArgumentException(nameof(message)));
 
         public ushort CalculateMessageLength(HubPropertyMessage message)
@@ -35,7 +35,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             return (ushort)length;
         }
 
-        public void Encode(CommonMessageHeader message, in Span<byte> data)
+        public void Encode(PoweredUpMessage message, in Span<byte> data)
             => Encode(message as HubPropertyMessage ?? throw new ArgumentException(nameof(message)), data);
 
         public void Encode(HubPropertyMessage message, Span<byte> data)
@@ -64,7 +64,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             }
         }
 
-        public CommonMessageHeader Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(in Span<byte> data)
         {
             HubPropertyMessage message = (HubProperty)data[0] switch
             {

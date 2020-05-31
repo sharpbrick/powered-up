@@ -5,8 +5,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public interface IMessageContentEncoder
     {
-        ushort CalculateContentLength(CommonMessageHeader message);
-        void Encode(CommonMessageHeader message, in Span<byte> data);
-        CommonMessageHeader Decode(in Span<byte> data);
+        ushort CalculateContentLength(PoweredUpMessage message);
+        void Encode(PoweredUpMessage message, in Span<byte> data);
+        PoweredUpMessage Decode(in Span<byte> data);
     }
 }

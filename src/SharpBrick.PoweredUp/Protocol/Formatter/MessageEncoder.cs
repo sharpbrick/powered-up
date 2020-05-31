@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class MessageEncoder
     {
-        public static byte[] Encode(CommonMessageHeader message)
+        public static byte[] Encode(PoweredUpMessage message)
         {
             var messageType = message switch
             {
@@ -56,7 +56,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => null,
             };
 
-        public static CommonMessageHeader Decode(in Span<byte> data)
+        public static PoweredUpMessage Decode(in Span<byte> data)
         {
             var (length, hubId, messageType, headerLength) = CommonMessageHeaderEncoder.ParseCommonHeader(data);
 
@@ -64,7 +64,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             var content = data.Slice(headerLength);
 
-            CommonMessageHeader result;
+            PoweredUpMessage result;
 
             if (encoder != null)
             {

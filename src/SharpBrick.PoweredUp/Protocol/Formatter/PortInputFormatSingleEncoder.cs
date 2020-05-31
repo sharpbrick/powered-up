@@ -6,10 +6,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     // spec chapter: 3.23
     public class PortInputFormatSingleEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(CommonMessageHeader message)
+        public ushort CalculateContentLength(PoweredUpMessage message)
             => throw new NotImplementedException();
 
-        public CommonMessageHeader Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(in Span<byte> data)
             => new PortInputFormatSingleMessage()
             {
                 PortId = data[0],
@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 NotificationEnabled = (data[6] == 0x01),
             };
 
-        public void Encode(CommonMessageHeader message, in Span<byte> data)
+        public void Encode(PoweredUpMessage message, in Span<byte> data)
             => throw new NotImplementedException();
     }
 }

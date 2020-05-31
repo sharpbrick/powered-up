@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public static class CommonMessageHeaderEncoder
     {
-        public static void DecodeAndApply(in Span<byte> data, CommonMessageHeader message)
+        public static void DecodeAndApply(in Span<byte> data, PoweredUpMessage message)
         {
             var (length, hubId, messageType, headerLength) = ParseCommonHeader(data);
 

@@ -1,7 +1,7 @@
 ﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.23
-    public class PortInputFormatSingleMessage : CommonMessageHeader
+    public class PortInputFormatSingleMessage : PoweredUpMessage
     {
         public byte PortId { get; set; }
         public byte Mode { get; set; }

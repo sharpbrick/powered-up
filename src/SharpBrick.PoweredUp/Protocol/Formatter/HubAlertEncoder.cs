@@ -5,16 +5,16 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class HubAlertEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(CommonMessageHeader message)
+        public ushort CalculateContentLength(PoweredUpMessage message)
         {
             var hubAlertMessage = message as HubAlertMessage ?? throw new ArgumentException(nameof(message));
             return (ushort)(hubAlertMessage.Operation == HubAlertOperation.Update ? 3 : 2);
         }
 
-        public CommonMessageHeader Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(in Span<byte> data)
             => new HubAlertMessage() { Alert = (HubAlert)data[0], Operation = (HubAlertOperation)data[1], DownstreamPayload = (byte)((data[1] == (byte)HubAlertOperation.Update) ? data[2] : 0) };
 
-        public void Encode(CommonMessageHeader message, in Span<byte> data)
+        public void Encode(PoweredUpMessage message, in Span<byte> data)
         {
             var hubAlertMessage = message as HubAlertMessage ?? throw new ArgumentException(nameof(message));
 

@@ -4,13 +4,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class HubAttachedIOEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(CommonMessageHeader message)
+        public ushort CalculateContentLength(PoweredUpMessage message)
             => throw new NotImplementedException();
 
-        public void Encode(CommonMessageHeader message, in Span<byte> data)
+        public void Encode(PoweredUpMessage message, in Span<byte> data)
             => throw new NotImplementedException();
 
-        public CommonMessageHeader Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(in Span<byte> data)
         {
             byte portId = data[0];
             HubAttachedIOEvent ev = (HubAttachedIOEvent)data[1];
