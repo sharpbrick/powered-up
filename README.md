@@ -8,6 +8,79 @@ SharpBrick.PoweredUp is a .NET implementation of the BlueTooth Low Energy Protoc
 [![Nuget](https://img.shields.io/nuget/v/SharpBrick.PoweredUp?style=flat-square)](https://www.nuget.org/packages/SharpBrick.PoweredUp/)
 
 
+# Examples
+
+***Note:** This is the current message driven interface. In future there will be a component model allowing a more comfortable access*
+
+## Discover Hubs
+
+````csharp
+var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
+
+// Finding Service
+ulong bluetoothAddress = 0;
+
+var cts = new CancellationTokenSource();
+
+poweredUpBluetoothAdapter.Discover(info =>
+{
+    Console.WriteLine($"Found {info.BluetoothAddress} is a {(PoweredUpManufacturerDataConstants)info.ManufacturerData[1]}");
+
+    bluetoothAddress = info.BluetoothAddress;
+}, cts.Token);
+
+Console.WriteLine("Press any key to cancel Scanning");
+Console.ReadLine();
+
+cts.Cancel(); // cancels the scanning process
+````
+
+## Connect to Hub and Send a Message (and retrieving answers)
+
+````csharp
+using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
+{
+    await kernel.ConnectAsync();
+    
+    await kernel.ReceiveBytesAsync(async data =>
+    {
+        var message = MessageEncoder.Decode(data);
+
+        if (message is HubPropertyMessage<string> msg)
+        {
+            Console.WriteLine($"Hub Property - {msg.Property}: {msg.Payload}");
+        }
+    });
+
+    await kernel.SendBytesAsync(MessageEncoder.Encode(new HubPropertyMessage() { 
+        Property = HubProperty.AdvertisingName, 
+        Operation = HubPropertyOperation.RequestUpdate
+    }));
+
+    Console.Readline(); // allow the messages to be processed and displayed.
+}
+````
+
+## VISION: Future Hub Based Model
+
+````csharp
+var host = new PoweredUpHost();
+
+using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
+{
+    await hub.ConnectAsync();
+
+    var motor = hub.A.Device<TechnicXLargeMotor>();
+
+    await motor.StartSpeedAsync(speed: 100, maxPower: 100);
+
+    await Task.Delay(2000);
+
+    await motor.Break();
+
+    await hub.SwitchOffAsync();
+}
+````
 
 ## Implementation Status
 
@@ -41,13 +114,13 @@ SharpBrick.PoweredUp is a .NET implementation of the BlueTooth Low Energy Protoc
   - ~~[ ] [3.14. F/W Lock Status](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#f-w-lock-status)~~
   - [X] [3.15. Port Information Request](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-information-request)
   - [X] [3.16. Port Mode Information Request](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-mode-information-request)
-  - [ ] [3.17. Port Input Format Setup (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-setup-single)
+  - [X] [3.17. Port Input Format Setup (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-setup-single)
   - [ ] [3.18. Port Input Format Setup (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-setup-combinedmode)
   - [X] [3.19. Port Information](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-information)
   - [X] [3.20. Port Mode Information](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-mode-information)
   - [ ] [3.21. Port Value (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-value-single)
   - [ ] [3.22. Port Value (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-value-combinedmode)
-  - [ ] [3.23. Port Input Format (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-single)
+  - [X] [3.23. Port Input Format (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-single)
   - [ ] [3.24. Port Input Format (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-combinedmode)
   - [ ] [3.25. Virtual Port Setup](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#virtual-port-setup)
   - [ ] [3.26. Port Output Command](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command)
