@@ -17,8 +17,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                 PortInformationRequestMessage msg => MessageType.PortInformationRequest,
                 PortModeInformationRequestMessage msg => MessageType.PortModeInformationRequest,
+                PortInputFormatSetupSingleMessage msg => MessageType.PortInputFormatSetupSingle,
                 PortInformationMessage msg => MessageType.PortInformation,
                 PortModeInformationMessage msg => MessageType.PortModeInformation,
+                PortInputFormatSingleMessage msg => MessageType.PortInputFormatSingle,
                 _ => throw new NotImplementedException(),
             };
 
@@ -47,9 +49,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                 MessageType.PortInformationRequest => new PortInformationRequestEncoder(),
                 MessageType.PortModeInformationRequest => new PortModeInformationRequestEncoder(),
+                MessageType.PortInputFormatSetupSingle => new PortInputFormatSetupSingleEncoder(),
                 MessageType.PortInformation => new PortInformationEncoder(),
                 MessageType.PortModeInformation => new PortModeInformationEncoder(),
-                _ => throw new NotImplementedException(),
+                MessageType.PortInputFormatSingle => new PortInputFormatSingleEncoder(),
+                _ => null,
             };
 
         public static CommonMessageHeader Decode(in Span<byte> data)
@@ -60,13 +64,24 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             var content = data.Slice(headerLength);
 
-            var message = encoder?.Decode(content) ?? throw new InvalidOperationException();
+            CommonMessageHeader result;
 
-            message.Length = length;
-            message.HubId = hubId;
-            message.MessageType = (MessageType)messageType;
+            if (encoder != null)
+            {
+                var message = encoder?.Decode(content);
 
-            return message;
+                message.Length = length;
+                message.HubId = hubId;
+                message.MessageType = (MessageType)messageType;
+
+                result = message;
+            }
+            else
+            {
+                result = new UnknownMessage();
+            }
+
+            return result;
         }
     }
 }
