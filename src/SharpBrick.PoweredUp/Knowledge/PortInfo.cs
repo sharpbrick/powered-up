@@ -27,5 +27,9 @@ namespace SharpBrick.PoweredUp.Knowledge
         public byte UsedCombinationIndex { get; set; }
         public bool MultiUpdateEnabled { get; set; } = false;
         public int[] ConfiguredModeDataSetIndex { get; set; } = Array.Empty<int>();
+
+
+
+        public byte LastFormattedPortMode { get; internal set; }
     }
 }

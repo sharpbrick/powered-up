@@ -2,9 +2,9 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     public enum PortModeInformationDataType : byte
     {
-        Byte = 0x00,
-        UInt16 = 0x01,
-        UInt32 = 0x02,
+        SByte = 0x00, // UNSPECED whether byte or sbyte
+        Int16 = 0x01, // UNSPECED whether UInt16 or Int16
+        Int32 = 0x02, // UNSPECED whether UInt32 or Int32
         Single = 0x03,
     }
 }

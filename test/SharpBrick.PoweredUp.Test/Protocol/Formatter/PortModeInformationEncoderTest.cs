@@ -126,12 +126,12 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
         [Theory]
         // Technic Large Motor
-        [InlineData("0A-00-44-00-00-80-01-00-01-00", 0x00, 0x00, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.Byte, 1, 0)]
-        [InlineData("0A-00-44-00-01-80-01-00-04-00", 0x00, 0x01, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.Byte, 4, 0)]
-        [InlineData("0A-00-44-00-02-80-01-02-04-00", 0x00, 0x02, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.UInt32, 4, 0)]
-        [InlineData("0A-00-44-00-03-80-01-01-03-00", 0x00, 0x03, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.UInt16, 3, 0)]
-        [InlineData("0A-00-44-00-04-80-01-00-01-00", 0x00, 0x04, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.Byte, 1, 0)]
-        [InlineData("0A-00-44-00-05-80-03-01-03-00", 0x00, 0x05, PortModeInformationType.ValueFormat, 3, PortModeInformationDataType.UInt16, 3, 0)]
+        [InlineData("0A-00-44-00-00-80-01-00-01-00", 0x00, 0x00, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.SByte, 1, 0)]
+        [InlineData("0A-00-44-00-01-80-01-00-04-00", 0x00, 0x01, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.SByte, 4, 0)]
+        [InlineData("0A-00-44-00-02-80-01-02-04-00", 0x00, 0x02, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.Int32, 4, 0)]
+        [InlineData("0A-00-44-00-03-80-01-01-03-00", 0x00, 0x03, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.Int16, 3, 0)]
+        [InlineData("0A-00-44-00-04-80-01-00-01-00", 0x00, 0x04, PortModeInformationType.ValueFormat, 1, PortModeInformationDataType.SByte, 1, 0)]
+        [InlineData("0A-00-44-00-05-80-03-01-03-00", 0x00, 0x05, PortModeInformationType.ValueFormat, 3, PortModeInformationDataType.Int16, 3, 0)]
         public void PortModeInformationEncoder_Decode_ValueFormat(string data, byte expectedPort, byte expectedMode, PortModeInformationType expectedType, byte expectedNr, PortModeInformationDataType expectedDataType, byte expectedFigures, byte expectedDecimals)
         {
             var message = Decode<PortModeInformationForValueFormatMessage>(data);

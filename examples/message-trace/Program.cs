@@ -69,6 +69,13 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             GenericErrorMessage msg => $"Error - {msg.ErrorCode} from {(MessageType)msg.CommandType}",
                             PortInformationForModeInfoMessage msg => $"Port Information - Port {msg.PortId} Total Modes {msg.TotalModeCount} / Capabilities Output:{msg.OutputCapability}, Input:{msg.InputCapability}, LogicalCombinable:{msg.LogicalCombinableCapability}, LogicalSynchronizable:{msg.LogicalSynchronizableCapability} / InputModes: {msg.InputModes:X}, OutputModes: {msg.InputModes:X}",
                             PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
+                            PortValueSingleMessage msg => "Port Values - " + string.Join(";", msg.Data.Select(d => d switch
+                            {
+                                PortValueSingleMessageData<sbyte> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueSingleMessageData<short> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueSingleMessageData<uint> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueSingleMessageData<float> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                            })),
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
                             PortInputFormatCombinedModeMessage msg => $"Port Input Format (Combined Mode) - Port {msg.PortId} UsedCombinationIndex {msg.UsedCombinationIndex} Enabled {msg.MultiUpdateEnabled} Configured Modes {string.Join(",", msg.ConfiguredModeDataSetIndex)}",
                             UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {BytesStringUtil.DataToString(msg.Data)}",
@@ -120,9 +127,9 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 // await protocol.SendMessageAsync(BytesStringUtil.StringToData("09-00-81-00-11-07-64-64-00")); // 3.27.5
 
-                // await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 0, Mode = 0x03, DeltaInterval = 5, NotificationEnabled = true });
+                await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 0, Mode = 0x01, DeltaInterval = 5, NotificationEnabled = true });
 
-                await SetupPortInCombinedMode(protocol);
+                //await SetupPortInCombinedMode(protocol);
 
                 Console.ReadLine();
 

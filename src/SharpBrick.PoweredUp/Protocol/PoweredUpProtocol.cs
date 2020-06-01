@@ -65,7 +65,10 @@ namespace SharpBrick.PoweredUp.Protocol
                     break;
 
                 case PortInputFormatSingleMessage msg:
+                    port = Knowledge.Port(msg.PortId);
                     mode = Knowledge.PortMode(msg.PortId, msg.Mode);
+
+                    port.LastFormattedPortMode = msg.Mode;
 
                     mode.DeltaInterval = msg.DeltaInterval;
                     mode.NotificationEnabled = msg.NotificationEnabled;
