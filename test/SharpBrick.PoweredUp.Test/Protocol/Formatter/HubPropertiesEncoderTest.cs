@@ -57,7 +57,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubPropertiesEncoder_Encode_Downstream(HubProperty property, HubPropertyOperation operation, string expectedData)
         {
             // act
-            var data = MessageEncoder.Encode(new HubPropertyMessage() { Property = property, Operation = operation });
+            var data = MessageEncoder.Encode(new HubPropertyMessage() { Property = property, Operation = operation }, null);
 
             // assert
             Assert.Equal(expectedData, BytesStringUtil.DataToString(data));

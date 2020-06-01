@@ -26,7 +26,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var message = new PortModeInformationRequestMessage() { PortId = portId, Mode = mode, InformationType = informationType };
 
             // act
-            var data = MessageEncoder.Encode(message);
+            var data = MessageEncoder.Encode(message, null);
 
             // assert
             Assert.Equal(expectedData, BytesStringUtil.DataToString(data));

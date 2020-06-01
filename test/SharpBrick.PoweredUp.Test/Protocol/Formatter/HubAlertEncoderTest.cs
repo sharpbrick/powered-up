@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var message = new HubAlertMessage() { Alert = alert, Operation = operation, DownstreamPayload = payload };
 
             // act
-            var data = MessageEncoder.Encode(message);
+            var data = MessageEncoder.Encode(message, null);
 
             // assert
             Assert.Equal(expectedData, BytesStringUtil.DataToString(data));
@@ -44,7 +44,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
-            var message = MessageEncoder.Decode(data) as HubAlertMessage;
+            var message = MessageEncoder.Decode(data, null) as HubAlertMessage;
 
             // assert
             Assert.Equal(expectedAlert, message.Alert);

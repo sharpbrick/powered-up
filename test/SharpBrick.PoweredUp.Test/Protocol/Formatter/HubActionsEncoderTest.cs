@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var message = new HubActionMessage() { Action = action };
 
             // act
-            var data = MessageEncoder.Encode(message);
+            var data = MessageEncoder.Encode(message, null);
 
             // assert
             Assert.Equal(expectedData, BytesStringUtil.DataToString(data));
@@ -48,7 +48,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
-            var message = MessageEncoder.Decode(data) as HubActionMessage;
+            var message = MessageEncoder.Decode(data, null) as HubActionMessage;
 
             // assert
             Assert.Equal(expectedAction, message.Action);

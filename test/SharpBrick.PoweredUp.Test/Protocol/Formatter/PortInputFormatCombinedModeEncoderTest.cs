@@ -16,7 +16,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
-            var message = MessageEncoder.Decode(data) as PortInputFormatCombinedModeMessage;
+            var message = MessageEncoder.Decode(data, null) as PortInputFormatCombinedModeMessage;
 
             // assert
             Assert.Equal(expectedPortId, message.PortId);

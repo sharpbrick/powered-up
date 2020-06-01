@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp.Protocol
         {
             var knowledge = Knowledge;
 
-            var data = MessageEncoder.Encode(message /*, portKnowledge*/);
+            var data = MessageEncoder.Encode(message, knowledge);
 
             await _kernel.SendBytesAsync(data);
         }
@@ -32,7 +32,7 @@ namespace SharpBrick.PoweredUp.Protocol
             {
                 var knowledge = Knowledge;
 
-                var message = MessageEncoder.Decode(data /*, portKnowledge */);
+                var message = MessageEncoder.Decode(data, knowledge);
 
                 await UpdateProtocolKnowledge(message);
 

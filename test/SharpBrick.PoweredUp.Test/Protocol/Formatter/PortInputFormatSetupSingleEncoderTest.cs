@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             };
 
             // act
-            var data = MessageEncoder.Encode(message);
+            var data = MessageEncoder.Encode(message, null);
 
             // assert
             Assert.Equal(expectedDataAsString, BytesStringUtil.DataToString(data));

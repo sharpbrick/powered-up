@@ -159,7 +159,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
-            TMessage result = MessageEncoder.Decode(data) as TMessage;
+            TMessage result = MessageEncoder.Decode(data, null) as TMessage;
 
             return result;
         }

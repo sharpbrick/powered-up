@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
-            var message = MessageEncoder.Decode(data) as PortInformationForModeInfoMessage;
+            var message = MessageEncoder.Decode(data, null) as PortInformationForModeInfoMessage;
 
             // assert
             Assert.Equal(expectedPort, message.PortId);
@@ -43,7 +43,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(dataAsString);
 
             // act
-            var message = MessageEncoder.Decode(data) as PortInformationForPossibleModeCombinationsMessage;
+            var message = MessageEncoder.Decode(data, null) as PortInformationForPossibleModeCombinationsMessage;
 
             // assert
             Assert.Equal(expectedPort, message.PortId);

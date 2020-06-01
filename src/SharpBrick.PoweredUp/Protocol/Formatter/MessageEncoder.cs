@@ -1,11 +1,12 @@
 ﻿using System;
+using SharpBrick.PoweredUp.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class MessageEncoder
     {
-        public static byte[] Encode(PoweredUpMessage message)
+        public static byte[] Encode(PoweredUpMessage message, ProtocolKnowledge knowledge)
         {
             var messageType = message switch
             {
@@ -26,7 +27,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => throw new NotImplementedException(),
             };
 
-            var encoder = CreateEncoder(messageType);
+            var encoder = CreateEncoder(messageType, knowledge);
 
             var contentLength = encoder.CalculateContentLength(message);
 
@@ -40,7 +41,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             return data;
         }
 
-        private static IMessageContentEncoder CreateEncoder(MessageType messageType)
+        private static IMessageContentEncoder CreateEncoder(MessageType messageType, ProtocolKnowledge knowledge)
             => messageType switch
             {
                 MessageType.HubProperties => new HubPropertiesEncoder(),
@@ -60,11 +61,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => null,
             };
 
-        public static PoweredUpMessage Decode(in Span<byte> data)
+        public static PoweredUpMessage Decode(in Span<byte> data, ProtocolKnowledge knowledge)
         {
             var (length, hubId, messageType, headerLength) = CommonMessageHeaderEncoder.ParseCommonHeader(data);
 
-            var encoder = CreateEncoder((MessageType)messageType);
+            var encoder = CreateEncoder((MessageType)messageType, knowledge);
 
             var content = data.Slice(headerLength);
 
