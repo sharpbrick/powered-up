@@ -75,7 +75,14 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             var unknown => $"{unknown.MessageType} (not yet formatted)",
                         };
 
-                        logger.LogInformation(messageAsString);
+                        if (message is GenericErrorMessage)
+                        {
+                            logger.LogError(messageAsString);
+                        }
+                        else
+                        {
+                            logger.LogInformation(messageAsString);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -178,5 +185,6 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 SubCommand = PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateEnabled,
             });
         }
+
     }
 }

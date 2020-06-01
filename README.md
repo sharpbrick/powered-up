@@ -141,10 +141,13 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
 
 
 
-## Other Languages
+## SDKs in other programming languages
 
 - JavaScript (Node + Browser): 
-  - [node-poweredup](https://github.com/nathankellenicki/node-poweredup)
+  - [nathankellenicki/node-poweredup](https://github.com/nathankellenicki/node-poweredup)
+- .NET / C#
+  - **sharpbrick/powered-up** (this here)
+  - [Vouzamo/Lego](https://github.com/Vouzamo/Lego) (and [blog](https://vouzamo.wordpress.com/2020/04/21/lego-c-sdk-enhancements-challenges/))
 
 ## Contribution
 
