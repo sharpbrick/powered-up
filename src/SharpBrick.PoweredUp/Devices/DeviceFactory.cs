@@ -8,9 +8,10 @@ namespace SharpBrick.PoweredUp.Devices
         public static IPowerdUpDevice Create(HubAttachedIOType type)
             => type switch
             {
+                HubAttachedIOType.TechnicMediumHubTiltSensor => new TechnicMediumHubTiltSensor(),
                 HubAttachedIOType.TechnicLargeLinearMotor => new TechnicLargeLinearMotor(),
                 HubAttachedIOType.TechnicXLargeLinearMotor => new TechnicXLargeLinearMotor(),
-                _ => throw new NotImplementedException(),
+                _ => null,
             };
     }
 }

@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
             {
-                var protocol = new PoweredUpProtocol(kernel);
+                var protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
 
                 await kernel.ConnectAsync();
 
@@ -73,7 +73,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             {
                                 PortValueSingleMessageData<sbyte> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueSingleMessageData<short> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueSingleMessageData<uint> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueSingleMessageData<int> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueSingleMessageData<float> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                             })),
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
@@ -127,7 +127,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 // await protocol.SendMessageAsync(BytesStringUtil.StringToData("09-00-81-00-11-07-64-64-00")); // 3.27.5
 
-                await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 0, Mode = 0x01, DeltaInterval = 5, NotificationEnabled = true });
+                await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 99, Mode = 0x00, DeltaInterval = 5, NotificationEnabled = true });
 
                 //await SetupPortInCombinedMode(protocol);
 

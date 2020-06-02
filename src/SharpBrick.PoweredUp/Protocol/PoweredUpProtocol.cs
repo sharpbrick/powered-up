@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Knowledge;
@@ -11,11 +13,13 @@ namespace SharpBrick.PoweredUp.Protocol
     public class PoweredUpProtocol
     {
         private readonly BluetoothKernel _kernel;
+        private readonly ILogger<PoweredUpProtocol> _logger;
         public ProtocolKnowledge Knowledge = new ProtocolKnowledge();
 
-        public PoweredUpProtocol(BluetoothKernel kernel)
+        public PoweredUpProtocol(BluetoothKernel kernel, ILogger<PoweredUpProtocol> logger = default)
         {
             _kernel = kernel;
+            _logger = logger;
         }
         public async Task SendMessageAsync(PoweredUpMessage message)
         {
@@ -26,93 +30,27 @@ namespace SharpBrick.PoweredUp.Protocol
             await _kernel.SendBytesAsync(data);
         }
 
-        public async Task ReceiveMessageAsync(Func<PoweredUpMessage, Task> handler)
+        public Task ReceiveMessageAsync(Func<PoweredUpMessage, Task> handler)
+            => ReceiveMessageAsync((data, message) => handler(message));
+        public async Task ReceiveMessageAsync(Func<byte[], PoweredUpMessage, Task> handler)
         {
             await _kernel.ReceiveBytesAsync(async data =>
             {
-                var knowledge = Knowledge;
+                try
+                {
+                    var knowledge = Knowledge;
 
-                var message = MessageEncoder.Decode(data, knowledge);
+                    var message = MessageEncoder.Decode(data, knowledge);
 
-                await UpdateProtocolKnowledge(message);
+                    await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge);
 
-                await handler(message);
+                    await handler(data, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Exception in PoweredUpProtocol Encode/Knowledge");
+                }
             });
-        }
-
-        private Task UpdateProtocolKnowledge(PoweredUpMessage message)
-        {
-            PortInfo port;
-            PortModeInfo mode;
-            switch (message)
-            {
-                case HubAttachedIOForAttachedDeviceMessage msg:
-                    port = Knowledge.Port(msg.PortId);
-
-                    ResetProtocolKnowledgeForPort(port.PortId);
-                    port.IsDeviceConnected = true;
-                    port.IOTypeId = msg.IOTypeId;
-                    port.HardwareRevision = msg.HardwareRevision;
-                    port.SoftwareRevision = msg.SoftwareRevision;
-
-                    AddCachePortAndPortModeInformation(msg.IOTypeId, port);
-                    break;
-                case HubAttachedIOForDetachedDeviceMessage msg:
-                    port = Knowledge.Port(msg.PortId);
-
-                    ResetProtocolKnowledgeForPort(port.PortId);
-                    port.IsDeviceConnected = false;
-                    break;
-
-                case PortInputFormatSingleMessage msg:
-                    port = Knowledge.Port(msg.PortId);
-                    mode = Knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    port.LastFormattedPortMode = msg.Mode;
-
-                    mode.DeltaInterval = msg.DeltaInterval;
-                    mode.NotificationEnabled = msg.NotificationEnabled;
-                    break;
-
-                case PortInputFormatCombinedModeMessage msg:
-                    port = Knowledge.Port(msg.PortId);
-
-                    port.UsedCombinationIndex = msg.UsedCombinationIndex;
-                    port.MultiUpdateEnabled = msg.MultiUpdateEnabled;
-                    port.ConfiguredModeDataSetIndex = msg.ConfiguredModeDataSetIndex;
-                    break;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private void AddCachePortAndPortModeInformation(HubAttachedIOType type, PortInfo port)
-        {
-            var device = DeviceFactory.Create(type);
-
-            device.ApplyStaticPortInfo(port);
-        }
-
-        private void ResetProtocolKnowledgeForPort(byte portId)
-        {
-            var port = Knowledge.Port(portId);
-
-            port.IsDeviceConnected = false;
-            port.IOTypeId = HubAttachedIOType.Unknown;
-            port.HardwareRevision = new Version("0.0.0.0");
-            port.SoftwareRevision = new Version("0.0.0.0");
-
-            port.OutputCapability = false;
-            port.InputCapability = false;
-            port.LogicalCombinableCapability = false;
-            port.LogicalSynchronizableCapability = false;
-            port.Modes = Array.Empty<PortModeInfo>();
-
-            port.ModeCombinations = Array.Empty<ushort>();
-
-            port.UsedCombinationIndex = 0;
-            port.MultiUpdateEnabled = false;
-            port.ConfiguredModeDataSetIndex = Array.Empty<int>();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Knowledge;
@@ -12,25 +13,32 @@ namespace SharpBrick.PoweredUp.Functions
         private readonly PoweredUpProtocol _protocol;
         private TaskCompletionSource<int> _taskCompletionSource;
         private int _stageTwoCount;
+        private int _stageTwoExpected;
 
         public int SentMessages { get; private set; }
         public int ReceivedMessages { get; private set; }
+
+        public ConcurrentBag<byte[]> ReceivedMessagesData { get; private set; }
+
         public DiscoverPorts(PoweredUpProtocol protocol)
         {
             _protocol = protocol ?? throw new System.ArgumentNullException(nameof(protocol));
         }
 
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(byte portFilter = 0xFF)
         {
             _taskCompletionSource = new TaskCompletionSource<int>();
+            ReceivedMessagesData = new ConcurrentBag<byte[]>();
             _stageTwoCount = 0;
+
 
             SentMessages = 0;
             ReceivedMessages = 0;
 
             await _protocol.ReceiveMessageAsync(UpdateKnowledge);
 
-            foreach (var port in _protocol.Knowledge.Ports.Values)
+            _stageTwoExpected = _protocol.Knowledge.Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter).Count();
+            foreach (var port in _protocol.Knowledge.Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter))
             {
                 if (port.IsDeviceConnected)
                 {
@@ -67,106 +75,30 @@ namespace SharpBrick.PoweredUp.Functions
             _stageTwoCount++;
         }
 
-        private async Task UpdateKnowledge(PoweredUpMessage message)
+        private async Task UpdateKnowledge(byte[] data, PoweredUpMessage message)
         {
-            var applicableMessage = true;
             var knowledge = _protocol.Knowledge;
 
-            PortInfo port;
-            PortModeInfo mode;
+            var applicableMessage = KnowledgeManager.ApplyStaticProtocolKnowledge(message, knowledge);
 
-            switch (message)
+            if (message is PortInformationForModeInfoMessage msg)
             {
-                case PortInformationForModeInfoMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                var port = knowledge.Port(msg.PortId);
 
-                    port.OutputCapability = msg.OutputCapability;
-                    port.InputCapability = msg.InputCapability;
-                    port.LogicalCombinableCapability = msg.LogicalCombinableCapability;
-                    port.LogicalSynchronizableCapability = msg.LogicalSynchronizableCapability;
-                    port.Modes = Enumerable.Range(0, msg.TotalModeCount).Select(modeIndex => new PortModeInfo()
-                    {
-                        PortId = msg.PortId,
-                        ModeIndex = (byte)modeIndex,
-                        IsInput = ((1 << modeIndex) & msg.InputModes) > 0,
-                        IsOutput = ((1 << modeIndex) & msg.OutputModes) > 0
-                    }).ToArray();
-
-                    await RequestPortModeProperties(port);
-
-                    break;
-                case PortInformationForPossibleModeCombinationsMessage msg:
-                    port = knowledge.Port(msg.PortId);
-
-                    port.ModeCombinations = msg.ModeCombinations;
-                    break;
-
-
-                case PortModeInformationForNameMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.Name = msg.Name;
-                    break;
-                case PortModeInformationForRawMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.RawMin = msg.RawMin;
-                    mode.RawMax = msg.RawMax;
-                    break;
-                case PortModeInformationForPctMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.PctMin = msg.PctMin;
-                    mode.PctMax = msg.PctMax;
-                    break;
-                case PortModeInformationForSIMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.SIMin = msg.SIMin;
-                    mode.SIMax = msg.SIMax;
-                    break;
-                case PortModeInformationForSymbolMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.Symbol = msg.Symbol;
-                    break;
-                case PortModeInformationForMappingMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.InputSupportsNull = msg.InputSupportsNull;
-                    mode.InputSupportFunctionalMapping20 = msg.InputSupportFunctionalMapping20;
-                    mode.InputAbsolute = msg.InputAbsolute;
-                    mode.InputRelative = msg.InputRelative;
-                    mode.InputDiscrete = msg.InputDiscrete;
-
-                    mode.OutputSupportsNull = msg.OutputSupportsNull;
-                    mode.OutputSupportFunctionalMapping20 = msg.OutputSupportFunctionalMapping20;
-                    mode.OutputAbsolute = msg.OutputAbsolute;
-                    mode.OutputRelative = msg.OutputRelative;
-                    mode.OutputDiscrete = msg.OutputDiscrete;
-                    break;
-                case PortModeInformationForValueFormatMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
-
-                    mode.NumberOfDatasets = msg.NumberOfDatasets;
-                    mode.DatasetType = msg.DatasetType;
-                    mode.TotalFigures = msg.TotalFigures;
-                    mode.Decimals = msg.Decimals;
-                    break;
-                default:
-                    applicableMessage = false;
-                    break;
+                await RequestPortModeProperties(port);
             }
 
             if (applicableMessage)
             {
                 ReceivedMessages++;
+                ReceivedMessagesData.Add(data);
 
-                if (SentMessages == ReceivedMessages && _stageTwoCount >= knowledge.Ports.Count)
+                if (SentMessages == ReceivedMessages && _stageTwoCount >= _stageTwoExpected)
                 {
                     _taskCompletionSource.SetResult(ReceivedMessages);
                 }
             }
         }
+
     }
 }

@@ -1,211 +1,60 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using SharpBrick.PoweredUp.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
+using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
     public class TechnicLargeLinearMotor : IPowerdUpDevice
     {
-        public void ApplyStaticPortInfo(PortInfo port)
-        {
-            port.IOTypeId = HubAttachedIOType.TechnicLargeLinearMotor;
-            port.HardwareRevision = new Version("0.0.0.1000"); // TODO
-            port.SoftwareRevision = new Version("0.0.0.1000"); //TODO
-            port.OutputCapability = true;
-            port.InputCapability = true;
-            port.LogicalCombinableCapability = true;
-            port.LogicalSynchronizableCapability = true;
-
-            port.Modes = new PortModeInfo[] {
-                new PortModeInfo() {
-                    PortId = port.PortId,
-                    ModeIndex = 0,
-                    Name= "POWER",
-                    IsInput= false,
-                    IsOutput= true,
-                    RawMin= -100,
-                    RawMax= 100,
-                    PctMin= -100,
-                    PctMax= 100,
-                    SIMin= -100,
-                    SIMax= 100,
-                    Symbol= "PCT",
-                    InputSupportsNull= false,
-                    InputSupportFunctionalMapping20= false,
-                    InputAbsolute= false,
-                    InputRelative= false,
-                    InputDiscrete= false,
-                    OutputSupportsNull= false,
-                    OutputSupportFunctionalMapping20= false,
-                    OutputAbsolute= true,
-                    OutputRelative= false,
-                    OutputDiscrete= false,
-                    NumberOfDatasets= 1,
-                    DatasetType= PortModeInformationDataType.SByte,
-                    TotalFigures= 1,
-                    Decimals= 0,
-                    DeltaInterval= 0,
-                    NotificationEnabled= false,
-                },
-                new PortModeInfo() {
-                    PortId = port.PortId,
-                    ModeIndex = 1,
-                    Name= "SPEED",
-                    IsInput= true,
-                    IsOutput= true,
-                    RawMin= -100,
-                    RawMax= 100,
-                    PctMin= -100,
-                    PctMax= 100,
-                    SIMin= -100,
-                    SIMax= 100,
-                    Symbol= "PCT",
-                    InputSupportsNull= false,
-                    InputSupportFunctionalMapping20= false,
-                    InputAbsolute= true,
-                    InputRelative= false,
-                    InputDiscrete= false,
-                    OutputSupportsNull= false,
-                    OutputSupportFunctionalMapping20= false,
-                    OutputAbsolute= true,
-                    OutputRelative= false,
-                    OutputDiscrete= false,
-                    NumberOfDatasets= 1,
-                    DatasetType= PortModeInformationDataType.SByte,
-                    TotalFigures= 4,
-                    Decimals= 0,
-                    DeltaInterval= 0,
-                    NotificationEnabled= false,
-                },
-                new PortModeInfo() {
-                    PortId = port.PortId,
-                    ModeIndex = 2,
-                    Name= "POS",
-                    IsInput= true,
-                    IsOutput= true,
-                    RawMin= -360,
-                    RawMax= 360,
-                    PctMin= -100,
-                    PctMax= 100,
-                    SIMin= -360,
-                    SIMax= 360,
-                    Symbol= "DEG",
-                    InputSupportsNull= false,
-                    InputSupportFunctionalMapping20= false,
-                    InputAbsolute= false,
-                    InputRelative= true,
-                    InputDiscrete= false,
-                    OutputSupportsNull= false,
-                    OutputSupportFunctionalMapping20= false,
-                    OutputAbsolute= false,
-                    OutputRelative= true,
-                    OutputDiscrete= false,
-                    NumberOfDatasets= 1,
-                    DatasetType= PortModeInformationDataType.Int32,
-                    TotalFigures= 4,
-                    Decimals= 0,
-                    DeltaInterval= 0,
-                    NotificationEnabled= false,
-                },
-                new PortModeInfo() {
-                    PortId = port.PortId,
-                    ModeIndex = 3,
-                    Name= "APOS",
-                    IsInput= true,
-                    IsOutput= true,
-                    RawMin= -360,
-                    RawMax= 360,
-                    PctMin= -100,
-                    PctMax= 100,
-                    SIMin= -360,
-                    SIMax= 360,
-                    Symbol= "DEG",
-                    InputSupportsNull= false,
-                    InputSupportFunctionalMapping20= false,
-                    InputAbsolute= false,
-                    InputRelative= true,
-                    InputDiscrete= false,
-                    OutputSupportsNull= false,
-                    OutputSupportFunctionalMapping20= false,
-                    OutputAbsolute= false,
-                    OutputRelative= true,
-                    OutputDiscrete= false,
-                    NumberOfDatasets= 1,
-                    DatasetType= PortModeInformationDataType.Int16,
-                    TotalFigures= 3,
-                    Decimals= 0,
-                    DeltaInterval= 0,
-                    NotificationEnabled= false,
-                },
-                new PortModeInfo() {
-                    PortId = port.PortId,
-                    ModeIndex = 4,
-                    Name= "LOAD",
-                    IsInput= true,
-                    IsOutput= true,
-                    RawMin= 0,
-                    RawMax= 127,
-                    PctMin= 0,
-                    PctMax= 100,
-                    SIMin= 0,
-                    SIMax= 127,
-                    Symbol= "PCT",
-                    InputSupportsNull= false,
-                    InputSupportFunctionalMapping20= false,
-                    InputAbsolute= false,
-                    InputRelative= true,
-                    InputDiscrete= false,
-                    OutputSupportsNull= false,
-                    OutputSupportFunctionalMapping20= false,
-                    OutputAbsolute= false,
-                    OutputRelative= true,
-                    OutputDiscrete= false,
-                    NumberOfDatasets= 1,
-                    DatasetType= PortModeInformationDataType.SByte,
-                    TotalFigures= 1,
-                    Decimals= 0,
-                    DeltaInterval= 0,
-                    NotificationEnabled= false,
-                },
-                new PortModeInfo() {
-                    PortId = port.PortId,
-                    ModeIndex = 5,
-                    Name= "CALIB",
-                    IsInput= false,
-                    IsOutput= false,
-                    RawMin= 0,
-                    RawMax= 512,
-                    PctMin= 0,
-                    PctMax= 100,
-                    SIMin= 0,
-                    SIMax= 512,
-                    Symbol= "RAW",
-                    InputSupportsNull= false,
-                    InputSupportFunctionalMapping20= false,
-                    InputAbsolute= false,
-                    InputRelative= false,
-                    InputDiscrete= false,
-                    OutputSupportsNull= false,
-                    OutputSupportFunctionalMapping20= false,
-                    OutputAbsolute= false,
-                    OutputRelative= false,
-                    OutputDiscrete= false,
-                    NumberOfDatasets= 3,
-                    DatasetType= PortModeInformationDataType.Int16,
-                    TotalFigures= 3,
-                    Decimals= 0,
-                    DeltaInterval= 0,
-                    NotificationEnabled= false,
-                },
-            };
-
-            port.ModeCombinations = new ushort[] {
-                0b0000_0000_0000_1110
-            };
-
-            port.UsedCombinationIndex = 0;
-            port.MultiUpdateEnabled = false;
-            port.ConfiguredModeDataSetIndex = Array.Empty<int>();
-        }
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+            => @"
+0B-00-43-00-01-0F-06-1E-00-1F-00
+07-00-43-00-02-0E-00
+11-00-44-00-00-00-50-4F-57-45-52-00-00-00-00-00-00
+0E-00-44-00-00-01-00-00-C8-C2-00-00-C8-42
+0E-00-44-00-00-02-00-00-C8-C2-00-00-C8-42
+0E-00-44-00-00-03-00-00-C8-C2-00-00-C8-42
+0A-00-44-00-00-04-50-43-54-00
+08-00-44-00-00-05-00-10
+0A-00-44-00-00-80-01-00-01-00
+11-00-44-00-01-00-53-50-45-45-44-00-00-00-00-00-00
+0E-00-44-00-01-01-00-00-C8-C2-00-00-C8-42
+0E-00-44-00-01-02-00-00-C8-C2-00-00-C8-42
+0E-00-44-00-01-03-00-00-C8-C2-00-00-C8-42
+0A-00-44-00-01-04-50-43-54-00
+08-00-44-00-01-05-10-10
+0A-00-44-00-01-80-01-00-04-00
+11-00-44-00-02-00-50-4F-53-00-00-00-00-00-00-00-00
+0E-00-44-00-02-01-00-00-B4-C3-00-00-B4-43
+0E-00-44-00-02-02-00-00-C8-C2-00-00-C8-42
+0E-00-44-00-02-03-00-00-B4-C3-00-00-B4-43
+0A-00-44-00-02-04-44-45-47-00
+08-00-44-00-02-05-08-08
+0A-00-44-00-02-80-01-02-04-00
+11-00-44-00-03-00-41-50-4F-53-00-00-00-00-00-00-00
+0E-00-44-00-03-01-00-00-B4-C3-00-00-B4-43
+0E-00-44-00-03-02-00-00-C8-C2-00-00-C8-42
+0E-00-44-00-03-03-00-00-B4-C3-00-00-B4-43
+0A-00-44-00-03-04-44-45-47-00
+08-00-44-00-03-05-08-08
+0A-00-44-00-03-80-01-01-03-00
+11-00-44-00-04-00-4C-4F-41-44-00-00-00-00-00-00-00
+0E-00-44-00-04-01-00-00-00-00-00-00-FE-42
+0E-00-44-00-04-02-00-00-00-00-00-00-C8-42
+0E-00-44-00-04-03-00-00-00-00-00-00-FE-42
+0A-00-44-00-04-04-50-43-54-00
+08-00-44-00-04-05-08-08
+0A-00-44-00-04-80-01-00-01-00
+11-00-44-00-05-00-43-41-4C-49-42-00-00-00-00-00-00
+0E-00-44-00-05-01-00-00-00-00-00-00-00-44
+0E-00-44-00-05-02-00-00-00-00-00-00-C8-42
+0E-00-44-00-05-03-00-00-00-00-00-00-00-44
+0A-00-44-00-05-04-52-41-57-00
+08-00-44-00-05-05-00-00
+0A-00-44-00-05-80-03-01-03-00
+".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
     }
 }
