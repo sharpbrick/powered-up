@@ -33,5 +33,23 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(new Version(expectedHwVersion), message.HardwareRevision);
             Assert.Equal(new Version(expectedSwVersion), message.SoftwareRevision);
         }
+
+
+        [Theory]
+        [InlineData("09-00-04-88-02-2E-00-01-02", HubAttachedIOType.TechnicLargeLinearMotor, 0x88, 0x01, 0x02)]
+        public void HubAttachedIOEncoder_Decode_AttachedVirutalIO(string messageAsString, HubAttachedIOType expectedType, byte expectedPortId, byte portA, byte portB)
+        {
+            // arrange
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+
+            // act
+            var message = new HubAttachedIOEncoder().Decode(data) as HubAttachedIOForAttachedVirtualDeviceMessage;
+
+            // assert
+            Assert.Equal(expectedPortId, message.PortId);
+            Assert.Equal(expectedType, message.IOTypeId);
+            Assert.Equal(portA, message.PortAId);
+            Assert.Equal(portB, message.PortBId);
+        }
     }
 }

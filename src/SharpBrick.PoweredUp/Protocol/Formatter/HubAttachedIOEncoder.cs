@@ -25,9 +25,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 },
                 HubAttachedIOEvent.AttachedVirtualIO => new HubAttachedIOForAttachedVirtualDeviceMessage()
                 {
-                    IOTypeId = (HubAttachedIOType)data[2],
-                    PortIdA = data[3],
-                    PortIdB = data[4],
+                    IOTypeId = (HubAttachedIOType)BitConverter.ToUInt16(data.Slice(2, 2)),
+                    PortAId = data[4],
+                    PortBId = data[5],
                 },
                 HubAttachedIOEvent.DetachedIO => new HubAttachedIOForDetachedDeviceMessage(),
                 _ => throw new NotImplementedException(),

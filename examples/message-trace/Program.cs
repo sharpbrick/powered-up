@@ -65,6 +65,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             HubPropertyMessage<byte[]> msg => $"Hub Property - {msg.Property}: {BytesStringUtil.DataToString(msg.Payload)}",
                             HubActionMessage msg => $"Hub Action - {msg.Action}",
                             HubAttachedIOForAttachedDeviceMessage msg => $"Attached IO - Port {msg.PortId} of type {msg.IOTypeId} (HW: {msg.HardwareRevision} / SW: {msg.SoftwareRevision})",
+                            HubAttachedIOForAttachedVirtualDeviceMessage msg => $"Attached Virtual IO - Port {msg.PortId} with A {msg.PortAId} / B {msg.PortBId}  of type {msg.IOTypeId}",
                             HubAttachedIOForDetachedDeviceMessage msg => $"Dettached IO - Port {msg.PortId}",
                             GenericErrorMessage msg => $"Error - {msg.ErrorCode} from {(MessageType)msg.CommandType}",
                             PortInformationForModeInfoMessage msg => $"Port Information - Port {msg.PortId} Total Modes {msg.TotalModeCount} / Capabilities Output:{msg.OutputCapability}, Input:{msg.InputCapability}, LogicalCombinable:{msg.LogicalCombinableCapability}, LogicalSynchronizable:{msg.LogicalSynchronizableCapability} / InputModes: {msg.InputModes:X}, OutputModes: {msg.InputModes:X}",
@@ -132,11 +133,16 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.CapabilityBits });
                 // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.ValueFormat });
 
+                // virtual port sample
+                // await protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage() { SubCommand = VirtualPortSubCommand.Connected, PortAId = 0x01, PortBId = 0x02, });
+                // await kernel.SendBytesAsync(BytesStringUtil.StringToData("09-00-81-10-11-07-64-64-00")); // 3.27.5
+
+                // single motor sample
                 // await protocol.SendMessageAsync(BytesStringUtil.StringToData("09-00-81-00-11-07-64-64-00")); // 3.27.5
 
                 //await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 99, Mode = 0x00, DeltaInterval = 5, NotificationEnabled = true });
 
-                await SetupPortInCombinedMode(protocol);
+                //await SetupPortInCombinedMode(protocol);
 
                 Console.ReadLine();
 

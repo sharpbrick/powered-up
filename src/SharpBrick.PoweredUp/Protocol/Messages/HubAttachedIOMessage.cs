@@ -21,8 +21,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class HubAttachedIOForAttachedVirtualDeviceMessage : HubAttachedIOMessage
     {
         public HubAttachedIOType IOTypeId { get; set; }
-        public byte PortIdA { get; set; }
-        public byte PortIdB { get; set; }
+        public byte PortAId { get; set; }
+        public byte PortBId { get; set; }
     }
 
     // spec chapter: 3.8.1
