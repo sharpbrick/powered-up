@@ -133,6 +133,12 @@ namespace SharpBrick.PoweredUp.Knowledge
                     mode.NotificationEnabled = msg.NotificationEnabled;
                     break;
 
+                case PortInputFormatSetupCombinedModeForSetModeDataSetMessage msg:
+                    port = knowledge.Port(msg.PortId);
+
+                    port.RequestedCombinedModeDataSets = msg.ModeDataSets;
+                    break;
+
                 case PortInputFormatCombinedModeMessage msg:
                     port = knowledge.Port(msg.PortId);
 

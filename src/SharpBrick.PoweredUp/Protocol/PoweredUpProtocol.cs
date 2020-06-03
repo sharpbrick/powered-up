@@ -27,6 +27,8 @@ namespace SharpBrick.PoweredUp.Protocol
 
             var data = MessageEncoder.Encode(message, knowledge);
 
+            await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, knowledge);
+
             await _kernel.SendBytesAsync(data);
         }
 

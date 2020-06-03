@@ -35,7 +35,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     Assert.Equal(d.PortId, expectedPortId);
                     Assert.Equal(d.DataType, expectedDataType);
 
-                    if (d is PortValueSingleMessageData<T> actual)
+                    if (d is PortValueData<T> actual)
                     {
                         Assert.Collection(actual.InputValues, expectedData.Cast<T>().Select<T, Action<T>>(expected => actual => Assert.Equal(expected, actual)).ToArray());
                     }

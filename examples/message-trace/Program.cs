@@ -71,10 +71,17 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
                             PortValueSingleMessage msg => "Port Values - " + string.Join(";", msg.Data.Select(d => d switch
                             {
-                                PortValueSingleMessageData<sbyte> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueSingleMessageData<short> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueSingleMessageData<int> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueSingleMessageData<float> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<sbyte> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<short> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<int> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<float> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                            })),
+                            PortValueCombinedModeMessage msg => $"Port Value (Combined Mode) - Port {msg.PortId} " + string.Join(";", msg.Data.Select(d => d switch
+                            {
+                                PortValueData<sbyte> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<short> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<int> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<float> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                             })),
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
                             PortInputFormatCombinedModeMessage msg => $"Port Input Format (Combined Mode) - Port {msg.PortId} UsedCombinationIndex {msg.UsedCombinationIndex} Enabled {msg.MultiUpdateEnabled} Configured Modes {string.Join(",", msg.ConfiguredModeDataSetIndex)}",
@@ -127,9 +134,9 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 // await protocol.SendMessageAsync(BytesStringUtil.StringToData("09-00-81-00-11-07-64-64-00")); // 3.27.5
 
-                await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 99, Mode = 0x00, DeltaInterval = 5, NotificationEnabled = true });
+                //await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 99, Mode = 0x00, DeltaInterval = 5, NotificationEnabled = true });
 
-                //await SetupPortInCombinedMode(protocol);
+                await SetupPortInCombinedMode(protocol);
 
                 Console.ReadLine();
 

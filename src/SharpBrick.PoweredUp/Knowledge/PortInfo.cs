@@ -28,6 +28,8 @@ namespace SharpBrick.PoweredUp.Knowledge
         public bool MultiUpdateEnabled { get; set; } = false;
         public int[] ConfiguredModeDataSetIndex { get; set; } = Array.Empty<int>();
 
+        // PortInputFormatSetupCombinedModeForSetModeDataSetMessage
+        public PortInputFormatSetupCombinedModeModeDataSet[] RequestedCombinedModeDataSets { get; internal set; }
 
 
         public byte LastFormattedPortMode { get; internal set; }

@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             var remainingSlice = data;
 
-            var result = new List<PortValueSingleMessageData>();
+            var result = new List<PortValueData>();
 
             while (remainingSlice.Length > 0)
             {
@@ -32,36 +32,15 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 var mode = portInfo.LastFormattedPortMode;
                 var modeInfo = _knowledge.PortMode(port, mode);
 
-                var lengthOfDataType = modeInfo.DatasetType switch
-                {
-                    PortModeInformationDataType.SByte => 1,
-                    PortModeInformationDataType.Int16 => 2,
-                    PortModeInformationDataType.Int32 => 4,
-                    PortModeInformationDataType.Single => 4,
-                };
+                int lengthOfDataType = PortValueSingleEncoder.GetLengthOfDataType(modeInfo);
 
-                PortValueSingleMessageData value = modeInfo.DatasetType switch
-                {
-                    PortModeInformationDataType.SByte => new PortValueSingleMessageData<sbyte>()
-                    {
-                        InputValues = MemoryMarshal.Cast<byte, sbyte>(remainingSlice.Slice(1, modeInfo.NumberOfDatasets * lengthOfDataType)).ToArray(),
-                    },
-                    PortModeInformationDataType.Int16 => new PortValueSingleMessageData<short>()
-                    {
-                        InputValues = MemoryMarshal.Cast<byte, short>(remainingSlice.Slice(1, modeInfo.NumberOfDatasets * lengthOfDataType)).ToArray(),
-                    },
-                    PortModeInformationDataType.Int32 => new PortValueSingleMessageData<int>()
-                    {
-                        InputValues = MemoryMarshal.Cast<byte, int>(remainingSlice.Slice(1, modeInfo.NumberOfDatasets * lengthOfDataType)).ToArray(),
-                    },
-                    PortModeInformationDataType.Single => new PortValueSingleMessageData<float>()
-                    {
-                        InputValues = MemoryMarshal.Cast<byte, float>(remainingSlice.Slice(1, modeInfo.NumberOfDatasets * lengthOfDataType)).ToArray(),
-                    },
-                };
+                var dataSlice = remainingSlice.Slice(1, modeInfo.NumberOfDatasets * lengthOfDataType);
+
+                var value = PortValueSingleEncoder.CreatPortValueData(modeInfo, dataSlice);
 
                 value.PortId = port;
                 value.DataType = modeInfo.DatasetType;
+                value.ModeIndex = mode;
 
                 result.Add(value);
                 remainingSlice = remainingSlice.Slice(1 + lengthOfDataType * modeInfo.NumberOfDatasets);
@@ -70,6 +49,38 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             return new PortValueSingleMessage()
             {
                 Data = result.ToArray(),
+            };
+        }
+
+        internal static int GetLengthOfDataType(PortModeInfo modeInfo)
+            => modeInfo.DatasetType switch
+            {
+                PortModeInformationDataType.SByte => 1,
+                PortModeInformationDataType.Int16 => 2,
+                PortModeInformationDataType.Int32 => 4,
+                PortModeInformationDataType.Single => 4,
+            };
+
+        internal static PortValueData CreatPortValueData(PortModeInfo modeInfo, Span<byte> dataSlice)
+        {
+            return modeInfo.DatasetType switch
+            {
+                PortModeInformationDataType.SByte => new PortValueData<sbyte>()
+                {
+                    InputValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray(),
+                },
+                PortModeInformationDataType.Int16 => new PortValueData<short>()
+                {
+                    InputValues = MemoryMarshal.Cast<byte, short>(dataSlice).ToArray(),
+                },
+                PortModeInformationDataType.Int32 => new PortValueData<int>()
+                {
+                    InputValues = MemoryMarshal.Cast<byte, int>(dataSlice).ToArray(),
+                },
+                PortModeInformationDataType.Single => new PortValueData<float>()
+                {
+                    InputValues = MemoryMarshal.Cast<byte, float>(dataSlice).ToArray(),
+                },
             };
         }
 

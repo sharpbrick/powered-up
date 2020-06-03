@@ -1,7 +1,9 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortValueSingleMessage : PoweredUpMessage
+    public class PortValueCombinedModeMessage : PoweredUpMessage
     {
+        public byte PortId { get; set; }
+
         public PortValueData[] Data { get; set; }
     }
 }
