@@ -1,5 +1,3 @@
-//0A-00-45-63-21-00-F9-FF-FD-FF
-
 using System;
 using System.Linq;
 using SharpBrick.PoweredUp.Devices;
