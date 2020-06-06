@@ -59,6 +59,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 PortModeInformationDataType.Int16 => 2,
                 PortModeInformationDataType.Int32 => 4,
                 PortModeInformationDataType.Single => 4,
+                _ => throw new NotSupportedException(),
             };
 
         internal static PortValueData CreatPortValueData(PortModeInfo modeInfo, Span<byte> dataSlice)
@@ -81,6 +82,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 {
                     InputValues = MemoryMarshal.Cast<byte, float>(dataSlice).ToArray(),
                 },
+
+                _ => throw new NotSupportedException(),
             };
         }
 

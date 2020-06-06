@@ -8,6 +8,7 @@ using SharpBrick.PoweredUp.WinRT;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Utils;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Devices;
 
 namespace SharpBrick.PoweredUp.Examples.MessageTrace
 {
@@ -69,13 +70,14 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             HubAttachedIOForDetachedDeviceMessage msg => $"Dettached IO - Port {msg.PortId}",
                             GenericErrorMessage msg => $"Error - {msg.ErrorCode} from {(MessageType)msg.CommandType}",
                             PortInformationForModeInfoMessage msg => $"Port Information - Port {msg.PortId} Total Modes {msg.TotalModeCount} / Capabilities Output:{msg.OutputCapability}, Input:{msg.InputCapability}, LogicalCombinable:{msg.LogicalCombinableCapability}, LogicalSynchronizable:{msg.LogicalSynchronizableCapability} / InputModes: {msg.InputModes:X}, OutputModes: {msg.InputModes:X}",
-                            PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
+                            PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (Combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
                             PortValueSingleMessage msg => "Port Values - " + string.Join(";", msg.Data.Select(d => d switch
                             {
                                 PortValueData<sbyte> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueData<short> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueData<int> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueData<float> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                _ => "Undefined Data Type",
                             })),
                             PortValueCombinedModeMessage msg => $"Port Value (Combined Mode) - Port {msg.PortId} " + string.Join(";", msg.Data.Select(d => d switch
                             {
@@ -83,6 +85,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                                 PortValueData<short> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueData<int> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 PortValueData<float> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                _ => "Undefined Data Type",
                             })),
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
                             PortInputFormatCombinedModeMessage msg => $"Port Input Format (Combined Mode) - Port {msg.PortId} UsedCombinationIndex {msg.UsedCombinationIndex} Enabled {msg.MultiUpdateEnabled} Configured Modes {string.Join(",", msg.ConfiguredModeDataSetIndex)}",
@@ -143,6 +146,15 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 //await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 99, Mode = 0x00, DeltaInterval = 5, NotificationEnabled = true });
 
                 //await SetupPortInCombinedMode(protocol);
+
+                Console.ReadLine();
+
+                //await protocol.SendMessageAsync(new HubActionMessage() { Action = HubAction.ResetBusyIndication, });
+
+                var rgbLight = new RgbLight(protocol, 50);
+                //await rgbLight.SetRgbColorNoAsync(PortOutputCommandColors.Pink);
+                await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+                //await rgbLight.SetRgbColorsAsync(0xFF, 0x00, 0x00);
 
                 Console.ReadLine();
 

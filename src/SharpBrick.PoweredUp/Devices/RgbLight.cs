@@ -1,12 +1,57 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
     public class RgbLight : IPowerdUpDevice
     {
+        private readonly PoweredUpProtocol _protocol;
+        private readonly byte _portId;
+
+        public RgbLight()
+        { }
+
+        public RgbLight(PoweredUpProtocol protocol, byte portId)
+        {
+            _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
+            _portId = portId;
+        }
+
+        public async Task SetRgbColorNoAsync(PortOutputCommandColors color)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                ColorNo = color,
+            });
+        }
+        public async Task SetRgbColorsAsync(byte red, byte green, byte blue)
+        {
+            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
+            {
+                PortId = _portId,
+                Mode = 0x01,
+                DeltaInterval = 10000,
+                NotificationEnabled = false,
+            });
+            await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNo2Message()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                RedColor = red,
+                GreenColor = green,
+                BlueColor = blue,
+            });
+        }
+
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
             => @"
 0B-00-43-32-01-01-02-00-00-03-00
@@ -26,5 +71,6 @@ namespace SharpBrick.PoweredUp.Devices
 08-00-44-32-01-05-00-10
 0A-00-44-32-01-80-03-00-03-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
+
     }
 }

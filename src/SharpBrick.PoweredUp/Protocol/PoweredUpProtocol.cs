@@ -23,13 +23,22 @@ namespace SharpBrick.PoweredUp.Protocol
         }
         public async Task SendMessageAsync(PoweredUpMessage message)
         {
-            var knowledge = Knowledge;
+            try
+            {
+                var knowledge = Knowledge;
 
-            var data = MessageEncoder.Encode(message, knowledge);
+                var data = MessageEncoder.Encode(message, knowledge);
 
-            await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, knowledge);
+                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, knowledge);
 
-            await _kernel.SendBytesAsync(data);
+                await _kernel.SendBytesAsync(data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception in PoweredUpProtocol Encode/Knowledge");
+
+                throw;
+            }
         }
 
         public Task ReceiveMessageAsync(Func<PoweredUpMessage, Task> handler)
@@ -50,7 +59,9 @@ namespace SharpBrick.PoweredUp.Protocol
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Exception in PoweredUpProtocol Encode/Knowledge");
+                    _logger.LogError(e, "Exception in PoweredUpProtocol Decode/Knowledge");
+
+                    throw;
                 }
             });
         }

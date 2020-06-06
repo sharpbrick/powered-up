@@ -6,6 +6,6 @@
    <PackageTags>lego, poweredup, powered, up, controlplus, csharp, dotnet, technic, techniccontrolplus, legocontrolplus, legotechniccontrolplus, legopoweredup</PackageTags>
    <PackageProjectUrl>https://github.com/sharpbrick/powered-up</PackageProjectUrl>
    <RepositoryUrl>https://github.com/sharpbrick/powered-up</RepositoryUrl>
-   <PackageLicenseUrl>https://github.com/sharpbrick/powered-up/blob/master/LICENSE</PackageLicenseUrl>
+   <PackageLicense>MIT</PackageLicense>
  </PropertyGroup>
 </Project>

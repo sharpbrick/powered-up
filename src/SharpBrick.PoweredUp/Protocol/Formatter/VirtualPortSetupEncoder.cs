@@ -10,6 +10,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             {
                 VirtualPortSetupForConnectedMessage msg => 3,
                 VirtualPortSetupForDisconnectedMessage msg => 2,
+                _ => throw new NotSupportedException(),
             };
 
         public PoweredUpMessage Decode(in Span<byte> data)
