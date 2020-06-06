@@ -66,7 +66,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     {
         public PortOutputCommandStartSpeedMessage() : base(PortOutputSubCommand.StartSpeed) { }
         public sbyte Speed { get; set; }
-        public sbyte MaxPower { get; set; }
+        public byte MaxPower { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -76,7 +76,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public PortOutputCommandStartSpeed2Message() : base(PortOutputSubCommand.StartSpeed2) { }
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
-        public sbyte MaxPower { get; set; }
+        public byte MaxPower { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -84,10 +84,10 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandStartSpeedForTimeMessage : PortOutputCommandMessage
     {
         public PortOutputCommandStartSpeedForTimeMessage() : base(PortOutputSubCommand.StartSpeedForTime) { }
-        public short Time { get; set; }
+        public ushort Time { get; set; }
         public sbyte Speed { get; set; }
-        public sbyte MaxPower { get; set; }
-        public byte EndState { get; set; }
+        public byte MaxPower { get; set; }
+        public PortOutputCommandSpecialSpeed EndState { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -95,11 +95,11 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandStartSpeedForTime2Message : PortOutputCommandMessage
     {
         public PortOutputCommandStartSpeedForTime2Message() : base(PortOutputSubCommand.StartSpeedForTime2) { }
-        public short Time { get; set; }
+        public ushort Time { get; set; }
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
-        public sbyte MaxPower { get; set; }
-        public byte EndState { get; set; }
+        public byte MaxPower { get; set; }
+        public PortOutputCommandSpecialSpeed EndState { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -109,8 +109,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public PortOutputCommandStartSpeedForDegreesMessage() : base(PortOutputSubCommand.StartSpeedForDegrees) { }
         public int Degrees { get; set; }
         public sbyte Speed { get; set; }
-        public sbyte MaxPower { get; set; }
-        public byte EndState { get; set; }
+        public byte MaxPower { get; set; }
+        public PortOutputCommandSpecialSpeed EndState { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -121,8 +121,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public int Degrees { get; set; }
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
-        public sbyte MaxPower { get; set; }
-        public byte EndState { get; set; }
+        public byte MaxPower { get; set; }
+        public PortOutputCommandSpecialSpeed EndState { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -132,8 +132,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public PortOutputCommandGotoAbsolutePositionMessage() : base(PortOutputSubCommand.GotoAbsolutePosition) { }
         public int AbsPos { get; set; }
         public sbyte Speed { get; set; }
-        public sbyte MaxPower { get; set; }
-        public byte EndState { get; set; }
+        public byte MaxPower { get; set; }
+        public PortOutputCommandSpecialSpeed EndState { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
     // spec chapter: 3.27.12
@@ -143,8 +143,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public int AbsPos1 { get; set; }
         public int AbsPos2 { get; set; }
         public sbyte Speed { get; set; }
-        public sbyte MaxPower { get; set; }
-        public byte EndState { get; set; }
+        public byte MaxPower { get; set; }
+        public PortOutputCommandSpecialSpeed EndState { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 

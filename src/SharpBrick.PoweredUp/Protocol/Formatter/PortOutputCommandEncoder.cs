@@ -10,8 +10,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             {
                 PortOutputCommandMessage portOutputMessage => 3 + portOutputMessage switch
                 {
+                    PortOutputCommandStartSpeedMessage msg => 3,
+                    PortOutputCommandStartSpeedForTimeMessage msg => 6,
                     PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage => 1 + directWriteModeDataMessage switch
                     {
+                        PortOutputCommandStartPowerMessage msg => 1,
                         PortOutputCommandSetRgbColorNoMessage msg => 1,
                         PortOutputCommandSetRgbColorNo2Message msg => 3,
 
@@ -38,11 +41,30 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             switch (message)
             {
+                case PortOutputCommandStartSpeedMessage msg:
+                    data[3] = (byte)msg.Speed;
+                    data[4] = msg.MaxPower;
+                    data[5] = (byte)msg.Profile;
+
+                    break;
+
+                case PortOutputCommandStartSpeedForTimeMessage msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 2), msg.Time);
+                    data[5] = (byte)msg.Speed;
+                    data[6] = msg.MaxPower;
+                    data[7] = (byte)msg.EndState;
+                    data[8] = (byte)msg.Profile;
+
+                    break;
                 case PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage:
                     data[3] = directWriteModeDataMessage.Mode;
 
                     switch (directWriteModeDataMessage)
                     {
+                        case PortOutputCommandStartPowerMessage msg:
+                            data[4] = (byte)msg.Power;
+                            break;
+
                         case PortOutputCommandSetRgbColorNoMessage msg:
                             data[4] = (byte)msg.ColorNo;
                             break;

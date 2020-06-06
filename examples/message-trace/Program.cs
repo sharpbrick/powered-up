@@ -157,6 +157,20 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
                 //await rgbLight.SetRgbColorsAsync(0xFF, 0x00, 0x00);
 
+                var motor = new TechnicXLargeLinearMotor(protocol, 0);
+
+                await motor.StartSpeedForTimeAsync(3000, 90, 100, PortOutputCommandSpecialSpeed.Hold, PortOutputCommandSpeedProfile.None);
+                // await motor.StartSpeedAsync(100, 90, PortOutputCommandSpeedProfile.None);
+
+                // await Task.Delay(2000);
+
+                // await motor.StartSpeedAsync(127, 90, PortOutputCommandSpeedProfile.None);
+
+                // await motor.StartSpeedAsync(-100, 90, PortOutputCommandSpeedProfile.None);
+                // await Task.Delay(2000);
+
+                // await motor.StartSpeedAsync(0, 90, PortOutputCommandSpeedProfile.None);
+
                 Console.ReadLine();
 
                 logger.LogInformation("Switch off device");
