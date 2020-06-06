@@ -89,6 +89,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             })),
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
                             PortInputFormatCombinedModeMessage msg => $"Port Input Format (Combined Mode) - Port {msg.PortId} UsedCombinationIndex {msg.UsedCombinationIndex} Enabled {msg.MultiUpdateEnabled} Configured Modes {string.Join(",", msg.ConfiguredModeDataSetIndex)}",
+                            PortOutputCommandFeedbackMessage msg => $"Port Command Feedback - " + string.Join(",", msg.Feedbacks.Select(f => $"Port {f.PortId} -> {f.Feedback}")),
                             UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {BytesStringUtil.DataToString(msg.Data)}",
                             var unknown => $"{unknown.MessageType} (not yet formatted)",
                         };

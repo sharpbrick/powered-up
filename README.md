@@ -1,6 +1,6 @@
 # SharpBrick.PoweredUp
 
-SharpBrick.PoweredUp is a .NET implementation of the BlueTooth Low Energy Protocol for Lego Powered Up products. [Specification](https://lego.github.io/lego-ble-wireless-protocol-docs/) and the [node-poweredup](https://github.com/nathankellenicki/node-poweredup) protocol implementation.
+SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered Up products. [Specification](https://lego.github.io/lego-ble-wireless-protocol-docs/) and the [node-poweredup](https://github.com/nathankellenicki/node-poweredup) protocol implementation.
 
 ![Build-Release](https://github.com/sharpbrick/powered-up/workflows/Build-Release/badge.svg)
 ![Build-CI](https://github.com/sharpbrick/powered-up/workflows/Build-CI/badge.svg)
@@ -39,23 +39,23 @@ cts.Cancel(); // cancels the scanning process
 
 ````csharp
 using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
-{
+{    
+    var protocol = new PoweredUpProtocol(kernel);
+
     await kernel.ConnectAsync();
     
-    await kernel.ReceiveBytesAsync(async data =>
+    await protocol.ReceiveMessageAsync(async message =>
     {
-        var message = MessageEncoder.Decode(data);
-
         if (message is HubPropertyMessage<string> msg)
         {
             Console.WriteLine($"Hub Property - {msg.Property}: {msg.Payload}");
         }
     });
 
-    await kernel.SendBytesAsync(MessageEncoder.Encode(new HubPropertyMessage() { 
+    await protocol.SendMessageAsync(new HubPropertyMessage() { 
         Property = HubProperty.AdvertisingName, 
         Operation = HubPropertyOperation.RequestUpdate
-    }));
+    });
 
     Console.Readline(); // allow the messages to be processed and displayed.
 }
@@ -137,7 +137,7 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
   - [ ] [3.29. WriteDirectModeData](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#writedirectmodedata)
   - [ ] [3.30. Checksum Calculation](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#checksum-calculation)
   - [ ] [3.31. Tacho Math](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#tacho-math)
-  - [ ] [3.32. Port Output Command Feedback](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command-feedback)
+  - [X] [3.32. Port Output Command Feedback](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command-feedback)
 
 
 

@@ -28,6 +28,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 PortInputFormatCombinedModeMessage msg => MessageType.PortInputFormatCombinedMode,
                 VirtualPortSetupMessage msg => MessageType.VirtualPortSetup,
                 PortOutputCommandMessage msg => MessageType.PortOutputCommand,
+                PortOutputCommandFeedbackMessage msg => MessageType.PortOutputCommandFeedback,
                 _ => throw new NotImplementedException(),
             };
 
@@ -66,6 +67,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 MessageType.PortInputFormatCombinedMode => new PortInputFormatCombinedModeEncoder(),
                 MessageType.VirtualPortSetup => new VirtualPortSetupEncoder(),
                 MessageType.PortOutputCommand => new PortOutputCommandEncoder(),
+                MessageType.PortOutputCommandFeedback => new PortOutputCommandFeedbackEncoder(),
                 _ => null,
             };
 
