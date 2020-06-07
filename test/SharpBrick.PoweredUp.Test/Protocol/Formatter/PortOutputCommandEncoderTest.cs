@@ -8,6 +8,31 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class PortOutputCommandEncoderTest
     {
+
+        [Theory]
+        [InlineData("09-00-81-00-11-05-B8-0B-01", 0, 3000, PortOutputCommandSpeedProfile.AccelerationProfile)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandSetAccTimeMessage(string expectedData, byte port, ushort time, PortOutputCommandSpeedProfile profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandSetAccTimeMessage()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = time,
+                Profile = profile,
+            });
+
+        [Theory]
+        [InlineData("09-00-81-00-11-06-E8-03-02", 0, 1000, PortOutputCommandSpeedProfile.DeccelerationProfile)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandSetDecTimeMessage(string expectedData, byte port, ushort time, PortOutputCommandSpeedProfile profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandSetDecTimeMessage()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = time,
+                Profile = profile,
+            });
+
         [Theory]
         [InlineData("09-00-81-00-11-07-64-5A-03", 0, 100, 90, PortOutputCommandSpeedProfile.AccelerationProfile | PortOutputCommandSpeedProfile.DeccelerationProfile)]
         [InlineData("09-00-81-00-11-07-7F-5A-03", 0, 127, 90, PortOutputCommandSpeedProfile.AccelerationProfile | PortOutputCommandSpeedProfile.DeccelerationProfile)]

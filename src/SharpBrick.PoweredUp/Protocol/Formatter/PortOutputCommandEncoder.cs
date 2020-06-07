@@ -10,6 +10,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             {
                 PortOutputCommandMessage portOutputMessage => 3 + portOutputMessage switch
                 {
+                    PortOutputCommandSetAccTimeMessage msg => 3,
+                    PortOutputCommandSetDecTimeMessage msg => 3,
                     PortOutputCommandStartSpeedMessage msg => 3,
                     PortOutputCommandStartSpeedForTimeMessage msg => 6,
                     PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage => 1 + directWriteModeDataMessage switch
@@ -41,6 +43,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             switch (message)
             {
+                case PortOutputCommandSetAccTimeMessage msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 2), msg.Time);
+                    data[5] = (byte)msg.Profile;
+                    break;
+                case PortOutputCommandSetDecTimeMessage msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 2), msg.Time);
+                    data[5] = (byte)msg.Profile;
+                    break;
                 case PortOutputCommandStartSpeedMessage msg:
                     data[3] = (byte)msg.Speed;
                     data[4] = msg.MaxPower;

@@ -56,5 +56,29 @@ namespace SharpBrick.PoweredUp.Devices
                 Profile = profile,
             });
         }
+
+        public async Task SetAccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.AccelerationProfile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = timeInMs,
+                Profile = profileNumber,
+            });
+        }
+
+        public async Task SetDeccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.DeccelerationProfile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = timeInMs,
+                Profile = profileNumber,
+            });
+        }
     }
 }

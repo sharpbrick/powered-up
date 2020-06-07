@@ -49,7 +49,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandSetAccTimeMessage : PortOutputCommandMessage
     {
         public PortOutputCommandSetAccTimeMessage() : base(PortOutputSubCommand.SetAccTime) { }
-        public short Time { get; set; }
+        public ushort Time { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 
@@ -57,7 +57,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandSetDecTimeMessage : PortOutputCommandMessage
     {
         public PortOutputCommandSetDecTimeMessage() : base(PortOutputSubCommand.SetDecTime) { }
-        public short Time { get; set; }
+        public ushort Time { get; set; }
         public PortOutputCommandSpeedProfile Profile { get; set; }
     }
 

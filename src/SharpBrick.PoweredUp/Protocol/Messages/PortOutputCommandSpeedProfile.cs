@@ -2,6 +2,7 @@ using System;
 
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
+    // UNSPECED concept of profileNumber etc
     [Flags]
     public enum PortOutputCommandSpeedProfile : byte
     {
