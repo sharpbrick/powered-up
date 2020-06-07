@@ -131,8 +131,8 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
   - [X] [3.23. Port Input Format (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-single)
   - [X] [3.24. Port Input Format (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-combinedmode)
   - [X] [3.25. Virtual Port Setup](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#virtual-port-setup)
-  - [ ] [3.26. Port Output Command](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command)
-  - [ ] [3.27. Output Command 0x81 - Motor Sub Commands [0x01-0x3F]](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-command-0x81-motor-sub-commands-0x01-0x3f)
+  - [X] [3.26. Port Output Command](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command)
+  - [3.27. Output Command 0x81 - Motor Sub Commands [0x01-0x3F]](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-command-0x81-motor-sub-commands-0x01-0x3f)
     - [X] [3.27.1 - StartPower(Power)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power)
     - [ ] [3.27.2 - StartPower(Power1, Power2)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power1-power2-0x02)
     - [X] [3.27.3 - SetAccTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setacctime-time-profileno-0x05)
@@ -145,17 +145,20 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
     - [ ] [3.27.10 - StartSpeedForDegrees(Degrees, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speedl-speedr-maxpower-endstate-useprofile-0x0c)
     - [X] [3.27.11 - GotoAbsolutePosition(AbsPos, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos-speed-maxpower-endstate-useprofile-0x0d)...
     - [ ] [3.27.12 - GotoAbsolutePosition(AbsPos1, AbsPos2, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos1-abspos2-speed-maxpower-endstate-useprofile-0x0e)
-    - [ ] []()...
-    - [ ] []()...
+    - [ ] [3.27.13 - PresetEncoder(Position)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-position-n-a)
+    - [ ] [3.27.14 - PresetEncoder(LeftPosition, RightPosition)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-leftposition-rightposition-0x14)
+    - [ ] [3.27.15 - TiltImpactPreset(PresetValue)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltimpactpreset-presetvalue-n-a)
+    - [ ] [3.27.16 - TiltConfigOrientation(Orientation)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltconfigorientation-orientation-n-a)
+    - [ ] [3.27.17 - TiltConfigImpact(ImpactThreshold, BumpHoldoff)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltconfigimpact-impactthreshold-bumpholdoff-n-a)
+    - [ ] [3.27.18 - TiltFactoryCalibration(Orientation, PassCode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltfactorycalibration-orientation-passcode-n-a)
+    - [ ] [3.27.19 - GenericZeroSetHardware()](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-hardware-reset-genericzerosethardware-n-a)
     - [X] [3.27.20 - SetRgbColorNo(ColorNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setrgbcolorno-colorno-n-a)
     - [X] [3.27.21 - SetRgbColorNo(RedColor, GreenColor, BlueColor)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setrgbcolorno-redcolor-greencolor-bluecolor-n-a)
   - [ ] [3.28. WriteDirect](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#writedirect)
-  - [ ] [3.29. WriteDirectModeData](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#writedirectmodedata)
+  - [X] [3.29. WriteDirectModeData](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#writedirectmodedata)
   - [ ] [3.30. Checksum Calculation](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#checksum-calculation)
   - [ ] [3.31. Tacho Math](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#tacho-math)
   - [X] [3.32. Port Output Command Feedback](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command-feedback)
-
-
 
 ## SDKs in other programming languages
 
