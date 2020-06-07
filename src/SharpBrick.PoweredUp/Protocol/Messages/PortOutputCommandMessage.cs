@@ -107,7 +107,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandStartSpeedForDegreesMessage : PortOutputCommandMessage
     {
         public PortOutputCommandStartSpeedForDegreesMessage() : base(PortOutputSubCommand.StartSpeedForDegrees) { }
-        public int Degrees { get; set; }
+        public uint Degrees { get; set; }
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
         public PortOutputCommandSpecialSpeed EndState { get; set; }
@@ -118,7 +118,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandStartSpeedForDegrees2Message : PortOutputCommandMessage
     {
         public PortOutputCommandStartSpeedForDegrees2Message() : base(PortOutputSubCommand.StartSpeedForDegrees2) { }
-        public int Degrees { get; set; }
+        public uint Degrees { get; set; }
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
         public byte MaxPower { get; set; }
@@ -130,7 +130,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandGotoAbsolutePositionMessage : PortOutputCommandMessage
     {
         public PortOutputCommandGotoAbsolutePositionMessage() : base(PortOutputSubCommand.GotoAbsolutePosition) { }
-        public int AbsPos { get; set; }
+        public int AbsolutePosition { get; set; } // UNSPECED: relative to what? (to the position of the motor start)
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
         public PortOutputCommandSpecialSpeed EndState { get; set; }

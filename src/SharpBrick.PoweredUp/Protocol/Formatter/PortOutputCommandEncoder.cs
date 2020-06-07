@@ -14,6 +14,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     PortOutputCommandSetDecTimeMessage msg => 3,
                     PortOutputCommandStartSpeedMessage msg => 3,
                     PortOutputCommandStartSpeedForTimeMessage msg => 6,
+                    PortOutputCommandStartSpeedForDegreesMessage msg => 8,
+                    PortOutputCommandGotoAbsolutePositionMessage msg => 8,
                     PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage => 1 + directWriteModeDataMessage switch
                     {
                         PortOutputCommandStartPowerMessage msg => 1,
@@ -55,7 +57,6 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     data[3] = (byte)msg.Speed;
                     data[4] = msg.MaxPower;
                     data[5] = (byte)msg.Profile;
-
                     break;
 
                 case PortOutputCommandStartSpeedForTimeMessage msg:
@@ -64,8 +65,24 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     data[6] = msg.MaxPower;
                     data[7] = (byte)msg.EndState;
                     data[8] = (byte)msg.Profile;
-
                     break;
+
+                case PortOutputCommandStartSpeedForDegreesMessage msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 4), msg.Degrees);
+                    data[7] = (byte)msg.Speed;
+                    data[8] = msg.MaxPower;
+                    data[9] = (byte)msg.EndState;
+                    data[10] = (byte)msg.Profile;
+                    break;
+
+                case PortOutputCommandGotoAbsolutePositionMessage msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 4), msg.AbsolutePosition);
+                    data[7] = (byte)msg.Speed;
+                    data[8] = msg.MaxPower;
+                    data[9] = (byte)msg.EndState;
+                    data[10] = (byte)msg.Profile;
+                    break;
+
                 case PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage:
                     data[3] = directWriteModeDataMessage.Mode;
 

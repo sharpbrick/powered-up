@@ -158,9 +158,19 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 //await rgbLight.SetRgbColorsAsync(0xFF, 0x00, 0x00);
 
                 var motor = new TechnicXLargeLinearMotor(protocol, 0);
-                await motor.SetAccelerationTime(3000);
-                await motor.SetDeccelerationTime(1000);
-                await motor.StartSpeedForTimeAsync(6000, 90, 100, PortOutputCommandSpecialSpeed.Hold, PortOutputCommandSpeedProfile.AccelerationProfile | PortOutputCommandSpeedProfile.DeccelerationProfile);
+                // await motor.SetAccelerationTime(3000);
+                // await motor.SetDeccelerationTime(1000);
+                // await motor.StartSpeedForTimeAsync(6000, 90, 100, PortOutputCommandSpecialSpeed.Hold, PortOutputCommandSpeedProfile.AccelerationProfile | PortOutputCommandSpeedProfile.DeccelerationProfile);
+
+                // await Task.Delay(2000);
+
+                //await motor.StartSpeedForDegrees(180, -10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+
+                await motor.GotoAbsolutePosition(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await Task.Delay(2000);
+                await motor.GotoAbsolutePosition(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+
+
                 // await motor.StartSpeedAsync(100, 90, PortOutputCommandSpeedProfile.None);
 
                 // await Task.Delay(2000);

@@ -140,7 +140,12 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
     - [X] [3.27.5 - StartSpeed (Speed, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed-maxpower-useprofile-0x07)
     - [ ] [3.27.6 - StartSpeed (Speed1, Speed2, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed1-speed2-maxpower-useprofile-0x08)
     - [X] [3.27.7 - StartSpeedForTime (Time, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x09)
-    - [ ] []()
+    - [ ] [3.27.8 - StartSpeedForTime (Time, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x0a)
+    - [X] [3.27.9 - StartSpeedForDegrees(Degrees, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speed-maxpower-endstate-useprofile-0x0b)
+    - [ ] [3.27.10 - StartSpeedForDegrees(Degrees, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speedl-speedr-maxpower-endstate-useprofile-0x0c)
+    - [X] [3.27.11 - GotoAbsolutePosition(AbsPos, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos-speed-maxpower-endstate-useprofile-0x0d)...
+    - [ ] [3.27.12 - GotoAbsolutePosition(AbsPos1, AbsPos2, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos1-abspos2-speed-maxpower-endstate-useprofile-0x0e)
+    - [ ] []()...
     - [ ] []()...
     - [X] [3.27.20 - SetRgbColorNo(ColorNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setrgbcolorno-colorno-n-a)
     - [X] [3.27.21 - SetRgbColorNo(RedColor, GreenColor, BlueColor)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setrgbcolorno-redcolor-greencolor-bluecolor-n-a)

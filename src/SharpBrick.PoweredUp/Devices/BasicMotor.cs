@@ -29,6 +29,30 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
+        public async Task SetAccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.AccelerationProfile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = timeInMs,
+                Profile = profileNumber,
+            });
+        }
+
+        public async Task SetDeccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.DeccelerationProfile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = timeInMs,
+                Profile = profileNumber,
+            });
+        }
+
         public async Task StartSpeedAsync(sbyte speed, byte maxPower, PortOutputCommandSpeedProfile profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedMessage()
@@ -57,27 +81,33 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
-        public async Task SetAccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.AccelerationProfile)
+        public async Task StartSpeedForDegrees(uint degrees, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
         {
-            await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
+            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegreesMessage()
             {
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Profile = profileNumber,
+                Degrees = degrees,
+                Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
             });
         }
 
-        public async Task SetDeccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.DeccelerationProfile)
+        public async Task GotoAbsolutePosition(int absolutePosition, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
         {
-            await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
+            await _protocol.SendMessageAsync(new PortOutputCommandGotoAbsolutePositionMessage()
             {
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Profile = profileNumber,
+                AbsolutePosition = absolutePosition,
+                Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
             });
         }
     }

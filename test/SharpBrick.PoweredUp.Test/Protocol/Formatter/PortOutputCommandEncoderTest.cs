@@ -65,6 +65,37 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             });
 
         [Theory]
+        [InlineData("0E-00-81-00-11-0B-B4-00-00-00-F6-64-7F-00", 0, 180, -10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeedForDegreesMessage(string expectedData, byte port, uint degrees, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeedForDegreesMessage()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Degrees = degrees,
+                Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+
+        [Theory]
+        [InlineData("0E-00-81-00-11-0D-2D-00-00-00-0A-64-7F-00", 0, 45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None)]
+        [InlineData("0E-00-81-00-11-0D-D3-FF-FF-FF-0A-64-7F-00", 0, -45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandGotoAbsolutePositionMessage(string expectedData, byte port, int absPosition, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandGotoAbsolutePositionMessage()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                AbsolutePosition = absPosition,
+                Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+
+        [Theory]
         [InlineData("08-00-81-00-11-51-00-64", 0, 100)]
         [InlineData("08-00-81-00-11-51-00-7F", 0, 127)]
         [InlineData("08-00-81-00-11-51-00-9C", 0, -100)]
