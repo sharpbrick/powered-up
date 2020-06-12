@@ -10,7 +10,7 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 
 # Examples
 
-***Note:** This is the current message driven interface. In future there will be a component model allowing a more comfortable access*
+***Note:** This is the current message driven interface. In future there will be a component model (`Hub`) allowing a more comfortable access*
 
 ## Discover Hubs (using raw bluetooth kernel)
 
@@ -58,6 +58,16 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     });
 
     Console.Readline(); // allow the messages to be processed and displayed.
+
+    // fun with light on hub 0 and built-in LED on port 50
+    var rgbLight = new RgbLight(protocol, 0, 50);
+    await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+
+    // fun with motor on hub 0 and port 0
+    var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
+    await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await Task.Delay(2000);
+    await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
 }
 ````
 
@@ -95,7 +105,7 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
     - [ ] Technic Medium Hub
     - .. other hubs depend on availability of hardware / contributions
   - Devices
-    - [ ] Technic Medium Hub - Rgb Light
+    - [X] Technic Medium Hub - Rgb Light
     - [ ] Technic Medium Hub - Current
     - [ ] Technic Medium Hub - Voltage
     - [ ] Technic Medium Hub - Temperature Sensor 1
@@ -103,8 +113,8 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
     - [ ] Technic Medium Hub - Accelerometer
     - [ ] Technic Medium Hub - Gyro Sensor
     - [ ] Technic Medium Hub - Tilt Sensor
-    - [ ] Technic XLarge Motor
-    - [ ] Technic Large Motor
+    - [X] Technic XLarge Motor
+    - [X] Technic Large Motor
 - Message Encoder
   - [X] [3.1 Common Message Header](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#common-message-header)
   - [X] [3.2. Message Length Encoding](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#message-length-encoding)
