@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
@@ -10,17 +11,33 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol
 {
-    public class PoweredUpProtocol
+    public class PoweredUpProtocol : IPoweredUpProtocol
     {
         private readonly BluetoothKernel _kernel;
         private readonly ILogger<PoweredUpProtocol> _logger;
+        private Subject<PoweredUpMessage> _upstreamSubject = null;
+
         public ProtocolKnowledge Knowledge = new ProtocolKnowledge();
+
+        public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject;
 
         public PoweredUpProtocol(BluetoothKernel kernel, ILogger<PoweredUpProtocol> logger = default)
         {
             _kernel = kernel;
             _logger = logger;
+            _upstreamSubject = new Subject<PoweredUpMessage>();
         }
+
+        public async Task SetupUpstreamObservableAsync()
+        {
+            await ReceiveMessageAsync(message =>
+            {
+                _upstreamSubject.OnNext(message);
+
+                return Task.CompletedTask;
+            });
+        }
+
         public async Task SendMessageAsync(PoweredUpMessage message)
         {
             try

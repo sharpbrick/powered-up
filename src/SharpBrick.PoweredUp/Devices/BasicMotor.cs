@@ -1,21 +1,33 @@
-using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public abstract class BasicMotor
+    public abstract class BasicMotor : Device
     {
-        protected readonly PoweredUpProtocol _protocol;
-        protected readonly byte _portId;
+        public byte ModeIndexPower { get; protected set; } = 0;
+        public sbyte Power { get; private set; } = 0;
 
         public BasicMotor()
         { }
-        public BasicMotor(PoweredUpProtocol protocol, byte portId)
+
+        public BasicMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
+        { }
+
+        protected override bool OnPortValueChange(PortValueData data)
+            => data.ModeIndex switch
+            {
+                var mode when (mode == ModeIndexPower) => OnPowerChange(data as PortValueData<sbyte>),
+                _ => base.OnPortValueChange(data),
+            };
+
+        private bool OnPowerChange(PortValueData<sbyte> data)
         {
-            _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
-            _portId = portId;
+            Power = data.InputValues[0];
+
+            return true;
         }
 
         public async Task StartPowerAsync(sbyte power)
@@ -26,88 +38,6 @@ namespace SharpBrick.PoweredUp.Devices
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 Power = power,
-            });
-        }
-
-        public async Task SetAccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.AccelerationProfile)
-        {
-            await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
-            {
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Profile = profileNumber,
-            });
-        }
-
-        public async Task SetDeccelerationTime(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.DeccelerationProfile)
-        {
-            await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
-            {
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Profile = profileNumber,
-            });
-        }
-
-        public async Task StartSpeedAsync(sbyte speed, byte maxPower, PortOutputCommandSpeedProfile profile)
-        {
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedMessage()
-            {
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Speed = speed,
-                MaxPower = maxPower,
-                Profile = profile,
-            });
-        }
-
-        public async Task StartSpeedForTimeAsync(ushort time, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
-        {
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTimeMessage()
-            {
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = time,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
-            });
-        }
-
-        public async Task StartSpeedForDegrees(uint degrees, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
-        {
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegreesMessage()
-            {
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Degrees = degrees,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
-            });
-        }
-
-        public async Task GotoAbsolutePosition(int absolutePosition, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
-        {
-            await _protocol.SendMessageAsync(new PortOutputCommandGotoAbsolutePositionMessage()
-            {
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                AbsolutePosition = absolutePosition,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
             });
         }
     }

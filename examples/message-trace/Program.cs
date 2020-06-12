@@ -52,6 +52,8 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 await kernel.ConnectAsync();
 
+                await protocol.SetupUpstreamObservableAsync();
+
                 await protocol.ReceiveMessageAsync(message =>
                 {
                     try
@@ -73,18 +75,18 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                             PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (Combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
                             PortValueSingleMessage msg => "Port Values - " + string.Join(";", msg.Data.Select(d => d switch
                             {
-                                PortValueData<sbyte> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<short> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<int> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<float> dd => $"Port {dd.PortId}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<sbyte> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<short> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<int> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<float> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 _ => "Undefined Data Type",
                             })),
                             PortValueCombinedModeMessage msg => $"Port Value (Combined Mode) - Port {msg.PortId} " + string.Join(";", msg.Data.Select(d => d switch
                             {
-                                PortValueData<sbyte> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<short> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<int> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<float> dd => $"Mode {dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<sbyte> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<short> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<int> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                                PortValueData<float> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                                 _ => "Undefined Data Type",
                             })),
                             PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
@@ -157,7 +159,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
                 //await rgbLight.SetRgbColorsAsync(0xFF, 0x00, 0x00);
 
-                var motor = new TechnicXLargeLinearMotor(protocol, 0);
+                var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
                 // await motor.SetAccelerationTime(3000);
                 // await motor.SetDeccelerationTime(1000);
                 // await motor.StartSpeedForTimeAsync(6000, 90, 100, PortOutputCommandSpecialSpeed.Hold, PortOutputCommandSpeedProfile.AccelerationProfile | PortOutputCommandSpeedProfile.DeccelerationProfile);
@@ -166,11 +168,27 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 //await motor.StartSpeedForDegrees(180, -10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
 
-                await motor.GotoAbsolutePosition(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
                 await Task.Delay(2000);
-                await motor.GotoAbsolutePosition(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
 
+                await Task.Delay(2000);
 
+                await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
+
+                await motor.StartPowerAsync(80);
+
+                logger.LogWarning($"XXXXXXXXXXXXXXXXXXXXXXXXXXXXX: {motor.AbsolutePosition}");
+
+                await Task.Delay(2000);
+
+                logger.LogWarning($"XXXXXXXXXXXXXXXXXXXXXXXXXXXXX: {motor.AbsolutePosition}");
+
+                await Task.Delay(2000);
+
+                await motor.StartPowerAsync(0);
+
+                logger.LogWarning($"XXXXXXXXXXXXXXXXXXXXXXXXXXXXX: {motor.AbsolutePosition}");
                 // await motor.StartSpeedAsync(100, 90, PortOutputCommandSpeedProfile.None);
 
                 // await Task.Delay(2000);

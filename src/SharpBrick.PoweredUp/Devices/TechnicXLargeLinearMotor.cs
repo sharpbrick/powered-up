@@ -7,13 +7,13 @@ using SharpBrick.PoweredUp.Utils;
 namespace SharpBrick.PoweredUp.Devices
 {
 
-    public class TechnicXLargeLinearMotor : BasicMotor, IPowerdUpDevice
+    public class TechnicXLargeLinearMotor : AbsoluteMotor, IPowerdUpDevice
     {
         public TechnicXLargeLinearMotor()
             : base()
         { }
-        public TechnicXLargeLinearMotor(PoweredUpProtocol protocol, byte portId)
-            : base(protocol, portId)
+        public TechnicXLargeLinearMotor(PoweredUpProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
         { }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
