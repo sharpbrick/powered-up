@@ -10,7 +10,66 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 
 # Examples
 
-***Note:** This is the current message driven interface. In future there will be a component model (`Hub`) allowing a more comfortable access*
+***Note**: This library is far from being complete. All API calls are currently not synchronized (e.g. the result property is not filled just because the request was sent)*
+
+## Discovering Hubs
+
+````csharp
+var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
+
+var host = new PoweredUpHost(poweredUpBluetoothAdapter);
+
+var cts = new CancellationTokenSource();
+host.Discover(async hub =>
+{
+    await hub.ConnectAsync();
+
+    Console.WriteLine(hub.AdvertisingName);
+    Console.WriteLine(hub.SystemType.ToString());
+
+    cts.Cancel();
+}, cts.Token);
+
+Console.WriteLine("Press any key to cancel Scanning");
+Console.ReadLine();
+
+cts.Cancel();
+````
+
+## Sending Commands to Ports and Devices of a Hub
+
+````csharp
+var host = new PoweredUpHost();
+
+// do discovery before
+
+using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+{
+    await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+
+    var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
+
+    await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await Task.Delay(2000);
+    await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+
+    await technicMediumHub.SwitchOffAsync();
+}
+````
+
+## Receiving values from Ports and Devices of a Hub (single value setup)
+
+***Note**: All API calls are currently not synchronized (e.g. the result property is not filled just because the request was sent)*
+
+````csharp
+var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
+
+await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
+
+// once upon a time later
+
+Console.WriteLine(motor.AbsolutePosition);
+````
 
 ## Discover Hubs (using raw bluetooth kernel)
 
@@ -71,27 +130,6 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 }
 ````
 
-## VISION: Hub Based Model
-
-````csharp
-var host = new PoweredUpHost();
-
-using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
-{
-    await hub.ConnectAsync();
-
-    var motor = hub.A.Device<TechnicXLargeMotor>();
-
-    await motor.StartSpeedAsync(speed: 100, maxPower: 100);
-
-    await Task.Delay(2000);
-
-    await motor.Break();
-
-    await hub.SwitchOffAsync();
-}
-````
-
 ## Implementation Status
 
 - Bluetooth Adapter
@@ -102,7 +140,11 @@ using (var hub = await host.FindHub<TechnicMediumHub>(bluetoothAddresss: 1234))
   - [ ] Blazor (on Browser using WebBluetooth)
 - Hub Model
   - Hubs
-    - [ ] Technic Medium Hub
+    - [X] Ports
+    - [X] Properties
+    - [ ] Alerts
+    - [ ] Actions
+    - [X] Technic Medium Hub
     - .. other hubs depend on availability of hardware / contributions
   - Devices
     - [X] Technic Medium Hub - Rgb Light
