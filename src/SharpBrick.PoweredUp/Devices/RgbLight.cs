@@ -8,19 +8,14 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public class RgbLight : IPowerdUpDevice
+    public class RgbLight : Device, IPowerdUpDevice
     {
-        private readonly PoweredUpProtocol _protocol;
-        private readonly byte _portId;
-
         public RgbLight()
         { }
 
-        public RgbLight(PoweredUpProtocol protocol, byte portId)
-        {
-            _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
-            _portId = portId;
-        }
+        public RgbLight(PoweredUpProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
+        { }
 
         public async Task SetRgbColorNoAsync(PortOutputCommandColors color)
         {

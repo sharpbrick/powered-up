@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public class TechnicMediumHubTemperatureSensor : IPowerdUpDevice
+    public class TechnicMediumHubTemperatureSensor : Device, IPowerdUpDevice
     {
+        public TechnicMediumHubTemperatureSensor()
+        { }
+
+        public TechnicMediumHubTemperatureSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
+        { }
+
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
             => @"
 0B-00-43-60-01-02-01-01-00-00-00

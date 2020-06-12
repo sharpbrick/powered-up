@@ -13,6 +13,8 @@ namespace SharpBrick.PoweredUp.Devices
         protected readonly byte _portId;
         private readonly IDisposable _receivingDisposable;
 
+        public bool IsConnected => (_protocol != null);
+
         public Device()
         { }
 

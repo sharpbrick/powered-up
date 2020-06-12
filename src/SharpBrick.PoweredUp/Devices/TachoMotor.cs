@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Devices
 
         public TachoMotor()
         { }
-        protected TachoMotor(PoweredUpProtocol protocol, byte hubId, byte portId)
+        protected TachoMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 

@@ -2,17 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpBrick.PoweredUp.Knowledge;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public class TechnicMediumHubTiltSensor : IPowerdUpDevice
+    public class TechnicMediumHubTiltSensor : Device, IPowerdUpDevice
     {
-        public void ApplyStaticPortInfo(PortInfo port)
-        {
-            throw new NotImplementedException();
-        }
+        public TechnicMediumHubTiltSensor()
+        { }
+
+        public TechnicMediumHubTiltSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
+        { }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
             =>

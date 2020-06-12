@@ -20,20 +20,27 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 builder
                     .AddConsole()
                     .AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug)
+                    .AddFilter("SharpBrick.PoweredUp.PoweredUpHost", LogLevel.Debug)
             );
 
             var logger = loggerFactory.CreateLogger("Main");
 
             var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
 
-            logger.LogInformation("Finding Service");
-            ulong bluetoothAddress = 0;
-            var cts = new CancellationTokenSource();
-            poweredUpBluetoothAdapter.Discover(info =>
-            {
-                logger.LogInformation($"Found {info.BluetoothAddress} is a {(PoweredUpManufacturerDataConstants)info.ManufacturerData[1]}");
+            var host = new PoweredUpHost(poweredUpBluetoothAdapter, loggerFactory.CreateLogger<PoweredUpHost>());
 
-                bluetoothAddress = info.BluetoothAddress;
+            logger.LogInformation("Finding Service");
+            var cts = new CancellationTokenSource();
+            host.Discover(async hub =>
+            {
+                logger.LogInformation("Connecting to Hub");
+
+                await hub.ConnectAsync();
+
+                logger.LogInformation(hub.AdvertisingName);
+                logger.LogInformation(hub.SystemType.ToString());
+
+                cts.Cancel();
             }, cts.Token);
 
             logger.LogInformation("Press any key to cancel Scanning");
@@ -41,7 +48,22 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             cts.Cancel();
 
-            // ulong bluetoothAddress = 158897336311065;
+            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            {
+                await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+
+                var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
+
+                await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await Task.Delay(2000);
+                await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+
+                await technicMediumHub.SwitchOffAsync();
+            }
+
+            return;
+
+            ulong bluetoothAddress = 158897336311065;
 
             if (bluetoothAddress == 0)
                 return;
@@ -154,7 +176,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 //await protocol.SendMessageAsync(new HubActionMessage() { Action = HubAction.ResetBusyIndication, });
 
-                var rgbLight = new RgbLight(protocol, 50);
+                var rgbLight = new RgbLight(protocol, 0, 50);
                 //await rgbLight.SetRgbColorNoAsync(PortOutputCommandColors.Pink);
                 await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
                 //await rgbLight.SetRgbColorsAsync(0xFF, 0x00, 0x00);

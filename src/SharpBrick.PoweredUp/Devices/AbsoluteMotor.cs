@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp.Devices
         public short AbsolutePosition { get; private set; } // ModeIndex = 3
         public AbsoluteMotor()
         { }
-        protected AbsoluteMotor(PoweredUpProtocol protocol, byte hubId, byte portId)
+        protected AbsoluteMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 

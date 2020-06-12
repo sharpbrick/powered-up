@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public class TechnicMediuimHubAccelerometer : IPowerdUpDevice
+    public class TechnicMediumHubAccelerometer : Device, IPowerdUpDevice
     {
+        public TechnicMediumHubAccelerometer()
+        { }
+
+        public TechnicMediumHubAccelerometer(IPoweredUpProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
+        { }
+
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
             => @"
 0B-00-43-61-01-02-02-03-00-00-00

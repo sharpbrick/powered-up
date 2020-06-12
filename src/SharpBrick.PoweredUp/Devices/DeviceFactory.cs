@@ -1,4 +1,5 @@
 using System;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Devices
@@ -6,18 +7,24 @@ namespace SharpBrick.PoweredUp.Devices
     public class DeviceFactory
     {
         public static IPowerdUpDevice Create(HubAttachedIOType type)
+            => (IPowerdUpDevice)Activator.CreateInstance(GetTypeOfDevice(type));
+
+        public static IPowerdUpDevice CreateConnected(HubAttachedIOType type, IPoweredUpProtocol protocol, byte hubId, byte portId)
+            => (IPowerdUpDevice)Activator.CreateInstance(GetTypeOfDevice(type), protocol, hubId, portId);
+
+        private static Type GetTypeOfDevice(HubAttachedIOType type)
             => type switch
             {
-                HubAttachedIOType.Voltage => new Voltage(),
-                HubAttachedIOType.Current => new Current(),
-                HubAttachedIOType.RgbLight => new RgbLight(),
-                HubAttachedIOType.TechnicLargeLinearMotor => new TechnicLargeLinearMotor(),
-                HubAttachedIOType.TechnicXLargeLinearMotor => new TechnicXLargeLinearMotor(),
-                HubAttachedIOType.TechnicMediumHubGestSensor => new TechnicMediumHubGestSensor(),
-                HubAttachedIOType.TechnicMediumHubAccelerometer => new TechnicMediuimHubAccelerometer(),
-                HubAttachedIOType.TechnicMediumHubGyroSensor => new TechnicMediumHubGyroSensor(),
-                HubAttachedIOType.TechnicMediumHubTiltSensor => new TechnicMediumHubTiltSensor(),
-                HubAttachedIOType.TechnicMediumHubTemperatureSensor => new TechnicMediumHubTemperatureSensor(),
+                HubAttachedIOType.Voltage => typeof(Voltage),
+                HubAttachedIOType.Current => typeof(Current),
+                HubAttachedIOType.RgbLight => typeof(RgbLight),
+                HubAttachedIOType.TechnicLargeLinearMotor => typeof(TechnicLargeLinearMotor),
+                HubAttachedIOType.TechnicXLargeLinearMotor => typeof(TechnicXLargeLinearMotor),
+                HubAttachedIOType.TechnicMediumHubGestSensor => typeof(TechnicMediumHubGestSensor),
+                HubAttachedIOType.TechnicMediumHubAccelerometer => typeof(TechnicMediumHubAccelerometer),
+                HubAttachedIOType.TechnicMediumHubGyroSensor => typeof(TechnicMediumHubGyroSensor),
+                HubAttachedIOType.TechnicMediumHubTiltSensor => typeof(TechnicMediumHubTiltSensor),
+                HubAttachedIOType.TechnicMediumHubTemperatureSensor => typeof(TechnicMediumHubTemperatureSensor),
                 _ => null,
             };
     }
