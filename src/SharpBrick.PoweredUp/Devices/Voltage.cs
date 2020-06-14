@@ -4,7 +4,7 @@ using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
     public class Voltage : Device, IPoweredUpDevice
     {

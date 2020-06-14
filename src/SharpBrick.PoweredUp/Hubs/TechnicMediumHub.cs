@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Logging;
-using SharpBrick.PoweredUp.Devices;
-using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
 {

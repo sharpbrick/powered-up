@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp
 {
     public enum SystemType : byte
     {

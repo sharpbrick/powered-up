@@ -18,8 +18,8 @@ namespace SharpBrick.PoweredUp
         public Version LegoWirelessProtocolVersion { get; private set; }
         public SystemType SystemType { get; private set; }
         public byte HardwareNetworkId { get; private set; }
-        public object PrimaryMacAddress { get; private set; }
-        public object SecondaryMacAddress { get; private set; }
+        public byte[] PrimaryMacAddress { get; private set; }
+        public byte[] SecondaryMacAddress { get; private set; }
         public byte HardwareNetworkFamily { get; private set; }
 
 
