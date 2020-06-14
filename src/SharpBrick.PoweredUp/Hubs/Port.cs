@@ -7,6 +7,7 @@ namespace SharpBrick.PoweredUp
         public string FriendlyName { get; }
         public bool ExternalPort { get; }
         public DeviceType? ExpectedDevice { get; }
+        public bool IsVirtual { get; }
 
         public bool IsDeviceAttached => (_device != null);
         public DeviceType? DeviceType { get; private set; }
@@ -17,6 +18,7 @@ namespace SharpBrick.PoweredUp
             FriendlyName = friendlyName;
             ExternalPort = externalPort;
             ExpectedDevice = expectedDevice;
+            IsVirtual = isVirtual;
         }
 
         public TDevice GetDevice<TDevice>() where TDevice : class, IPoweredUpDevice

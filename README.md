@@ -144,6 +144,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] Properties
     - [ ] Alerts
     - [ ] Actions
+    - [X] Create Virtual Ports
     - [X] Technic Medium Hub
     - .. other hubs depend on availability of hardware / contributions
   - Devices

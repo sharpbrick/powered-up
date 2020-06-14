@@ -22,6 +22,7 @@ namespace SharpBrick.Cli
             var app = new CommandLineApplication();
 
             app.HelpOption();
+            app.UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue;
 
             app.Command("device", deviceApp =>
             {

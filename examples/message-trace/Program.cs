@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.WinRT;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Functions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace SharpBrick.PoweredUp.Examples.MessageTrace
 {
@@ -60,6 +60,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
             {
                 await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
+                // simple motor control
                 var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
                 await motor.GotoAbsolutePositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
@@ -68,86 +69,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 await technicMediumHub.SwitchOffAsync();
             }
-
-            return;
-
-            ulong bluetoothAddress = 158897336311065;
-
-            if (bluetoothAddress == 0)
-                return;
-
-
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-            using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
-            {
-                var protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
-
-                await kernel.ConnectAsync();
-
-                await protocol.SetupUpstreamObservableAsync();
-
-                // virtual port sample
-                // await protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage() { SubCommand = VirtualPortSubCommand.Connected, PortAId = 0x01, PortBId = 0x02, });
-                // await kernel.SendBytesAsync(BytesStringUtil.StringToData("09-00-81-10-11-07-64-64-00")); // 3.27.5
-
-                // single motor sample
-                // await protocol.SendMessageAsync(BytesStringUtil.StringToData("09-00-81-00-11-07-64-64-00")); // 3.27.5
-
-                //await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage() { PortId = 99, Mode = 0x00, DeltaInterval = 5, NotificationEnabled = true });
-
-                //await SetupPortInCombinedMode(protocol);
-
-                Console.ReadLine();
-
-                //await protocol.SendMessageAsync(new HubActionMessage() { Action = HubAction.ResetBusyIndication, });
-
-                var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
-                // await motor.SetAccelerationTime(3000);
-                // await motor.SetDeccelerationTime(1000);
-                // await motor.StartSpeedForTimeAsync(6000, 90, 100, PortOutputCommandSpecialSpeed.Hold, PortOutputCommandSpeedProfile.AccelerationProfile | PortOutputCommandSpeedProfile.DeccelerationProfile);
-
-                // await Task.Delay(2000);
-
-                //await motor.StartSpeedForDegrees(180, -10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
-
-                await Task.Delay(2000);
-
-                await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
-
-                await motor.StartPowerAsync(80);
-
-                logger.LogWarning($"XXXXXXXXXXXXXXXXXXXXXXXXXXXXX: {motor.AbsolutePosition}");
-
-                await Task.Delay(2000);
-
-                logger.LogWarning($"XXXXXXXXXXXXXXXXXXXXXXXXXXXXX: {motor.AbsolutePosition}");
-
-                await Task.Delay(2000);
-
-                await motor.StartPowerAsync(0);
-
-                logger.LogWarning($"XXXXXXXXXXXXXXXXXXXXXXXXXXXXX: {motor.AbsolutePosition}");
-                // await motor.StartSpeedAsync(100, 90, PortOutputCommandSpeedProfile.None);
-
-                // await Task.Delay(2000);
-
-                // await motor.StartSpeedAsync(127, 90, PortOutputCommandSpeedProfile.None);
-
-                // await motor.StartSpeedAsync(-100, 90, PortOutputCommandSpeedProfile.None);
-                // await Task.Delay(2000);
-
-                // await motor.StartSpeedAsync(0, 90, PortOutputCommandSpeedProfile.None);
-
-                Console.ReadLine();
-
-                logger.LogInformation("Switch off device");
-                await protocol.SendMessageAsync(new HubActionMessage() { Action = HubAction.SwitchOffHub });
-
-                Console.ReadLine();
-            }
         }
-
-
 
         private static async Task SetupPortInCombinedMode(PoweredUpProtocol protocol)
         {

@@ -27,7 +27,7 @@ namespace SharpBrick.PoweredUp
         public Hub(IServiceProvider serviceProvider, Port[] knownPorts)
         {
             ServiceProvider = serviceProvider;
-            _ports = knownPorts ?? throw new ArgumentNullException(nameof(knownPorts));
+            AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
             _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
         }
 

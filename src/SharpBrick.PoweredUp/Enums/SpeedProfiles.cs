@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp
 {
     // UNSPECED concept of profileNumber etc
     [Flags]
