@@ -4,5 +4,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class HubActionMessage : PoweredUpMessage
     {
         public HubAction Action { get; set; }
+
+        public override string ToString()
+            => $"Hub Action - {this.Action}";
     }
 }

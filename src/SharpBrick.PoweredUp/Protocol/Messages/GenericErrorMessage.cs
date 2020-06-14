@@ -5,5 +5,8 @@
     {
         public byte CommandType { get; set; }
         public ErrorCode ErrorCode { get; set; }
+
+        public override string ToString()
+            => $"Error - {ErrorCode} from {(MessageType)CommandType}";
     }
 }

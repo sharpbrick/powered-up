@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             // assert
             Assert.Equal(expectedPortId, message.PortId);
-            Assert.Equal(expectedMode, message.Mode);
+            Assert.Equal(expectedMode, message.ModeIndex);
             Assert.Equal(expectedDeltaInterval, message.DeltaInterval);
             Assert.Equal(expectedNotificationEnabled, message.NotificationEnabled);
         }

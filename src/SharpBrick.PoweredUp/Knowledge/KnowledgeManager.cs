@@ -125,9 +125,9 @@ namespace SharpBrick.PoweredUp.Knowledge
 
                 case PortInputFormatSingleMessage msg:
                     port = knowledge.Port(msg.PortId);
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.PortId, msg.ModeIndex);
 
-                    port.LastFormattedPortMode = msg.Mode;
+                    port.LastFormattedPortMode = msg.ModeIndex;
 
                     mode.DeltaInterval = msg.DeltaInterval;
                     mode.NotificationEnabled = msg.NotificationEnabled;

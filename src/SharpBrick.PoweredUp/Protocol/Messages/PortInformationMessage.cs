@@ -1,4 +1,6 @@
-﻿namespace SharpBrick.PoweredUp.Protocol.Messages
+﻿using System.Linq;
+
+namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.19.1
     public abstract class PortInformationMessage : PoweredUpMessage
@@ -18,11 +20,17 @@
         public byte TotalModeCount { get; set; }
         public ushort InputModes { get; set; }
         public ushort OutputModes { get; set; }
+
+        public override string ToString()
+            => $"Port Information - Port {HubId}/{PortId} Total Modes {TotalModeCount} / Capabilities Output:{OutputCapability}, Input:{InputCapability}, LogicalCombinable:{LogicalCombinableCapability}, LogicalSynchronizable:{LogicalSynchronizableCapability} / InputModes: {InputModes:X}, OutputModes: {InputModes:X}";
     }
 
     // spec chapter: 3.19.1
     public class PortInformationForPossibleModeCombinationsMessage : PortInformationMessage
     {
         public ushort[] ModeCombinations { get; set; }
+
+        public override string ToString()
+            => $"Port Information (Combinations) - Port {HubId}/{PortId} Combinations: {string.Join(",", ModeCombinations.Select(x => x.ToString("X")))}";
     }
 }

@@ -13,7 +13,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => new PortInputFormatSingleMessage()
             {
                 PortId = data[0],
-                Mode = data[1],
+                ModeIndex = data[1],
                 DeltaInterval = BitConverter.ToUInt32(data.Slice(2, 4)),
                 NotificationEnabled = (data[6] == 0x01),
             };
