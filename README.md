@@ -10,7 +10,7 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 
 # Examples
 
-***Note**: This library is far from being complete. All API calls are currently not synchronized (e.g. the result property is not filled just because the request was sent)*
+***Note**: While already usable, this library is work in progress.*
 
 ## Discovering Hubs
 
@@ -28,15 +28,18 @@ host.Discover(async hub =>
     Console.WriteLine(hub.SystemType.ToString());
 
     cts.Cancel();
+    Console.WriteLine("Press RETURN to continue");
 }, cts.Token);
 
-Console.WriteLine("Press any key to cancel Scanning");
+Console.WriteLine("Press RETURN to cancel Scanning");
 Console.ReadLine();
 
 cts.Cancel();
 ````
 
 ## Sending Commands to Ports and Devices of a Hub
+
+See source code in `examples/SharpBrick.PoweredUp.Examples` for more examples.
 
 ````csharp
 var host = new PoweredUpHost();
@@ -220,6 +223,14 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 - .NET / C#
   - **sharpbrick/powered-up** (this here)
   - [Vouzamo/Lego](https://github.com/Vouzamo/Lego) (and [blog](https://vouzamo.wordpress.com/2020/04/21/lego-c-sdk-enhancements-challenges/))
+- C++
+  -  [corneliusmunz/legoino](https://github.com/corneliusmunz/legoino) (Arduino)
+- Python
+  - [alexsdutton/python-lego-wireless-protocol](https://github.com/alexsdutton/python-lego-wireless-protocol)
+
+## Resources
+
+- [Lego Wireless Protocol Specification](https://lego.github.io/lego-ble-wireless-protocol-docs) ([GitHub](https://github.com/lego/lego-ble-wireless-protocol-docs))
 
 ## Contribution
 
