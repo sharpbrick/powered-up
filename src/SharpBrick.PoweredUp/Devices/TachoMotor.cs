@@ -39,7 +39,7 @@ namespace SharpBrick.PoweredUp.Devices
             return true;
         }
 
-        public async Task SetAccelerationTimeAsync(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.AccelerationProfile)
+        public async Task SetAccelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.AccelerationProfile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
             {
@@ -51,7 +51,7 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
-        public async Task SetDeccelerationTimeAsync(ushort timeInMs, PortOutputCommandSpeedProfile profileNumber = PortOutputCommandSpeedProfile.DeccelerationProfile)
+        public async Task SetDeccelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.DeccelerationProfile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
             {
@@ -63,7 +63,7 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
-        public async Task StartSpeedAsync(sbyte speed, byte maxPower, PortOutputCommandSpeedProfile profile)
+        public async Task StartSpeedAsync(sbyte speed, byte maxPower, SpeedProfiles profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedMessage()
             {
@@ -76,7 +76,7 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
-        public async Task StartSpeedForTimeAsync(ushort time, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
+        public async Task StartSpeedForTimeAsync(ushort time, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTimeMessage()
             {
@@ -91,7 +91,7 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
-        public async Task StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
+        public async Task StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegreesMessage()
             {

@@ -1,7 +1,7 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.9.2
-    public enum ErrorCodes : byte
+    public enum ErrorCode : byte
     {
         Ack = 0x01,
         MAck = 0x02,

@@ -9,7 +9,7 @@ namespace SharpBrick.PoweredUp.Knowledge
 
         // HubAttachedIOForAttachedDeviceMessage
         public bool IsDeviceConnected { get; set; } = false;
-        public HubAttachedIOType IOTypeId { get; set; }
+        public DeviceType IOTypeId { get; set; }
         public Version HardwareRevision { get; set; }
         public Version SoftwareRevision { get; set; }
 

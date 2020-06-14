@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.8.1
     public class HubAttachedIOForAttachedDeviceMessage : HubAttachedIOMessage
     {
-        public HubAttachedIOType IOTypeId { get; set; }
+        public DeviceType IOTypeId { get; set; }
         public Version HardwareRevision { get; set; }
         public Version SoftwareRevision { get; set; }
     }
@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.8.1
     public class HubAttachedIOForAttachedVirtualDeviceMessage : HubAttachedIOMessage
     {
-        public HubAttachedIOType IOTypeId { get; set; }
+        public DeviceType IOTypeId { get; set; }
         public byte PortAId { get; set; }
         public byte PortBId { get; set; }
     }

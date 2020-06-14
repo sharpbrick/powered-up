@@ -70,7 +70,7 @@ namespace SharpBrick.Cli
         private static ulong FindAndSelectHub(WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
         {
             ulong result = 0;
-            var devices = new ConcurrentBag<(int key, ulong bluetoothAddresss, PoweredUpManufacturerDataConstants deviceType)>();
+            var devices = new ConcurrentBag<(int key, ulong bluetoothAddresss, PoweredUpHubManufacturerData deviceType)>();
             var cts = new CancellationTokenSource();
             int idx = 1;
 
@@ -80,10 +80,10 @@ namespace SharpBrick.Cli
             {
                 if (devices.FirstOrDefault(kv => kv.bluetoothAddresss == info.BluetoothAddress) == default)
                 {
-                    var deviceType = (PoweredUpManufacturerDataConstants)info.ManufacturerData[1];
+                    var deviceType = (PoweredUpHubManufacturerData)info.ManufacturerData[1];
                     devices.Add((idx, info.BluetoothAddress, deviceType));
 
-                    Console.WriteLine($"{idx}: {(PoweredUpManufacturerDataConstants)info.ManufacturerData[1]} (with address {info.BluetoothAddress})");
+                    Console.WriteLine($"{idx}: {(PoweredUpHubManufacturerData)info.ManufacturerData[1]} (with address {info.BluetoothAddress})");
 
                     idx++;
                 }

@@ -151,7 +151,7 @@ namespace SharpBrick.PoweredUp.Knowledge
             return Task.CompletedTask;
         }
 
-        private static void AddCachePortAndPortModeInformation(HubAttachedIOType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge)
+        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge)
         {
             var device = DeviceFactory.Create(type);
 
@@ -179,7 +179,7 @@ namespace SharpBrick.PoweredUp.Knowledge
             var port = knowledge.Port(portId);
 
             port.IsDeviceConnected = false;
-            port.IOTypeId = HubAttachedIOType.Unknown;
+            port.IOTypeId = DeviceType.Unknown;
             port.HardwareRevision = new Version("0.0.0.0");
             port.SoftwareRevision = new Version("0.0.0.0");
 

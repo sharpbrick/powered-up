@@ -74,7 +74,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 HubProperty.HwVersion => new HubPropertyMessage<Version>() { Payload = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(2, 4))) },
                 HubProperty.Rssi => new HubPropertyMessage<sbyte>() { Payload = unchecked((sbyte)data[2]) },
                 HubProperty.BatteryVoltage => new HubPropertyMessage<byte>() { Payload = data[2] },
-                HubProperty.BatteryType => new HubPropertyMessage<HubPropertyBatteryType>() { Payload = (HubPropertyBatteryType)data[2] },
+                HubProperty.BatteryType => new HubPropertyMessage<BatteryType>() { Payload = (BatteryType)data[2] },
                 HubProperty.ManufacturerName => new HubPropertyMessage<string>() { Payload = Encoding.ASCII.GetString(data.Slice(2)) },
                 HubProperty.RadioFirmwareVersion => new HubPropertyMessage<string>() { Payload = Encoding.ASCII.GetString(data.Slice(2)) },
                 HubProperty.LegoWirelessProtocolVersion => new HubPropertyMessage<Version>() { Payload = LwpVersionNumberEncoder.Decode(data[2], data[3]) },

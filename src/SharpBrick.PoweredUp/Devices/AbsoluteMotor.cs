@@ -28,7 +28,7 @@ namespace SharpBrick.PoweredUp.Devices
             return true;
         }
 
-        public async Task GotoAbsolutePositionAsync(int absolutePosition, sbyte speed, byte maxPower, PortOutputCommandSpecialSpeed endState, PortOutputCommandSpeedProfile profile)
+        public async Task GotoAbsolutePositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandGotoAbsolutePositionMessage()
             {

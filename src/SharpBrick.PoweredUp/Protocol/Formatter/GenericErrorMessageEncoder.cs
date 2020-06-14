@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => new GenericErrorMessage()
             {
                 CommandType = data[0],
-                ErrorCode = (ErrorCodes)data[1],
+                ErrorCode = (ErrorCode)data[1],
             };
 
         public void Encode(PoweredUpMessage message, in Span<byte> data)

@@ -1,3 +1,11 @@
+## 2020-06-14 Creating a single namespace for popular classes
+
+- Intention: Consumers should not need to search namespaces to discover an API
+- Solution:
+  - Break namespace / folder alignment (e.g. sub folder Devices/Hubs despite all being in root namespace)
+  - Move re-used types (mainly enums from Messages / Devices into the root namespace with separate folder Enums)
+- Rationale: Consumer usability is more important than code organization
+
 ## 2020-06-01 Port(Combined)Value encoding and consequences
 
 - PortValue and PortCombinedValue are encoding their payload data according to definitions set-up in PortInputFormat(Combined)Setup requests. As a result, the protocol decoder itself is stateful.

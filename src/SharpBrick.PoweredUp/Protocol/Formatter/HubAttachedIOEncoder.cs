@@ -19,13 +19,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             {
                 HubAttachedIOEvent.AttachedIO => new HubAttachedIOForAttachedDeviceMessage()
                 {
-                    IOTypeId = (HubAttachedIOType)BitConverter.ToUInt16(data.Slice(2, 2)),
+                    IOTypeId = (DeviceType)BitConverter.ToUInt16(data.Slice(2, 2)),
                     HardwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(4, 4))),
                     SoftwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(8, 4))),
                 },
                 HubAttachedIOEvent.AttachedVirtualIO => new HubAttachedIOForAttachedVirtualDeviceMessage()
                 {
-                    IOTypeId = (HubAttachedIOType)BitConverter.ToUInt16(data.Slice(2, 2)),
+                    IOTypeId = (DeviceType)BitConverter.ToUInt16(data.Slice(2, 2)),
                     PortAId = data[4],
                     PortBId = data[5],
                 },

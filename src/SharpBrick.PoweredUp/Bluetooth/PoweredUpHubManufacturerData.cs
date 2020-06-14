@@ -1,7 +1,7 @@
 ﻿namespace SharpBrick.PoweredUp.Bluetooth
 {
     // UNSPECED
-    public enum PoweredUpManufacturerDataConstants : byte
+    public enum PoweredUpHubManufacturerData : byte
     {
         DuploTrainBase = 32, // UNSPECED
         MoveHub = 64, // UNSPECED

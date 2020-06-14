@@ -1,7 +1,7 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+﻿namespace SharpBrick.PoweredUp
 {
     // spec chapter: 3.8.4
-    public enum HubAttachedIOType : ushort
+    public enum DeviceType : ushort
     {
         Unknown = 0x000, // UNSPECED
         Motor = 0x0001, // SIMPLE_MEDIUM_LINEAR_MOTOR

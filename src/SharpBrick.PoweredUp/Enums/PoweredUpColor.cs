@@ -1,6 +1,6 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+﻿namespace SharpBrick.PoweredUp
 {
-    public enum PortOutputCommandColors : byte
+    public enum PoweredUpColor : byte
     {
         Black = 0,
         Pink = 1,

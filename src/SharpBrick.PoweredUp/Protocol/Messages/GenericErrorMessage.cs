@@ -4,6 +4,6 @@
     public class GenericErrorMessage : PoweredUpMessage
     {
         public byte CommandType { get; set; }
-        public ErrorCodes ErrorCode { get; set; }
+        public ErrorCode ErrorCode { get; set; }
     }
 }

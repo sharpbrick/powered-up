@@ -17,7 +17,7 @@ namespace SharpBrick.PoweredUp.Devices
             : base(protocol, hubId, portId)
         { }
 
-        public async Task SetRgbColorNoAsync(PortOutputCommandColors color)
+        public async Task SetRgbColorNoAsync(PoweredUpColor color)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage()
             {

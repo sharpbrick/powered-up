@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp
         public Version HardwareVersion { get; private set; }
         public sbyte Rssi { get; private set; }
         public byte BatteryVoltageInPercent { get; private set; }
-        public HubPropertyBatteryType BatteryType { get; private set; }
+        public BatteryType BatteryType { get; private set; }
         public string ManufacturerName { get; private set; }
         public string RadioFirmwareVersion { get; private set; }
         public Version LegoWirelessProtocolVersion { get; private set; }
@@ -71,7 +71,7 @@ namespace SharpBrick.PoweredUp
             {
                 BatteryVoltageInPercent = batteryVoltageData.Payload;
             }
-            else if (hubProperty.Property == HubProperty.BatteryVoltage && hubProperty is HubPropertyMessage<HubPropertyBatteryType> batteryTypeData)
+            else if (hubProperty.Property == HubProperty.BatteryVoltage && hubProperty is HubPropertyMessage<BatteryType> batteryTypeData)
             {
                 BatteryType = batteryTypeData.Payload;
             }

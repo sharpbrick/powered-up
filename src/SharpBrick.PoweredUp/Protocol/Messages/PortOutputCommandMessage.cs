@@ -50,7 +50,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     {
         public PortOutputCommandSetAccTimeMessage() : base(PortOutputSubCommand.SetAccTime) { }
         public ushort Time { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.4
@@ -58,7 +58,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     {
         public PortOutputCommandSetDecTimeMessage() : base(PortOutputSubCommand.SetDecTime) { }
         public ushort Time { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.5
@@ -67,7 +67,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public PortOutputCommandStartSpeedMessage() : base(PortOutputSubCommand.StartSpeed) { }
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.6
@@ -77,7 +77,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.7
@@ -87,8 +87,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public ushort Time { get; set; }
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpecialSpeed EndState { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpecialSpeed EndState { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.8
@@ -99,8 +99,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpecialSpeed EndState { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpecialSpeed EndState { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.9
@@ -110,8 +110,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public uint Degrees { get; set; }
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpecialSpeed EndState { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpecialSpeed EndState { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.10
@@ -122,8 +122,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public sbyte Speed1 { get; set; }
         public sbyte Speed2 { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpecialSpeed EndState { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpecialSpeed EndState { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.11
@@ -133,8 +133,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public int AbsolutePosition { get; set; } // UNSPECED: relative to what? (to the position of the motor start)
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpecialSpeed EndState { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpecialSpeed EndState { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
     // spec chapter: 3.27.12
     public class PortOutputCommandGotoAbsolutePosition2Message : PortOutputCommandMessage
@@ -144,8 +144,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public int AbsPos2 { get; set; }
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
-        public PortOutputCommandSpecialSpeed EndState { get; set; }
-        public PortOutputCommandSpeedProfile Profile { get; set; }
+        public SpecialSpeed EndState { get; set; }
+        public SpeedProfiles Profile { get; set; }
     }
 
     // spec chapter: 3.27.13
@@ -194,7 +194,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     {
         public PortOutputCommandSetRgbColorNoMessage() : base(0x00) { }
 
-        public PortOutputCommandColors ColorNo { get; set; }
+        public PoweredUpColor ColorNo { get; set; }
     }
 
     // spec chapter: 3.27.21

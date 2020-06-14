@@ -54,9 +54,9 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
-                await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await motor.GotoAbsolutePositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(2000);
-                await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await motor.GotoAbsolutePositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
 
                 await technicMediumHub.SwitchOffAsync();
             }
@@ -190,9 +190,9 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 //await motor.StartSpeedForDegrees(180, -10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
 
-                await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await motor.GotoAbsolutePositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(2000);
-                await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+                await motor.GotoAbsolutePositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
 
                 await Task.Delay(2000);
 
