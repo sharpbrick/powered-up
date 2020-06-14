@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Protocol;
@@ -20,10 +21,14 @@ namespace SharpBrick.PoweredUp
 
         public byte HubId { get; }
 
-        public Hub(ILogger logger, Port[] knownPorts)
+        public Func<IPoweredUpProtocol, Task> ConfigureProtocolAsync { get; set; } = null;
+        public IServiceProvider ServiceProvider { get; }
+
+        public Hub(IServiceProvider serviceProvider, Port[] knownPorts)
         {
-            _logger = logger;
+            ServiceProvider = serviceProvider;
             _ports = knownPorts ?? throw new ArgumentNullException(nameof(knownPorts));
+            _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
         }
 
         public void ConnectWithBluetoothAdapter(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress)
@@ -49,14 +54,17 @@ namespace SharpBrick.PoweredUp
 
         public async Task ConnectAsync()
         {
-            _logger?.LogDebug("Init Hub with BluetoothKernel");
-            _kernel = new BluetoothKernel(_poweredUpBluetoothAdapter, _bluetoothAddress);
-            _logger?.LogDebug("Init Hub with PoweredUpProtocol");
-            _protocol = new PoweredUpProtocol(_kernel);
+            var loggerFactory = ServiceProvider.GetService<ILoggerFactory>();
 
-            _logger?.LogDebug("Connecting BluetoothKernel");
-            await _kernel.ConnectAsync();
-            await _protocol.SetupUpstreamObservableAsync();
+            _logger?.LogDebug("Init Hub with BluetoothKernel");
+            _kernel = new BluetoothKernel(_poweredUpBluetoothAdapter, _bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>());
+            _logger?.LogDebug("Init Hub with PoweredUpProtocol");
+            _protocol = new PoweredUpProtocol(_kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
+
+            if (ConfigureProtocolAsync != null)
+            {
+                await ConfigureProtocolAsync(_protocol);
+            }
 
             _protocolListenerDisposable = _protocol.UpstreamMessages
                 .Where(msg => msg switch
@@ -70,6 +78,10 @@ namespace SharpBrick.PoweredUp
                 })
                 .Subscribe(OnHubChange);
 
+            _logger?.LogDebug("Connecting BluetoothKernel");
+            await _kernel.ConnectAsync();
+            await _protocol.SetupUpstreamObservableAsync();
+
             _logger?.LogDebug("Query Hub Properties");
             await InitialHubPropertiesQueryAsync();
 
@@ -82,8 +94,6 @@ namespace SharpBrick.PoweredUp
 
         private void OnHubChange(PoweredUpMessage message)
         {
-            _logger?.LogDebug("OnHubChange");
-
             if (message is HubPropertyMessage hubProperty && hubProperty.Operation == HubPropertyOperation.Update)
             {
                 OnHubPropertyMessage(hubProperty);

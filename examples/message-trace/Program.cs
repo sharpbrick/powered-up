@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.WinRT;
 using Microsoft.Extensions.Logging;
-using SharpBrick.PoweredUp.Utils;
 using SharpBrick.PoweredUp.Protocol;
-using SharpBrick.PoweredUp.Devices;
+using SharpBrick.PoweredUp.Functions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SharpBrick.PoweredUp.Examples.MessageTrace
 {
@@ -16,24 +15,33 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
     {
         static async Task Main(string[] args)
         {
-            var loggerFactory = LoggerFactory.Create(builder =>
-                builder
+            var serviceProvider = new ServiceCollection()
+                .AddLogging(builder => builder
                     .AddConsole()
                     .AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug)
                     .AddFilter("SharpBrick.PoweredUp.PoweredUpHost", LogLevel.Debug)
-            );
+                    .AddFilter("SharpBrick.PoweredUp.Protocol.PoweredUpProtocol", LogLevel.Debug))
+                .BuildServiceProvider();
 
-            var logger = loggerFactory.CreateLogger("Main");
+            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
 
             var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
 
-            var host = new PoweredUpHost(poweredUpBluetoothAdapter, loggerFactory.CreateLogger<PoweredUpHost>());
+            var host = new PoweredUpHost(poweredUpBluetoothAdapter, serviceProvider);
+            TraceMessages tracer = null;
 
             logger.LogInformation("Finding Service");
             var cts = new CancellationTokenSource();
             host.Discover(async hub =>
             {
                 logger.LogInformation("Connecting to Hub");
+
+                hub.ConfigureProtocolAsync = async (protocol) =>
+                {
+                    tracer = new TraceMessages(protocol, serviceProvider.GetService<ILoggerFactory>().CreateLogger<TraceMessages>());
+
+                    await tracer.ExecuteAsync();
+                };
 
                 await hub.ConnectAsync();
 
@@ -68,6 +76,8 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
             if (bluetoothAddress == 0)
                 return;
 
+
+            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
             using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
             {
                 var protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
@@ -75,91 +85,6 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 await kernel.ConnectAsync();
 
                 await protocol.SetupUpstreamObservableAsync();
-
-                await protocol.ReceiveMessageAsync(message =>
-                {
-                    try
-                    {
-                        string messageAsString = message switch
-                        {
-                            HubPropertyMessage<Version> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
-                            HubPropertyMessage<string> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
-                            HubPropertyMessage<bool> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
-                            HubPropertyMessage<sbyte> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
-                            HubPropertyMessage<byte> msg => $"Hub Property - {msg.Property}: {msg.Payload}",
-                            HubPropertyMessage<byte[]> msg => $"Hub Property - {msg.Property}: {BytesStringUtil.DataToString(msg.Payload)}",
-                            HubActionMessage msg => $"Hub Action - {msg.Action}",
-                            HubAttachedIOForAttachedDeviceMessage msg => $"Attached IO - Port {msg.PortId} of type {msg.IOTypeId} (HW: {msg.HardwareRevision} / SW: {msg.SoftwareRevision})",
-                            HubAttachedIOForAttachedVirtualDeviceMessage msg => $"Attached Virtual IO - Port {msg.PortId} with A {msg.PortAId} / B {msg.PortBId}  of type {msg.IOTypeId}",
-                            HubAttachedIOForDetachedDeviceMessage msg => $"Dettached IO - Port {msg.PortId}",
-                            GenericErrorMessage msg => $"Error - {msg.ErrorCode} from {(MessageType)msg.CommandType}",
-                            PortInformationForModeInfoMessage msg => $"Port Information - Port {msg.PortId} Total Modes {msg.TotalModeCount} / Capabilities Output:{msg.OutputCapability}, Input:{msg.InputCapability}, LogicalCombinable:{msg.LogicalCombinableCapability}, LogicalSynchronizable:{msg.LogicalSynchronizableCapability} / InputModes: {msg.InputModes:X}, OutputModes: {msg.InputModes:X}",
-                            PortInformationForPossibleModeCombinationsMessage msg => $"Port Information (Combinations) - Port {msg.PortId} Combinations: {string.Join(",", msg.ModeCombinations.Select(x => x.ToString("X")))}",
-                            PortValueSingleMessage msg => "Port Values - " + string.Join(";", msg.Data.Select(d => d switch
-                            {
-                                PortValueData<sbyte> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<short> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<int> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<float> dd => $"Port {dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                _ => "Undefined Data Type",
-                            })),
-                            PortValueCombinedModeMessage msg => $"Port Value (Combined Mode) - Port {msg.PortId} " + string.Join(";", msg.Data.Select(d => d switch
-                            {
-                                PortValueData<sbyte> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<short> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<int> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                PortValueData<float> dd => $"Mode {dd.ModeIndex}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                                _ => "Undefined Data Type",
-                            })),
-                            PortInputFormatSingleMessage msg => $"Port Input Format (Single) - Port {msg.PortId}, Mode {msg.Mode}, Threshold {msg.DeltaInterval}, Notification {msg.NotificationEnabled}",
-                            PortInputFormatCombinedModeMessage msg => $"Port Input Format (Combined Mode) - Port {msg.PortId} UsedCombinationIndex {msg.UsedCombinationIndex} Enabled {msg.MultiUpdateEnabled} Configured Modes {string.Join(",", msg.ConfiguredModeDataSetIndex)}",
-                            PortOutputCommandFeedbackMessage msg => $"Port Command Feedback - " + string.Join(",", msg.Feedbacks.Select(f => $"Port {f.PortId} -> {f.Feedback}")),
-                            UnknownMessage msg => $"Unknown Message Type: {(MessageType)msg.MessageType} Length: {msg.Length} Content: {BytesStringUtil.DataToString(msg.Data)}",
-                            var unknown => $"{unknown.MessageType} (not yet formatted)",
-                        };
-
-                        if (message is GenericErrorMessage)
-                        {
-                            logger.LogError(messageAsString);
-                        }
-                        else
-                        {
-                            logger.LogInformation(messageAsString);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogCritical(e, "Eception occurred in Handler");
-                    }
-
-                    return Task.CompletedTask;
-                });
-
-                // await protocol.SendMessageAsync(new HubPropertyMessage() { Property = HubProperty.BatteryVoltage, Operation = HubPropertyOperation.RequestUpdate });
-
-                // logger.LogInformation("Request PortInformation (ModeInfo)");
-                // await protocol.SendMessageAsync(new PortInformationRequestMessage() { PortId = 99, InformationType = PortInformationType.ModeInfo });
-
-                // logger.LogInformation("Request PortInformation (ModeCombinations)");
-                // await protocol.SendMessageAsync(new PortInformationRequestMessage() { PortId = 99, InformationType = PortInformationType.PossibleModeCombinations });
-
-                // logger.LogInformation("Request PortModeInformation(s)");
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.ValueFormat });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 1, InformationType = PortModeInformationType.ValueFormat });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 2, InformationType = PortModeInformationType.ValueFormat });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 3, InformationType = PortModeInformationType.ValueFormat });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 4, InformationType = PortModeInformationType.ValueFormat });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 5, InformationType = PortModeInformationType.ValueFormat });
-
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Raw });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Pct });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.SI });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Symbol });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.Mapping });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.InternalUse });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.MotorBias });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.CapabilityBits });
-                // await protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = 0, Mode = 0, InformationType = PortModeInformationType.ValueFormat });
 
                 // virtual port sample
                 // await protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage() { SubCommand = VirtualPortSubCommand.Connected, PortAId = 0x01, PortBId = 0x02, });
@@ -176,11 +101,6 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
                 //await protocol.SendMessageAsync(new HubActionMessage() { Action = HubAction.ResetBusyIndication, });
 
-                var rgbLight = new RgbLight(protocol, 0, 50);
-                //await rgbLight.SetRgbColorNoAsync(PortOutputCommandColors.Pink);
-                await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
-                //await rgbLight.SetRgbColorsAsync(0xFF, 0x00, 0x00);
-
                 var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
                 // await motor.SetAccelerationTime(3000);
                 // await motor.SetDeccelerationTime(1000);
@@ -189,10 +109,6 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 // await Task.Delay(2000);
 
                 //await motor.StartSpeedForDegrees(180, -10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
-
-                await motor.GotoAbsolutePositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(2000);
-                await motor.GotoAbsolutePositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
 
                 await Task.Delay(2000);
 
@@ -230,6 +146,8 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
                 Console.ReadLine();
             }
         }
+
+
 
         private static async Task SetupPortInCombinedMode(PoweredUpProtocol protocol)
         {

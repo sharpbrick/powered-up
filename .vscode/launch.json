@@ -1,0 +1,55 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "message-trace",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/message-trace/bin/Debug/netcoreapp3.1/message-trace.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/message-trace",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "poweredup device list",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/SharpBrick.Cli/bin/Debug/netcoreapp3.1/publish/SharpBrick.Cli.dll",
+            "args": [
+                "device",
+                "list"
+            ],
+            "cwd": "${workspaceFolder}/examples/SharpBrick.Cli",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "poweredup device dump-static-port",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/SharpBrick.Cli/bin/Debug/netcoreapp3.1/publish/SharpBrick.Cli.dll",
+            "args": [
+                "device",
+                "dump-static-port",
+                "-p",
+                "0"
+            ],
+            "cwd": "${workspaceFolder}/examples/SharpBrick.Cli",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}

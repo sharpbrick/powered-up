@@ -1,11 +1,11 @@
-using Microsoft.Extensions.Logging;
+using System;
 
 namespace SharpBrick.PoweredUp
 {
     public class TechnicMediumHub : Hub
     {
-        public TechnicMediumHub(ILogger logger = default)
-            : base(logger, new Port[] {
+        public TechnicMediumHub(IServiceProvider serviceProvider = default)
+            : base(serviceProvider, new Port[] {
                 new Port(0, "A", true),
                 new Port(1, "B", true),
                 new Port(2, "C", true),
