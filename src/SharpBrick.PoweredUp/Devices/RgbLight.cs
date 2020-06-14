@@ -6,14 +6,14 @@ using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
-    public class RgbLight : Device, IPowerdUpDevice
+    public class RgbLight : Device, IPoweredUpDevice
     {
         public RgbLight()
         { }
 
-        public RgbLight(PoweredUpProtocol protocol, byte hubId, byte portId)
+        public RgbLight(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp.Devices
             });
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
 0B-00-43-32-01-01-02-00-00-03-00
 05-00-43-32-02

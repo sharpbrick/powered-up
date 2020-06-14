@@ -4,9 +4,9 @@ using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
-    public class Current : Device, IPowerdUpDevice
+    public class Current : Device, IPoweredUpDevice
     {
         public Current()
         { }
@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp.Devices
             : base(protocol, hubId, portId)
         { }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
 0B-00-43-3B-01-02-02-03-00-00-00
 05-00-43-3B-02

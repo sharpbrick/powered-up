@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp
 {
     public class Port
     {
-        public IPowerdUpDevice _device;
+        public IPoweredUpDevice _device;
         public byte PortId { get; }
         public string FriendlyName { get; }
         public bool ExternalPort { get; }
@@ -22,10 +22,10 @@ namespace SharpBrick.PoweredUp
             ExpectedDevice = expectedDevice;
         }
 
-        public TDevice GetDevice<TDevice>() where TDevice : class, IPowerdUpDevice
+        public TDevice GetDevice<TDevice>() where TDevice : class, IPoweredUpDevice
             => _device as TDevice;
 
-        public void AttachDevice(IPowerdUpDevice device, DeviceType type)
+        public void AttachDevice(IPoweredUpDevice device, DeviceType type)
         {
             DeviceType = type;
             _device = device;

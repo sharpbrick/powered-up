@@ -1,16 +1,15 @@
 using System;
 using SharpBrick.PoweredUp.Protocol;
-using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Devices
 {
     public class DeviceFactory
     {
-        public static IPowerdUpDevice Create(DeviceType type)
-            => (IPowerdUpDevice)Activator.CreateInstance(GetTypeOfDevice(type));
+        public static IPoweredUpDevice Create(DeviceType type)
+            => (IPoweredUpDevice)Activator.CreateInstance(GetTypeOfDevice(type));
 
-        public static IPowerdUpDevice CreateConnected(DeviceType type, IPoweredUpProtocol protocol, byte hubId, byte portId)
-            => (IPowerdUpDevice)Activator.CreateInstance(GetTypeOfDevice(type), protocol, hubId, portId);
+        public static IPoweredUpDevice CreateConnected(DeviceType type, IPoweredUpProtocol protocol, byte hubId, byte portId)
+            => (IPoweredUpDevice)Activator.CreateInstance(GetTypeOfDevice(type), protocol, hubId, portId);
 
         private static Type GetTypeOfDevice(DeviceType type)
             => type switch

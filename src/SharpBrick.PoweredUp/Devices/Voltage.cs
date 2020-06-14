@@ -6,7 +6,7 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public class Voltage : Device, IPowerdUpDevice
+    public class Voltage : Device, IPoweredUpDevice
     {
         public Voltage()
         { }
@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Devices
         public Voltage(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
 0B-00-43-3C-01-02-02-03-00-00-00
 05-00-43-3C-02

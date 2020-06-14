@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
     public abstract class BasicMotor : Device
     {

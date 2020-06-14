@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using SharpBrick.PoweredUp.Knowledge;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
-    public interface IPowerdUpDevice
+    public interface IPoweredUpDevice
     {
         bool IsConnected { get; }
-        IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw);
+        IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion);
     }
 }

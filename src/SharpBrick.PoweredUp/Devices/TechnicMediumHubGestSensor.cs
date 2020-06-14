@@ -6,9 +6,9 @@ using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
-    public class TechnicMediumHubGestSensor : Device, IPowerdUpDevice
+    public class TechnicMediumHubGestSensor : Device, IPoweredUpDevice
     {
         public TechnicMediumHubGestSensor()
         { }
@@ -17,7 +17,7 @@ namespace SharpBrick.PoweredUp.Devices
             : base(protocol, hubId, portId)
         { }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
 0B-00-43-64-01-02-01-01-00-00-00
 05-00-43-64-02

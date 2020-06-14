@@ -4,9 +4,9 @@ using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
-    public class TechnicLargeLinearMotor : BasicMotor, IPowerdUpDevice
+    public class TechnicLargeLinearMotor : BasicMotor, IPoweredUpDevice
     {
         public TechnicLargeLinearMotor()
             : base()
@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp.Devices
             : base(protocol, hubId, portId)
         { }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
 0B-00-43-00-01-0F-06-1E-00-1F-00
 07-00-43-00-02-0E-00

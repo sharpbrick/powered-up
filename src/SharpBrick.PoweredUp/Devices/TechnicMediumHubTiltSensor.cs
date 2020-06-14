@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SharpBrick.PoweredUp.Knowledge;
 using SharpBrick.PoweredUp.Protocol;
-using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
-    public class TechnicMediumHubTiltSensor : Device, IPowerdUpDevice
+    public class TechnicMediumHubTiltSensor : Device, IPoweredUpDevice
     {
         public TechnicMediumHubTiltSensor()
         { }
@@ -17,7 +15,7 @@ namespace SharpBrick.PoweredUp.Devices
             : base(protocol, hubId, portId)
         { }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version sw, Version hw)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             =>
 @"
 0B-00-43-63-01-03-03-03-00-04-00
