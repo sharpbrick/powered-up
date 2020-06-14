@@ -13,7 +13,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         [InlineData("0A-00-45-63-21-00-F9-FF-FD-FF", 0x63, PortModeInformationDataType.Int16, new short[] { 33, -7, -3 })]
         public void PortValueSingleEncoder_Decode_Short(string dataAsString, byte expectedPortId, PortModeInformationDataType expectedDataType, short[] expectedData)
             => PortValueSingleEncoder_Decode<short>(dataAsString, expectedPortId, expectedDataType, expectedData);
-        public void PortValueSingleEncoder_Decode<T>(string dataAsString, byte expectedPortId, PortModeInformationDataType expectedDataType, T[] expectedData)
+
+        private void PortValueSingleEncoder_Decode<T>(string dataAsString, byte expectedPortId, PortModeInformationDataType expectedDataType, T[] expectedData)
         {
             var knowledge = new ProtocolKnowledge();
 
