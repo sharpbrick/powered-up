@@ -1,6 +1,6 @@
 # SharpBrick.PoweredUp
 
-SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered Up products. [Specification](https://lego.github.io/lego-ble-wireless-protocol-docs/) and the [node-poweredup](https://github.com/nathankellenicki/node-poweredup) protocol implementation.
+SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered Up products.
 
 ![Build-Release](https://github.com/sharpbrick/powered-up/workflows/Build-Release/badge.svg)
 ![Build-CI](https://github.com/sharpbrick/powered-up/workflows/Build-CI/badge.svg)
