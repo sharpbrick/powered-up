@@ -10,7 +10,7 @@ using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.WinRT;
 
-namespace SharpBrick.Cli
+namespace SharpBrick.PoweredUp.Cli
 {
     public static class DevicesList
     {

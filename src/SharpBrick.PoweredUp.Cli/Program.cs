@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.WinRT;
 
-namespace SharpBrick.Cli
+namespace SharpBrick.PoweredUp.Cli
 {
     class Program
     {

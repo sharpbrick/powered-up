@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol.Messages;
 

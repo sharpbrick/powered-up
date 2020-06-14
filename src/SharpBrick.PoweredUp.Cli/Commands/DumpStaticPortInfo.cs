@@ -11,7 +11,7 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using SharpBrick.PoweredUp.WinRT;
 
-namespace SharpBrick.Cli
+namespace SharpBrick.PoweredUp.Cli
 {
     public static class DumpStaticPortInfo
     {

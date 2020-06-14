@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
-    <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj" />
+    <ProjectReference Include="..\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
+    <ProjectReference Include="..\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj" />
   </ItemGroup>
 
     <ItemGroup>
