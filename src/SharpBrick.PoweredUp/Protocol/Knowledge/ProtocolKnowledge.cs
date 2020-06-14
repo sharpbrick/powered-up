@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SharpBrick.PoweredUp.Knowledge
+namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public class ProtocolKnowledge
     {

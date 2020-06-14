@@ -1,5 +1,5 @@
 ﻿using System;
-using SharpBrick.PoweredUp.Knowledge;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter

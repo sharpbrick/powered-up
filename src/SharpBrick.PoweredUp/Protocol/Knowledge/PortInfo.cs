@@ -1,7 +1,7 @@
 using System;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp.Knowledge
+namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public class PortInfo
     {

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
-using SharpBrick.PoweredUp.Devices;
-using SharpBrick.PoweredUp.Knowledge;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using Xunit;

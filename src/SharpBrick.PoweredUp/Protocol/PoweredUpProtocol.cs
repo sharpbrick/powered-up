@@ -1,12 +1,10 @@
 using System;
-using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
-using SharpBrick.PoweredUp.Devices;
-using SharpBrick.PoweredUp.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Formatter;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol

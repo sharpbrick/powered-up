@@ -5,7 +5,7 @@ using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp.Knowledge
+namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public static class KnowledgeManager
     {
