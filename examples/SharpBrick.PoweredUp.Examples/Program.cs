@@ -10,7 +10,9 @@ namespace SharpBrick.PoweredUp.Examples
             //await Example.ExampleColors.ExecuteAsync();
             //await Example.ExampleMotorControl.ExecuteAsync();
             //await Example.ExampleMotorInputAbsolutePosition.ExecuteAsync();
-            await Example.ExampleMotorVirtualPort.ExecuteAsync();
+            //await Example.ExampleMotorVirtualPort.ExecuteAsync();
+
+            await Example.ExampleHubActions.ExecuteAsync();
         }
     }
 }

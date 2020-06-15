@@ -106,8 +106,11 @@ namespace SharpBrick.PoweredUp
 
         public async Task SwitchOffAsync()
         {
-            var request = new HubActionMessage { Action = HubAction.SwitchOffHub };
-            await _protocol.SendMessageAsync(request);
+            await _protocol.SendMessageAsync(new HubActionMessage
+            {
+                HubId = HubId,
+                Action = HubAction.SwitchOffHub
+            });
 
             //TODO await response
             //TODO HubAction.HubWillSwitchOff
@@ -117,18 +120,43 @@ namespace SharpBrick.PoweredUp
 
         public async Task DisconnectAsync()
         {
-            var request = new HubActionMessage { Action = HubAction.Disconnect };
-            await _protocol.SendMessageAsync(request);
+            await _protocol.SendMessageAsync(new HubActionMessage
+            {
+                HubId = HubId,
+                Action = HubAction.Disconnect
+            });
 
             //TODO await response
             //TODO HubAction.HubWillDisconnect
 
             await _kernel.DisconnectAsync();
         }
-        public Task VccPortControlOn() => throw new NotImplementedException();
-        public Task VccPortControlOff() => throw new NotImplementedException();
-        public Task ActivateBusyIndicatorAsync() => throw new NotImplementedException();
-        public Task ResetBusyIndicatorAsync() => throw new NotImplementedException();
-        // TODO: Action HubWillGoIntoBootMode (eventy)
+        public Task VccPortControlOnAsync()
+            => _protocol.SendMessageAsync(new HubActionMessage
+            {
+                HubId = HubId,
+                Action = HubAction.VccPortControlOn,
+            });
+
+
+        public Task VccPortControlOffAsync()
+            => _protocol.SendMessageAsync(new HubActionMessage
+            {
+                HubId = HubId,
+                Action = HubAction.VccPortControlOff,
+            });
+
+        public Task ActivateBusyIndicatorAsync()
+            => _protocol.SendMessageAsync(new HubActionMessage
+            {
+                HubId = HubId,
+                Action = HubAction.ActivateBusyIndication,
+            });
+        public Task ResetBusyIndicatorAsync()
+            => _protocol.SendMessageAsync(new HubActionMessage
+            {
+                HubId = HubId,
+                Action = HubAction.ResetBusyIndication,
+            });
     }
 }
