@@ -2,7 +2,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     public enum PortOutputSubCommand : byte
     {
-        StartPower2 = 0x02,
+        StartPower2 = 0x02, // UNSPECED
         SetAccTime = 0x05,
         SetDecTime = 0x06,
         StartSpeed = 0x07,

@@ -230,6 +230,8 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
   -  [corneliusmunz/legoino](https://github.com/corneliusmunz/legoino) (Arduino)
 - Python
   - [alexsdutton/python-lego-wireless-protocol](https://github.com/alexsdutton/python-lego-wireless-protocol)
+  - [undera/pylgbst](https://github.com/undera/pylgbst)
+  - [virantha/bricknil](https://github.com/virantha/bricknil/)
 
 ## Resources
 
