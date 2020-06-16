@@ -193,7 +193,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
   - [X] [3.26. Port Output Command](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command)
   - [3.27. Output Command 0x81 - Motor Sub Commands [0x01-0x3F]](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-command-0x81-motor-sub-commands-0x01-0x3f)
     - [X] [3.27.1 - StartPower(Power)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power)
-    - [ ] [3.27.2 - StartPower(Power1, Power2)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power1-power2-0x02)
+    - [X] [3.27.2 - StartPower(Power1, Power2)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power1-power2-0x02)
     - [X] [3.27.3 - SetAccTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setacctime-time-profileno-0x05)
     - [X] [3.27.4 - SetDecTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setdectime-time-profileno-0x06)
     - [X] [3.27.5 - StartSpeed (Speed, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed-maxpower-useprofile-0x07)

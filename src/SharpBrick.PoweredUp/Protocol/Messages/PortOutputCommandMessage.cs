@@ -38,9 +38,9 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     }
 
     // spec chapter: 3.27.2
-    public class PortOutputCommandStartPower2Message : PortOutputCommandWriteDirectModeDataMessage
+    public class PortOutputCommandStartPower2Message : PortOutputCommandMessage
     {
-        public PortOutputCommandStartPower2Message() : base(0x00) { }
+        public PortOutputCommandStartPower2Message() : base(PortOutputSubCommand.StartPower2) { }
         public sbyte Power1 { get; set; }
         public sbyte Power2 { get; set; }
     }
