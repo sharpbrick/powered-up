@@ -76,6 +76,20 @@ namespace SharpBrick.PoweredUp
             });
         }
 
+        public async Task StartSpeedAsync(sbyte speed1, sbyte speed2, byte maxPower, SpeedProfiles profile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeed2Message()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Speed1 = speed1,
+                Speed2 = speed2,
+                MaxPower = maxPower,
+                Profile = profile,
+            });
+        }
+
         public async Task StartSpeedForTimeAsync(ushort time, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTimeMessage()
@@ -91,6 +105,22 @@ namespace SharpBrick.PoweredUp
             });
         }
 
+        public async Task StartSpeedForTimeAsync(ushort time, sbyte speed1, sbyte speed2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTime2Message()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = time,
+                Speed1 = speed1,
+                Speed2 = speed2,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+        }
+
         public async Task StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegreesMessage()
@@ -100,6 +130,23 @@ namespace SharpBrick.PoweredUp
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 Degrees = degrees,
                 Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+        }
+
+
+        public async Task StartSpeedForDegreesAsync(uint degrees, sbyte speed1, sbyte speed2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegrees2Message()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Degrees = degrees,
+                Speed1 = speed1,
+                Speed2 = speed2,
                 MaxPower = maxPower,
                 EndState = endState,
                 Profile = profile,

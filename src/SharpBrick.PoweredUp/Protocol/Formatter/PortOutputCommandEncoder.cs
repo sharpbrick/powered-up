@@ -13,12 +13,17 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     PortOutputCommandSetAccTimeMessage msg => 3,
                     PortOutputCommandSetDecTimeMessage msg => 3,
                     PortOutputCommandStartSpeedMessage msg => 3,
+                    PortOutputCommandStartSpeed2Message msg => 4,
                     PortOutputCommandStartSpeedForTimeMessage msg => 6,
+                    PortOutputCommandStartSpeedForTime2Message msg => 7,
                     PortOutputCommandStartSpeedForDegreesMessage msg => 8,
+                    PortOutputCommandStartSpeedForDegrees2Message msg => 9,
                     PortOutputCommandGotoAbsolutePositionMessage msg => 8,
+                    PortOutputCommandGotoAbsolutePosition2Message msg => 12,
                     PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage => 1 + directWriteModeDataMessage switch
                     {
                         PortOutputCommandStartPowerMessage msg => 1,
+                        PortOutputCommandStartPower2Message msg => 2,
                         PortOutputCommandSetRgbColorNoMessage msg => 1,
                         PortOutputCommandSetRgbColorNo2Message msg => 3,
 
@@ -58,6 +63,12 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     data[4] = msg.MaxPower;
                     data[5] = (byte)msg.Profile;
                     break;
+                case PortOutputCommandStartSpeed2Message msg:
+                    data[3] = (byte)msg.Speed1;
+                    data[4] = (byte)msg.Speed2;
+                    data[5] = msg.MaxPower;
+                    data[6] = (byte)msg.Profile;
+                    break;
 
                 case PortOutputCommandStartSpeedForTimeMessage msg:
                     BitConverter.TryWriteBytes(data.Slice(3, 2), msg.Time);
@@ -65,6 +76,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     data[6] = msg.MaxPower;
                     data[7] = (byte)msg.EndState;
                     data[8] = (byte)msg.Profile;
+                    break;
+                case PortOutputCommandStartSpeedForTime2Message msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 2), msg.Time);
+                    data[5] = (byte)msg.Speed1;
+                    data[6] = (byte)msg.Speed2;
+                    data[7] = msg.MaxPower;
+                    data[8] = (byte)msg.EndState;
+                    data[9] = (byte)msg.Profile;
                     break;
 
                 case PortOutputCommandStartSpeedForDegreesMessage msg:
@@ -75,12 +94,30 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     data[10] = (byte)msg.Profile;
                     break;
 
+                case PortOutputCommandStartSpeedForDegrees2Message msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 4), msg.Degrees);
+                    data[7] = (byte)msg.Speed1;
+                    data[8] = (byte)msg.Speed2;
+                    data[9] = msg.MaxPower;
+                    data[10] = (byte)msg.EndState;
+                    data[11] = (byte)msg.Profile;
+                    break;
+
                 case PortOutputCommandGotoAbsolutePositionMessage msg:
                     BitConverter.TryWriteBytes(data.Slice(3, 4), msg.AbsolutePosition);
                     data[7] = (byte)msg.Speed;
                     data[8] = msg.MaxPower;
                     data[9] = (byte)msg.EndState;
                     data[10] = (byte)msg.Profile;
+                    break;
+
+                case PortOutputCommandGotoAbsolutePosition2Message msg:
+                    BitConverter.TryWriteBytes(data.Slice(3, 4), msg.AbsolutePosition1);
+                    BitConverter.TryWriteBytes(data.Slice(7, 4), msg.AbsolutePosition2);
+                    data[11] = (byte)msg.Speed;
+                    data[12] = msg.MaxPower;
+                    data[13] = (byte)msg.EndState;
+                    data[14] = (byte)msg.Profile;
                     break;
 
                 case PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage:
@@ -90,6 +127,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     {
                         case PortOutputCommandStartPowerMessage msg:
                             data[4] = (byte)msg.Power;
+                            break;
+
+                        case PortOutputCommandStartPower2Message msg:
+                            data[4] = (byte)msg.Power1;
+                            data[5] = (byte)msg.Power2;
                             break;
 
                         case PortOutputCommandSetRgbColorNoMessage msg:

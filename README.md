@@ -2,11 +2,14 @@
 
 SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered Up products.
 
-![Build-Release](https://github.com/sharpbrick/powered-up/workflows/Build-Release/badge.svg)
-![Build-CI](https://github.com/sharpbrick/powered-up/workflows/Build-CI/badge.svg)
-![license:MIT](https://img.shields.io/github/license/sharpbrick/powered-up?style=flat-square)
 [![Nuget](https://img.shields.io/nuget/v/SharpBrick.PoweredUp?style=flat-square)](https://www.nuget.org/packages/SharpBrick.PoweredUp/)
+![license:MIT](https://img.shields.io/github/license/sharpbrick/powered-up?style=flat-square)
+[![GitHub issues by-label](https://img.shields.io/github/issues/sharpbrick/powered-up/bug?color=red&style=flat-square)](https://github.com/sharpbrick/powered-up/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+[![GitHub issues by-label](https://img.shields.io/github/issues/sharpbrick/powered-up/enhancement?color=green&style=flat-square)](https://github.com/sharpbrick/powered-up/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
 
+
+![Build-CI](https://github.com/sharpbrick/powered-up/workflows/Build-CI/badge.svg)
+![Build-Release](https://github.com/sharpbrick/powered-up/workflows/Build-Release/badge.svg)
 
 # Examples
 
@@ -194,13 +197,13 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] [3.27.3 - SetAccTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setacctime-time-profileno-0x05)
     - [X] [3.27.4 - SetDecTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setdectime-time-profileno-0x06)
     - [X] [3.27.5 - StartSpeed (Speed, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed-maxpower-useprofile-0x07)
-    - [ ] [3.27.6 - StartSpeed (Speed1, Speed2, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed1-speed2-maxpower-useprofile-0x08)
+    - [X] [3.27.6 - StartSpeed (Speed1, Speed2, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed1-speed2-maxpower-useprofile-0x08)
     - [X] [3.27.7 - StartSpeedForTime (Time, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x09)
-    - [ ] [3.27.8 - StartSpeedForTime (Time, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x0a)
+    - [X] [3.27.8 - StartSpeedForTime (Time, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x0a)
     - [X] [3.27.9 - StartSpeedForDegrees(Degrees, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speed-maxpower-endstate-useprofile-0x0b)
-    - [ ] [3.27.10 - StartSpeedForDegrees(Degrees, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speedl-speedr-maxpower-endstate-useprofile-0x0c)
+    - [X] [3.27.10 - StartSpeedForDegrees(Degrees, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speedl-speedr-maxpower-endstate-useprofile-0x0c)
     - [X] [3.27.11 - GotoAbsolutePosition(AbsPos, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos-speed-maxpower-endstate-useprofile-0x0d)...
-    - [ ] [3.27.12 - GotoAbsolutePosition(AbsPos1, AbsPos2, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos1-abspos2-speed-maxpower-endstate-useprofile-0x0e)
+    - [X] [3.27.12 - GotoAbsolutePosition(AbsPos1, AbsPos2, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos1-abspos2-speed-maxpower-endstate-useprofile-0x0e)
     - [ ] [3.27.13 - PresetEncoder(Position)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-position-n-a)
     - [ ] [3.27.14 - PresetEncoder(LeftPosition, RightPosition)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-leftposition-rightposition-0x14)
     - [ ] [3.27.15 - TiltImpactPreset(PresetValue)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltimpactpreset-presetvalue-n-a)

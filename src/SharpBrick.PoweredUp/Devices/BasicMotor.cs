@@ -40,5 +40,15 @@ namespace SharpBrick.PoweredUp
                 Power = power,
             });
         }
+
+        public Task StartPowerAsync(sbyte power1, sbyte power2)
+            => _protocol.SendMessageAsync(new PortOutputCommandStartPower2Message()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Power1 = power1,
+                Power2 = power2,
+            });
     }
 }

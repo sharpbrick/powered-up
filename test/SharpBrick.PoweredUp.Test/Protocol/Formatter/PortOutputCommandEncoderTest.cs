@@ -50,6 +50,23 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             });
 
         [Theory]
+        [InlineData("0A-00-81-00-11-08-64-64-5A-03", 0, 100, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-7F-7F-5A-03", 0, 127, 127, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-9C-64-5A-03", 0, -100, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-00-64-5A-03", 0, 0, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeed2Message(string expectedData, byte port, sbyte speed1, sbyte speed2, byte maxPower, SpeedProfiles profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeed2Message()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Speed1 = speed1,
+                Speed2 = speed2,
+                MaxPower = maxPower,
+                Profile = profile,
+            });
+
+        [Theory]
         [InlineData("0C-00-81-00-11-09-B8-0B-5A-64-7E-00", 0, 3000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.None)]
         public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeedForTimeMessage(string expectedData, byte port, ushort time, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
             => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeedForTimeMessage()
@@ -59,6 +76,22 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 Time = time,
                 Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+
+        [Theory]
+        [InlineData("0D-00-81-00-11-0A-B8-0B-5A-64-64-7E-00", 0, 3000, 90, 100, 100, SpecialSpeed.Hold, SpeedProfiles.None)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeedForTime2Message(string expectedData, byte port, ushort time, sbyte speed1, sbyte speed2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeedForTime2Message()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Time = time,
+                Speed1 = speed1,
+                Speed2 = speed2,
                 MaxPower = maxPower,
                 EndState = endState,
                 Profile = profile,
@@ -80,6 +113,22 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             });
 
         [Theory]
+        [InlineData("0F-00-81-00-11-0C-B4-00-00-00-F6-64-64-7F-00", 0, 180, -10, 100, 100, SpecialSpeed.Brake, SpeedProfiles.None)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeedForDegrees2Message(string expectedData, byte port, uint degrees, sbyte speed1, sbyte speed2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeedForDegrees2Message()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Degrees = degrees,
+                Speed1 = speed1,
+                Speed2 = speed2,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+
+        [Theory]
         [InlineData("0E-00-81-00-11-0D-2D-00-00-00-0A-64-7F-00", 0, 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None)]
         [InlineData("0E-00-81-00-11-0D-D3-FF-FF-FF-0A-64-7F-00", 0, -45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None)]
         public void PortOutputCommandEncoder_Encode_PortOutputCommandGotoAbsolutePositionMessage(string expectedData, byte port, int absPosition, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
@@ -89,6 +138,24 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 AbsolutePosition = absPosition,
+                Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+
+
+        [Theory]
+        [InlineData("12-00-81-00-11-0E-2D-00-00-00-00-00-00-00-0A-64-7F-00", 0, 45, 0, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None)]
+        [InlineData("12-00-81-00-11-0E-D3-FF-FF-FF-2D-00-00-00-0A-64-7F-00", 0, -45, 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandGotoAbsolutePosition2Message(string expectedData, byte port, int absPos1, int absPos2, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandGotoAbsolutePosition2Message()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                AbsolutePosition1 = absPos1,
+                AbsolutePosition2 = absPos2,
                 Speed = speed,
                 MaxPower = maxPower,
                 EndState = endState,

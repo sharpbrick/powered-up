@@ -140,8 +140,8 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandGotoAbsolutePosition2Message : PortOutputCommandMessage
     {
         public PortOutputCommandGotoAbsolutePosition2Message() : base(PortOutputSubCommand.GotoAbsolutePosition2) { }
-        public int AbsPos1 { get; set; }
-        public int AbsPos2 { get; set; }
+        public int AbsolutePosition1 { get; set; }
+        public int AbsolutePosition2 { get; set; }
         public sbyte Speed { get; set; }
         public byte MaxPower { get; set; }
         public SpecialSpeed EndState { get; set; }

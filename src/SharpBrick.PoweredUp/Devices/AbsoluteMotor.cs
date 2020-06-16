@@ -42,5 +42,21 @@ namespace SharpBrick.PoweredUp
                 Profile = profile,
             });
         }
+
+        public async Task GotoAbsolutePositionAsync(int absolutePosition1, int absolutePosition2, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        {
+            await _protocol.SendMessageAsync(new PortOutputCommandGotoAbsolutePosition2Message()
+            {
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                AbsolutePosition1 = absolutePosition1,
+                AbsolutePosition2 = absolutePosition2,
+                Speed = speed,
+                MaxPower = maxPower,
+                EndState = endState,
+                Profile = profile,
+            });
+        }
     }
 }
