@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -62,29 +63,82 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => throw new NotSupportedException(),
             };
 
-        internal static PortValueData CreatPortValueData(PortModeInfo modeInfo, Span<byte> dataSlice)
-        {
-            return modeInfo.DatasetType switch
+        internal static PortValueData CreatPortValueData(PortModeInfo modeInfo, in Span<byte> dataSlice)
+            => modeInfo.DatasetType switch
             {
-                PortModeInformationDataType.SByte => new PortValueData<sbyte>()
-                {
-                    InputValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray(),
-                },
-                PortModeInformationDataType.Int16 => new PortValueData<short>()
-                {
-                    InputValues = MemoryMarshal.Cast<byte, short>(dataSlice).ToArray(),
-                },
-                PortModeInformationDataType.Int32 => new PortValueData<int>()
-                {
-                    InputValues = MemoryMarshal.Cast<byte, int>(dataSlice).ToArray(),
-                },
-                PortModeInformationDataType.Single => new PortValueData<float>()
-                {
-                    InputValues = MemoryMarshal.Cast<byte, float>(dataSlice).ToArray(),
-                },
+                PortModeInformationDataType.SByte => CreatePortValueDataSByte(modeInfo, dataSlice),
+                PortModeInformationDataType.Int16 => CreatePortValueDataInt16(modeInfo, dataSlice),
+                PortModeInformationDataType.Int32 => CreatePortValueDataInt32(modeInfo, dataSlice),
+                PortModeInformationDataType.Single => CreatePortValueDataSingle(modeInfo, dataSlice),
 
                 _ => throw new NotSupportedException(),
             };
+
+        internal static PortValueData<sbyte> CreatePortValueDataSByte(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        {
+            var rawValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray();
+
+            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToSByte(f)).ToArray();
+            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToSByte(f)).ToArray();
+
+            return new PortValueData<sbyte>()
+            {
+                InputValues = rawValues,
+                SIInputValues = siValues,
+                PctInputValues = pctValues,
+            };
+        }
+
+        internal static PortValueData<short> CreatePortValueDataInt16(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        {
+            var rawValues = MemoryMarshal.Cast<byte, short>(dataSlice).ToArray();
+
+            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToInt16(f)).ToArray();
+            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt16(f)).ToArray();
+
+            return new PortValueData<short>()
+            {
+                InputValues = rawValues,
+                SIInputValues = siValues,
+                PctInputValues = pctValues,
+            };
+        }
+
+        internal static PortValueData<int> CreatePortValueDataInt32(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        {
+            var rawValues = MemoryMarshal.Cast<byte, int>(dataSlice).ToArray();
+
+            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToInt32(f)).ToArray();
+            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt32(f)).ToArray();
+
+            return new PortValueData<int>()
+            {
+                InputValues = rawValues,
+                SIInputValues = siValues,
+                PctInputValues = pctValues,
+            };
+        }
+
+        internal static PortValueData<float> CreatePortValueDataSingle(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        {
+            var rawValues = MemoryMarshal.Cast<byte, float>(dataSlice).ToArray();
+
+            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).ToArray();
+            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).ToArray();
+
+            return new PortValueData<float>()
+            {
+                InputValues = rawValues,
+                SIInputValues = siValues,
+                PctInputValues = pctValues,
+            };
+        }
+
+        internal static float Scale(float value, float rawMin, float rawMax, float min, float max)
+        {
+            var positionInRawRange = (value - rawMin) / (rawMax - rawMin);
+
+            return (positionInRawRange * (max - min)) + min;
         }
 
         public void Encode(PoweredUpMessage message, in Span<byte> data)

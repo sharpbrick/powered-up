@@ -9,5 +9,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortValueData<TPayload> : PortValueData
     {
         public TPayload[] InputValues { get; set; }
+        public TPayload[] SIInputValues { get; set; }
+        public TPayload[] PctInputValues { get; set; }
     }
 }
