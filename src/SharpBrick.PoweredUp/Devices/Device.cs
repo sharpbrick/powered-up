@@ -9,8 +9,9 @@ namespace SharpBrick.PoweredUp
     public abstract class Device : IDisposable
     {
         protected readonly IPoweredUpProtocol _protocol;
-        private readonly byte _hubId;
+        protected readonly byte _hubId;
         protected readonly byte _portId;
+        protected readonly IObservable<PortValueData> _portValueObservable;
         private readonly IDisposable _receivingDisposable;
 
         public bool IsConnected => (_protocol != null);
@@ -24,7 +25,7 @@ namespace SharpBrick.PoweredUp
             _hubId = hubId;
             _portId = portId;
 
-            _receivingDisposable = _protocol.UpstreamMessages
+            _portValueObservable = _protocol.UpstreamMessages
                 .Where(msg => msg.HubId == _hubId)
                 .SelectMany(msg => msg switch
                 {
@@ -32,7 +33,9 @@ namespace SharpBrick.PoweredUp
                     PortValueCombinedModeMessage pvcmm => pvcmm.Data,
                     _ => Array.Empty<PortValueData>(),
                 })
-                .Where(pvd => pvd.PortId == _portId)
+                .Where(pvd => pvd.PortId == _portId);
+
+            _receivingDisposable = _portValueObservable
                 .Subscribe(pvd =>
                 {
                     OnPortValueChange(pvd);
