@@ -72,8 +72,12 @@ var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
 await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
 
-// once upon a time later
+// observe using System.Reactive
+var disposable = motor.AbsolutePositionObservable.Subscribe(x => Console.WriteLine(x.SI));
+// ... once finished observing (do not call immediately afterwards ;))
+disposable.Dispose();
 
+// OR manually observe it
 Console.WriteLine(motor.AbsolutePosition);
 ````
 
@@ -155,7 +159,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - .. other hubs depend on availability of hardware / contributions
   - Devices
     - [X] Technic Medium Hub - Rgb Light
-    - [ ] Technic Medium Hub - Current
+    - [X] Technic Medium Hub - Current
     - [ ] Technic Medium Hub - Voltage
     - [ ] Technic Medium Hub - Temperature Sensor 1
     - [ ] Technic Medium Hub - Temperature Sensor 2
