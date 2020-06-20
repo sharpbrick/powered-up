@@ -160,12 +160,12 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
   - Devices
     - [X] Technic Medium Hub - Rgb Light
     - [X] Technic Medium Hub - Current
-    - [ ] Technic Medium Hub - Voltage
-    - [ ] Technic Medium Hub - Temperature Sensor 1
-    - [ ] Technic Medium Hub - Temperature Sensor 2
-    - [ ] Technic Medium Hub - Accelerometer
-    - [ ] Technic Medium Hub - Gyro Sensor
+    - [X] Technic Medium Hub - Voltage
+    - [X] Technic Medium Hub - Temperature Sensor 1 + 2
+    - [X] Technic Medium Hub - Accelerometer
+    - [X] Technic Medium Hub - Gyro Sensor
     - [ ] Technic Medium Hub - Tilt Sensor
+    - [ ] Technic Medium Hub - Gesture Sensor
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
 - Message Encoder

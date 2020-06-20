@@ -8,12 +8,22 @@ namespace SharpBrick.PoweredUp
 {
     public class TechnicMediumHubTemperatureSensor : Device, IPoweredUpDevice
     {
+        public byte ModeIndexTemperature { get; protected set; } = 0;
+
+        public short Temperature { get; private set; }
+        public short TemperaturePct { get; private set; }
+        public IObservable<Value<short>> TemperatureObservable { get; }
+
         public TechnicMediumHubTemperatureSensor()
         { }
 
         public TechnicMediumHubTemperatureSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
+        {
+            TemperatureObservable = CreateSinglePortModeValueObservable<short>(ModeIndexTemperature);
+
+            ObserveOnLocalProperty(TemperatureObservable, v => Temperature = v.SI, v => TemperaturePct = v.Pct);
+        }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"

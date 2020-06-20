@@ -38,7 +38,7 @@ namespace SharpBrick.PoweredUp
                 .Where(pvd => pvd.PortId == _portId);
         }
 
-        protected void ObserveOnLocalProperty<TPayload>(IObservable<Value<TPayload>> modeObservable, params Action<Value<TPayload>>[] updaters)
+        protected void ObserveOnLocalProperty<T>(IObservable<T> modeObservable, params Action<T>[] updaters)
         {
             var disposable = modeObservable.Subscribe(v =>
             {
@@ -52,15 +52,18 @@ namespace SharpBrick.PoweredUp
         }
 
         protected IObservable<Value<TPayload>> CreateSinglePortModeValueObservable<TPayload>(byte modeIndex)
+            => CreatePortModeValueObservable<TPayload, Value<TPayload>>(modeIndex, pvd => new Value<TPayload>()
+            {
+                Raw = pvd.InputValues[0],
+                SI = pvd.SIInputValues[0],
+                Pct = pvd.PctInputValues[0],
+            });
+
+        protected IObservable<TTarget> CreatePortModeValueObservable<TSource, TTarget>(byte modeIndex, Func<PortValueData<TSource>, TTarget> converter)
             => _portValueObservable
                 .Where(pvd => pvd.ModeIndex == modeIndex)
-                .Cast<PortValueData<TPayload>>()
-                .Select(pvd => new Value<TPayload>()
-                {
-                    Raw = pvd.InputValues[0],
-                    SI = pvd.SIInputValues[0],
-                    Pct = pvd.PctInputValues[0],
-                });
+                .Cast<PortValueData<TSource>>()
+                .Select(converter);
 
         public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = 5)
         {

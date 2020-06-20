@@ -6,14 +6,24 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
+    // gyroscopes measure rotation
     public class TechnicMediumHubGyroSensor : Device, IPoweredUpDevice
     {
+        public byte ModeIndexRotation { get; protected set; } = 0;
+
+        public (short x, short y, short z) Rotation { get; private set; }
+        public IObservable<(short x, short y, short z)> RotationObservable { get; }
+
         public TechnicMediumHubGyroSensor()
         { }
 
         public TechnicMediumHubGyroSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
+        {
+            RotationObservable = CreatePortModeValueObservable<short, (short x, short y, short z)>(ModeIndexRotation, pvd => (pvd.SIInputValues[0], pvd.SIInputValues[1], pvd.SIInputValues[2]));
+
+            ObserveOnLocalProperty(RotationObservable, r => Rotation = r);
+        }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"

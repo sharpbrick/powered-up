@@ -8,12 +8,30 @@ namespace SharpBrick.PoweredUp
 {
     public class Voltage : Device, IPoweredUpDevice
     {
+        public byte ModeIndexVoltageL { get; protected set; } = 0;
+        public byte ModeIndexVoltageS { get; protected set; } = 1;
+
+        public short VoltageL { get; private set; }
+        public short VoltageLPct { get; private set; }
+        public IObservable<Value<short>> VoltageLObservable { get; }
+
+        public short VoltageS { get; private set; }
+        public short VoltageSPct { get; private set; }
+        public IObservable<Value<short>> VoltageSObservable { get; }
+
         public Voltage()
         { }
 
         public Voltage(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
+        {
+            VoltageLObservable = CreateSinglePortModeValueObservable<short>(ModeIndexVoltageL);
+            VoltageSObservable = CreateSinglePortModeValueObservable<short>(ModeIndexVoltageS);
+
+            ObserveOnLocalProperty(VoltageLObservable, v => VoltageL = v.SI, v => VoltageLPct = v.Pct);
+            ObserveOnLocalProperty(VoltageSObservable, v => VoltageS = v.SI, v => VoltageSPct = v.Pct);
+        }
+
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
 0B-00-43-3C-01-02-02-03-00-00-00

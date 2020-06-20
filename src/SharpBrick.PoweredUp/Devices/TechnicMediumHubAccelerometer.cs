@@ -6,14 +6,25 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
+    // accelerometers measure translation
     public class TechnicMediumHubAccelerometer : Device, IPoweredUpDevice
     {
+        public byte ModeIndexGravity { get; protected set; } = 0;
+        public byte ModeIndexCalibration { get; protected set; } = 1;
+
+        public (short x, short y, short z) Gravity { get; private set; }
+        public IObservable<(short x, short y, short z)> GravityObservable { get; }
+
         public TechnicMediumHubAccelerometer()
         { }
 
         public TechnicMediumHubAccelerometer(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
+        {
+            GravityObservable = CreatePortModeValueObservable<short, (short x, short y, short z)>(ModeIndexGravity, pvd => (pvd.SIInputValues[0], pvd.SIInputValues[1], pvd.SIInputValues[2]));
+
+            ObserveOnLocalProperty(GravityObservable, g => Gravity = g);
+        }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
             => @"
