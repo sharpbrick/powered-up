@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -7,25 +8,19 @@ namespace SharpBrick.PoweredUp
     public abstract class AbsoluteMotor : TachoMotor
     {
         public byte ModeIndexAbsolutePosition { get; protected set; } = 3;
-        public short AbsolutePosition { get; private set; } // ModeIndex = 3
+
+        public short AbsolutePosition { get; private set; } = 0;
+        public short AbsolutePositionPct { get; private set; } = 0;
+        public IObservable<Value<short>> AbsolutePositionObservable { get; }
+
         public AbsoluteMotor()
         { }
         protected AbsoluteMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
-
-        protected override bool OnPortValueChange(PortValueData data)
-            => data.ModeIndex switch
-            {
-                var mode when (mode == ModeIndexAbsolutePosition) => OnAbsolutePositionChange(data as PortValueData<short>),
-                _ => base.OnPortValueChange(data),
-            };
-
-        private bool OnAbsolutePositionChange(PortValueData<short> data)
         {
-            AbsolutePosition = data.InputValues[0];
+            AbsolutePositionObservable = CreateSinglePortModeValueObservable<short>(ModeIndexAbsolutePosition);
 
-            return true;
+            ObserveOnLocalProperty(AbsolutePositionObservable, v => AbsolutePosition = v.SI, v => AbsolutePositionPct = v.Pct);
         }
 
         public async Task GotoAbsolutePositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)

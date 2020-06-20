@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -9,34 +10,26 @@ namespace SharpBrick.PoweredUp
         public byte ModeIndexSpeed { get; protected set; } = 1;
         public byte ModeIndexPosition { get; protected set; } = 2;
 
-        public sbyte Speed { get; private set; }
-        public int Position { get; private set; }
+        public sbyte Speed { get; private set; } = 0;
+        public sbyte SpeedPct { get; private set; } = 0;
+        public IObservable<Value<sbyte>> SpeedObservable { get; }
+
+        public int Position { get; private set; } = 0;
+        public int PositionPct { get; private set; } = 0;
+        public IObservable<Value<int>> PositionObservable { get; }
 
         public TachoMotor()
         { }
+
         protected TachoMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
-
-        protected override bool OnPortValueChange(PortValueData data)
-            => data.ModeIndex switch
-            {
-                var mode when (mode == ModeIndexSpeed) => OnSpeedChange(data as PortValueData<sbyte>),
-                var mode when (mode == ModeIndexPosition) => OnPositionChange(data as PortValueData<int>),
-                _ => base.OnPortValueChange(data),
-            };
-
-        private bool OnSpeedChange(PortValueData<sbyte> data)
         {
-            Speed = data.InputValues[0];
 
-            return true;
-        }
-        private bool OnPositionChange(PortValueData<int> data)
-        {
-            Position = data.InputValues[0];
+            SpeedObservable = CreateSinglePortModeValueObservable<sbyte>(ModeIndexSpeed);
+            PositionObservable = CreateSinglePortModeValueObservable<int>(ModeIndexPosition);
 
-            return true;
+            ObserveOnLocalProperty(SpeedObservable, v => Speed = v.SI, v => SpeedPct = v.Pct);
+            ObserveOnLocalProperty(PositionObservable, v => Position = v.SI, v => PositionPct = v.Pct);
         }
 
         public async Task SetAccelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.AccelerationProfile)

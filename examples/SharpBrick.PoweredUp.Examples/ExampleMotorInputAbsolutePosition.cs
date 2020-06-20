@@ -1,7 +1,9 @@
+using System;
 using System.Threading.Tasks;
+using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using SharpBrick.PoweredUp;
 using Microsoft.Extensions.DependencyInjection;
+using SharpBrick.PoweredUp;
 
 namespace Example
 {
@@ -21,7 +23,7 @@ namespace Example
 
                 await motor.StartPowerAsync(80);
 
-                logger.LogWarning($"Position: {motor.AbsolutePosition}");
+                var disposable = motor.AbsolutePositionObservable.Subscribe(x => logger.LogWarning($"Position: {x.SI} / {x.Pct}"));
 
                 await Task.Delay(2000);
 
@@ -30,6 +32,8 @@ namespace Example
                 await Task.Delay(2000);
 
                 await motor.StartPowerAsync(0);
+
+                disposable.Dispose();
 
                 await technicMediumHub.SwitchOffAsync();
             }

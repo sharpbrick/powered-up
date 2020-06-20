@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -7,27 +8,20 @@ namespace SharpBrick.PoweredUp
     public abstract class BasicMotor : Device
     {
         public byte ModeIndexPower { get; protected set; } = 0;
+
         public sbyte Power { get; private set; } = 0;
+        public sbyte PowerPct { get; private set; } = 0;
+        public IObservable<Value<sbyte>> PowerObservable { get; }
 
         public BasicMotor()
         { }
 
         public BasicMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
-
-        protected override bool OnPortValueChange(PortValueData data)
-            => data.ModeIndex switch
-            {
-                var mode when (mode == ModeIndexPower) => OnPowerChange(data as PortValueData<sbyte>),
-                _ => base.OnPortValueChange(data),
-            };
-
-        private bool OnPowerChange(PortValueData<sbyte> data)
         {
-            Power = data.InputValues[0];
+            PowerObservable = CreateSinglePortModeValueObservable<sbyte>(ModeIndexPower);
 
-            return true;
+            ObserveOnLocalProperty(PowerObservable, v => Power = v.SI, v => PowerPct = v.Pct);
         }
 
         public async Task StartPowerAsync(sbyte power)

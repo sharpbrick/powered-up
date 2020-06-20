@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
@@ -8,11 +9,12 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class Device : IDisposable
     {
+        private CompositeDisposable _compositeDisposable = new CompositeDisposable();
+
         protected readonly IPoweredUpProtocol _protocol;
         protected readonly byte _hubId;
         protected readonly byte _portId;
         protected readonly IObservable<PortValueData> _portValueObservable;
-        private readonly IDisposable _receivingDisposable;
 
         public bool IsConnected => (_protocol != null);
 
@@ -34,13 +36,31 @@ namespace SharpBrick.PoweredUp
                     _ => Array.Empty<PortValueData>(),
                 })
                 .Where(pvd => pvd.PortId == _portId);
-
-            _receivingDisposable = _portValueObservable
-                .Subscribe(pvd =>
-                {
-                    OnPortValueChange(pvd);
-                });
         }
+
+        protected void ObserveOnLocalProperty<TPayload>(IObservable<Value<TPayload>> modeObservable, params Action<Value<TPayload>>[] updaters)
+        {
+            var disposable = modeObservable.Subscribe(v =>
+            {
+                foreach (var u in updaters)
+                {
+                    u(v);
+                }
+            });
+
+            _compositeDisposable.Add(disposable);
+        }
+
+        protected IObservable<Value<TPayload>> CreateSinglePortModeValueObservable<TPayload>(byte modeIndex)
+            => _portValueObservable
+                .Where(pvd => pvd.ModeIndex == modeIndex)
+                .Cast<PortValueData<TPayload>>()
+                .Select(pvd => new Value<TPayload>()
+                {
+                    Raw = pvd.InputValues[0],
+                    SI = pvd.SIInputValues[0],
+                    Pct = pvd.PctInputValues[0],
+                });
 
         public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = 5)
         {
@@ -53,9 +73,6 @@ namespace SharpBrick.PoweredUp
             });
         }
 
-        protected virtual bool OnPortValueChange(PortValueData portValue)
-            => false;
-
         #region Disposable Pattern
         private bool disposedValue;
         protected virtual void Dispose(bool disposing)
@@ -64,7 +81,8 @@ namespace SharpBrick.PoweredUp
             {
                 if (disposing)
                 {
-                    _receivingDisposable?.Dispose();
+                    _compositeDisposable?.Dispose();
+                    _compositeDisposable = null;
                 }
 
                 // TODO: Nicht verwaltete Ressourcen (nicht verwaltete Objekte) freigeben und Finalizer überschreiben
