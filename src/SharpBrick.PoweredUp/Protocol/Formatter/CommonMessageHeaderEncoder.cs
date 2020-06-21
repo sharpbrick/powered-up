@@ -33,7 +33,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             return (length, hubId, messageType, headerLength);
         }
 
-        public static void Encode(ushort contentLength, MessageType messageType, Span<byte> data)
+        public static void Encode(ushort contentLength, byte hubId, MessageType messageType, Span<byte> data)
         {
             int offset = 0;
 
@@ -51,7 +51,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 data[0] = length;
             }
 
-            data[offset + 1] = 0x00;
+            data[offset + 1] = hubId;
             data[offset + 2] = (byte)messageType;
         }
     }

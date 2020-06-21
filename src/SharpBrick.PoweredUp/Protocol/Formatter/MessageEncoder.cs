@@ -40,7 +40,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             byte[] data = new byte[commonHeaderLength + contentLength];
 
-            CommonMessageHeaderEncoder.Encode(contentLength, messageType, data.AsSpan().Slice(0, commonHeaderLength));
+            CommonMessageHeaderEncoder.Encode(contentLength, message.HubId, messageType, data.AsSpan().Slice(0, commonHeaderLength));
             encoder.Encode(message, data.AsSpan().Slice(commonHeaderLength));
 
             return data;
