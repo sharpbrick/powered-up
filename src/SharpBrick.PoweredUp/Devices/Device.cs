@@ -69,6 +69,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 Mode = modeIndex,
                 DeltaInterval = deltaInterval,

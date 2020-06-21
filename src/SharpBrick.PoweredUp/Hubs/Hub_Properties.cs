@@ -43,7 +43,12 @@ namespace SharpBrick.PoweredUp
         }
 
         public Task RequestHubPropertySingleUpdate(HubProperty property)
-            => _protocol.SendMessageAsync(new HubPropertyMessage() { Property = property, Operation = HubPropertyOperation.RequestUpdate });
+            => _protocol.SendMessageAsync(new HubPropertyMessage()
+            {
+                HubId = HubId,
+                Property = property,
+                Operation = HubPropertyOperation.RequestUpdate
+            });
 
         private void OnHubPropertyMessage(HubPropertyMessage hubProperty)
         {

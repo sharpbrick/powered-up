@@ -6,7 +6,7 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
-    public class TechnicLargeLinearMotor : BasicMotor, IPoweredUpDevice
+    public class TechnicLargeLinearMotor : AbsoluteMotor, IPoweredUpDevice
     {
         public TechnicLargeLinearMotor()
             : base()

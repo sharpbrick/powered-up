@@ -29,6 +29,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage()
             {
+                HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
                 PortAId = port1,
                 PortBId = port2,
@@ -46,6 +47,7 @@ namespace SharpBrick.PoweredUp
 
             await _protocol.SendMessageAsync(new VirtualPortSetupForDisconnectedMessage()
             {
+                HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
                 PortId = virtualPort,
             });

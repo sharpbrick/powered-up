@@ -28,6 +28,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartPowerMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -38,6 +39,7 @@ namespace SharpBrick.PoweredUp
         public Task StartPowerAsync(sbyte power1, sbyte power2)
             => _protocol.SendMessageAsync(new PortOutputCommandStartPower2Message()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,

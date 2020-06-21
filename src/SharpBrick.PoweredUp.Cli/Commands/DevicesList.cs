@@ -35,7 +35,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                 await discoverPorts.ExecuteAsync();
 
-                await protocol.SendMessageAsync(new HubActionMessage() { Action = HubAction.SwitchOffHub });
+                await protocol.SendMessageAsync(new HubActionMessage() { HubId = 0, Action = HubAction.SwitchOffHub });
 
                 Console.WriteLine(string.Empty);
 

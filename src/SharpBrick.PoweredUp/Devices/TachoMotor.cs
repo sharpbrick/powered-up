@@ -36,6 +36,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -48,6 +49,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -60,6 +62,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -73,6 +76,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeed2Message()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -87,6 +91,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTimeMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -102,6 +107,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTime2Message()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -118,6 +124,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegreesMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -134,6 +141,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegrees2Message()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,

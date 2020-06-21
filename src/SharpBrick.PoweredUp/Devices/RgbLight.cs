@@ -21,6 +21,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
@@ -31,6 +32,7 @@ namespace SharpBrick.PoweredUp
         {
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 Mode = 0x01,
                 DeltaInterval = 10000,
@@ -38,6 +40,7 @@ namespace SharpBrick.PoweredUp
             });
             await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNo2Message()
             {
+                HubId = _hubId,
                 PortId = _portId,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,

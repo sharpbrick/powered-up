@@ -86,12 +86,14 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
         {
             await protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage()
             {
+                HubId = 0,
                 PortId = 0,
                 SubCommand = PortInputFormatSetupCombinedSubCommand.LockDeviceForSetup,
             });
 
             await protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
             {
+                HubId = 0,
                 PortId = 0,
                 SubCommand = PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination,
                 CombinationIndex = 0, // should refer 0b0000_0000_0000_1110 => SPEED POS APOS
@@ -104,6 +106,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
+                HubId = 0,
                 PortId = 0,
                 Mode = 0x01,
                 DeltaInterval = 10,
@@ -112,6 +115,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
+                HubId = 0,
                 PortId = 0,
                 Mode = 0x02,
                 DeltaInterval = 10,
@@ -121,6 +125,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             await protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
+                HubId = 0,
                 PortId = 0,
                 Mode = 0x03,
                 DeltaInterval = 10,
@@ -130,6 +135,7 @@ namespace SharpBrick.PoweredUp.Examples.MessageTrace
 
             await protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage()
             {
+                HubId = 0,
                 PortId = 0,
                 SubCommand = PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateEnabled,
             });

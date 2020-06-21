@@ -11,6 +11,7 @@ namespace SharpBrick.PoweredUp.Functions
     public class DiscoverPorts
     {
         private readonly PoweredUpProtocol _protocol;
+        private readonly byte _hubId;
         private TaskCompletionSource<int> _taskCompletionSource;
         private int _stageTwoCount;
         private int _stageTwoExpected;
@@ -20,9 +21,10 @@ namespace SharpBrick.PoweredUp.Functions
 
         public ConcurrentBag<byte[]> ReceivedMessagesData { get; private set; }
 
-        public DiscoverPorts(PoweredUpProtocol protocol)
+        public DiscoverPorts(PoweredUpProtocol protocol, byte hubId = 0)
         {
             _protocol = protocol ?? throw new System.ArgumentNullException(nameof(protocol));
+            _hubId = hubId;
         }
 
         public async Task ExecuteAsync(byte portFilter = 0xFF)
@@ -51,8 +53,8 @@ namespace SharpBrick.PoweredUp.Functions
 
         private async Task RequestPortProperties(PortInfo port)
         {
-            await _protocol.SendMessageAsync(new PortInformationRequestMessage() { PortId = port.PortId, InformationType = PortInformationType.ModeInfo, });
-            await _protocol.SendMessageAsync(new PortInformationRequestMessage() { PortId = port.PortId, InformationType = PortInformationType.PossibleModeCombinations, });
+            await _protocol.SendMessageAsync(new PortInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, InformationType = PortInformationType.ModeInfo, });
+            await _protocol.SendMessageAsync(new PortInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, InformationType = PortInformationType.PossibleModeCombinations, });
 
             SentMessages += 2;
         }
@@ -61,13 +63,13 @@ namespace SharpBrick.PoweredUp.Functions
         {
             for (byte modexIndex = 0; modexIndex < port.Modes.Length; modexIndex++)
             {
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Name, });
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Raw, });
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Pct, });
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.SI, });
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Symbol, });
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Mapping, });
-                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.ValueFormat, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Name, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Raw, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Pct, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.SI, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Symbol, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Mapping, });
+                await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.ValueFormat, });
 
                 SentMessages += 7;
             }
