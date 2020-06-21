@@ -8,6 +8,6 @@ namespace SharpBrick.PoweredUp
     {
         None = 0x00,
         AccelerationProfile = 0x01,
-        DeccelerationProfile = 0x02,
+        DecelerationProfile = 0x02,
     }
 }

@@ -77,6 +77,19 @@ namespace SharpBrick.PoweredUp
             });
         }
 
+        protected void AssertIsConnected()
+        {
+            if (!IsConnected)
+            {
+                throw new InvalidOperationException("The device needs to be connected to a protocol.");
+            }
+        }
+
+        protected void AssertIsVirtualPort()
+        {
+            //TODO
+        }
+
         #region Disposable Pattern
         private bool disposedValue;
         protected virtual void Dispose(bool disposing)

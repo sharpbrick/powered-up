@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             });
 
         [Theory]
-        [InlineData("09-00-81-00-11-06-E8-03-02", 0, 1000, SpeedProfiles.DeccelerationProfile)]
+        [InlineData("09-00-81-00-11-06-E8-03-02", 0, 1000, SpeedProfiles.DecelerationProfile)]
         public void PortOutputCommandEncoder_Encode_PortOutputCommandSetDecTimeMessage(string expectedData, byte port, ushort time, SpeedProfiles profile)
             => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandSetDecTimeMessage()
             {
@@ -34,10 +34,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             });
 
         [Theory]
-        [InlineData("09-00-81-00-11-07-64-5A-03", 0, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
-        [InlineData("09-00-81-00-11-07-7F-5A-03", 0, 127, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
-        [InlineData("09-00-81-00-11-07-9C-5A-03", 0, -100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
-        [InlineData("09-00-81-00-11-07-00-5A-03", 0, 0, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
+        [InlineData("09-00-81-00-11-07-64-5A-03", 0, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
+        [InlineData("09-00-81-00-11-07-7F-5A-03", 0, 127, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
+        [InlineData("09-00-81-00-11-07-9C-5A-03", 0, -100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
+        [InlineData("09-00-81-00-11-07-00-5A-03", 0, 0, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
         public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeedMessage(string expectedData, byte port, sbyte speed, byte maxPower, SpeedProfiles profile)
             => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeedMessage()
             {
@@ -50,10 +50,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             });
 
         [Theory]
-        [InlineData("0A-00-81-00-11-08-64-64-5A-03", 0, 100, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
-        [InlineData("0A-00-81-00-11-08-7F-7F-5A-03", 0, 127, 127, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
-        [InlineData("0A-00-81-00-11-08-9C-64-5A-03", 0, -100, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
-        [InlineData("0A-00-81-00-11-08-00-64-5A-03", 0, 0, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-64-64-5A-03", 0, 100, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-7F-7F-5A-03", 0, 127, 127, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-9C-64-5A-03", 0, -100, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
+        [InlineData("0A-00-81-00-11-08-00-64-5A-03", 0, 0, 100, 90, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile)]
         public void PortOutputCommandEncoder_Encode_PortOutputCommandStartSpeed2Message(string expectedData, byte port, sbyte speed1, sbyte speed2, byte maxPower, SpeedProfiles profile)
             => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandStartSpeed2Message()
             {

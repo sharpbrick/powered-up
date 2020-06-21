@@ -19,6 +19,8 @@ namespace SharpBrick.PoweredUp
 
         public async Task SetRgbColorNoAsync(PoweredUpColor color)
         {
+            AssertIsConnected();
+
             await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage()
             {
                 HubId = _hubId,
@@ -30,6 +32,8 @@ namespace SharpBrick.PoweredUp
         }
         public async Task SetRgbColorsAsync(byte red, byte green, byte blue)
         {
+            AssertIsConnected();
+
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
                 HubId = _hubId,

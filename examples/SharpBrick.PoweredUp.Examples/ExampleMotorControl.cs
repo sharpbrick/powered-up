@@ -14,8 +14,8 @@ namespace Example
                 var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
                 await motor.SetAccelerationTimeAsync(3000);
-                await motor.SetDeccelerationTimeAsync(1000);
-                await motor.StartSpeedForTimeAsync(6000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DeccelerationProfile);
+                await motor.SetDecelerationTimeAsync(1000);
+                await motor.StartSpeedForTimeAsync(6000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
 
                 await Task.Delay(10_000);
 
