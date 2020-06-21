@@ -67,6 +67,8 @@ namespace SharpBrick.PoweredUp
 
         public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = 5)
         {
+            AssertIsConnected();
+
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
                 HubId = _hubId,

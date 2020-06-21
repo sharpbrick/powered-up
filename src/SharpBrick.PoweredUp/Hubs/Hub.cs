@@ -24,8 +24,11 @@ namespace SharpBrick.PoweredUp
         public Func<IPoweredUpProtocol, Task> ConfigureProtocolAsync { get; set; } = null;
         public IServiceProvider ServiceProvider { get; }
 
-        public Hub(IServiceProvider serviceProvider, Port[] knownPorts)
+        public bool IsConnected => _protocol != null;
+
+        public Hub(byte hubId, IServiceProvider serviceProvider, Port[] knownPorts)
         {
+            HubId = hubId;
             ServiceProvider = serviceProvider;
             AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
             _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
@@ -85,7 +88,7 @@ namespace SharpBrick.PoweredUp
             _logger?.LogDebug("Query Hub Properties");
             await InitialHubPropertiesQueryAsync();
 
-            //TODO, query properties, await properties, setup monitor for ports
+            //TODO await properties
 
             //TODO HubId = hubId;
 
@@ -106,6 +109,8 @@ namespace SharpBrick.PoweredUp
 
         public async Task SwitchOffAsync()
         {
+            AssertIsConnected();
+
             await _protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
@@ -120,6 +125,8 @@ namespace SharpBrick.PoweredUp
 
         public async Task DisconnectAsync()
         {
+            AssertIsConnected();
+
             await _protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
@@ -131,32 +138,58 @@ namespace SharpBrick.PoweredUp
 
             await _kernel.DisconnectAsync();
         }
-        public Task VccPortControlOnAsync()
-            => _protocol.SendMessageAsync(new HubActionMessage
+        public async Task VccPortControlOnAsync()
+        {
+            AssertIsConnected();
+
+            await _protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.VccPortControlOn,
             });
+        }
 
 
-        public Task VccPortControlOffAsync()
-            => _protocol.SendMessageAsync(new HubActionMessage
+        public async Task VccPortControlOffAsync()
+        {
+            AssertIsConnected();
+
+            await _protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.VccPortControlOff,
             });
+        }
 
-        public Task ActivateBusyIndicatorAsync()
-            => _protocol.SendMessageAsync(new HubActionMessage
+        public async Task ActivateBusyIndicatorAsync()
+        {
+            AssertIsConnected();
+
+            await _protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.ActivateBusyIndication,
             });
-        public Task ResetBusyIndicatorAsync()
-            => _protocol.SendMessageAsync(new HubActionMessage
+        }
+        public async Task ResetBusyIndicatorAsync()
+        {
+            AssertIsConnected();
+
+            await _protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.ResetBusyIndication,
             });
+        }
+
+
+
+        protected void AssertIsConnected()
+        {
+            if (!IsConnected)
+            {
+                throw new InvalidOperationException("The device needs to be connected to a protocol.");
+            }
+        }
     }
 }

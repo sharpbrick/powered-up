@@ -27,6 +27,8 @@ namespace SharpBrick.PoweredUp
 
         public async Task CreateVirtualPortAsync(byte port1, byte port2)
         {
+            AssertIsConnected();
+
             await _protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage()
             {
                 HubId = HubId,
@@ -38,6 +40,8 @@ namespace SharpBrick.PoweredUp
 
         public async Task CloseVirtualPortAsync(byte virtualPort)
         {
+            AssertIsConnected();
+
             var port = Port(virtualPort);
 
             if (port is null || !port.IsVirtual)
