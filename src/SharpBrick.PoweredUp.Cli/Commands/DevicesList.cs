@@ -9,6 +9,7 @@ using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.WinRT;
+using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Cli
 {
@@ -22,7 +23,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                 await kernel.ConnectAsync();
 
-                Console.WriteLine("Discover Ports. Reciving Messages ...");
+                Console.WriteLine("Discover Ports. Receiving Messages ...");
 
                 var discoverPorts = new DiscoverPorts(protocol);
 
@@ -62,8 +63,7 @@ namespace SharpBrick.PoweredUp.Cli
                 writer.WriteLine($"{Intent(2)}LogicalSynchronizableCapability: {port.LogicalSynchronizableCapability}");
 
                 // PortInformationForPossibleModeCombinationsMessage
-                //TODO ModeCombinations { get; set; }
-
+                writer.WriteLine($"{Intent(2)}ModeCombinations: [{string.Join(", ", port.ModeCombinations.Select(x => BytesStringUtil.ToBitString(x)))}]");
 
                 writer.WriteLine($"{Intent(2)}UsedCombinationIndex: {port.UsedCombinationIndex}");
                 writer.WriteLine($"{Intent(2)}MultiUpdateEnabled: {port.MultiUpdateEnabled}");
