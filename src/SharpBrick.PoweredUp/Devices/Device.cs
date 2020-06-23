@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -76,6 +77,76 @@ namespace SharpBrick.PoweredUp
                 Mode = modeIndex,
                 DeltaInterval = deltaInterval,
                 NotificationEnabled = enabled,
+            });
+        }
+
+        private byte IndexOfSupportedCombinedMode(byte[] modeIndices)
+        {
+            var portInfo = _protocol.Knowledge.Port(_portId);
+
+            byte result = 0xFF;
+
+            // e.g. technic motor: mode combination[0 = idx] = 0b0000_0000_0000_1110 / SPEED (mode 1), POS (mode 2), APOS (mode 3)
+            for (byte idx = 0; idx < portInfo.ModeCombinations.Length; idx++)
+            {
+                var mc = portInfo.ModeCombinations[idx];
+
+                if (modeIndices.All(requestedIndex => ((1 << requestedIndex) & mc) > 0))
+                {
+                    result = idx;
+
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<bool> TryLockDeviceForCombinedModeNotificationSetupAsync(params byte[] modeIndices)
+        {
+            AssertIsConnected();
+
+            var result = false;
+
+            var combinationModeIndex = IndexOfSupportedCombinedMode(modeIndices);
+
+            if (combinationModeIndex <= 7) // spec chapter 3.18.1 max combination mode index 
+            {
+                await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage()
+                {
+                    HubId = _hubId,
+                    PortId = _portId,
+                    SubCommand = PortInputFormatSetupCombinedSubCommand.LockDeviceForSetup,
+                });
+
+                // if this needs to be performed after the port formats, cache it for the unlock function
+                await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
+                {
+                    HubId = _hubId,
+                    PortId = _portId,
+                    SubCommand = PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination,
+
+                    CombinationIndex = combinationModeIndex,
+                    ModeDataSets = modeIndices.Select(mode => new PortInputFormatSetupCombinedModeModeDataSet() { Mode = mode, DataSet = 0, }).ToArray(), //TODO: manage DataSet for device which has (A) multiple modes and (B) returns for a mode more than one data set (e.g. R, G, B for color).
+                });
+
+                result = true;
+            }
+
+            return result;
+        }
+
+        public async Task UnlockFromCombinedModeNotificationSetupAsync(bool enableUpdates)
+        {
+            AssertIsConnected();
+
+            await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage()
+            {
+                HubId = _hubId,
+                PortId = _portId,
+                SubCommand = enableUpdates
+                    ? PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateEnabled
+                    : PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateDisabled,
             });
         }
 

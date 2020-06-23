@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.WinRT;
-using SharpBrick.PoweredUp.Functions;
 
 namespace Example
 {

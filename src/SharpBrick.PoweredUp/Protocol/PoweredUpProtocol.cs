@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp.Protocol
         private readonly ILogger<PoweredUpProtocol> _logger;
         private Subject<PoweredUpMessage> _upstreamSubject = null;
 
-        public ProtocolKnowledge Knowledge = new ProtocolKnowledge();
+        public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
 
         public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject;
 
@@ -40,11 +40,9 @@ namespace SharpBrick.PoweredUp.Protocol
         {
             try
             {
-                var knowledge = Knowledge;
+                var data = MessageEncoder.Encode(message, Knowledge);
 
-                var data = MessageEncoder.Encode(message, knowledge);
-
-                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, knowledge);
+                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge);
 
                 await _kernel.SendBytesAsync(data);
             }
@@ -64,9 +62,7 @@ namespace SharpBrick.PoweredUp.Protocol
             {
                 try
                 {
-                    var knowledge = Knowledge;
-
-                    var message = MessageEncoder.Decode(data, knowledge);
+                    var message = MessageEncoder.Decode(data, Knowledge);
 
                     await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge);
 

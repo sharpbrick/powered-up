@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol
@@ -8,5 +9,7 @@ namespace SharpBrick.PoweredUp.Protocol
     {
         Task SendMessageAsync(PoweredUpMessage message);
         IObservable<PoweredUpMessage> UpstreamMessages { get; }
+
+        ProtocolKnowledge Knowledge { get; }
     }
 }

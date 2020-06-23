@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "example app",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Examples.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
             "name": "message-trace",
             "type": "coreclr",
             "request": "launch",

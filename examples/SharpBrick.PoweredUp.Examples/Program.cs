@@ -15,7 +15,8 @@ namespace SharpBrick.PoweredUp.Examples
             //await Example.ExampleTechnicMediumHubAccelerometer.ExecuteAsync();
             //await Example.ExampleTechnicMediumHubGyroSensor.ExecuteAsync();
             //await Example.ExampleVoltage.ExecuteAsync();
-            await Example.ExampleTechnicMediumTemperatureSensor.ExecuteAsync();
+            //await Example.ExampleTechnicMediumTemperatureSensor.ExecuteAsync();
+            await Example.ExampleMotorInputCombinedMode.ExecuteAsync();
         }
     }
 }
