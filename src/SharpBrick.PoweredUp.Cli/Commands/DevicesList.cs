@@ -20,19 +20,16 @@ namespace SharpBrick.PoweredUp.Cli
             using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
             {
                 var protocol = new PoweredUpProtocol(kernel);
-
-                await kernel.ConnectAsync();
+                var discoverPorts = new DiscoverPorts(protocol); // register to upstream
 
                 Console.WriteLine("Discover Ports. Receiving Messages ...");
 
-                var discoverPorts = new DiscoverPorts(protocol);
+                await kernel.ConnectAsync();
+                await protocol.ConnectAsync(); // registering to bluetooth notification
 
-                await protocol.ReceiveMessageAsync(message =>
-                {
-                    Console.Write(".");
+                await Task.Delay(2000); // await ports to be announced initially by device.
 
-                    return Task.CompletedTask;
-                });
+                using var disposable = protocol.UpstreamMessages.Subscribe(x => Console.Write("."));
 
                 await discoverPorts.ExecuteAsync();
 

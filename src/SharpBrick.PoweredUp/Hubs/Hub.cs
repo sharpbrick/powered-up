@@ -83,7 +83,7 @@ namespace SharpBrick.PoweredUp
 
             _logger?.LogDebug("Connecting BluetoothKernel");
             await _kernel.ConnectAsync();
-            await _protocol.SetupUpstreamObservableAsync();
+            await _protocol.ConnectAsync();
 
             _logger?.LogDebug("Query Hub Properties");
             await InitialHubPropertiesQueryAsync();

@@ -112,8 +112,9 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     var protocol = new PoweredUpProtocol(kernel);
 
     await kernel.ConnectAsync();
+    await protocol.ConnectAsync();
     
-    await protocol.ReceiveMessageAsync(async message =>
+    using disposable = protocol.UpstreamMessages.Subscribe(message =>
     {
         if (message is HubPropertyMessage<string> msg)
         {

@@ -9,6 +9,7 @@ namespace SharpBrick.PoweredUp.Protocol
     {
         Task SendMessageAsync(PoweredUpMessage message);
         IObservable<PoweredUpMessage> UpstreamMessages { get; }
+        IObservable<(byte[] data, PoweredUpMessage message)> UpstreamRawMessages { get; }
 
         ProtocolKnowledge Knowledge { get; }
     }

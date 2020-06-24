@@ -16,27 +16,16 @@
             "stopAtEntry": false
         },
         {
-            "name": "message-trace",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/examples/message-trace/bin/Debug/netcoreapp3.1/message-trace.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/examples/message-trace",
-            "console": "integratedTerminal",
-            "stopAtEntry": false
-        },
-        {
             "name": "poweredup device list",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/examples/SharpBrick.Cli/bin/Debug/netcoreapp3.1/publish/SharpBrick.Cli.dll",
+            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Cli.dll",
             "args": [
                 "device",
                 "list"
             ],
-            "cwd": "${workspaceFolder}/examples/SharpBrick.Cli",
+            "cwd": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli",
             "console": "integratedTerminal",
             "stopAtEntry": false
         },
@@ -45,14 +34,14 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/examples/SharpBrick.Cli/bin/Debug/netcoreapp3.1/publish/SharpBrick.Cli.dll",
+            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Cli.dll",
             "args": [
                 "device",
                 "dump-static-port",
                 "-p",
                 "0"
             ],
-            "cwd": "${workspaceFolder}/examples/SharpBrick.Cli",
+            "cwd": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli",
             "console": "integratedTerminal",
             "stopAtEntry": false
         },

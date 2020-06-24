@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
@@ -10,8 +11,11 @@ namespace SharpBrick.PoweredUp.Functions
 {
     public class DiscoverPorts
     {
-        private readonly PoweredUpProtocol _protocol;
+        private object lockObject = new object();
+
+        private readonly IPoweredUpProtocol _protocol;
         private readonly byte _hubId;
+        private readonly IDisposable _disposable;
         private TaskCompletionSource<int> _taskCompletionSource;
         private int _stageTwoCount;
         private int _stageTwoExpected;
@@ -21,7 +25,7 @@ namespace SharpBrick.PoweredUp.Functions
 
         public ConcurrentBag<byte[]> ReceivedMessagesData { get; private set; }
 
-        public DiscoverPorts(PoweredUpProtocol protocol, byte hubId = 0)
+        public DiscoverPorts(IPoweredUpProtocol protocol, byte hubId = 0)
         {
             _protocol = protocol ?? throw new System.ArgumentNullException(nameof(protocol));
             _hubId = hubId;
@@ -33,13 +37,15 @@ namespace SharpBrick.PoweredUp.Functions
             ReceivedMessagesData = new ConcurrentBag<byte[]>();
             _stageTwoCount = 0;
 
-
             SentMessages = 0;
             ReceivedMessages = 0;
 
-            await _protocol.ReceiveMessageAsync(UpdateKnowledge);
+            using var disposable = _protocol.UpstreamRawMessages.Subscribe(tuple => UpdateKnowledge(tuple.data, tuple.message));
 
             _stageTwoExpected = _protocol.Knowledge.Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter).Count();
+
+            Console.WriteLine($"Number of Ports /  Stages: {_stageTwoExpected}");
+
             foreach (var port in _protocol.Knowledge.Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter))
             {
                 if (port.IsDeviceConnected)
@@ -49,20 +55,31 @@ namespace SharpBrick.PoweredUp.Functions
             }
 
             await _taskCompletionSource.Task;
+
+            disposable.Dispose();
         }
 
         private async Task RequestPortProperties(PortInfo port)
         {
+            lock (lockObject)
+            {
+                SentMessages += 2;
+            }
+
             await _protocol.SendMessageAsync(new PortInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, InformationType = PortInformationType.ModeInfo, });
             await _protocol.SendMessageAsync(new PortInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, InformationType = PortInformationType.PossibleModeCombinations, });
-
-            SentMessages += 2;
         }
 
-        private async Task RequestPortModeProperties(PortInfo port)
+        private async Task RequestPortModePropertiesAsync(PortInfo port)
         {
+
             for (byte modexIndex = 0; modexIndex < port.Modes.Length; modexIndex++)
             {
+                lock (lockObject)
+                {
+                    SentMessages += 7;
+                }
+
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Name, });
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Raw, });
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Pct, });
@@ -70,14 +87,18 @@ namespace SharpBrick.PoweredUp.Functions
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Symbol, });
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.Mapping, });
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modexIndex, InformationType = PortModeInformationType.ValueFormat, });
-
-                SentMessages += 7;
             }
 
-            _stageTwoCount++;
+            // safeguard after awaits. first when all messages are sent out, completion can be reached.
+            lock (lockObject)
+            {
+                _stageTwoCount++;
+            }
+
+            CheckEndOfDiscovery();
         }
 
-        private async Task UpdateKnowledge(byte[] data, PoweredUpMessage message)
+        private void UpdateKnowledge(byte[] data, PoweredUpMessage message)
         {
             var knowledge = _protocol.Knowledge;
 
@@ -87,20 +108,30 @@ namespace SharpBrick.PoweredUp.Functions
             {
                 var port = knowledge.Port(msg.PortId);
 
-                await RequestPortModeProperties(port);
+                RequestPortModePropertiesAsync(port);
             }
 
             if (applicableMessage)
             {
-                ReceivedMessages++;
                 ReceivedMessagesData.Add(data);
 
-                if (SentMessages == ReceivedMessages && _stageTwoCount >= _stageTwoExpected)
+                lock (lockObject)
                 {
-                    _taskCompletionSource.SetResult(ReceivedMessages);
+                    ReceivedMessages++;
                 }
+
+                Console.WriteLine($"{ReceivedMessages}/{SentMessages} {_stageTwoCount}/{_stageTwoExpected}");
+
+                CheckEndOfDiscovery();
             }
         }
 
+        private void CheckEndOfDiscovery()
+        {
+            if (SentMessages == ReceivedMessages && _stageTwoCount >= _stageTwoExpected)
+            {
+                _taskCompletionSource.SetResult(ReceivedMessages);
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -13,26 +14,38 @@ namespace SharpBrick.PoweredUp.Protocol
     {
         private readonly BluetoothKernel _kernel;
         private readonly ILogger<PoweredUpProtocol> _logger;
-        private Subject<PoweredUpMessage> _upstreamSubject = null;
+        private Subject<(byte[] data, PoweredUpMessage message)> _upstreamSubject = null;
 
         public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
 
-        public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject;
+        public IObservable<(byte[] data, PoweredUpMessage message)> UpstreamRawMessages => _upstreamSubject;
+        public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject.Select(x => x.message);
 
         public PoweredUpProtocol(BluetoothKernel kernel, ILogger<PoweredUpProtocol> logger = default)
         {
             _kernel = kernel;
             _logger = logger;
-            _upstreamSubject = new Subject<PoweredUpMessage>();
+            _upstreamSubject = new Subject<(byte[] data, PoweredUpMessage message)>();
         }
 
-        public async Task SetupUpstreamObservableAsync()
+        public async Task ConnectAsync()
         {
-            await ReceiveMessageAsync(message =>
+            await _kernel.ReceiveBytesAsync(async data =>
             {
-                _upstreamSubject.OnNext(message);
+                try
+                {
+                    var message = MessageEncoder.Decode(data, Knowledge);
 
-                return Task.CompletedTask;
+                    await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge);
+
+                    _upstreamSubject.OnNext((data, message));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Exception in PoweredUpProtocol Decode/Knowledge");
+
+                    throw;
+                }
             });
         }
 
@@ -52,29 +65,6 @@ namespace SharpBrick.PoweredUp.Protocol
 
                 throw;
             }
-        }
-
-        public Task ReceiveMessageAsync(Func<PoweredUpMessage, Task> handler)
-            => ReceiveMessageAsync((data, message) => handler(message));
-        public async Task ReceiveMessageAsync(Func<byte[], PoweredUpMessage, Task> handler)
-        {
-            await _kernel.ReceiveBytesAsync(async data =>
-            {
-                try
-                {
-                    var message = MessageEncoder.Decode(data, Knowledge);
-
-                    await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge);
-
-                    await handler(data, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Exception in PoweredUpProtocol Decode/Knowledge");
-
-                    throw;
-                }
-            });
         }
     }
 }
