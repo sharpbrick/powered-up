@@ -5,8 +5,11 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol
 {
-    public interface IPoweredUpProtocol
+    public interface IPoweredUpProtocol : IDisposable
     {
+        Task ConnectAsync();
+        Task DisconnectAsync();
+
         Task SendMessageAsync(PoweredUpMessage message);
         IObservable<PoweredUpMessage> UpstreamMessages { get; }
         IObservable<(byte[] data, PoweredUpMessage message)> UpstreamRawMessages { get; }

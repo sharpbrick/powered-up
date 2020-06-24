@@ -111,7 +111,6 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 {    
     var protocol = new PoweredUpProtocol(kernel);
 
-    await kernel.ConnectAsync();
     await protocol.ConnectAsync();
     
     using disposable = protocol.UpstreamMessages.Subscribe(message =>

@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp
         private IPoweredUpBluetoothAdapter _poweredUpBluetoothAdapter;
         private ulong _bluetoothAddress;
         private BluetoothKernel _kernel;
-        private PoweredUpProtocol _protocol;
+        private IPoweredUpProtocol _protocol;
         private IDisposable _protocolListenerDisposable;
 
         private readonly ILogger _logger;
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp
         protected virtual void Dispose(bool disposing)
         {
             _protocolListenerDisposable?.Dispose();
-            _kernel?.Dispose();
+            _protocol?.Dispose();
         }
 
         #endregion
@@ -82,7 +82,6 @@ namespace SharpBrick.PoweredUp
                 .Subscribe(OnHubChange);
 
             _logger?.LogDebug("Connecting BluetoothKernel");
-            await _kernel.ConnectAsync();
             await _protocol.ConnectAsync();
 
             _logger?.LogDebug("Query Hub Properties");
@@ -120,7 +119,7 @@ namespace SharpBrick.PoweredUp
             //TODO await response
             //TODO HubAction.HubWillSwitchOff
 
-            await _kernel.DisconnectAsync();
+            await _protocol.DisconnectAsync();
         }
 
         public async Task DisconnectAsync()
@@ -136,7 +135,7 @@ namespace SharpBrick.PoweredUp
             //TODO await response
             //TODO HubAction.HubWillDisconnect
 
-            await _kernel.DisconnectAsync();
+            await _protocol.DisconnectAsync();
         }
         public async Task VccPortControlOnAsync()
         {

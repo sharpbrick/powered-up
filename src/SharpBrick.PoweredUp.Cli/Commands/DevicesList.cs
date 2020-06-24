@@ -24,7 +24,6 @@ namespace SharpBrick.PoweredUp.Cli
 
                 Console.WriteLine("Discover Ports. Receiving Messages ...");
 
-                await kernel.ConnectAsync();
                 await protocol.ConnectAsync(); // registering to bluetooth notification
 
                 await Task.Delay(2000); // await ports to be announced initially by device.

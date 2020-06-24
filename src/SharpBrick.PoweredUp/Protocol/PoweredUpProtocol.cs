@@ -30,6 +30,8 @@ namespace SharpBrick.PoweredUp.Protocol
 
         public async Task ConnectAsync()
         {
+            await _kernel.ConnectAsync();
+
             await _kernel.ReceiveBytesAsync(async data =>
             {
                 try
@@ -49,6 +51,11 @@ namespace SharpBrick.PoweredUp.Protocol
             });
         }
 
+        public async Task DisconnectAsync()
+        {
+            await _kernel.DisconnectAsync();
+        }
+
         public async Task SendMessageAsync(PoweredUpMessage message)
         {
             try
@@ -66,5 +73,32 @@ namespace SharpBrick.PoweredUp.Protocol
                 throw;
             }
         }
+
+        #region Disposable Pattern
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _kernel?.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        // ~PoweredUpProtocol()
+        // {
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
