@@ -20,7 +20,8 @@ namespace SharpBrick.PoweredUp.Examples
             //await Example.ExampleTechnicMediumHubGyroSensor.ExecuteAsync(host, serviceProvider, selectedHub);
             //await Example.ExampleVoltage.ExecuteAsync(host, serviceProvider, selectedHub);
             //await Example.ExampleTechnicMediumTemperatureSensor.ExecuteAsync(host, serviceProvider, selectedHub);
-            await Example.ExampleMotorInputCombinedMode.ExecuteAsync(host, serviceProvider, selectedHub);
+            //await Example.ExampleMotorInputCombinedMode.ExecuteAsync(host, serviceProvider, selectedHub);
+            await Example.ExampleMixedBag.ExecuteAsync(host, serviceProvider, selectedHub);
         }
     }
 }
