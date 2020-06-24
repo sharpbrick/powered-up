@@ -3,17 +3,27 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
+using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.WinRT;
 
 namespace Example
 {
     public static class ExampleHubDiscover
     {
-        public static (PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub) CreateHostAndDiscover()
+        public static (PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub) CreateHostAndDiscover(bool enableTrace)
         {
             var serviceProvider = new ServiceCollection()
-                .AddLogging(builder => builder
-                    .AddConsole())
+                // configure your favourite level of logging.
+                .AddLogging(builder =>
+                {
+                    builder
+                        .AddConsole();
+
+                    if (enableTrace)
+                    {
+                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                    }
+                })
                 .BuildServiceProvider();
 
 
@@ -27,8 +37,18 @@ namespace Example
             var cts = new CancellationTokenSource();
             host.Discover(async hub =>
             {
-                logger.LogInformation("Connecting to Hub");
+                // add this when you are interested in a tracing of the message ("human readable")
+                hub.ConfigureProtocolAsync = async protocol =>
+                {
+                    if (enableTrace)
+                    {
+                        var tracer = new TraceMessages(protocol, serviceProvider.GetService<ILoggerFactory>().CreateLogger<TraceMessages>());
 
+                        await tracer.ExecuteAsync();
+                    }
+                };
+
+                logger.LogInformation("Connecting to Hub");
                 await hub.ConnectAsync();
 
                 logger.LogInformation(hub.AdvertisingName);

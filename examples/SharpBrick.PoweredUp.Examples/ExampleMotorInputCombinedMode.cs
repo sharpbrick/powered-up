@@ -9,10 +9,8 @@ namespace Example
 {
     public class ExampleMotorInputCombinedMode
     {
-        public static async Task ExecuteAsync()
+        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
         {
-            var (host, serviceProvider, _) = ExampleHubDiscover.CreateHostAndDiscover();
-
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputCombinedMode>();
 
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())

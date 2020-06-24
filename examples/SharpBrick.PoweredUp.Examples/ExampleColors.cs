@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
 
@@ -5,10 +6,8 @@ namespace Example
 {
     public static class ExampleColors
     {
-        public static async Task ExecuteAsync()
+        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
         {
-            var (host, serviceProvider, _) = ExampleHubDiscover.CreateHostAndDiscover();
-
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
                 await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
