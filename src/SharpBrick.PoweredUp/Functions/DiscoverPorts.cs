@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -15,6 +16,7 @@ namespace SharpBrick.PoweredUp.Functions
 
         private readonly IPoweredUpProtocol _protocol;
         private readonly byte _hubId;
+        private readonly ILogger<DiscoverPorts> _logger;
         private readonly IDisposable _disposable;
         private TaskCompletionSource<int> _taskCompletionSource;
         private int _stageTwoCount;
@@ -25,10 +27,11 @@ namespace SharpBrick.PoweredUp.Functions
 
         public ConcurrentBag<byte[]> ReceivedMessagesData { get; private set; }
 
-        public DiscoverPorts(IPoweredUpProtocol protocol, byte hubId = 0)
+        public DiscoverPorts(IPoweredUpProtocol protocol, byte hubId = 0, ILogger<DiscoverPorts> logger = default)
         {
             _protocol = protocol ?? throw new System.ArgumentNullException(nameof(protocol));
             _hubId = hubId;
+            _logger = logger;
         }
 
         public async Task ExecuteAsync(byte portFilter = 0xFF)
@@ -44,7 +47,7 @@ namespace SharpBrick.PoweredUp.Functions
 
             _stageTwoExpected = _protocol.Knowledge.Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter).Count();
 
-            Console.WriteLine($"Number of Ports /  Stages: {_stageTwoExpected}");
+            Console.WriteLine($"Number of Ports: {_stageTwoExpected}");
 
             foreach (var port in _protocol.Knowledge.Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter))
             {
@@ -120,7 +123,7 @@ namespace SharpBrick.PoweredUp.Functions
                     ReceivedMessages++;
                 }
 
-                Console.WriteLine($"{ReceivedMessages}/{SentMessages} {_stageTwoCount}/{_stageTwoExpected}");
+                _logger?.LogInformation($"Stage: {_stageTwoCount}/{_stageTwoExpected}, Messages: {ReceivedMessages}/{SentMessages} ");
 
                 CheckEndOfDiscovery();
             }

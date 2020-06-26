@@ -38,15 +38,12 @@ namespace Example
             host.Discover(async hub =>
             {
                 // add this when you are interested in a tracing of the message ("human readable")
-                hub.ConfigureProtocolAsync = async protocol =>
+                if (enableTrace)
                 {
-                    if (enableTrace)
-                    {
-                        var tracer = new TraceMessages(protocol, serviceProvider.GetService<ILoggerFactory>().CreateLogger<TraceMessages>());
+                    var tracer = new TraceMessages(hub.Protocol, serviceProvider.GetService<ILoggerFactory>().CreateLogger<TraceMessages>());
 
-                        await tracer.ExecuteAsync();
-                    }
-                };
+                    await tracer.ExecuteAsync();
+                }
 
                 logger.LogInformation("Connecting to Hub");
                 await hub.ConnectAsync();

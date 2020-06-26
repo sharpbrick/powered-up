@@ -14,11 +14,6 @@ namespace SharpBrick.PoweredUp.Cli
     {
         static async Task Main(string[] args)
         {
-            var loggerFactory = LoggerFactory.Create(builder =>
-                builder
-                    .ClearProviders()
-            );
-
             var app = new CommandLineApplication();
 
             app.HelpOption();
@@ -26,12 +21,18 @@ namespace SharpBrick.PoweredUp.Cli
 
             app.Command("device", deviceApp =>
             {
+                deviceApp.HelpOption();
+
                 deviceApp.Command("list", deviceListApp =>
                 {
                     deviceListApp.HelpOption();
+                    var traceOption = deviceListApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
                     deviceListApp.OnExecuteAsync(async cts =>
                     {
+                        var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+
+                        var loggerFactory = CreateLoggerFactory(enableTrace);
                         var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
 
                         ulong bluetoothAddress = FindAndSelectHub(poweredUpBluetoothAdapter);
@@ -39,18 +40,22 @@ namespace SharpBrick.PoweredUp.Cli
                         if (bluetoothAddress == 0)
                             return;
 
-                        await DevicesList.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress);
+                        await DevicesList.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, enableTrace);
                     });
                 });
 
                 deviceApp.Command("dump-static-port", deviceDumpStaticPortApp =>
                 {
                     deviceDumpStaticPortApp.HelpOption();
+                    var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
                     var portOption = deviceDumpStaticPortApp.Option("-p", "Port to Dump", CommandOptionType.SingleValue);
 
                     deviceDumpStaticPortApp.OnExecuteAsync(async cts =>
                     {
+                        var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+
+                        var loggerFactory = CreateLoggerFactory(enableTrace);
                         var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
 
                         ulong bluetoothAddress = FindAndSelectHub(poweredUpBluetoothAdapter);
@@ -60,12 +65,28 @@ namespace SharpBrick.PoweredUp.Cli
 
                         var port = byte.Parse(portOption.Value());
 
-                        await DumpStaticPortInfo.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, port);
+                        await DumpStaticPortInfo.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, port, enableTrace);
                     });
                 });
             });
 
             await app.ExecuteAsync(args);
+        }
+
+        private static ILoggerFactory CreateLoggerFactory(bool enableTrace)
+        {
+            return LoggerFactory.Create(builder =>
+            {
+                builder.ClearProviders();
+
+                if (enableTrace)
+                {
+                    builder.AddConsole();
+
+                    builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                }
+            }
+            );
         }
 
         private static ulong FindAndSelectHub(WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)

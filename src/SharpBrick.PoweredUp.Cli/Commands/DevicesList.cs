@@ -15,12 +15,20 @@ namespace SharpBrick.PoweredUp.Cli
 {
     public static class DevicesList
     {
-        public static async Task ExecuteAsync(ILoggerFactory loggerFactory, WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress)
+        public static async Task ExecuteAsync(ILoggerFactory loggerFactory, WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress, bool enableTrace)
         {
-            using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
+            using (var protocol = new PoweredUpProtocol(
+                new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()),
+                loggerFactory.CreateLogger<PoweredUpProtocol>()))
             {
-                var protocol = new PoweredUpProtocol(kernel);
-                var discoverPorts = new DiscoverPorts(protocol); // register to upstream
+                var discoverPorts = new DiscoverPorts(protocol, logger: loggerFactory.CreateLogger<DiscoverPorts>()); // register to upstream
+
+                if (enableTrace)
+                {
+                    var tracer = new TraceMessages(protocol, loggerFactory.CreateLogger<TraceMessages>());
+
+                    await tracer.ExecuteAsync();
+                }
 
                 Console.WriteLine("Discover Ports. Receiving Messages ...");
 

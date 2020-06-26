@@ -16,10 +16,7 @@ namespace SharpBrick.PoweredUp
 
         public IPoweredUpProtocol Protocol { get; private set; }
         public byte HubId { get; }
-
-        public Func<IPoweredUpProtocol, Task> ConfigureProtocolAsync { get; set; } = null;
         public IServiceProvider ServiceProvider { get; }
-
         public bool IsConnected => Protocol != null;
 
         public Hub(byte hubId, IServiceProvider serviceProvider, Port[] knownPorts)
@@ -57,11 +54,6 @@ namespace SharpBrick.PoweredUp
 
         public async Task ConnectAsync()
         {
-            if (ConfigureProtocolAsync != null)
-            {
-                await ConfigureProtocolAsync(Protocol);
-            }
-
             _protocolListenerDisposable = Protocol.UpstreamMessages
                 .Where(msg => msg switch
                 {

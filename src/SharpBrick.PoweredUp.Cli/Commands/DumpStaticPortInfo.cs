@@ -15,12 +15,20 @@ namespace SharpBrick.PoweredUp.Cli
 {
     public static class DumpStaticPortInfo
     {
-        public static async Task ExecuteAsync(ILoggerFactory loggerFactory, WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress, byte portId)
+        public static async Task ExecuteAsync(ILoggerFactory loggerFactory, WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress, byte portId, bool enableTrace)
         {
-            using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
+            using (var protocol = new PoweredUpProtocol(
+                new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()),
+                loggerFactory.CreateLogger<PoweredUpProtocol>()))
             {
-                var protocol = new PoweredUpProtocol(kernel);
-                var discoverPorts = new DiscoverPorts(protocol);
+                var discoverPorts = new DiscoverPorts(protocol, logger: loggerFactory.CreateLogger<DiscoverPorts>());
+
+                if (enableTrace)
+                {
+                    var tracer = new TraceMessages(protocol, loggerFactory.CreateLogger<TraceMessages>());
+
+                    await tracer.ExecuteAsync();
+                }
 
                 Console.WriteLine($"Discover Port {portId}. Receiving Messages ...");
 
@@ -33,6 +41,8 @@ namespace SharpBrick.PoweredUp.Cli
                 await discoverPorts.ExecuteAsync(portId);
 
                 await protocol.SendMessageAsync(new HubActionMessage() { HubId = 0, Action = HubAction.SwitchOffHub });
+
+                await Task.Delay(2000); // avoid printing console log into output
 
                 Console.WriteLine(string.Empty);
 
