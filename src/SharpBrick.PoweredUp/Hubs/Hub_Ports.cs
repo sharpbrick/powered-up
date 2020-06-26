@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Messages;
