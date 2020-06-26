@@ -29,7 +29,7 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage()
+            await Protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage()
             {
                 HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
@@ -49,7 +49,7 @@ namespace SharpBrick.PoweredUp
                 throw new ArgumentException("Port not present or not virtual", nameof(virtualPort));
             }
 
-            await _protocol.SendMessageAsync(new VirtualPortSetupForDisconnectedMessage()
+            await Protocol.SendMessageAsync(new VirtualPortSetupForDisconnectedMessage()
             {
                 HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
@@ -65,7 +65,7 @@ namespace SharpBrick.PoweredUp
                 case HubAttachedIOForAttachedDeviceMessage attachedDeviceMessage:
                     port = Port(attachedDeviceMessage.PortId);
 
-                    var device = DeviceFactory.CreateConnected(attachedDeviceMessage.IOTypeId, _protocol, attachedDeviceMessage.HubId, attachedDeviceMessage.PortId);
+                    var device = DeviceFactory.CreateConnected(attachedDeviceMessage.IOTypeId, Protocol, attachedDeviceMessage.HubId, attachedDeviceMessage.PortId);
 
                     port.AttachDevice(device, attachedDeviceMessage.IOTypeId);
                     break;
@@ -85,7 +85,7 @@ namespace SharpBrick.PoweredUp
 
                     _ports[createdVirtualPort.PortId] = createdVirtualPort;
 
-                    var deviceOnVirtualPort = DeviceFactory.CreateConnected(attachedVirtualDeviceMessage.IOTypeId, _protocol, attachedVirtualDeviceMessage.HubId, attachedVirtualDeviceMessage.PortId);
+                    var deviceOnVirtualPort = DeviceFactory.CreateConnected(attachedVirtualDeviceMessage.IOTypeId, Protocol, attachedVirtualDeviceMessage.HubId, attachedVirtualDeviceMessage.PortId);
 
                     createdVirtualPort.AttachDevice(deviceOnVirtualPort, attachedVirtualDeviceMessage.IOTypeId);
 

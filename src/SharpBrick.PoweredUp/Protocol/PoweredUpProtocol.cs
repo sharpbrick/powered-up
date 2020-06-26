@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp.Protocol
 
         public PoweredUpProtocol(BluetoothKernel kernel, ILogger<PoweredUpProtocol> logger = default)
         {
-            _kernel = kernel;
+            _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
             _logger = logger;
             _upstreamSubject = new Subject<(byte[] data, PoweredUpMessage message)>();
         }

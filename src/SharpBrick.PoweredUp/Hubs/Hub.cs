@@ -11,20 +11,16 @@ namespace SharpBrick.PoweredUp
 {
     public abstract partial class Hub : IDisposable
     {
-        private IPoweredUpBluetoothAdapter _poweredUpBluetoothAdapter;
-        private ulong _bluetoothAddress;
-        private BluetoothKernel _kernel;
-        private IPoweredUpProtocol _protocol;
         private IDisposable _protocolListenerDisposable;
-
         private readonly ILogger _logger;
 
+        public IPoweredUpProtocol Protocol { get; private set; }
         public byte HubId { get; }
 
         public Func<IPoweredUpProtocol, Task> ConfigureProtocolAsync { get; set; } = null;
         public IServiceProvider ServiceProvider { get; }
 
-        public bool IsConnected => _protocol != null;
+        public bool IsConnected => Protocol != null;
 
         public Hub(byte hubId, IServiceProvider serviceProvider, Port[] knownPorts)
         {
@@ -36,8 +32,12 @@ namespace SharpBrick.PoweredUp
 
         public void ConnectWithBluetoothAdapter(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress)
         {
-            _poweredUpBluetoothAdapter = poweredUpBluetoothAdapter;
-            _bluetoothAddress = bluetoothAddress;
+            var loggerFactory = ServiceProvider.GetService<ILoggerFactory>();
+
+            _logger?.LogDebug("Init Hub with BluetoothKernel");
+            var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>());
+            _logger?.LogDebug("Init Hub with PoweredUpProtocol");
+            Protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
         }
 
         #region Disposable Pattern
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp
         protected virtual void Dispose(bool disposing)
         {
             _protocolListenerDisposable?.Dispose();
-            _protocol?.Dispose();
+            Protocol?.Dispose();
         }
 
         #endregion
@@ -57,19 +57,12 @@ namespace SharpBrick.PoweredUp
 
         public async Task ConnectAsync()
         {
-            var loggerFactory = ServiceProvider.GetService<ILoggerFactory>();
-
-            _logger?.LogDebug("Init Hub with BluetoothKernel");
-            _kernel = new BluetoothKernel(_poweredUpBluetoothAdapter, _bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>());
-            _logger?.LogDebug("Init Hub with PoweredUpProtocol");
-            _protocol = new PoweredUpProtocol(_kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
-
             if (ConfigureProtocolAsync != null)
             {
-                await ConfigureProtocolAsync(_protocol);
+                await ConfigureProtocolAsync(Protocol);
             }
 
-            _protocolListenerDisposable = _protocol.UpstreamMessages
+            _protocolListenerDisposable = Protocol.UpstreamMessages
                 .Where(msg => msg switch
                 {
                     PortValueSingleMessage x => false,
@@ -82,7 +75,7 @@ namespace SharpBrick.PoweredUp
                 .Subscribe(OnHubChange);
 
             _logger?.LogDebug("Connecting BluetoothKernel");
-            await _protocol.ConnectAsync();
+            await Protocol.ConnectAsync();
 
             _logger?.LogDebug("Query Hub Properties");
             await InitialHubPropertiesQueryAsync();
@@ -110,7 +103,7 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.SwitchOffHub
@@ -119,14 +112,14 @@ namespace SharpBrick.PoweredUp
             //TODO await response
             //TODO HubAction.HubWillSwitchOff
 
-            await _protocol.DisconnectAsync();
+            await Protocol.DisconnectAsync();
         }
 
         public async Task DisconnectAsync()
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.Disconnect
@@ -135,13 +128,13 @@ namespace SharpBrick.PoweredUp
             //TODO await response
             //TODO HubAction.HubWillDisconnect
 
-            await _protocol.DisconnectAsync();
+            await Protocol.DisconnectAsync();
         }
         public async Task VccPortControlOnAsync()
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.VccPortControlOn,
@@ -153,7 +146,7 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.VccPortControlOff,
@@ -164,7 +157,7 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.ActivateBusyIndication,
@@ -174,7 +167,7 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.ResetBusyIndication,
