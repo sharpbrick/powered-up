@@ -1,5 +1,7 @@
 using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
@@ -10,14 +12,11 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.SwitchOffHub
-            });
-
-            //TODO await response
-            //TODO HubAction.HubWillSwitchOff
+            }, action => action.Action == HubAction.HubWillSwitchOff);
 
             await Protocol.DisconnectAsync();
         }
@@ -26,14 +25,11 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage
             {
                 HubId = HubId,
                 Action = HubAction.Disconnect
-            });
-
-            //TODO await response
-            //TODO HubAction.HubWillDisconnect
+            }, action => action.Action == HubAction.HubWillDisconnect);
 
             await Protocol.DisconnectAsync();
         }
@@ -47,7 +43,6 @@ namespace SharpBrick.PoweredUp
                 Action = HubAction.VccPortControlOn,
             });
         }
-
 
         public async Task VccPortControlOffAsync()
         {
