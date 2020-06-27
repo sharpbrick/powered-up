@@ -1,6 +1,6 @@
 using System;
 
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp
 {
     [Flags]
     public enum PortFeedback : byte

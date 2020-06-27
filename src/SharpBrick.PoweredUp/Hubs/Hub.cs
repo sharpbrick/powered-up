@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,7 @@ namespace SharpBrick.PoweredUp
 {
     public abstract partial class Hub : IDisposable
     {
-        private IDisposable _protocolListenerDisposable;
+        private CompositeDisposable _compositeDisposable = new CompositeDisposable();
         private readonly ILogger _logger;
 
         public IPoweredUpProtocol Protocol { get; private set; }
@@ -25,6 +26,7 @@ namespace SharpBrick.PoweredUp
             ServiceProvider = serviceProvider;
             AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
             _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
+
         }
 
         public void ConnectWithBluetoothAdapter(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress)
@@ -35,6 +37,9 @@ namespace SharpBrick.PoweredUp
             var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>());
             _logger?.LogDebug("Init Hub with PoweredUpProtocol");
             Protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
+
+            SetupOnHubChange();
+            SetupHubAlertObservable(Protocol.UpstreamMessages);
         }
 
         #region Disposable Pattern
@@ -43,7 +48,7 @@ namespace SharpBrick.PoweredUp
         public void Dispose() => Dispose(true);
         protected virtual void Dispose(bool disposing)
         {
-            _protocolListenerDisposable?.Dispose();
+            _compositeDisposable?.Dispose();
             Protocol?.Dispose();
         }
 
@@ -54,17 +59,6 @@ namespace SharpBrick.PoweredUp
 
         public async Task ConnectAsync()
         {
-            _protocolListenerDisposable = Protocol.UpstreamMessages
-                .Where(msg => msg switch
-                {
-                    PortValueSingleMessage x => false,
-                    PortValueCombinedModeMessage x => false,
-                    PortInformationMessage x => false,
-                    PortOutputCommandFeedbackMessage x => false,
-                    PortInputFormatCombinedModeMessage x => false,
-                    _ => true,
-                })
-                .Subscribe(OnHubChange);
 
             _logger?.LogDebug("Connecting BluetoothKernel");
             await Protocol.ConnectAsync();
@@ -77,6 +71,23 @@ namespace SharpBrick.PoweredUp
             //TODO HubId = hubId;
 
             _logger?.LogDebug("Finished Querying Hub Properties");
+        }
+
+        private void SetupOnHubChange()
+        {
+            var disposable = Protocol.UpstreamMessages
+                .Where(msg => msg switch
+                {
+                    PortValueSingleMessage x => false,
+                    PortValueCombinedModeMessage x => false,
+                    PortInformationMessage x => false,
+                    PortOutputCommandFeedbackMessage x => false,
+                    PortInputFormatCombinedModeMessage x => false,
+                    _ => true,
+                })
+                .Subscribe(OnHubChange);
+
+            _compositeDisposable.Add(disposable);
         }
 
         private void OnHubChange(PoweredUpMessage message)

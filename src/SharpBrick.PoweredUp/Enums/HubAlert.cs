@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp
 {
     // spec chapter: 3.7.2
     public enum HubAlert : byte
