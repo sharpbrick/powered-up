@@ -33,13 +33,13 @@ namespace SharpBrick.PoweredUp
         /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task GotoAbsolutePositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> GotoAbsolutePositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandGotoAbsolutePositionMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePositionMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -51,6 +51,8 @@ namespace SharpBrick.PoweredUp
                 EndState = endState,
                 Profile = profile,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -63,14 +65,14 @@ namespace SharpBrick.PoweredUp
         /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task GotoAbsolutePositionAsync(int absolutePosition1, int absolutePosition2, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> GotoAbsolutePositionAsync(int absolutePosition1, int absolutePosition2, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandGotoAbsolutePosition2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePosition2Message()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -83,6 +85,8 @@ namespace SharpBrick.PoweredUp
                 EndState = endState,
                 Profile = profile,
             });
+
+            return response;
         }
     }
 }

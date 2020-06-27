@@ -24,7 +24,6 @@ namespace Example
 
                 await motor.StartSpeedAsync(100, 90, SpeedProfiles.None);
                 await Task.Delay(2000);
-                await motor.StartSpeedAsync(127, 90, SpeedProfiles.None);
                 await motor.StartSpeedAsync(-100, 90, SpeedProfiles.None);
                 await Task.Delay(2000);
                 await motor.StartSpeedAsync(0, 90, SpeedProfiles.None);

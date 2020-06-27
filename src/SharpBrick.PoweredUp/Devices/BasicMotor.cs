@@ -33,12 +33,12 @@ namespace SharpBrick.PoweredUp
         /// - Stop Motor (breaking): 127
         /// </param>
         /// <returns>An awaitable Task.</returns>
-        public async Task StartPowerAsync(sbyte power)
+        public async Task<PortFeedback> StartPowerAsync(sbyte power)
         {
             AssertValidPower(power, nameof(power));
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartPowerMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPowerMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -46,6 +46,8 @@ namespace SharpBrick.PoweredUp
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 Power = power,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -76,14 +78,14 @@ namespace SharpBrick.PoweredUp
         /// - Stop Motor (breaking): 127
         /// </param>
         /// <returns></returns>
-        public async Task StartPowerAsync(sbyte powerOnMotor1, sbyte powerOnMotor2)
+        public async Task<PortFeedback> StartPowerAsync(sbyte powerOnMotor1, sbyte powerOnMotor2)
         {
             AssertValidPower(powerOnMotor1, nameof(powerOnMotor1));
             AssertValidPower(powerOnMotor2, nameof(powerOnMotor2));
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartPower2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPower2Message()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -92,6 +94,8 @@ namespace SharpBrick.PoweredUp
                 Power1 = powerOnMotor1,
                 Power2 = powerOnMotor2,
             });
+
+            return response;
         }
 
         protected void AssertValidPower(sbyte power, string argumentName)

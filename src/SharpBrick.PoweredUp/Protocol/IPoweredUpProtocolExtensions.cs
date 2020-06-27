@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -20,6 +21,15 @@ namespace SharpBrick.PoweredUp.Protocol
             var result = await awaitable;
 
             return result;
+        }
+
+        public static async Task<PortFeedback> SendPortOutputCommandAsync(this IPoweredUpProtocol self, PortOutputCommandMessage message)
+        {
+            var portId = message.PortId;
+
+            var response = await self.SendMessageReceiveResultAsync<PortOutputCommandFeedbackMessage>(message, msg => msg.Feedbacks.Any(f => f.PortId == portId));
+
+            return response.Feedbacks.FirstOrDefault(f => f.PortId == portId).Feedback;
         }
     }
 }

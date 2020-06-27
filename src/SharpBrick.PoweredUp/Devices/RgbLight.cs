@@ -30,7 +30,7 @@ namespace SharpBrick.PoweredUp
                 ColorNo = color,
             });
         }
-        public async Task SetRgbColorsAsync(byte red, byte green, byte blue)
+        public async Task<PortFeedback> SetRgbColorsAsync(byte red, byte green, byte blue)
         {
             AssertIsConnected();
 
@@ -42,7 +42,8 @@ namespace SharpBrick.PoweredUp
                 DeltaInterval = 10000,
                 NotificationEnabled = false,
             });
-            await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNo2Message()
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetRgbColorNo2Message()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -52,6 +53,8 @@ namespace SharpBrick.PoweredUp
                 GreenColor = green,
                 BlueColor = blue,
             });
+
+            return response;
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

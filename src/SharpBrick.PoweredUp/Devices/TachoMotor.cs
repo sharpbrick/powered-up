@@ -43,7 +43,7 @@ namespace SharpBrick.PoweredUp
         /// </param>
         /// <param name="profileNumber">Specify the acceleration profile used. Defaults to standard AccelerationProfile.</param>
         /// <returns></returns>
-        public async Task SetAccelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.AccelerationProfile)
+        public async Task<PortFeedback> SetAccelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.AccelerationProfile)
         {
             if (timeInMs < 0 || timeInMs > 10_000)
             {
@@ -51,7 +51,7 @@ namespace SharpBrick.PoweredUp
             }
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandSetAccTimeMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetAccTimeMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -60,6 +60,8 @@ namespace SharpBrick.PoweredUp
                 Time = timeInMs,
                 Profile = profileNumber,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace SharpBrick.PoweredUp
         /// </param>
         /// <param name="profileNumber">Specify the deceleration profile used. Defaults to standard DecelerationProfile.</param>
         /// <returns></returns>
-        public async Task SetDecelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.DecelerationProfile)
+        public async Task<PortFeedback> SetDecelerationTimeAsync(ushort timeInMs, SpeedProfiles profileNumber = SpeedProfiles.DecelerationProfile)
         {
             if (timeInMs < 0 || timeInMs > 10_000)
             {
@@ -81,7 +83,7 @@ namespace SharpBrick.PoweredUp
             }
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandSetDecTimeMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetDecTimeMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -90,6 +92,8 @@ namespace SharpBrick.PoweredUp
                 Time = timeInMs,
                 Profile = profileNumber,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -102,13 +106,13 @@ namespace SharpBrick.PoweredUp
         /// <param name="maxPower">Maximum Power level used.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task StartSpeedAsync(sbyte speed, byte maxPower, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedAsync(sbyte speed, byte maxPower, SpeedProfiles profile)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -118,6 +122,8 @@ namespace SharpBrick.PoweredUp
                 MaxPower = maxPower,
                 Profile = profile,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -134,7 +140,7 @@ namespace SharpBrick.PoweredUp
         /// <param name="maxPower">Maximum Power level used.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task StartSpeedAsync(sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedAsync(sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpeedProfiles profile)
         {
             AssertValidSpeed(speedOnMotor1, nameof(speedOnMotor1));
             AssertValidSpeed(speedOnMotor2, nameof(speedOnMotor2));
@@ -142,7 +148,7 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeed2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeed2Message()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -153,6 +159,8 @@ namespace SharpBrick.PoweredUp
                 MaxPower = maxPower,
                 Profile = profile,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -167,13 +175,13 @@ namespace SharpBrick.PoweredUp
         /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task StartSpeedForTimeAsync(ushort timeInMs, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForTimeAsync(ushort timeInMs, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTimeMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForTimeMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -185,6 +193,8 @@ namespace SharpBrick.PoweredUp
                 EndState = endState,
                 Profile = profile,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -203,7 +213,7 @@ namespace SharpBrick.PoweredUp
         /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task StartSpeedForTimeAsync(ushort timeInMs, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForTimeAsync(ushort timeInMs, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             AssertValidSpeed(speedOnMotor1, nameof(speedOnMotor1));
             AssertValidSpeed(speedOnMotor2, nameof(speedOnMotor2));
@@ -211,7 +221,7 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForTime2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForTime2Message()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -224,6 +234,8 @@ namespace SharpBrick.PoweredUp
                 EndState = endState,
                 Profile = profile,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -235,14 +247,14 @@ namespace SharpBrick.PoweredUp
         /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             AssertValidDegrees(degrees, nameof(degrees));
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegreesMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForDegreesMessage()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -254,6 +266,8 @@ namespace SharpBrick.PoweredUp
                 EndState = endState,
                 Profile = profile,
             });
+
+            return response;
         }
 
         /// <summary>
@@ -266,7 +280,7 @@ namespace SharpBrick.PoweredUp
         /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
         /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
         /// <returns></returns>
-        public async Task StartSpeedForDegreesAsync(uint degrees, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForDegreesAsync(uint degrees, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
         {
             AssertValidDegrees(degrees, nameof(degrees));
             AssertValidSpeed(speedOnMotor1, nameof(speedOnMotor1));
@@ -275,7 +289,7 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandStartSpeedForDegrees2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForDegrees2Message()
             {
                 HubId = _hubId,
                 PortId = _portId,
@@ -288,6 +302,8 @@ namespace SharpBrick.PoweredUp
                 EndState = endState,
                 Profile = profile,
             });
+
+            return response;
         }
 
         protected void AssertValidSpeed(sbyte speed, string argumentName)
