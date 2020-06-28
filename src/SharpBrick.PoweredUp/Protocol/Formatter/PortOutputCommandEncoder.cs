@@ -26,6 +26,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         PortOutputCommandStartPowerMessage msg => 1,
                         PortOutputCommandSetRgbColorNoMessage msg => 1,
                         PortOutputCommandSetRgbColorNo2Message msg => 3,
+                        PortOutputCommandPresetEncoderMessage msg => 4,
 
                         _ => throw new NotSupportedException(),
                     },
@@ -126,7 +127,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     break;
 
                 case PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage:
-                    data[3] = directWriteModeDataMessage.Mode;
+                    data[3] = directWriteModeDataMessage.ModeIndex;
 
                     switch (directWriteModeDataMessage)
                     {
@@ -142,6 +143,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                             data[4] = msg.RedColor;
                             data[5] = msg.GreenColor;
                             data[6] = msg.BlueColor;
+                            break;
+
+                        case PortOutputCommandPresetEncoderMessage msg:
+                            BitConverter.TryWriteBytes(data.Slice(4, 4), msg.Position);
                             break;
                     }
 

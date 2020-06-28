@@ -152,7 +152,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
   - Hubs
     - [X] Ports
     - [X] Properties
-    - [ ] Alerts
+    - [X] Alerts
     - [ ] Actions
     - [X] Create Virtual Ports
     - [X] Technic Medium Hub
@@ -208,7 +208,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] [3.27.10 - StartSpeedForDegrees(Degrees, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speedl-speedr-maxpower-endstate-useprofile-0x0c)
     - [X] [3.27.11 - GotoAbsolutePosition(AbsPos, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos-speed-maxpower-endstate-useprofile-0x0d)...
     - [X] [3.27.12 - GotoAbsolutePosition(AbsPos1, AbsPos2, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos1-abspos2-speed-maxpower-endstate-useprofile-0x0e)
-    - [ ] [3.27.13 - PresetEncoder(Position)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-position-n-a)
+    - [X] [3.27.13 - PresetEncoder(Position)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-position-n-a)
     - [ ] [3.27.14 - PresetEncoder(LeftPosition, RightPosition)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-leftposition-rightposition-0x14)
     - [ ] [3.27.15 - TiltImpactPreset(PresetValue)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltimpactpreset-presetvalue-n-a)
     - [ ] [3.27.16 - TiltConfigOrientation(Orientation)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltconfigorientation-orientation-n-a)

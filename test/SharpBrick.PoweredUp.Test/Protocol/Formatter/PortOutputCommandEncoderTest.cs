@@ -215,6 +215,19 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 ColorNo = color,
             });
 
+        [Theory]
+        [InlineData("0B-00-81-03-11-51-02-00-00-00-00", 3, 2, 0)]
+        [InlineData("0B-00-81-01-11-51-03-0F-00-00-00", 1, 3, 15)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandPresetEncoderMessage(string expectedData, byte port, byte modeIndex, int position)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandPresetEncoderMessage()
+            {
+                PortId = port,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                ModeIndex = modeIndex,
+                Position = position,
+            });
+
         private void PortOutputCommandEncoder_Encode(string expectedDataAsString, PoweredUpMessage message)
         {
             // act

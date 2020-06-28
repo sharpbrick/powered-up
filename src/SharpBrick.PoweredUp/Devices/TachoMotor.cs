@@ -240,6 +240,11 @@ namespace SharpBrick.PoweredUp
 
         /// <summary>
         /// Start the motors for Degrees and try to keep individual speeds using Speed(X) while using a maximum power of MaxPower. After Degrees is reached stop the outputs using the EndState.
+        /// 
+        /// TachoMotor.StartSpeedForDegreesAsync support moving the motor by degrees. It operates relative of its current position.
+        /// AbsoluteMotor.GotoAbsolutePositionAsync allows moving the motor to an absolute position. It operates relative to a changeable zero position.
+        /// The Position(Observable) (POS) is reflecting the position relative to a changeable zero position (firmware in-memory encoded)
+        /// The AbsolutePosition(Observable) (APOS) is reflecting the position relative to marked zero position (physically encoded).
         /// </summary>
         /// <param name="degrees"></param>
         /// <param name="speed"></param>
@@ -272,6 +277,11 @@ namespace SharpBrick.PoweredUp
 
         /// <summary>
         /// Start the motors for Degrees and try to keep individual speeds using Speed(X) while using a maximum power of MaxPower. After Degrees is reached stop the outputs using the EndState.
+        /// 
+        /// TachoMotor.StartSpeedForDegreesAsync support moving the motor by degrees. It operates relative of its current position.
+        /// AbsoluteMotor.GotoAbsolutePositionAsync allows moving the motor to an absolute position. It operates relative to a changeable zero position.
+        /// The Position(Observable) (POS) is reflecting the position relative to a changeable zero position (firmware in-memory encoded)
+        /// The AbsolutePosition(Observable) (APOS) is reflecting the position relative to marked zero position (physically encoded).
         /// </summary>
         /// <param name="degrees">The degrees each motor should run. However, the combined degrees (2 * degrees) are split propertional among the speeds.</param>
         /// <param name="speedOnMotor1"></param>
@@ -301,6 +311,28 @@ namespace SharpBrick.PoweredUp
                 MaxPower = maxPower,
                 EndState = endState,
                 Profile = profile,
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Reset the position encoder in the motor
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public async Task<PortFeedback> SetZeroAsync(int position = 0)
+        {
+            AssertIsConnected();
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandPresetEncoderMessage()
+            {
+                HubId = _hubId,
+                PortId = _portId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                ModeIndex = ModeIndexPosition, // GotoAbsolutePosition and input POS is aligned with this adjustment
+                Position = position,
             });
 
             return response;

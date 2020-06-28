@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -26,6 +27,12 @@ namespace SharpBrick.PoweredUp
 
         /// <summary>
         /// Start the motor with a speed of Speed using a maximum power of MaxPower and GOTO the Absolute position AbsPos. After position is reached the motor is stopped using the EndState mode of operation.
+        /// 
+        /// TachoMotor.StartSpeedForDegreesAsync support moving the motor by degrees. It operates relative of its current position.
+        /// AbsoluteMotor.GotoAbsolutePositionAsync allows moving the motor to an absolute position. It operates relative to a changeable zero position.
+        /// The Position(Observable) (POS) is reflecting the position relative to a changeable zero position (firmware in-memory encoded)
+        /// The AbsolutePosition(Observable) (APOS) is reflecting the position relative to marked zero position (physically encoded).
+        /// Position is resetable with SetZeroAsync, AbsolutePosition not.
         /// </summary>
         /// <param name="absolutePosition">Absolute Position (0 is the position at the start of the motor)</param>
         /// <param name="speed">The speed used to move to the absolute position.</param>
@@ -57,6 +64,11 @@ namespace SharpBrick.PoweredUp
 
         /// <summary>
         /// Start the motors with individual speeds calculated from the common given Speed using a powerlevel limited to the MaxPower value. And the GOTO the Absolute positions: AbsPos1 and AbsPos2.
+        /// 
+        /// TachoMotor.StartSpeedForDegreesAsync support moving the motor by degrees. It operates relative of its current position.
+        /// AbsoluteMotor.GotoAbsolutePositionAsync allows moving the motor to an absolute position. It operates relative to a changeable zero position.
+        /// The Position(Observable) (POS) is reflecting the position relative to a changeable zero position (firmware in-memory encoded)
+        /// The AbsolutePosition(Observable) (APOS) is reflecting the position relative to marked zero position (physically encoded).
         /// </summary>
         /// <param name="absolutePosition1">Absolute Position of motor 1 (0 is the position at the start of the motor)</param>
         /// <param name="absolutePosition2">Absolute Position of motor 2 (0 is the position at the start of the motor)</param>
@@ -87,6 +99,44 @@ namespace SharpBrick.PoweredUp
             });
 
             return response;
+        }
+
+        private async Task<int> GetAbsolutePositionAsync()
+        {
+            AssertIsConnected();
+
+            var awaitable = AbsolutePositionObservable.FirstAsync().GetAwaiter();
+
+            await SetupNotificationAsync(ModeIndexAbsolutePosition, true);
+
+            var result = await awaitable;
+
+            await SetupNotificationAsync(ModeIndexAbsolutePosition, false);
+
+            return result.SI;
+        }
+
+        public async Task GotoRealZeroAsync()
+        {
+            AssertIsConnected();
+
+            var currentPosition = await GetAbsolutePositionAsync();
+
+            sbyte speed = 5;
+
+            uint degrees;
+
+            if (currentPosition < 0)
+            {
+                degrees = (uint)(-1 * currentPosition); // make position absolute since speed for degress only take positive degrees.
+            }
+            else
+            {
+                degrees = (uint)currentPosition;
+                speed *= -1; // reverse direction if positive position
+            }
+
+            await StartSpeedForDegreesAsync(degrees, speed, 100, SpecialSpeed.Brake, SpeedProfiles.None);
         }
     }
 }

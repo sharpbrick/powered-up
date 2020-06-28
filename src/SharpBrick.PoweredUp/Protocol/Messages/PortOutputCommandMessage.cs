@@ -21,13 +21,13 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     }
     public class PortOutputCommandWriteDirectModeDataMessage : PortOutputCommandMessage
     {
-        public PortOutputCommandWriteDirectModeDataMessage(byte mode)
+        public PortOutputCommandWriteDirectModeDataMessage(byte modeIndex)
             : base(PortOutputSubCommand.WriteDirectModeData)
         {
-            Mode = mode;
+            ModeIndex = modeIndex;
         }
 
-        public byte Mode { get; }
+        public byte ModeIndex { get; set; }
     }
 
     // spec chapter: 3.27.1
