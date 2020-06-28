@@ -144,7 +144,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 
 - Bluetooth Adapter
   - [X] .NET Core 3.1 (on Windows 10 using WinRT)
-    - Library uses `Span<T>` therefore not supported in .NET Framework 1.0-4.8 and UWP Apps until arrival of .NET 5 (WinForms and WPF work in .NET Core 3.1)
+    - Library uses `Span<T>` / C# 8.0 and is therefore not supported in .NET Framework 1.0 - 4.8 and UWP Apps until arrival of .NET 5 (WinForms and WPF work in .NET Core 3.1)
     - Library uses WinRT for communication therefore only Windows 10
   - [ ] Xamarin (on iOS / Android using Xamarin.Essentials)
   - [ ] Blazor (on Browser using WebBluetooth)
@@ -153,7 +153,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] Ports
     - [X] Properties
     - [X] Alerts
-    - [ ] Actions
+    - [X] Actions
     - [X] Create Virtual Ports
     - [X] Technic Medium Hub
     - .. other hubs depend on availability of hardware / contributions
@@ -168,60 +168,13 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [ ] Technic Medium Hub - Gesture Sensor
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
-- Message Encoder
-  - [X] [3.1 Common Message Header](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#common-message-header)
-  - [X] [3.2. Message Length Encoding](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#message-length-encoding)
-  - [X] [3.3. Message Types (Enum)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#message-types)
-  - [ ] [3.4 Transmission Flow Control (Preliminary PROPOSAL!)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#transmission-flow-control-preliminary-proposal)
-  - [X] [3.5. Hub Properties](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#hub-properties)
-  - [X] [3.6. Hub Actions](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#hub-actions)
-  - [X] [3.7. Hub Alerts](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#hub-alerts)
-  - [X] [3.8. Hub Attached I/O](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#hub-attached-i-o)
-  - [X] [3.9. Generic Error Messages](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#generic-error-messages)
-  - [ ] ~~[3.10. H/W NetWork Commands](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#h-w-network-commands)~~
-  - [ ] ~~[3.11. F/W Update - Go Into Boot Mode](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#f-w-update-go-into-boot-mode)~~
-  - [ ] ~~[3.12. F/W Update Lock memory](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#f-w-update-lock-memory)~~
-  - [ ] ~~[3.13. F/W Update Lock Status Request](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#f-w-update-lock-status-request)~~
-  - [ ] ~~[3.14. F/W Lock Status](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#f-w-lock-status)~~
-  - [X] [3.15. Port Information Request](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-information-request)
-  - [X] [3.16. Port Mode Information Request](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-mode-information-request)
-  - [X] [3.17. Port Input Format Setup (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-setup-single)
-  - [X] [3.18. Port Input Format Setup (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-setup-combinedmode)
-  - [X] [3.19. Port Information](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-information)
-  - [X] [3.20. Port Mode Information](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-mode-information)
-  - [X] [3.21. Port Value (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-value-single)
-  - [X] [3.22. Port Value (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-value-combinedmode)
-  - [X] [3.23. Port Input Format (Single)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-single)
-  - [X] [3.24. Port Input Format (CombinedMode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-input-format-combinedmode)
-  - [X] [3.25. Virtual Port Setup](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#virtual-port-setup)
-  - [X] [3.26. Port Output Command](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command)
-  - [3.27. Output Command 0x81 - Motor Sub Commands [0x01-0x3F]](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-command-0x81-motor-sub-commands-0x01-0x3f)
-    - [X] [3.27.1 - StartPower(Power)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power)
-    - [X] [3.27.2 - StartPower(Power1, Power2)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startpower-power1-power2-0x02)
-    - [X] [3.27.3 - SetAccTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setacctime-time-profileno-0x05)
-    - [X] [3.27.4 - SetDecTime (Time, ProfileNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setdectime-time-profileno-0x06)
-    - [X] [3.27.5 - StartSpeed (Speed, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed-maxpower-useprofile-0x07)
-    - [X] [3.27.6 - StartSpeed (Speed1, Speed2, MaxPower, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeed-speed1-speed2-maxpower-useprofile-0x08)
-    - [X] [3.27.7 - StartSpeedForTime (Time, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x09)
-    - [X] [3.27.8 - StartSpeedForTime (Time, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfortime-time-speed-maxpower-endstate-useprofile-0x0a)
-    - [X] [3.27.9 - StartSpeedForDegrees(Degrees, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speed-maxpower-endstate-useprofile-0x0b)
-    - [X] [3.27.10 - StartSpeedForDegrees(Degrees, SpeedL, SpeedR, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-startspeedfordegrees-degrees-speedl-speedr-maxpower-endstate-useprofile-0x0c)
-    - [X] [3.27.11 - GotoAbsolutePosition(AbsPos, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos-speed-maxpower-endstate-useprofile-0x0d)...
-    - [X] [3.27.12 - GotoAbsolutePosition(AbsPos1, AbsPos2, Speed, MaxPower, EndState, UseProfile)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-gotoabsoluteposition-abspos1-abspos2-speed-maxpower-endstate-useprofile-0x0e)
-    - [X] [3.27.13 - PresetEncoder(Position)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-position-n-a)
-    - [ ] [3.27.14 - PresetEncoder(LeftPosition, RightPosition)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-presetencoder-leftposition-rightposition-0x14)
-    - [ ] [3.27.15 - TiltImpactPreset(PresetValue)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltimpactpreset-presetvalue-n-a)
-    - [ ] [3.27.16 - TiltConfigOrientation(Orientation)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltconfigorientation-orientation-n-a)
-    - [ ] [3.27.17 - TiltConfigImpact(ImpactThreshold, BumpHoldoff)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltconfigimpact-impactthreshold-bumpholdoff-n-a)
-    - [ ] [3.27.18 - TiltFactoryCalibration(Orientation, PassCode)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-tiltfactorycalibration-orientation-passcode-n-a)
-    - [ ] [3.27.19 - GenericZeroSetHardware()](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-hardware-reset-genericzerosethardware-n-a)
-    - [X] [3.27.20 - SetRgbColorNo(ColorNo)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setrgbcolorno-colorno-n-a)
-    - [X] [3.27.21 - SetRgbColorNo(RedColor, GreenColor, BlueColor)](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#output-sub-command-setrgbcolorno-redcolor-greencolor-bluecolor-n-a)
-  - [ ] [3.28. WriteDirect](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#writedirect)
-  - [X] [3.29. WriteDirectModeData](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#writedirectmodedata)
-  - [ ] [3.30. Checksum Calculation](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#checksum-calculation)
-  - [ ] [3.31. Tacho Math](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#tacho-math)
-  - [X] [3.32. Port Output Command Feedback](https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#port-output-command-feedback)
+    - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
+- Protocol
+  - [X] Message Encoding (95% [spec coverage](docs/specification/coverage.md))
+  - [X] Knowledge
+- Command Line (`dotnet install -g SharpBrick.PoweredUp.Cli`)
+  - [X] `poweredup device list` (discover all connected devices and their port (mode) properties)
+  - [X] `poweredup device dump-static-port -p <port number>` (see [adding new devices tutorial](docs/development/adding-new-device.md))
 
 ## SDKs in other programming languages
 
