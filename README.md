@@ -13,6 +13,8 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 
 # Examples
 
+Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp.Examples` project (15+ examples).
+
 ## Discovering Hubs
 
 ````csharp
@@ -77,30 +79,7 @@ disposable.Dispose();
 Console.WriteLine(motor.AbsolutePosition);
 ````
 
-## Discover Hubs (using raw bluetooth kernel)
-
-````csharp
-var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
-
-// Finding Service
-ulong bluetoothAddress = 0;
-
-var cts = new CancellationTokenSource();
-
-poweredUpBluetoothAdapter.Discover(info =>
-{
-    Console.WriteLine($"Found {info.BluetoothAddress} is a {(PoweredUpManufacturerDataConstants)info.ManufacturerData[1]}");
-
-    bluetoothAddress = info.BluetoothAddress;
-}, cts.Token);
-
-Console.WriteLine("Press any key to cancel Scanning");
-Console.ReadLine();
-
-cts.Cancel(); // cancels the scanning process
-````
-
-## Connect to Hub and Send a Message and retrieving answers (using raw bluetooth kernel and messages)
+## Connect to Hub and Send a Message and retrieving answers (directly on protocol layer)
 
 ````csharp
 using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
@@ -152,6 +131,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] Actions
     - [X] Create Virtual Ports
     - [X] Technic Medium Hub
+    - [ ] Hub (88009)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
     - [X] Technic Medium Hub - Rgb Light
@@ -165,6 +145,10 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
     - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
+    - [ ] Hub (88009) - Rgb Light
+    - [ ] Hub (88009) - Current
+    - [ ] Hub (88009) - Voltage
+    - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
   - [X] Knowledge
@@ -179,6 +163,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 - .NET / C#
   - **sharpbrick/powered-up** (this here)
   - [Vouzamo/Lego](https://github.com/Vouzamo/Lego) (and [blog](https://vouzamo.wordpress.com/2020/04/21/lego-c-sdk-enhancements-challenges/))
+  - [Cosmik42/BAP](https://github.com/Cosmik42/BAP) (Lego Train Project ... Contains logic for the LWP)
 - C++
   -  [corneliusmunz/legoino](https://github.com/corneliusmunz/legoino) (Arduino)
 - Python
