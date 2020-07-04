@@ -11,5 +11,12 @@ namespace SharpBrick.PoweredUp.Hubs
                 PoweredUpHubManufacturerData.TechnicMediumHub => new TechnicMediumHub(0x00, serviceProvider),
                 _ => throw new NotSupportedException($"Hub with type {(PoweredUpHubManufacturerData)manufacturerData[1]} not yet supported."),
             };
+
+        public static SystemType GetSystemTypeFromType(Type type)
+            => type.Name switch
+            {
+                nameof(TechnicMediumHub) => SystemType.LegoTechnic_MediumHub,
+                _ => throw new NotSupportedException(),
+            };
     }
 }

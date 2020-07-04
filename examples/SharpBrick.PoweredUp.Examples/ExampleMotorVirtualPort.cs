@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
 
@@ -11,6 +10,13 @@ namespace Example
         {
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
+                await technicMediumHub.VerifyAsync(modelBuilder => modelBuilder
+                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                        .AddDevice<TechnicXLargeLinearMotor>(0)
+                        .AddDevice<TechnicXLargeLinearMotor>(2)
+                    )
+                );
+
                 var virtualPort = await technicMediumHub.CreateVirtualPortAsync(0, 2);
 
                 var motorsOnVirtualPort = virtualPort.GetDevice<TechnicXLargeLinearMotor>();

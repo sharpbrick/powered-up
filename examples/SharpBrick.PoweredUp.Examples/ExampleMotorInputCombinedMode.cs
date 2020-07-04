@@ -15,6 +15,12 @@ namespace Example
 
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
+                await technicMediumHub.VerifyAsync(modelBuilder => modelBuilder
+                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                        .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
+                    )
+                );
+
                 var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
                 await motor.TryLockDeviceForCombinedModeNotificationSetupAsync(motor.ModeIndexSpeed, motor.ModeIndexPosition, motor.ModeIndexAbsolutePosition);

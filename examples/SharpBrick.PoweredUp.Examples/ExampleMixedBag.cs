@@ -15,6 +15,12 @@ namespace Example
 
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
+                await technicMediumHub.VerifyAsync(modelBuilder => modelBuilder
+                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                        .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
+                    )
+                );
+
                 await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
                 technicMediumHub.Current.CurrentLObservable.Subscribe(v =>
