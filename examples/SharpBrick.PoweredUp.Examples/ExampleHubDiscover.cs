@@ -33,6 +33,8 @@ namespace Example
 
             var host = new PoweredUpHost(poweredUpBluetoothAdapter, serviceProvider);
 
+            Hub result = null;
+
             logger.LogInformation("Finding Service");
             var cts = new CancellationTokenSource();
             host.Discover(async hub =>
@@ -48,6 +50,8 @@ namespace Example
                 logger.LogInformation("Connecting to Hub");
                 await hub.ConnectAsync();
 
+                result = hub;
+
                 logger.LogInformation(hub.AdvertisingName);
                 logger.LogInformation(hub.SystemType.ToString());
 
@@ -60,7 +64,7 @@ namespace Example
             Console.ReadLine();
 
             cts.Cancel();
-            return (host, serviceProvider, null);
+            return (host, serviceProvider, result);
         }
     }
 }

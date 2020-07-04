@@ -13,8 +13,6 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 
 # Examples
 
-***Note**: While already usable, this library is work in progress.*
-
 ## Discovering Hubs
 
 ````csharp
@@ -64,8 +62,6 @@ using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
 ````
 
 ## Receiving values from Ports and Devices of a Hub (single value setup)
-
-***Note**: All API calls are currently not synchronized (e.g. the result property is not filled just because the request was sent)*
 
 ````csharp
 var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
@@ -164,13 +160,13 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
     - [X] Technic Medium Hub - Temperature Sensor 1 + 2
     - [X] Technic Medium Hub - Accelerometer
     - [X] Technic Medium Hub - Gyro Sensor
-    - [ ] Technic Medium Hub - Tilt Sensor
+    - [X] Technic Medium Hub - Tilt Sensor
     - [ ] Technic Medium Hub - Gesture Sensor
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
     - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
 - Protocol
-  - [X] Message Encoding (95% [spec coverage](docs/specification/coverage.md))
+  - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
   - [X] Knowledge
 - Command Line (`dotnet install -g SharpBrick.PoweredUp.Cli`)
   - [X] `poweredup device list` (discover all connected devices and their port (mode) properties)

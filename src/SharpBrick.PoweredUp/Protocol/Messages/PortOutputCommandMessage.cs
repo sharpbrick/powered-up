@@ -174,7 +174,7 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     public class PortOutputCommandTiltConfigOrientationMessage : PortOutputCommandWriteDirectModeDataMessage
     {
         public PortOutputCommandTiltConfigOrientationMessage() : base(0x05) { }
-        public PortOutputCommandTiltConfigOrientation Orientation { get; set; }
+        public TiltConfigOrientation Orientation { get; set; }
     }
 
     // spec chapter: 3.27.17

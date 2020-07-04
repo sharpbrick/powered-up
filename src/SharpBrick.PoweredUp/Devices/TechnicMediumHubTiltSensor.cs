@@ -1,22 +1,126 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
     public class TechnicMediumHubTiltSensor : Device, IPoweredUpDevice
     {
+        public byte ModeIndexPosition { get; protected set; } = 0;
+        public byte ModeIndexImpacts { get; protected set; } = 1;
+        public byte ModeIndexConfig { get; protected set; } = 2;
+
+        public (short x, short y, short z) Position { get; private set; }
+        public int Impacts { get; private set; }
+        public IObservable<(short x, short y, short z)> PositionObservable { get; }
+        public IObservable<Value<int>> ImpactsObservable { get; }
+
         public TechnicMediumHubTiltSensor()
         { }
 
         public TechnicMediumHubTiltSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
+        {
+            PositionObservable = CreatePortModeValueObservable<short, (short, short, short)>(ModeIndexPosition, pvd => (pvd.SIInputValues[0], pvd.SIInputValues[1], pvd.SIInputValues[2]));
+            ImpactsObservable = CreateSinglePortModeValueObservable<int>(ModeIndexImpacts);
+
+            ObserveOnLocalProperty(PositionObservable, v => Position = v);
+            ObserveOnLocalProperty(ImpactsObservable, v => Impacts = v.SI);
+        }
+
+        /// <summary>
+        /// Set the Tilt into ImpactCount mode and change (preset) the value to the given PresetValue.
+        /// </summary>
+        /// <param name="presetValue">Value between 0 and int.MaxValue</param>
+        /// <returns></returns>
+        public async Task<PortFeedback> TiltImpactPresetAsync(int presetValue)
+        {
+            AssertIsConnected();
+
+            if (presetValue < 0)
+            {
+                throw new ArgumentOutOfRangeException("PresetValue has to be between 0 and int.MaxValue", nameof(presetValue));
+            }
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltImpactPresetMessage()
+            {
+                HubId = _hubId,
+                PortId = _portId,
+                ModeIndex = ModeIndexImpacts,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                PresetValue = presetValue,
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Setup Tilt ImpactThreshold and BumpHoldoff
+        /// </summary>
+        /// <param name="impactThreshold">Impact Threshold between 0 and 127.</param>
+        /// <param name="bumpHoldoffInMs">Bump Holdoff between 10ms and 1270ms.</param>
+        /// <returns></returns>
+        public async Task<PortFeedback> TiltConfigImpactAsync(sbyte impactThreshold, short bumpHoldoffInMs)
+        {
+            AssertIsConnected();
+
+            if (impactThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException("Impact Threshold has to be between 0 and 127", nameof(impactThreshold));
+            }
+
+            if (bumpHoldoffInMs < 10 || bumpHoldoffInMs > 1270)
+            {
+                throw new ArgumentOutOfRangeException("Hold off has to be between 10 and 1270 ms (in steps of 10ms)", nameof(bumpHoldoffInMs));
+            }
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigImpactMessage()
+            {
+                HubId = _hubId,
+                PortId = _portId,
+                ModeIndex = ModeIndexConfig,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                ImpactThreshold = impactThreshold,
+                BumpHoldoff = (sbyte)((float)bumpHoldoffInMs / 10),
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Set the Tilt into Orientation mode and set the Orientation value to Orientation.
+        ///  
+        /// DOES NOT work on technic medium hub (with or without feedback, with or without NoAction/CommandFeedback) (send e.g. as 08-00-81-63-11-51-02-01). 
+        /// </summary>
+        /// <param name="orientation">orientation of the tilt for 0 values.</param>
+        /// <returns></returns>
+        public async Task<PortFeedback> TiltConfigOrientationAsync(TiltConfigOrientation orientation)
+        {
+            AssertIsConnected();
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigOrientationMessage()
+            {
+                HubId = _hubId,
+                PortId = _portId,
+                ModeIndex = ModeIndexConfig, // TODO ???
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Orientation = orientation
+            });
+
+            return response;
+        }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
-            =>
+            => (softwareVersion.ToString(), hardwareVersion.ToString()) switch
+            {
+                ("0.0.0.1", "0.0.0.1") =>
 @"
 0B-00-43-63-01-03-03-03-00-04-00
 05-00-43-63-02
@@ -41,6 +145,8 @@ namespace SharpBrick.PoweredUp
 0A-00-44-63-02-04-00-00-00-00
 08-00-44-63-02-05-00-10
 0A-00-44-63-02-80-02-00-03-00
-".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
+".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s)),
+                _ => throw new NotSupportedException("SharpBrick.PoweredUp currently does not support this version of the sensor."),
+            };
     }
 }

@@ -228,6 +228,46 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 Position = position,
             });
 
+        [Theory]
+        [InlineData("0B-00-81-63-11-51-01-00-00-00-00", 99, 1, 0)]
+        [InlineData("0B-00-81-63-11-51-01-0F-00-00-00", 99, 1, 15)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandTiltImpactPresetMessage(string expectedData, byte port, byte modeIndex, int presetValue)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandTiltImpactPresetMessage()
+            {
+                PortId = port,
+                ModeIndex = modeIndex,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                PresetValue = presetValue,
+            });
+
+        [Theory]
+        [InlineData("09-00-81-63-11-51-02-02-03", 99, 2, 2, 3)]
+        [InlineData("09-00-81-63-11-51-02-04-05", 99, 2, 4, 5)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandTiltConfigImpactMessage(string expectedData, byte port, byte modeIndex, sbyte impactThreshold, sbyte bumpHoldoff)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandTiltConfigImpactMessage()
+            {
+                PortId = port,
+                ModeIndex = modeIndex,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                ImpactThreshold = impactThreshold,
+                BumpHoldoff = bumpHoldoff,
+            });
+
+        [Theory]
+        [InlineData("08-00-81-63-11-51-02-00", 99, 2, TiltConfigOrientation.Bottom)]
+        [InlineData("08-00-81-63-11-51-02-03", 99, 2, TiltConfigOrientation.Left)]
+        public void PortOutputCommandEncoder_Encode_PortOutputCommandTiltConfigOrientationMessage(string expectedData, byte port, byte modeIndex, TiltConfigOrientation orientation)
+            => PortOutputCommandEncoder_Encode(expectedData, new PortOutputCommandTiltConfigOrientationMessage()
+            {
+                PortId = port,
+                ModeIndex = modeIndex,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Orientation = orientation,
+            });
+
         private void PortOutputCommandEncoder_Encode(string expectedDataAsString, PoweredUpMessage message)
         {
             // act

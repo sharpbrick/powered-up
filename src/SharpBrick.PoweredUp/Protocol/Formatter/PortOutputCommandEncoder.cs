@@ -27,6 +27,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         PortOutputCommandSetRgbColorNoMessage msg => 1,
                         PortOutputCommandSetRgbColorNo2Message msg => 3,
                         PortOutputCommandPresetEncoderMessage msg => 4,
+                        PortOutputCommandTiltImpactPresetMessage msg => 4,
+                        PortOutputCommandTiltConfigImpactMessage msg => 2,
+                        PortOutputCommandTiltConfigOrientationMessage msg => 1,
 
                         _ => throw new NotSupportedException(),
                     },
@@ -147,6 +150,19 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                         case PortOutputCommandPresetEncoderMessage msg:
                             BitConverter.TryWriteBytes(data.Slice(4, 4), msg.Position);
+                            break;
+
+                        case PortOutputCommandTiltImpactPresetMessage msg:
+                            BitConverter.TryWriteBytes(data.Slice(4, 4), msg.PresetValue);
+                            break;
+
+                        case PortOutputCommandTiltConfigImpactMessage msg:
+                            data[4] = (byte)msg.ImpactThreshold;
+                            data[5] = (byte)msg.BumpHoldoff;
+                            break;
+
+                        case PortOutputCommandTiltConfigOrientationMessage msg:
+                            data[4] = (byte)msg.Orientation;
                             break;
                     }
 

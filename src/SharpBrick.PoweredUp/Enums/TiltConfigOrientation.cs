@@ -1,6 +1,6 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+﻿namespace SharpBrick.PoweredUp
 {
-    public enum PortOutputCommandTiltConfigOrientation : byte
+    public enum TiltConfigOrientation : byte
     {
         Bottom = 0x00,
         Front = 0x01,
