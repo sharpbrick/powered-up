@@ -6,10 +6,10 @@ namespace SharpBrick.PoweredUp
     {
         public TechnicMediumHub(byte hubId, IServiceProvider serviceProvider = default)
             : base(hubId, serviceProvider, new Port[] {
-                new Port(0, "A", true),
-                new Port(1, "B", true),
-                new Port(2, "C", true),
-                new Port(3, "D", true),
+                new Port(0, nameof(A), true),
+                new Port(1, nameof(B), true),
+                new Port(2, nameof(C), true),
+                new Port(3, nameof(D), true),
                 new Port(50, string.Empty, false, expectedDevice: DeviceType.RgbLight),
                 new Port(59, string.Empty, false, expectedDevice: DeviceType.Current),
                 new Port(60, string.Empty, false, expectedDevice: DeviceType.Voltage),

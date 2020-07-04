@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp
 
         public Port Port(byte id) => _ports.TryGetValue(id, out var port) ? port : default;
 
-        public void AddKnownPorts(IEnumerable<Port> knownPorts)
+        protected void AddKnownPorts(IEnumerable<Port> knownPorts)
         {
             foreach (var port in knownPorts)
             {
@@ -23,7 +23,13 @@ namespace SharpBrick.PoweredUp
             }
         }
 
-        public async Task CreateVirtualPortAsync(byte port1, byte port2)
+        /// <summary>
+        /// Create a VirtualPort of two identical ports
+        /// </summary>
+        /// <param name="portId1"></param>
+        /// <param name="portId2"></param>
+        /// <returns></returns>
+        public async Task CreateVirtualPortAsync(byte portId1, byte portId2)
         {
             AssertIsConnected();
 
@@ -31,27 +37,32 @@ namespace SharpBrick.PoweredUp
             {
                 HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
-                PortAId = port1,
-                PortBId = port2,
+                PortAId = portId1,
+                PortBId = portId2,
             });
         }
 
-        public async Task CloseVirtualPortAsync(byte virtualPort)
+        /// <summary>
+        /// Remove the virtual port.
+        /// </summary>
+        /// <param name="virtualPortId"></param>
+        /// <returns></returns>
+        public async Task CloseVirtualPortAsync(byte virtualPortId)
         {
             AssertIsConnected();
 
-            var port = Port(virtualPort);
+            var port = Port(virtualPortId);
 
             if (port is null || !port.IsVirtual)
             {
-                throw new ArgumentException("Port not present or not virtual", nameof(virtualPort));
+                throw new ArgumentException("Port not present or not virtual", nameof(virtualPortId));
             }
 
             await Protocol.SendMessageAsync(new VirtualPortSetupForDisconnectedMessage()
             {
                 HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
-                PortId = virtualPort,
+                PortId = virtualPortId,
             });
         }
 

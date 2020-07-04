@@ -17,6 +17,11 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         { }
 
+        /// <summary>
+        /// Show the Color specified by ColorNo
+        /// </summary>
+        /// <param name="color">A color no from the enum.</param>
+        /// <returns></returns>
         public async Task SetRgbColorNoAsync(PoweredUpColor color)
         {
             AssertIsConnected();
@@ -30,6 +35,14 @@ namespace SharpBrick.PoweredUp
                 ColorNo = color,
             });
         }
+
+        /// <summary>
+        /// Show a color mixed off the individual RGB values.
+        /// </summary>
+        /// <param name="red"></param>
+        /// <param name="green"></param>
+        /// <param name="blue"></param>
+        /// <returns></returns>
         public async Task<PortFeedback> SetRgbColorsAsync(byte red, byte green, byte blue)
         {
             AssertIsConnected();

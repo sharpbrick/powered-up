@@ -2,7 +2,8 @@ namespace SharpBrick.PoweredUp
 {
     public class Port
     {
-        public IPoweredUpDevice _device;
+        private IPoweredUpDevice _device;
+
         public byte PortId { get; }
         public string FriendlyName { get; }
         public bool ExternalPort { get; }

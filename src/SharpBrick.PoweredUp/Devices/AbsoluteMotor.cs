@@ -116,6 +116,10 @@ namespace SharpBrick.PoweredUp
             return result.SI;
         }
 
+        /// <summary>
+        /// Aligns the current position with the nearest absolute position 0.
+        /// </summary>
+        /// <returns></returns>
         public async Task GotoRealZeroAsync()
         {
             AssertIsConnected();
