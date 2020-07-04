@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Devices;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
@@ -29,17 +30,21 @@ namespace SharpBrick.PoweredUp
         /// <param name="portId1"></param>
         /// <param name="portId2"></param>
         /// <returns></returns>
-        public async Task CreateVirtualPortAsync(byte portId1, byte portId2)
+        public async Task<Port> CreateVirtualPortAsync(byte portId1, byte portId2)
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new VirtualPortSetupForConnectedMessage()
+            var virtualPortAttachedMessage = await Protocol.SendMessageReceiveResultAsync<HubAttachedIOForAttachedVirtualDeviceMessage>(new VirtualPortSetupForConnectedMessage()
             {
                 HubId = HubId,
                 SubCommand = VirtualPortSubCommand.Connected,
                 PortAId = portId1,
                 PortBId = portId2,
-            });
+            }, msg => msg.PortAId == portId1 && msg.PortBId == portId2);
+
+            var port = OnHubAttachedVirtualIOMessage(virtualPortAttachedMessage);
+
+            return port;
         }
 
         /// <summary>
@@ -89,17 +94,24 @@ namespace SharpBrick.PoweredUp
                     }
 
                     break;
-                case HubAttachedIOForAttachedVirtualDeviceMessage attachedVirtualDeviceMessage:
-                    var createdVirtualPort = new Port(attachedVirtualDeviceMessage.PortId, "Virtual Port", false, attachedVirtualDeviceMessage.IOTypeId, true);
+                    // case HubAttachedIOForAttachedVirtualDeviceMessage attachedVirtualDeviceMessage:
+                    //     OnHubAttachedVirtualIOMessage(attachedVirtualDeviceMessage);
 
-                    _ports[createdVirtualPort.PortId] = createdVirtualPort;
-
-                    var deviceOnVirtualPort = DeviceFactory.CreateConnected(attachedVirtualDeviceMessage.IOTypeId, Protocol, attachedVirtualDeviceMessage.HubId, attachedVirtualDeviceMessage.PortId);
-
-                    createdVirtualPort.AttachDevice(deviceOnVirtualPort, attachedVirtualDeviceMessage.IOTypeId);
-
-                    break;
+                    //     break;
             }
+        }
+
+        private Port OnHubAttachedVirtualIOMessage(HubAttachedIOForAttachedVirtualDeviceMessage attachedVirtualDeviceMessage)
+        {
+            var createdVirtualPort = new Port(attachedVirtualDeviceMessage.PortId, "Virtual Port", false, attachedVirtualDeviceMessage.IOTypeId, true);
+
+            _ports[createdVirtualPort.PortId] = createdVirtualPort;
+
+            var deviceOnVirtualPort = DeviceFactory.CreateConnected(attachedVirtualDeviceMessage.IOTypeId, Protocol, attachedVirtualDeviceMessage.HubId, attachedVirtualDeviceMessage.PortId);
+
+            createdVirtualPort.AttachDevice(deviceOnVirtualPort, attachedVirtualDeviceMessage.IOTypeId);
+
+            return createdVirtualPort;
         }
     }
 }

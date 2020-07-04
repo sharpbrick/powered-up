@@ -11,10 +11,8 @@ namespace Example
         {
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
-                await technicMediumHub.CreateVirtualPortAsync(0, 2);
-                await Task.Delay(1000);
+                var virtualPort = await technicMediumHub.CreateVirtualPortAsync(0, 2);
 
-                var virtualPort = technicMediumHub.Ports.FirstOrDefault(p => p.IsVirtual);
                 var motorsOnVirtualPort = virtualPort.GetDevice<TechnicXLargeLinearMotor>();
 
                 await motorsOnVirtualPort.GotoAbsolutePositionAsync(90, -45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
