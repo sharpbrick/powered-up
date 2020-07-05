@@ -7,6 +7,10 @@ namespace SharpBrick.PoweredUp.Deployment
 {
     public class DeploymentModel
     {
+        /// <summary>
+        /// Expected Hubs in Model
+        /// </summary>
+        /// <value></value>
         public DeploymentHubModel[] Hubs { get; }
 
         public DeploymentModel(DeploymentHubModel[] hubs)
@@ -19,6 +23,11 @@ namespace SharpBrick.PoweredUp.Deployment
             Hubs = hubs;
         }
 
+        /// <summary>
+        /// Verify the model against a list of protocols (e.g. due to multiple BT connections)
+        /// </summary>
+        /// <param name="protocols"></param>
+        /// <returns></returns>
         public DeploymentModelError[] Verify(params IPoweredUpProtocol[] protocols)
         {
             //TODO: match best hub with best protocol
@@ -26,6 +35,13 @@ namespace SharpBrick.PoweredUp.Deployment
             return Verify(protocols[0], 0x00, Hubs[0]);
         }
 
+        /// <summary>
+        /// Verify a given Hub (protocol + hubId) aganinst a HubModel
+        /// </summary>
+        /// <param name="protocol"></param>
+        /// <param name="hubId"></param>
+        /// <param name="hubModel"></param>
+        /// <returns></returns>
         public DeploymentModelError[] Verify(IPoweredUpProtocol protocol, byte hubId, DeploymentHubModel hubModel)
         {
             if (protocol is null)

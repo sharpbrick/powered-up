@@ -7,8 +7,11 @@ namespace SharpBrick.PoweredUp.Deployment
     public class DeploymentModelHubBuilder
     {
         private List<DeploymentDeviceModel> _devices = new List<DeploymentDeviceModel>();
-        internal IEnumerable<DeploymentDeviceModel> Devices => _devices;
 
+        private SystemType? _hubType = null;
+
+        public void AddHubType(SystemType? hubType)
+            => _hubType = hubType;
 
         public DeploymentModelHubBuilder AddDevice<TDevice>(Port port)
             => AddDevice<TDevice>(port?.PortId ?? throw new ArgumentNullException(nameof(port)));
@@ -27,5 +30,8 @@ namespace SharpBrick.PoweredUp.Deployment
 
             return this;
         }
+
+        public DeploymentHubModel Build()
+            => new DeploymentHubModel(_hubType, _devices.ToArray());
     }
 }

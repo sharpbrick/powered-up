@@ -17,7 +17,7 @@ Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp
 
 ````csharp
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.WinRT;
+using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 ````
 
 ## Discovering Hubs
