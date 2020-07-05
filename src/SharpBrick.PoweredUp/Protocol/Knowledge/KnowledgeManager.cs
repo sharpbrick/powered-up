@@ -105,10 +105,16 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         }
         public static Task ApplyDynamicProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge)
         {
+            HubInfo hub;
             PortInfo port;
             PortModeInfo mode;
             switch (message)
             {
+                case HubPropertyMessage<SystemType> msg when msg.Property == HubProperty.SystemTypeId:
+                    hub = knowledge.Hub(msg.HubId);
+
+                    hub.SystemType = msg.Payload;
+                    break;
                 case HubAttachedIOForAttachedDeviceMessage msg:
                     port = knowledge.Port(msg.HubId, msg.PortId);
 
@@ -166,9 +172,11 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     switch (message)
                     {
                         case PortModeInformationMessage pmim:
+                            pmim.HubId = port.HubId;
                             pmim.PortId = port.PortId;
                             break;
                         case PortInformationMessage pim:
+                            pim.HubId = port.HubId;
                             pim.PortId = port.PortId;
                             break;
                     }
