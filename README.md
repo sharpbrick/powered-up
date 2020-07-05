@@ -15,6 +15,11 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 
 Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp.Examples` project (15+ examples).
 
+````csharp
+using SharpBrick.PoweredUp;
+using SharpBrick.PoweredUp.WinRT;
+````
+
 ## Discovering Hubs
 
 ````csharp
@@ -51,6 +56,13 @@ var host = new PoweredUpHost();
 
 using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
 {
+    // optionally verify if everything is wired up correctly (v1.1 onwards)
+    await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
+        .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+            .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
+        )
+    );
+
     await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
     var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
