@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public ushort CalculateContentLength(PoweredUpMessage message)
             => (ushort)(message is PortInputFormatSetupCombinedModeForSetModeDataSetMessage setMessage ? 3 + setMessage.ModeDataSets.Length : 2);
 
-        public PoweredUpMessage Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
             => throw new NotImplementedException();
 
         public void Encode(PoweredUpMessage message, in Span<byte> data)

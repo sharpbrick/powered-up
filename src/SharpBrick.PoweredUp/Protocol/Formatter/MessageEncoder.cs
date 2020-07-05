@@ -83,7 +83,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             if (encoder != null)
             {
-                var message = encoder?.Decode(content);
+                var message = encoder?.Decode(hubId, content);
 
                 message.Length = length;
                 message.HubId = hubId;

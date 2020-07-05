@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void Encode(PoweredUpMessage message, in Span<byte> data)
             => throw new NotImplementedException();
 
-        public PoweredUpMessage Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
         {
             byte portId = data[0];
             HubAttachedIOEvent ev = (HubAttachedIOEvent)data[1];

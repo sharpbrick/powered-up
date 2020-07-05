@@ -7,31 +7,53 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public class ProtocolKnowledge
     {
-        public IDictionary<byte, PortInfo> Ports = new ConcurrentDictionary<byte, PortInfo>();
+        private ConcurrentDictionary<byte, HubInfo> _hubs = new ConcurrentDictionary<byte, HubInfo>();
+        public IEnumerable<HubInfo> Hubs => _hubs.Values;
 
-        public PortInfo Port(byte portId)
+        public HubInfo Hub(byte hubId)
         {
-            PortInfo result;
-            if (!Ports.TryGetValue(portId, out result))
+            HubInfo result;
+
+            if (!_hubs.TryGetValue(hubId, out result))
             {
-                result = new PortInfo()
+                result = new HubInfo()
                 {
-                    PortId = portId,
+                    HubId = hubId,
                 };
 
-                Ports.Add(portId, result);
+                _hubs.TryAdd(hubId, result);
             }
 
             return result;
         }
 
-        public PortModeInfo PortMode(byte portId, byte modeId)
-        {
-            var port = Port(portId);
 
-            if (!(port.Modes.FirstOrDefault(m => m.ModeIndex == modeId) is var result))
+        public PortInfo Port(byte hubId, byte portId)
+        {
+            var hub = Hub(hubId);
+
+            PortInfo result;
+            if (!hub.Ports.TryGetValue(portId, out result))
             {
-                throw new ArgumentException(nameof(modeId));
+                result = new PortInfo()
+                {
+                    HubId = hub.HubId,
+                    PortId = portId,
+                };
+
+                hub.Ports.TryAdd(portId, result);
+            }
+
+            return result;
+        }
+
+        public PortModeInfo PortMode(byte hubId, byte portId, byte modeIndex)
+        {
+            var port = Port(hubId, portId);
+
+            if (!(port.Modes.TryGetValue(modeIndex, out var result)))
+            {
+                throw new ArgumentException(nameof(modeIndex));
             }
 
             return result;

@@ -64,7 +64,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             }
         }
 
-        public PoweredUpMessage Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
         {
             HubPropertyMessage message = (HubProperty)data[0] switch
             {

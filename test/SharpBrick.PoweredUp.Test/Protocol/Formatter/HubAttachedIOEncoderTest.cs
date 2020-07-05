@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
 
             // act
-            var message = new HubAttachedIOEncoder().Decode(data) as HubAttachedIOForAttachedDeviceMessage;
+            var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedDeviceMessage;
 
             // assert
             Assert.Equal(expectedPortId, message.PortId);
@@ -43,7 +43,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
 
             // act
-            var message = new HubAttachedIOEncoder().Decode(data) as HubAttachedIOForAttachedVirtualDeviceMessage;
+            var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedVirtualDeviceMessage;
 
             // assert
             Assert.Equal(expectedPortId, message.PortId);

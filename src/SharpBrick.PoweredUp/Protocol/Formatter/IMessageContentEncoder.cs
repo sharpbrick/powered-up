@@ -7,6 +7,6 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     {
         ushort CalculateContentLength(PoweredUpMessage message);
         void Encode(PoweredUpMessage message, in Span<byte> data);
-        PoweredUpMessage Decode(in Span<byte> data);
+        PoweredUpMessage Decode(byte hubId, in Span<byte> data);
     }
 }

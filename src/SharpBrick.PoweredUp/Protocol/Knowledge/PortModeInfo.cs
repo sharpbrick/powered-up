@@ -4,9 +4,11 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public class PortModeInfo
     {
-        // PortInformationForModeInfoMessage
+        public byte HubId { get; set; }
         public byte PortId { get; set; }
         public byte ModeIndex { get; set; }
+
+        // PortInformationForModeInfoMessage
         public bool IsInput { get; set; }
         public bool IsOutput { get; set; }
 

@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Concurrent;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public class PortInfo
     {
+        public byte HubId { get; set; }
         public byte PortId { get; set; }
+        public ConcurrentDictionary<byte, PortModeInfo> Modes { get; set; } = new ConcurrentDictionary<byte, PortModeInfo>();
 
         // HubAttachedIOForAttachedDeviceMessage
         public bool IsDeviceConnected { get; set; } = false;
@@ -18,7 +21,6 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         public bool InputCapability { get; set; }
         public bool LogicalCombinableCapability { get; set; }
         public bool LogicalSynchronizableCapability { get; set; }
-        public PortModeInfo[] Modes { get; set; }
 
         // PortInformationForPossibleModeCombinationsMessage
         public ushort[] ModeCombinations { get; set; }

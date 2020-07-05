@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public ushort CalculateContentLength(PoweredUpMessage message)
             => throw new NotImplementedException();
 
-        public PoweredUpMessage Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
         {
             var result = new List<PortValueData>();
 
@@ -33,13 +33,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             while (remainingSlice.Length > 0)
             {
-                var portInfo = _knowledge.Port(port);
+                var portInfo = _knowledge.Port(hubId, port);
 
                 var mode = portInfo.RequestedCombinedModeDataSets[modeDataSetIndices[currentIndexIndex]].Mode;
 
                 //var mode = (byte)modeDataSetIndices[currentIndexIndex];
 
-                var modeInfo = _knowledge.PortMode(port, mode);
+                var modeInfo = _knowledge.PortMode(hubId, port, mode);
 
                 int lengthOfDataType = PortValueSingleEncoder.GetLengthOfDataType(modeInfo);
 

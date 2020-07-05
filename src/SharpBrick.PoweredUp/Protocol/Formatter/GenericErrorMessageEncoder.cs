@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public ushort CalculateContentLength(PoweredUpMessage message)
             => throw new NotImplementedException();
 
-        public PoweredUpMessage Decode(in Span<byte> data)
+        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
             => new GenericErrorMessage()
             {
                 CommandType = data[0],

@@ -27,7 +27,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
 
             // act
-            var message = new HubPropertiesEncoder().Decode(data) as HubPropertyMessage<T>;
+            var message = new HubPropertiesEncoder().Decode(0x00, data) as HubPropertyMessage<T>;
 
             // assert
             Assert.Equal(expectedProperty, message.Property);

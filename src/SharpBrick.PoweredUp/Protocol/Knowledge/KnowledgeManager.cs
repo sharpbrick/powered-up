@@ -19,58 +19,62 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             switch (message)
             {
                 case PortInformationForModeInfoMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
 
                     port.OutputCapability = msg.OutputCapability;
                     port.InputCapability = msg.InputCapability;
                     port.LogicalCombinableCapability = msg.LogicalCombinableCapability;
                     port.LogicalSynchronizableCapability = msg.LogicalSynchronizableCapability;
-                    port.Modes = Enumerable.Range(0, msg.TotalModeCount).Select(modeIndex => new PortModeInfo()
+                    foreach (var modeInfo in Enumerable.Range(0, msg.TotalModeCount).Select(modeIndex => new PortModeInfo()
                     {
+                        HubId = port.HubId,
                         PortId = msg.PortId,
                         ModeIndex = (byte)modeIndex,
                         IsInput = ((1 << modeIndex) & msg.InputModes) > 0,
                         IsOutput = ((1 << modeIndex) & msg.OutputModes) > 0
-                    }).ToArray();
+                    }))
+                    {
+                        port.Modes.TryAdd(modeInfo.ModeIndex, modeInfo);
+                    }
 
                     break;
                 case PortInformationForPossibleModeCombinationsMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
 
                     port.ModeCombinations = msg.ModeCombinations;
                     break;
 
 
                 case PortModeInformationForNameMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.Name = msg.Name;
                     break;
                 case PortModeInformationForRawMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.RawMin = msg.RawMin;
                     mode.RawMax = msg.RawMax;
                     break;
                 case PortModeInformationForPctMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.PctMin = msg.PctMin;
                     mode.PctMax = msg.PctMax;
                     break;
                 case PortModeInformationForSIMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.SIMin = msg.SIMin;
                     mode.SIMax = msg.SIMax;
                     break;
                 case PortModeInformationForSymbolMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.Symbol = msg.Symbol;
                     break;
                 case PortModeInformationForMappingMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.InputSupportsNull = msg.InputSupportsNull;
                     mode.InputSupportFunctionalMapping20 = msg.InputSupportFunctionalMapping20;
@@ -85,7 +89,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     mode.OutputDiscrete = msg.OutputDiscrete;
                     break;
                 case PortModeInformationForValueFormatMessage msg:
-                    mode = knowledge.PortMode(msg.PortId, msg.Mode);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.Mode);
 
                     mode.NumberOfDatasets = msg.NumberOfDatasets;
                     mode.DatasetType = msg.DatasetType;
@@ -106,9 +110,9 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             switch (message)
             {
                 case HubAttachedIOForAttachedDeviceMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
 
-                    ResetProtocolKnowledgeForPort(port.PortId, knowledge);
+                    ResetProtocolKnowledgeForPort(msg.HubId, port.PortId, knowledge);
                     port.IsDeviceConnected = true;
                     port.IOTypeId = msg.IOTypeId;
                     port.HardwareRevision = msg.HardwareRevision;
@@ -117,15 +121,15 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, port, knowledge);
                     break;
                 case HubAttachedIOForDetachedDeviceMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
 
-                    ResetProtocolKnowledgeForPort(port.PortId, knowledge);
+                    ResetProtocolKnowledgeForPort(msg.HubId, port.PortId, knowledge);
                     port.IsDeviceConnected = false;
                     break;
 
                 case PortInputFormatSingleMessage msg:
-                    port = knowledge.Port(msg.PortId);
-                    mode = knowledge.PortMode(msg.PortId, msg.ModeIndex);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
+                    mode = knowledge.PortMode(msg.HubId, msg.PortId, msg.ModeIndex);
 
                     port.LastFormattedPortMode = msg.ModeIndex;
 
@@ -134,13 +138,13 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     break;
 
                 case PortInputFormatSetupCombinedModeForSetModeDataSetMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
 
                     port.RequestedCombinedModeDataSets = msg.ModeDataSets;
                     break;
 
                 case PortInputFormatCombinedModeMessage msg:
-                    port = knowledge.Port(msg.PortId);
+                    port = knowledge.Port(msg.HubId, msg.PortId);
 
                     port.UsedCombinationIndex = msg.UsedCombinationIndex;
                     port.MultiUpdateEnabled = msg.MultiUpdateEnabled;
@@ -174,9 +178,9 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             }
         }
 
-        private static void ResetProtocolKnowledgeForPort(byte portId, ProtocolKnowledge knowledge)
+        private static void ResetProtocolKnowledgeForPort(byte hubId, byte portId, ProtocolKnowledge knowledge)
         {
-            var port = knowledge.Port(portId);
+            var port = knowledge.Port(hubId, portId);
 
             port.IsDeviceConnected = false;
             port.IOTypeId = DeviceType.Unknown;
@@ -187,7 +191,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             port.InputCapability = false;
             port.LogicalCombinableCapability = false;
             port.LogicalSynchronizableCapability = false;
-            port.Modes = Array.Empty<PortModeInfo>();
+            port.Modes.Clear();
 
             port.ModeCombinations = Array.Empty<ushort>();
 

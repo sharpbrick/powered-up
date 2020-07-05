@@ -82,7 +82,7 @@ namespace SharpBrick.PoweredUp
 
         private byte IndexOfSupportedCombinedMode(byte[] modeIndices)
         {
-            var portInfo = _protocol.Knowledge.Port(_portId);
+            var portInfo = _protocol.Knowledge.Port(_hubId, _portId);
 
             byte result = 0xFF;
 
