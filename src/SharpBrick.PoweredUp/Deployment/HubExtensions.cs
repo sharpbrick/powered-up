@@ -108,6 +108,5 @@ namespace SharpBrick.PoweredUp
                 }
             };
         }
-        s
     }
 }
