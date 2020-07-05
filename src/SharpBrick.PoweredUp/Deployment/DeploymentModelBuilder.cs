@@ -9,20 +9,33 @@ namespace SharpBrick.PoweredUp.Deployment
     {
         private List<DeploymentHubModel> _hubs = new List<DeploymentHubModel>();
 
-        public DeploymentModelBuilder AddHub<THub>(Action<DeploymentModelHubBuilder<THub>> configure) where THub : Hub
+        public DeploymentModelBuilder AddHub<THub>(Action<DeploymentModelHubBuilder> configure)
+        {
+            var hubType = HubFactory.GetSystemTypeFromType(typeof(THub));
+
+            return AddHub(hubType, configure);
+        }
+
+        public DeploymentModelBuilder AddAnyHub(Action<DeploymentModelHubBuilder> configure)
+            => AddHub(null, configure);
+
+        public DeploymentModelBuilder AddHub(SystemType? hubType, Action<DeploymentModelHubBuilder> configure)
         {
             if (configure is null)
             {
                 throw new ArgumentNullException(nameof(configure));
             }
 
-            var hubBuilder = new DeploymentModelHubBuilder<THub>();
+            var hubBuilder = new DeploymentModelHubBuilder();
 
             configure(hubBuilder);
 
-            var hubType = HubFactory.GetSystemTypeFromType(typeof(THub));
+            return AddHub(hubType, hubBuilder.Devices.ToArray());
+        }
 
-            _hubs.Add(new DeploymentHubModel(hubType, hubBuilder.Devices.ToArray()));
+        private DeploymentModelBuilder AddHub(SystemType? hubType, DeploymentDeviceModel[] devices)
+        {
+            _hubs.Add(new DeploymentHubModel(hubType, devices));
 
             return this;
         }

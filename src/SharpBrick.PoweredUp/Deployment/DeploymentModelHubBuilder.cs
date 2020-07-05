@@ -4,19 +4,24 @@ using SharpBrick.PoweredUp.Devices;
 
 namespace SharpBrick.PoweredUp.Deployment
 {
-    public class DeploymentModelHubBuilder<THub> where THub : Hub
+    public class DeploymentModelHubBuilder
     {
         private List<DeploymentDeviceModel> _devices = new List<DeploymentDeviceModel>();
         internal IEnumerable<DeploymentDeviceModel> Devices => _devices;
 
 
-        public DeploymentModelHubBuilder<THub> AddDevice<TDevice>(Port port)
+        public DeploymentModelHubBuilder AddDevice<TDevice>(Port port)
             => AddDevice<TDevice>(port?.PortId ?? throw new ArgumentNullException(nameof(port)));
 
-        public DeploymentModelHubBuilder<THub> AddDevice<TDevice>(byte portId)
+        public DeploymentModelHubBuilder AddDevice<TDevice>(byte portId)
             => AddDevice(DeviceFactory.GetDeviceTypeFromType(typeof(TDevice)), portId);
 
-        public DeploymentModelHubBuilder<THub> AddDevice(DeviceType deviceType, byte portId)
+        public DeploymentModelHubBuilder AddAnyDevice(Port port)
+            => AddAnyDevice(port.PortId);
+        public DeploymentModelHubBuilder AddAnyDevice(byte portId)
+            => AddDevice(null, portId);
+
+        public DeploymentModelHubBuilder AddDevice(DeviceType? deviceType, byte portId)
         {
             _devices.Add(new DeploymentDeviceModel(portId, deviceType));
 
