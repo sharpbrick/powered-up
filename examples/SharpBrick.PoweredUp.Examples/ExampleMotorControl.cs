@@ -10,7 +10,7 @@ namespace Example
         {
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
-                await technicMediumHub.VerifyAsync(modelBuilder => modelBuilder
+                await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
                     .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
                         .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
                     )

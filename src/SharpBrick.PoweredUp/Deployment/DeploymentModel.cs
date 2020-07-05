@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 
 namespace SharpBrick.PoweredUp.Deployment
@@ -20,14 +19,14 @@ namespace SharpBrick.PoweredUp.Deployment
             Hubs = hubs;
         }
 
-        public Task<DeploymentModelError[]> VerifyAsync(params IPoweredUpProtocol[] protocols)
+        public DeploymentModelError[] Verify(params IPoweredUpProtocol[] protocols)
         {
             //TODO: match best hub with best protocol
 
-            return VerifyAsync(protocols[0], 0x00, Hubs[0]);
+            return Verify(protocols[0], 0x00, Hubs[0]);
         }
 
-        public Task<DeploymentModelError[]> VerifyAsync(IPoweredUpProtocol protocol, byte hubId, DeploymentHubModel hubModel)
+        public DeploymentModelError[] Verify(IPoweredUpProtocol protocol, byte hubId, DeploymentHubModel hubModel)
         {
             if (protocol is null)
             {
@@ -75,7 +74,7 @@ namespace SharpBrick.PoweredUp.Deployment
                     }
                 )));
 
-            return Task.FromResult(result.ToArray());
+            return result.ToArray();
         }
     }
 }
