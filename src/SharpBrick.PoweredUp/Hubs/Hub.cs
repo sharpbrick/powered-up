@@ -60,9 +60,13 @@ namespace SharpBrick.PoweredUp
 
         public async Task ConnectAsync()
         {
+            var expectedDevicesCompletedTask = ExpectedDevicesCompletedAsync();
 
             _logger?.LogDebug("Connecting BluetoothKernel");
             await Protocol.ConnectAsync();
+
+            await expectedDevicesCompletedTask;
+            _logger?.LogDebug("Hub Attached IO expected devices completed");
 
             _logger?.LogDebug("Query Hub Properties");
             await InitialHubPropertiesQueryAsync();

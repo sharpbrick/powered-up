@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Utils;
@@ -30,7 +29,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
             _service = await _device.GetServiceAsync(new Guid(PoweredUpBluetoothConstants.LegoHubService));
             _characteristic = await _service.GetCharacteristicAsync(new Guid(PoweredUpBluetoothConstants.LegoHubCharacteristic));
 
-            _logger?.LogInformation("BluetoothKernel: Connected");
+            _logger?.LogDebug("Connected");
         }
 
 
@@ -42,7 +41,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
             _device?.Dispose();
             _device = null;
 
-            _logger?.LogInformation("BluetoothKernel: Disconnected");
+            _logger?.LogDebug("Disconnected");
 
             return Task.CompletedTask;
         }
@@ -54,7 +53,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
                 throw new InvalidOperationException($"Cannot invoke {nameof(SendBytesAsync)} when device is not connected ({nameof(_characteristic)} is null)");
             }
 
-            _logger?.LogDebug($"BluetoothKernel: > {BytesStringUtil.DataToString(data)}");
+            _logger?.LogDebug($"> {BytesStringUtil.DataToString(data)}");
 
             await _characteristic.WriteValueAsync(data);
 
@@ -69,12 +68,12 @@ namespace SharpBrick.PoweredUp.Bluetooth
 
             await _characteristic.NotifyValueChangeAsync(async data =>
             {
-                _logger?.LogDebug($"BluetoothKernel: < {BytesStringUtil.DataToString(data)}");
+                _logger?.LogDebug($"< {BytesStringUtil.DataToString(data)}");
 
                 await handler(data);
             });
 
-            _logger?.LogInformation("BluetoothKernel: Registered Receive Handler");
+            _logger?.LogDebug("Registered Receive Handler");
         }
 
         #region Dispose

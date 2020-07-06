@@ -31,6 +31,12 @@ namespace SharpBrick.PoweredUp
                 .Select(msg => Port(msg.PortId));
         }
 
+        private async Task ExpectedDevicesCompletedAsync()
+            => await PortChangeObservable
+                .Where(msg => Ports.All(p => p.ExpectedDevice == null || (p.ExpectedDevice != null && p.DeviceType == p.ExpectedDevice)))
+                .FirstAsync()
+                .GetAwaiter();
+
         protected void AddKnownPorts(IEnumerable<Port> knownPorts)
         {
             foreach (var port in knownPorts)
