@@ -71,7 +71,7 @@ namespace SharpBrick.PoweredUp
                 throw new ArgumentNullException(nameof(model));
             }
 
-            return self.Protocol.UpstreamMessages.Select(msg => model.Verify(self.Protocol));
+            return self.Protocol.UpstreamMessages.Select(msg => model.Verify(self.Protocol)); // stay with protocol messages in general. Future constraint may listen to e.g. property changes.
         }
 
         private static DeploymentModel BuildModel(Action<DeploymentModelBuilder> configure)

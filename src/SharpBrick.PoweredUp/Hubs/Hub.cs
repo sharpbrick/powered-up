@@ -39,6 +39,7 @@ namespace SharpBrick.PoweredUp
             Protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
 
             SetupOnHubChange();
+            SetupOnPortChangeObservable(Protocol.UpstreamMessages);
             SetupHubAlertObservable(Protocol.UpstreamMessages);
         }
 

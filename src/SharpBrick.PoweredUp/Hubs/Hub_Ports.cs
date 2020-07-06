@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
@@ -12,9 +14,22 @@ namespace SharpBrick.PoweredUp
     {
         private ConcurrentDictionary<byte, Port> _ports = new ConcurrentDictionary<byte, Port>();
 
+        public IObservable<Port> PortChangeObservable { get; private set; }
+
         public IEnumerable<Port> Ports => _ports.Values;
 
-        public Port Port(byte id) => _ports.TryGetValue(id, out var port) ? port : default;
+        public Port Port(byte id)
+            => _ports.TryGetValue(id, out var port) ? port : default;
+
+        public Port Port(string friendlyName)
+            => _ports.Values.FirstOrDefault(p => p.FriendlyName == friendlyName) ?? default;
+
+        private void SetupOnPortChangeObservable(IObservable<PoweredUpMessage> upstreamMessages)
+        {
+            PortChangeObservable = upstreamMessages
+                .OfType<HubAttachedIOMessage>()
+                .Select(msg => Port(msg.PortId));
+        }
 
         protected void AddKnownPorts(IEnumerable<Port> knownPorts)
         {
