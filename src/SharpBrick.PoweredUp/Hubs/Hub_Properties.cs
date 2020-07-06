@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
@@ -25,30 +26,32 @@ namespace SharpBrick.PoweredUp
 
         private async Task InitialHubPropertiesQueryAsync()
         {
-            await RequestHubPropertySingleUpdate(HubProperty.AdvertisingName);
-            await RequestHubPropertySingleUpdate(HubProperty.Button);
-            await RequestHubPropertySingleUpdate(HubProperty.FwVersion);
-            await RequestHubPropertySingleUpdate(HubProperty.HwVersion);
-            await RequestHubPropertySingleUpdate(HubProperty.Rssi);
-            await RequestHubPropertySingleUpdate(HubProperty.BatteryVoltage);
-            await RequestHubPropertySingleUpdate(HubProperty.BatteryType);
-            await RequestHubPropertySingleUpdate(HubProperty.ManufacturerName);
-            await RequestHubPropertySingleUpdate(HubProperty.RadioFirmwareVersion);
-            await RequestHubPropertySingleUpdate(HubProperty.LegoWirelessProtocolVersion);
-            await RequestHubPropertySingleUpdate(HubProperty.SystemTypeId);
-            await RequestHubPropertySingleUpdate(HubProperty.HardwareNetworkId);
-            await RequestHubPropertySingleUpdate(HubProperty.PrimaryMacAddress);
-            await RequestHubPropertySingleUpdate(HubProperty.SecondaryMacAddress);
-            await RequestHubPropertySingleUpdate(HubProperty.HardwareNetworkFamily);
+            await Task.WhenAll(
+                RequestHubPropertySingleUpdate(HubProperty.AdvertisingName),
+                RequestHubPropertySingleUpdate(HubProperty.Button),
+                RequestHubPropertySingleUpdate(HubProperty.FwVersion),
+                RequestHubPropertySingleUpdate(HubProperty.HwVersion),
+                RequestHubPropertySingleUpdate(HubProperty.Rssi),
+                RequestHubPropertySingleUpdate(HubProperty.BatteryVoltage),
+                RequestHubPropertySingleUpdate(HubProperty.BatteryType),
+                RequestHubPropertySingleUpdate(HubProperty.ManufacturerName),
+                RequestHubPropertySingleUpdate(HubProperty.RadioFirmwareVersion),
+                RequestHubPropertySingleUpdate(HubProperty.LegoWirelessProtocolVersion),
+                RequestHubPropertySingleUpdate(HubProperty.SystemTypeId),
+                RequestHubPropertySingleUpdate(HubProperty.HardwareNetworkId),
+                RequestHubPropertySingleUpdate(HubProperty.PrimaryMacAddress),
+                RequestHubPropertySingleUpdate(HubProperty.SecondaryMacAddress)
+            // RequestHubPropertySingleUpdate(HubProperty.HardwareNetworkFamily) does not work .. at least for TechnicMediumHub. Throws command not recognized error.
+            );
         }
 
         public Task RequestHubPropertySingleUpdate(HubProperty property)
-            => Protocol.SendMessageAsync(new HubPropertyMessage()
+            => Protocol.SendMessageReceiveResultAsync<HubPropertyMessage>(new HubPropertyMessage()
             {
                 HubId = HubId,
                 Property = property,
                 Operation = HubPropertyOperation.RequestUpdate
-            });
+            }, msg => msg.Operation == HubPropertyOperation.Update && msg.Property == property);
 
         private void OnHubPropertyMessage(HubPropertyMessage hubProperty)
         {

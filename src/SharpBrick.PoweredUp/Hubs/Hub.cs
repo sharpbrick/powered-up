@@ -66,8 +66,6 @@ namespace SharpBrick.PoweredUp
             _logger?.LogDebug("Query Hub Properties");
             await InitialHubPropertiesQueryAsync();
 
-            //TODO await properties
-
             //TODO HubId = hubId;
 
             _logger?.LogDebug("Finished Querying Hub Properties");
