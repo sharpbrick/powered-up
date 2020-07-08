@@ -7,9 +7,9 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public class ExampleTechnicMediumHubGyroSensor
+    public class ExampleTechnicMediumHubGyroSensor : BaseExample
     {
-        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
+        public override async Task ExecuteAsync()
         {
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
 
@@ -21,7 +21,7 @@ namespace Example
 
                 var disposable = device.RotationObservable.Subscribe(x => logger.LogWarning($"Rotation: {x.x} / {x.y} / {x.z}"));
 
-                await Task.Delay(60_000);
+                await Task.Delay(10_000);
 
                 disposable.Dispose();
 

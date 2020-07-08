@@ -7,9 +7,9 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public class ExampleVoltage
+    public class ExampleVoltage : BaseExample
     {
-        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
+        public override async Task ExecuteAsync()
         {
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
 
@@ -21,7 +21,7 @@ namespace Example
 
                 var disposable = device.VoltageLObservable.Subscribe(x => logger.LogWarning($"Voltage L: {x.SI}mV ({x.Pct}%)"));
 
-                await Task.Delay(60_000);
+                await Task.Delay(10_000);
 
                 disposable.Dispose();
 

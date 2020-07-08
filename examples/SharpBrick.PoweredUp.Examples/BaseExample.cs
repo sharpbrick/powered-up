@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
@@ -8,11 +9,23 @@ using SharpBrick.PoweredUp.WinRT;
 
 namespace Example
 {
-    public static class ExampleHubDiscover
+    public abstract class BaseExample
     {
-        public static (PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub) CreateHostAndDiscover(bool enableTrace)
+        protected PoweredUpHost host;
+        protected IServiceProvider serviceProvider;
+        public Hub selectedHub;
+
+        public abstract Task ExecuteAsync();
+
+        public virtual void Configure(IServiceCollection serviceCollection)
         {
-            var serviceProvider = new ServiceCollection()
+            serviceCollection
+                .AddPoweredUp();
+        }
+
+        public void CreateHostAndDiscover(bool enableTrace)
+        {
+            var serviceCollection = new ServiceCollection()
                 // configure your favourite level of logging.
                 .AddLogging(builder =>
                 {
@@ -23,16 +36,18 @@ namespace Example
                     {
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
-                })
-                .AddPoweredUp()
-                .BuildServiceProvider();
+                });
+
+            Configure(serviceCollection);
+
+            serviceProvider = serviceCollection.BuildServiceProvider();
 
 
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
 
             var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
 
-            var host = new PoweredUpHost(poweredUpBluetoothAdapter, serviceProvider);
+            host = new PoweredUpHost(poweredUpBluetoothAdapter, serviceProvider);
 
             Hub result = null;
 
@@ -65,7 +80,8 @@ namespace Example
             Console.ReadLine();
 
             cts.Cancel();
-            return (host, serviceProvider, result);
+
+            selectedHub = result;
         }
     }
 }

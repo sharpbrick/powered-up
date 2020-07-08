@@ -5,9 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.Deployment;
-using SharpBrick.PoweredUp.WinRT;
-using System.Threading;
-using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
 
@@ -21,71 +18,15 @@ namespace Example
         public IPoweredUpDevice CreateConnected(DeviceType deviceType, IPoweredUpProtocol protocol, byte hubId, byte portId)
             => null;
     }
-    public class ExampleDynamicDevice
+    public class ExampleDynamicDevice : BaseExample
     {
-        public static (PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub) CreateHostAndDiscover(bool enableTrace)
+        public override void Configure(IServiceCollection serviceCollection)
         {
-            var serviceProvider = new ServiceCollection()
-                // configure your favourite level of logging.
-                .AddLogging(builder =>
-                {
-                    builder
-                        .AddConsole();
-
-                    if (enableTrace)
-                    {
-                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
-                    }
-                })
-                .AddSingleton<IDeviceFactory, EmptyDeviceFactory>()
-                //.AddPoweredUp()
-                .BuildServiceProvider();
-
-
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
-
-            var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
-
-            var host = new PoweredUpHost(poweredUpBluetoothAdapter, serviceProvider);
-
-            Hub result = null;
-
-            logger.LogInformation("Finding Service");
-            var cts = new CancellationTokenSource();
-            host.Discover(async hub =>
-            {
-                // add this when you are interested in a tracing of the message ("human readable")
-                if (enableTrace)
-                {
-                    var tracer = new TraceMessages(hub.Protocol, serviceProvider.GetService<ILoggerFactory>().CreateLogger<TraceMessages>());
-
-                    await tracer.ExecuteAsync();
-                }
-
-                logger.LogInformation("Connecting to Hub");
-                await hub.ConnectAsync();
-
-                result = hub;
-
-                logger.LogInformation(hub.AdvertisingName);
-                logger.LogInformation(hub.SystemType.ToString());
-
-                cts.Cancel();
-
-                logger.LogInformation("Press RETURN to continue to the action");
-            }, cts.Token);
-
-            logger.LogInformation("Press RETURN to cancel Scanning");
-            Console.ReadLine();
-
-            cts.Cancel();
-            return (host, serviceProvider, result);
+            serviceCollection.AddSingleton<IDeviceFactory, EmptyDeviceFactory>();
         }
 
-        public static async Task ExecuteAsync(bool enableTrace)
+        public override async Task ExecuteAsync()
         {
-            var (host, serviceProvider, selectedHub) = ExampleDynamicDevice.CreateHostAndDiscover(enableTrace);
-
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
 
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())

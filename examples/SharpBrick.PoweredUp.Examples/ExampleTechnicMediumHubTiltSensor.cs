@@ -7,9 +7,9 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public class ExampleTechnicMediumHubTiltSensor
+    public class ExampleTechnicMediumHubTiltSensor : BaseExample
     {
-        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
+        public override async Task ExecuteAsync()
         {
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
 
@@ -23,7 +23,7 @@ namespace Example
 
                 using var disposable = device.PositionObservable.Subscribe(x => logger.LogWarning($"Tilt: {x.x} / {x.y} / {x.z}"));
 
-                await Task.Delay(60_000);
+                await Task.Delay(10_000);
 
                 await technicMediumHub.SwitchOffAsync();
             }

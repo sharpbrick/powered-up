@@ -4,9 +4,9 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public static class ExampleMotorVirtualPort
+    public class ExampleMotorVirtualPort : BaseExample
     {
-        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
+        public override async Task ExecuteAsync()
         {
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {

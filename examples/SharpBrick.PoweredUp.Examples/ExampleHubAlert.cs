@@ -4,9 +4,9 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public static class ExampleHubAlert
+    public class ExampleHubAlert : BaseExample
     {
-        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
+        public override async Task ExecuteAsync()
         {
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
@@ -14,7 +14,7 @@ namespace Example
 
                 await technicMediumHub.EnableAlertNotificationAsync(HubAlert.LowSignalStrength);
 
-                await Task.Delay(60_000);
+                await Task.Delay(60_000); // run
 
                 await technicMediumHub.DisableAlertNotification(HubAlert.LowSignalStrength);
 

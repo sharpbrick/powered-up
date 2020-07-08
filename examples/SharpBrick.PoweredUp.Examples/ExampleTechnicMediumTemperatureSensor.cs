@@ -7,9 +7,9 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public class ExampleTechnicMediumTemperatureSensor
+    public class ExampleTechnicMediumTemperatureSensor : BaseExample
     {
-        public static async Task ExecuteAsync(PoweredUpHost host, IServiceProvider serviceProvider, Hub selectedHub)
+        public override async Task ExecuteAsync()
         {
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
 
@@ -27,7 +27,7 @@ namespace Example
 
                 var disposable2 = device2.TemperatureObservable.Subscribe(x => logger.LogWarning($"Temperature 2: {x.SI}° ({x.Pct}%)"));
 
-                await Task.Delay(60_000);
+                await Task.Delay(10_000);
 
                 disposable1.Dispose();
                 disposable2.Dispose();
