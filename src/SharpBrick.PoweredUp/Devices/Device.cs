@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -11,12 +13,14 @@ namespace SharpBrick.PoweredUp
     public abstract class Device : IDisposable
     {
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
+        private ConcurrentDictionary<byte, Mode> _modes = new ConcurrentDictionary<byte, Mode>();
 
         protected readonly IPoweredUpProtocol _protocol;
         protected readonly byte _hubId;
         protected readonly byte _portId;
         protected readonly IObservable<PortValueData> _portValueObservable;
 
+        public IReadOnlyDictionary<byte, Mode> Modes => _modes;
         public bool IsConnected => (_protocol != null);
 
         public Device()
@@ -37,6 +41,26 @@ namespace SharpBrick.PoweredUp
                     _ => Array.Empty<PortValueData>(),
                 })
                 .Where(pvd => pvd.PortId == _portId);
+
+            BuildModes();
+        }
+
+        private void BuildModes()
+        {
+            foreach (var mode in _modes.Values)
+            {
+                mode.Dispose();
+            }
+
+            _modes.Clear();
+
+            foreach (var modeInfo in _protocol.Knowledge.Port(_hubId, _portId).Modes.Values)
+            {
+                var modeValueObservable = _portValueObservable.Where(pvd => pvd.ModeIndex == modeInfo.ModeIndex);
+                var mode = Mode.Create(_protocol, _hubId, _portId, modeInfo.ModeIndex, modeValueObservable);
+
+                _modes.TryAdd(modeInfo.ModeIndex, mode);
+            }
         }
 
         protected void ObserveOnLocalProperty<T>(IObservable<T> modeObservable, params Action<T>[] updaters)
@@ -176,6 +200,11 @@ namespace SharpBrick.PoweredUp
             {
                 if (disposing)
                 {
+                    foreach (var mode in _modes.Values)
+                    {
+                        mode.Dispose();
+                    }
+
                     _compositeDisposable?.Dispose();
                     _compositeDisposable = null;
                 }
