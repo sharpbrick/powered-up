@@ -16,7 +16,7 @@ namespace SharpBrick.PoweredUp.Devices
         {
             var type = GetTypeFromDeviceType(deviceType);
 
-            return (type == null) ? null : (IPoweredUpDevice)Activator.CreateInstance(type, protocol, hubId, portId);
+            return (type == null) ? new DynamicDevice(protocol, hubId, portId) : (IPoweredUpDevice)Activator.CreateInstance(type, protocol, hubId, portId);
         }
 
         public Type GetTypeFromDeviceType(DeviceType deviceType)
