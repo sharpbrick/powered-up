@@ -160,7 +160,12 @@ namespace SharpBrick.PoweredUp
 
         protected void AssertIsVirtualPort()
         {
-            //TODO
+            var port = _protocol.Knowledge.Port(_hubId, _portId);
+
+            if (!(port?.IsVirtual ?? false))
+            {
+                throw new InvalidOperationException("This operation is not valid on a non-virtual port.");
+            }
         }
 
         #region Disposable Pattern
@@ -175,22 +180,17 @@ namespace SharpBrick.PoweredUp
                     _compositeDisposable = null;
                 }
 
-                // TODO: Nicht verwaltete Ressourcen (nicht verwaltete Objekte) freigeben und Finalizer überschreiben
-                // TODO: Große Felder auf NULL setzen
                 disposedValue = true;
             }
         }
 
-        // // TODO: Finalizer nur überschreiben, wenn "Dispose(bool disposing)" Code für die Freigabe nicht verwalteter Ressourcen enthält
         // ~Device()
         // {
-        //     // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
         //     Dispose(disposing: false);
         // }
 
         public void Dispose()
         {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

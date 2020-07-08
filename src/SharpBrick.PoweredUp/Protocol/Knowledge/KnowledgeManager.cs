@@ -132,6 +132,11 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     ResetProtocolKnowledgeForPort(msg.HubId, port.PortId, knowledge);
                     port.IsDeviceConnected = false;
                     break;
+                case HubAttachedIOForAttachedVirtualDeviceMessage msg:
+                    port = knowledge.Port(msg.HubId, msg.PortId);
+
+                    port.IsVirtual = true;
+                    break;
 
                 case PortInputFormatSingleMessage msg:
                     port = knowledge.Port(msg.HubId, msg.PortId);
