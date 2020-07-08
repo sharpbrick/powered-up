@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
+using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.WinRT;
 
@@ -36,18 +37,17 @@ namespace Example
                     {
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
-                });
+                })
+                .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
+                ;
 
             Configure(serviceCollection);
 
             serviceProvider = serviceCollection.BuildServiceProvider();
 
-
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
 
-            var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
-
-            host = new PoweredUpHost(poweredUpBluetoothAdapter, serviceProvider);
+            host = serviceProvider.GetService<PoweredUpHost>();
 
             Hub result = null;
 

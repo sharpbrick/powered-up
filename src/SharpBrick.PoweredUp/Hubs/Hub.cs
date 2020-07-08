@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public Hub(byte hubId, IServiceProvider serviceProvider, Port[] knownPorts)
         {
             HubId = hubId;
-            ServiceProvider = serviceProvider;
+            ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
             _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
 
@@ -31,12 +31,10 @@ namespace SharpBrick.PoweredUp
 
         public void ConnectWithBluetoothAdapter(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress)
         {
-            var loggerFactory = ServiceProvider.GetService<ILoggerFactory>();
-
             _logger?.LogDebug("Init Hub with BluetoothKernel");
-            var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>());
+            var kernel = ActivatorUtilities.CreateInstance<BluetoothKernel>(ServiceProvider, poweredUpBluetoothAdapter, bluetoothAddress);
             _logger?.LogDebug("Init Hub with PoweredUpProtocol");
-            Protocol = new PoweredUpProtocol(kernel, ServiceProvider);
+            Protocol = ActivatorUtilities.CreateInstance<PoweredUpProtocol>(ServiceProvider, kernel);
 
             SetupOnHubChange();
             SetupOnPortChangeObservable(Protocol.UpstreamMessages);

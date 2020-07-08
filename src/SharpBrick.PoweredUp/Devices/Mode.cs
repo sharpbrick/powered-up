@@ -20,6 +20,7 @@ namespace SharpBrick.PoweredUp
         public bool IsConnected => (_protocol != null);
 
         public string Name => _modeInfo.Name;
+        public string Symbol => _modeInfo.Symbol;
 
         public static Mode Create(IPoweredUpProtocol protocol, byte hubId, byte portId, byte modeIndex, IObservable<PortValueData> modeValueObservable)
         {

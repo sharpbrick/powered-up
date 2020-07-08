@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Hubs;
 
 namespace Example
 {
@@ -22,7 +23,9 @@ namespace Example
         public override void Configure(IServiceCollection services)
         {
             // pretend we do not know the device and use only dynamic ones
+            services.AddSingleton<IHubFactory, HubFactory>();
             services.AddSingleton<IDeviceFactory, EmptyDeviceFactory>();
+            services.AddSingleton<PoweredUpHost>();
         }
 
         public override async Task ExecuteAsync()

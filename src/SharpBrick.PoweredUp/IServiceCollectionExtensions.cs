@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Devices;
+using SharpBrick.PoweredUp.Hubs;
 
 namespace SharpBrick.PoweredUp
 {
@@ -7,6 +8,8 @@ namespace SharpBrick.PoweredUp
     {
         public static IServiceCollection AddPoweredUp(this IServiceCollection self)
             => self
-                .AddSingleton<IDeviceFactory, DeviceFactory>();
+                .AddSingleton<IHubFactory, HubFactory>()
+                .AddSingleton<IDeviceFactory, DeviceFactory>()
+                .AddSingleton<PoweredUpHost>();
     }
 }

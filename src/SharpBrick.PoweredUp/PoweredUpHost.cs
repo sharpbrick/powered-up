@@ -16,7 +16,7 @@ namespace SharpBrick.PoweredUp
         private readonly IPoweredUpBluetoothAdapter _bluetoothAdapter;
         public IServiceProvider ServiceProvider { get; }
         private readonly ILogger<PoweredUpHost> _logger;
-
+        private readonly IHubFactory _hubFactory;
         private ConcurrentDictionary<ulong, Hub> _hubs = new ConcurrentDictionary<ulong, Hub>();
 
         public IEnumerable<Hub> Hubs => _hubs.Values;
@@ -26,6 +26,7 @@ namespace SharpBrick.PoweredUp
             _bluetoothAdapter = bluetoothAdapter;
             ServiceProvider = serviceProvider;
             _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<PoweredUpHost>();
+            _hubFactory = serviceProvider.GetService<IHubFactory>();
         }
 
         //ctr with auto-finding bt adapter
@@ -45,7 +46,7 @@ namespace SharpBrick.PoweredUp
             {
                 if (!_hubs.ContainsKey(deviceInfo.BluetoothAddress))
                 {
-                    var hub = HubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData, ServiceProvider);
+                    var hub = _hubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData, ServiceProvider);
                     hub.ConnectWithBluetoothAdapter(_bluetoothAdapter, deviceInfo.BluetoothAddress);
 
                     _hubs.TryAdd(deviceInfo.BluetoothAddress, hub);

@@ -1,22 +1,30 @@
 using System;
+using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Protocol;
 
 namespace SharpBrick.PoweredUp.Devices
 {
     public class DeviceFactory : IDeviceFactory
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public DeviceFactory(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        }
+
         public IPoweredUpDevice Create(DeviceType deviceType)
         {
             var type = GetTypeFromDeviceType(deviceType);
 
-            return (type == null) ? null : (IPoweredUpDevice)Activator.CreateInstance(type);
+            return (type == null) ? null : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type);
         }
 
         public IPoweredUpDevice CreateConnected(DeviceType deviceType, IPoweredUpProtocol protocol, byte hubId, byte portId)
         {
             var type = GetTypeFromDeviceType(deviceType);
 
-            return (type == null) ? new DynamicDevice(protocol, hubId, portId) : (IPoweredUpDevice)Activator.CreateInstance(type, protocol, hubId, portId);
+            return (type == null) ? new DynamicDevice(protocol, hubId, portId) : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type, protocol, hubId, portId);
         }
 
         public Type GetTypeFromDeviceType(DeviceType deviceType)
