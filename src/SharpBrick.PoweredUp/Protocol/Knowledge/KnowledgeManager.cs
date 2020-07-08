@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -103,7 +104,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 
             return applicableMessage;
         }
-        public static Task ApplyDynamicProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge)
+        public static Task ApplyDynamicProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge, IServiceProvider serviceProvider)
         {
             HubInfo hub;
             PortInfo port;
@@ -124,7 +125,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     port.HardwareRevision = msg.HardwareRevision;
                     port.SoftwareRevision = msg.SoftwareRevision;
 
-                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, port, knowledge);
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, port, knowledge, serviceProvider);
                     break;
                 case HubAttachedIOForDetachedDeviceMessage msg:
                     port = knowledge.Port(msg.HubId, msg.PortId);
@@ -166,9 +167,9 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             return Task.CompletedTask;
         }
 
-        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge)
+        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge, IServiceProvider serviceProvider)
         {
-            var device = DeviceFactory.Create(type);
+            var device = serviceProvider.GetService<IDeviceFactory>().Create(type);
 
             if (device != null)
             {

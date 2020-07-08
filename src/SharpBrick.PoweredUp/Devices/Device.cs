@@ -45,7 +45,12 @@ namespace SharpBrick.PoweredUp
             BuildModes();
         }
 
-        private void BuildModes()
+        public SingleValueMode<TPayload> SingleValueMode<TPayload>(byte modeIndex)
+            => _modes.TryGetValue(modeIndex, out var mode) ? mode as SingleValueMode<TPayload> : default;
+        public MultiValueMode<TPayload> MultiValueMode<TPayload>(byte modeIndex)
+            => _modes.TryGetValue(modeIndex, out var mode) ? mode as MultiValueMode<TPayload> : default;
+
+        protected void BuildModes()
         {
             foreach (var mode in _modes.Values)
             {

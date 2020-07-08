@@ -24,6 +24,7 @@ namespace Example
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
                 })
+                .AddPoweredUp()
                 .BuildServiceProvider();
 
 

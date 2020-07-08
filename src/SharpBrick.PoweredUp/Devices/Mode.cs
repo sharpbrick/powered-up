@@ -54,6 +54,22 @@ namespace SharpBrick.PoweredUp
             this._modeValueObservable = modeValueObservable;
         }
 
+        public async Task<PortFeedback> WriteDirectModeDataAsync(params byte[] data)
+        {
+            AssertIsConnected();
+
+            var response = await _protocol.SendPortOutputCommandAsync(new GenericWriteDirectModeDataMessage(_modeInfo.ModeIndex)
+            {
+                HubId = _modeInfo.HubId,
+                PortId = _modeInfo.PortId,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Data = data,
+            });
+
+            return response;
+        }
+
         protected void ObserveOnLocalProperty<T>(IObservable<T> modeObservable, params Action<T>[] updaters)
         {
             var disposable = modeObservable.Subscribe(v =>

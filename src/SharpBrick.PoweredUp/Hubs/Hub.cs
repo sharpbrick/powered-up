@@ -36,7 +36,7 @@ namespace SharpBrick.PoweredUp
             _logger?.LogDebug("Init Hub with BluetoothKernel");
             var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>());
             _logger?.LogDebug("Init Hub with PoweredUpProtocol");
-            Protocol = new PoweredUpProtocol(kernel, loggerFactory.CreateLogger<PoweredUpProtocol>());
+            Protocol = new PoweredUpProtocol(kernel, ServiceProvider);
 
             SetupOnHubChange();
             SetupOnPortChangeObservable(Protocol.UpstreamMessages);

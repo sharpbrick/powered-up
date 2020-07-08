@@ -268,6 +268,19 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 Orientation = orientation,
             });
 
+        [Theory]
+        [InlineData("0A-00-81-63-11-51-02-01-02-03", 99, 2, new byte[] { 1, 2, 3 })]
+        [InlineData("09-00-81-63-11-51-02-05-06", 99, 2, new byte[] { 5, 6 })]
+        public void PortOutputCommandEncoder_Encode_GenericWriteDirectModeDataMessage(string expectedData, byte port, byte modeIndex, byte[] data)
+            => PortOutputCommandEncoder_Encode(expectedData, new GenericWriteDirectModeDataMessage(modeIndex)
+            {
+                PortId = port,
+                ModeIndex = modeIndex,
+                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
+                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
+                Data = data,
+            });
+
         private void PortOutputCommandEncoder_Encode(string expectedDataAsString, PoweredUpMessage message)
         {
             // act

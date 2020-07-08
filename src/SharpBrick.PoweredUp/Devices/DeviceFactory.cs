@@ -3,15 +3,23 @@ using SharpBrick.PoweredUp.Protocol;
 
 namespace SharpBrick.PoweredUp.Devices
 {
-    public class DeviceFactory
+    public class DeviceFactory : IDeviceFactory
     {
-        public static IPoweredUpDevice Create(DeviceType type)
-            => (IPoweredUpDevice)Activator.CreateInstance(GetTypeFromDeviceType(type));
+        public IPoweredUpDevice Create(DeviceType deviceType)
+        {
+            var type = GetTypeFromDeviceType(deviceType);
 
-        public static IPoweredUpDevice CreateConnected(DeviceType type, IPoweredUpProtocol protocol, byte hubId, byte portId)
-            => (IPoweredUpDevice)Activator.CreateInstance(GetTypeFromDeviceType(type), protocol, hubId, portId);
+            return (type == null) ? null : (IPoweredUpDevice)Activator.CreateInstance(type);
+        }
 
-        public static Type GetTypeFromDeviceType(DeviceType deviceType)
+        public IPoweredUpDevice CreateConnected(DeviceType deviceType, IPoweredUpProtocol protocol, byte hubId, byte portId)
+        {
+            var type = GetTypeFromDeviceType(deviceType);
+
+            return (type == null) ? null : (IPoweredUpDevice)Activator.CreateInstance(type, protocol, hubId, portId);
+        }
+
+        public Type GetTypeFromDeviceType(DeviceType deviceType)
             => deviceType switch
             {
                 DeviceType.Voltage => typeof(Voltage),

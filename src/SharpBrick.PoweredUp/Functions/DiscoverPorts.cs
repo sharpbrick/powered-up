@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Protocol;
@@ -47,7 +46,7 @@ namespace SharpBrick.PoweredUp.Functions
 
             _stageTwoExpected = _protocol.Knowledge.Hub(_hubId).Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter).Count();
 
-            Console.WriteLine($"Number of Ports: {_stageTwoExpected}");
+            _logger?.LogInformation($"Number of Ports: {_stageTwoExpected}");
 
             foreach (var port in _protocol.Knowledge.Hub(_hubId).Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter))
             {

@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
@@ -18,7 +20,12 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             var knowledge = new ProtocolKnowledge();
 
-            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicMediumHubTiltSensor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x63, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge);
+            var serviceProvider = new ServiceCollection()
+                .AddPoweredUp()
+                .BuildServiceProvider();
+
+
+            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicMediumHubTiltSensor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x63, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge, serviceProvider);
 
             // arrange
             var data = BytesStringUtil.StringToData(dataAsString);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -100,7 +101,9 @@ namespace SharpBrick.PoweredUp
                 case HubAttachedIOForAttachedDeviceMessage attachedDeviceMessage:
                     port = Port(attachedDeviceMessage.PortId);
 
-                    var device = DeviceFactory.CreateConnected(attachedDeviceMessage.IOTypeId, Protocol, attachedDeviceMessage.HubId, attachedDeviceMessage.PortId);
+                    var deviceFactory = ServiceProvider.GetService<IDeviceFactory>();
+
+                    var device = deviceFactory.CreateConnected(attachedDeviceMessage.IOTypeId, Protocol, attachedDeviceMessage.HubId, attachedDeviceMessage.PortId);
 
                     port.AttachDevice(device, attachedDeviceMessage.IOTypeId);
                     break;
@@ -128,7 +131,9 @@ namespace SharpBrick.PoweredUp
 
             _ports[createdVirtualPort.PortId] = createdVirtualPort;
 
-            var deviceOnVirtualPort = DeviceFactory.CreateConnected(attachedVirtualDeviceMessage.IOTypeId, Protocol, attachedVirtualDeviceMessage.HubId, attachedVirtualDeviceMessage.PortId);
+            var deviceFactory = ServiceProvider.GetService<IDeviceFactory>();
+
+            var deviceOnVirtualPort = deviceFactory.CreateConnected(attachedVirtualDeviceMessage.IOTypeId, Protocol, attachedVirtualDeviceMessage.HubId, attachedVirtualDeviceMessage.PortId);
 
             createdVirtualPort.AttachDevice(deviceOnVirtualPort, attachedVirtualDeviceMessage.IOTypeId);
 

@@ -10,6 +10,7 @@ using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.WinRT;
 using SharpBrick.PoweredUp.Utils;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SharpBrick.PoweredUp.Cli
 {
@@ -17,9 +18,13 @@ namespace SharpBrick.PoweredUp.Cli
     {
         public static async Task ExecuteAsync(ILoggerFactory loggerFactory, WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress, bool enableTrace)
         {
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<ILoggerFactory>(loggerFactory)
+                .BuildServiceProvider();
+
             using (var protocol = new PoweredUpProtocol(
                 new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()),
-                loggerFactory.CreateLogger<PoweredUpProtocol>()))
+                serviceProvider))
             {
                 var discoverPorts = new DiscoverPorts(protocol, logger: loggerFactory.CreateLogger<DiscoverPorts>()); // register to upstream
 

@@ -23,6 +23,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     PortOutputCommandGotoAbsolutePosition2Message msg => 12,
                     PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage => 1 + directWriteModeDataMessage switch
                     {
+                        GenericWriteDirectModeDataMessage msg => msg.Data.Length,
                         PortOutputCommandStartPowerMessage msg => 1,
                         PortOutputCommandSetRgbColorNoMessage msg => 1,
                         PortOutputCommandSetRgbColorNo2Message msg => 3,
@@ -134,6 +135,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                     switch (directWriteModeDataMessage)
                     {
+                        case GenericWriteDirectModeDataMessage msg:
+                            msg.Data.CopyTo(data.Slice(4, data.Length - 4));
+                            break;
                         case PortOutputCommandStartPowerMessage msg:
                             data[4] = (byte)msg.Power;
                             break;
