@@ -23,9 +23,13 @@ using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 ## Discovering Hubs
 
 ````csharp
-var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
-
-var host = new PoweredUpHost(poweredUpBluetoothAdapter);
+var serviceProvider = new ServiceCollection()
+    .AddLogging()
+    .AddPoweredUp()
+    .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>() // using WinRT Bluetooth on Windows
+    .BuildServiceProvider();
+    
+var host = serviceProvider.GetService<PoweredUpHost>();
 
 var cts = new CancellationTokenSource();
 host.Discover(async hub =>
@@ -50,13 +54,11 @@ cts.Cancel();
 See source code in `examples/SharpBrick.PoweredUp.Examples` for more examples.
 
 ````csharp
-var host = new PoweredUpHost();
-
-// do discovery before
+// do hub discovery before
 
 using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
 {
-    // optionally verify if everything is wired up correctly (v1.1 onwards)
+    // optionally verify if everything is wired up correctly (v2.0 onwards)
     await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
         .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
             .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
@@ -89,6 +91,48 @@ disposable.Dispose();
 
 // OR manually observe it
 Console.WriteLine(motor.AbsolutePosition);
+````
+
+## Connecting to an unknown device
+
+***Note:** Starting version 2.0*
+
+````csharp
+// deployment model verification with unknown devices
+await technicMediumHub.VerifyDeploymentModelAsync(mb => mb
+    .AddAnyHub(hubBuilder => hubBuilder
+        .AddAnyDevice(0))
+    );
+
+var dynamicDeviceWhichIsAMotor = technicMediumHub.Port(0).GetDevice<DynamicDevice>();
+
+// or also direct from a protocol
+//var dynamicDeviceWhichIsAMotor = new DynamicDevice(technicMediumHub.Protocol, technicMediumHub.HubId, 0);
+
+// discover the unknown device using the LWP (since no cached metadata available)
+await dynamicDeviceWhichIsAMotor.DiscoverAsync();
+
+// use combined mode values from the device
+await dynamicDeviceWhichIsAMotor.TryLockDeviceForCombinedModeNotificationSetupAsync(2, 3);
+await dynamicDeviceWhichIsAMotor.SetupNotificationAsync(2, true);
+await dynamicDeviceWhichIsAMotor.SetupNotificationAsync(3, true);
+await dynamicDeviceWhichIsAMotor.UnlockFromCombinedModeNotificationSetupAsync(true);
+
+// get the individual modes for input and output
+var powerMode = dynamicDeviceWhichIsAMotor.SingleValueMode<sbyte>(0);
+var posMode = dynamicDeviceWhichIsAMotor.SingleValueMode<int>(2);
+var aposMode = dynamicDeviceWhichIsAMotor.SingleValueMode<short>(3);
+
+// use their observables to report values
+using var disposable = posMode.Observable.Subscribe(x => Console.WriteLine($"Position: {x.SI} / {x.Pct}"));
+using var disposable2 = aposMode.Observable.Subscribe(x => Console.WriteLine($"Absolute Position: {x.SI} / {x.Pct}"));
+
+// or even write to them
+await powerMode.WriteDirectModeDataAsync(0x64); // That is StartPower(100%) on a motor
+await Task.Delay(2_000);
+await powerMode.WriteDirectModeDataAsync(0x00); // That is Stop on a motor
+
+Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode.Pct}%");
 ````
 
 ## Connect to Hub and Send a Message and retrieving answers (directly on protocol layer)
@@ -164,6 +208,9 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
   - [X] Knowledge
+- Features
+  - [X] Dynamic Device
+  - [X] Deployment Verifier
 - Command Line (`dotnet install -g SharpBrick.PoweredUp.Cli`)
   - [X] `poweredup device list` (discover all connected devices and their port (mode) properties)
   - [X] `poweredup device dump-static-port -p <port number>` (see [adding new devices tutorial](docs/development/adding-new-device.md))
