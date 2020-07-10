@@ -7,16 +7,18 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class TachoMotor : BasicMotor
     {
+        protected SingleValueMode<sbyte> _speedMode;
+        protected SingleValueMode<int> _positionMode;
         public byte ModeIndexSpeed { get; protected set; } = 1;
         public byte ModeIndexPosition { get; protected set; } = 2;
 
-        public sbyte Speed { get; private set; } = 0;
-        public sbyte SpeedPct { get; private set; } = 0;
-        public IObservable<Value<sbyte>> SpeedObservable { get; }
+        public sbyte Speed => _speedMode.SI;
+        public sbyte SpeedPct => _speedMode.Pct;
+        public IObservable<Value<sbyte>> SpeedObservable => _speedMode.Observable;
 
-        public int Position { get; private set; } = 0;
-        public int PositionPct { get; private set; } = 0;
-        public IObservable<Value<int>> PositionObservable { get; }
+        public int Position => _positionMode.SI;
+        public int PositionPct => _positionMode.Pct;
+        public IObservable<Value<int>> PositionObservable => _positionMode.Observable;
 
         public TachoMotor()
         { }
@@ -24,11 +26,8 @@ namespace SharpBrick.PoweredUp
         protected TachoMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            SpeedObservable = CreateSinglePortModeValueObservable<sbyte>(ModeIndexSpeed);
-            PositionObservable = CreateSinglePortModeValueObservable<int>(ModeIndexPosition);
-
-            ObserveOnLocalProperty(SpeedObservable, v => Speed = v.SI, v => SpeedPct = v.Pct);
-            ObserveOnLocalProperty(PositionObservable, v => Position = v.SI, v => PositionPct = v.Pct);
+            _speedMode = SingleValueMode<sbyte>(ModeIndexSpeed);
+            _positionMode = SingleValueMode<int>(ModeIndexPosition);
         }
 
         /// <summary>

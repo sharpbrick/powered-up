@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
@@ -9,10 +10,11 @@ namespace SharpBrick.PoweredUp
     // gyroscopes measure rotation
     public class TechnicMediumHubGyroSensor : Device, IPoweredUpDevice
     {
+        protected MultiValueMode<short> _rotationMode;
         public byte ModeIndexRotation { get; protected set; } = 0;
 
-        public (short x, short y, short z) Rotation { get; private set; }
-        public IObservable<(short x, short y, short z)> RotationObservable { get; }
+        public (short x, short y, short z) Rotation => (_rotationMode.SI[0], _rotationMode.SI[1], _rotationMode.SI[2]);
+        public IObservable<(short x, short y, short z)> RotationObservable => _rotationMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
 
         public TechnicMediumHubGyroSensor()
         { }
@@ -20,9 +22,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubGyroSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            RotationObservable = CreatePortModeValueObservable<short, (short x, short y, short z)>(ModeIndexRotation, pvd => (pvd.SIInputValues[0], pvd.SIInputValues[1], pvd.SIInputValues[2]));
-
-            ObserveOnLocalProperty(RotationObservable, r => Rotation = r);
+            _rotationMode = MultiValueMode<short>(ModeIndexRotation);
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

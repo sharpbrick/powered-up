@@ -8,16 +8,18 @@ namespace SharpBrick.PoweredUp
 {
     public class Current : Device, IPoweredUpDevice
     {
-        public byte ModeIndexCurrentL { get; } = 0x00;
-        public byte ModeIndexCurrentS { get; } = 0x01;
+        protected SingleValueMode<short> _currentLMode;
+        protected SingleValueMode<short> _currentSMode;
+        public byte ModeIndexCurrentL { get; protected set; } = 0x00;
+        public byte ModeIndexCurrentS { get; protected set; } = 0x01;
 
-        public short CurrentL { get; private set; } = 0;
-        public short CurrentLPct { get; private set; } = 0;
-        public IObservable<Value<short>> CurrentLObservable { get; }
+        public short CurrentL => _currentLMode.SI;
+        public short CurrentLPct => _currentLMode.Pct;
+        public IObservable<Value<short>> CurrentLObservable => _currentLMode.Observable;
 
-        public short CurrentS { get; private set; } = 0;
-        public short CurrentSPct { get; private set; } = 0;
-        public IObservable<Value<short>> CurrentSObservable { get; }
+        public short CurrentS => _currentSMode.SI;
+        public short CurrentSPct => _currentSMode.Pct;
+        public IObservable<Value<short>> CurrentSObservable => _currentSMode.Observable;
 
         public Current()
         { }
@@ -25,11 +27,8 @@ namespace SharpBrick.PoweredUp
         public Current(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            CurrentLObservable = CreateSinglePortModeValueObservable<short>(ModeIndexCurrentL);
-            CurrentSObservable = CreateSinglePortModeValueObservable<short>(ModeIndexCurrentS);
-
-            ObserveOnLocalProperty(CurrentLObservable, v => CurrentL = v.SI, v => CurrentLPct = v.Pct);
-            ObserveOnLocalProperty(CurrentSObservable, v => CurrentS = v.SI, v => CurrentSPct = v.Pct);
+            _currentLMode = SingleValueMode<short>(ModeIndexCurrentL);
+            _currentSMode = SingleValueMode<short>(ModeIndexCurrentS);
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

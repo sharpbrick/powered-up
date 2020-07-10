@@ -9,8 +9,6 @@ namespace SharpBrick.PoweredUp.Examples
         {
             var enableTrace = (args.Length > 0 && args[0] == "--trace");
 
-            //await ; return;
-
             Example.BaseExample example;
 
             //example = new Example.ExampleColors();

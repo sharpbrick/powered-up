@@ -8,11 +8,12 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class AbsoluteMotor : TachoMotor
     {
+        protected SingleValueMode<short> _absoluteMode;
         public byte ModeIndexAbsolutePosition { get; protected set; } = 3;
 
-        public short AbsolutePosition { get; private set; } = 0;
-        public short AbsolutePositionPct { get; private set; } = 0;
-        public IObservable<Value<short>> AbsolutePositionObservable { get; }
+        public short AbsolutePosition => _absoluteMode.SI;
+        public short AbsolutePositionPct => _absoluteMode.Pct;
+        public IObservable<Value<short>> AbsolutePositionObservable => _absoluteMode.Observable;
 
         public AbsoluteMotor()
         { }
@@ -20,9 +21,7 @@ namespace SharpBrick.PoweredUp
         protected AbsoluteMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            AbsolutePositionObservable = CreateSinglePortModeValueObservable<short>(ModeIndexAbsolutePosition);
-
-            ObserveOnLocalProperty(AbsolutePositionObservable, v => AbsolutePosition = v.SI, v => AbsolutePositionPct = v.Pct);
+            _absoluteMode = SingleValueMode<short>(ModeIndexAbsolutePosition);
         }
 
         /// <summary>

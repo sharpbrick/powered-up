@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -10,14 +11,16 @@ namespace SharpBrick.PoweredUp
 {
     public class TechnicMediumHubTiltSensor : Device, IPoweredUpDevice
     {
+        protected MultiValueMode<short> _positionMode;
+        protected SingleValueMode<int> _impactsMode;
         public byte ModeIndexPosition { get; protected set; } = 0;
         public byte ModeIndexImpacts { get; protected set; } = 1;
         public byte ModeIndexConfig { get; protected set; } = 2;
 
-        public (short x, short y, short z) Position { get; private set; }
-        public int Impacts { get; private set; }
-        public IObservable<(short x, short y, short z)> PositionObservable { get; }
-        public IObservable<Value<int>> ImpactsObservable { get; }
+        public (short x, short y, short z) Position => (_positionMode.SI[0], _positionMode.SI[1], _positionMode.SI[2]);
+        public int Impacts => _impactsMode.SI;
+        public IObservable<(short x, short y, short z)> PositionObservable => _positionMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
+        public IObservable<Value<int>> ImpactsObservable => _impactsMode.Observable;
 
         public TechnicMediumHubTiltSensor()
         { }
@@ -25,11 +28,8 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubTiltSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            PositionObservable = CreatePortModeValueObservable<short, (short, short, short)>(ModeIndexPosition, pvd => (pvd.SIInputValues[0], pvd.SIInputValues[1], pvd.SIInputValues[2]));
-            ImpactsObservable = CreateSinglePortModeValueObservable<int>(ModeIndexImpacts);
-
-            ObserveOnLocalProperty(PositionObservable, v => Position = v);
-            ObserveOnLocalProperty(ImpactsObservable, v => Impacts = v.SI);
+            _positionMode = MultiValueMode<short>(ModeIndexPosition);
+            _impactsMode = SingleValueMode<int>(ModeIndexImpacts);
         }
 
         /// <summary>

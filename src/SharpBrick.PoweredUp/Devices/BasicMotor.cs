@@ -7,11 +7,12 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class BasicMotor : Device
     {
+        protected SingleValueMode<sbyte> _powerMode;
         public byte ModeIndexPower { get; protected set; } = 0;
 
-        public sbyte Power { get; private set; } = 0;
-        public sbyte PowerPct { get; private set; } = 0;
-        public IObservable<Value<sbyte>> PowerObservable { get; }
+        public sbyte Power => _powerMode.SI;
+        public sbyte PowerPct => _powerMode.Pct;
+        public IObservable<Value<sbyte>> PowerObservable => _powerMode.Observable;
 
         public BasicMotor()
         { }
@@ -19,9 +20,7 @@ namespace SharpBrick.PoweredUp
         public BasicMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            PowerObservable = CreateSinglePortModeValueObservable<sbyte>(ModeIndexPower);
-
-            ObserveOnLocalProperty(PowerObservable, v => Power = v.SI, v => PowerPct = v.Pct);
+            _powerMode = SingleValueMode<sbyte>(ModeIndexPower);
         }
 
         /// <summary>

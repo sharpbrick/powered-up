@@ -68,33 +68,6 @@ namespace SharpBrick.PoweredUp
             }
         }
 
-        protected void ObserveOnLocalProperty<T>(IObservable<T> modeObservable, params Action<T>[] updaters)
-        {
-            var disposable = modeObservable.Subscribe(v =>
-            {
-                foreach (var u in updaters)
-                {
-                    u(v);
-                }
-            });
-
-            _compositeDisposable.Add(disposable);
-        }
-
-        protected IObservable<Value<TPayload>> CreateSinglePortModeValueObservable<TPayload>(byte modeIndex)
-            => CreatePortModeValueObservable<TPayload, Value<TPayload>>(modeIndex, pvd => new Value<TPayload>()
-            {
-                Raw = pvd.InputValues[0],
-                SI = pvd.SIInputValues[0],
-                Pct = pvd.PctInputValues[0],
-            });
-
-        protected IObservable<TTarget> CreatePortModeValueObservable<TSource, TTarget>(byte modeIndex, Func<PortValueData<TSource>, TTarget> converter)
-            => _portValueObservable
-                .Where(pvd => pvd.ModeIndex == modeIndex)
-                .Cast<PortValueData<TSource>>()
-                .Select(converter);
-
         public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = 5)
         {
             AssertIsConnected();

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
@@ -9,11 +10,13 @@ namespace SharpBrick.PoweredUp
     // accelerometers measure translation
     public class TechnicMediumHubAccelerometer : Device, IPoweredUpDevice
     {
+        protected MultiValueMode<short> _gravityMode;
+
         public byte ModeIndexGravity { get; protected set; } = 0;
         public byte ModeIndexCalibration { get; protected set; } = 1;
 
-        public (short x, short y, short z) Gravity { get; private set; }
-        public IObservable<(short x, short y, short z)> GravityObservable { get; }
+        public (short x, short y, short z) Gravity => (_gravityMode.SI[0], _gravityMode.SI[1], _gravityMode.SI[2]);
+        public IObservable<(short x, short y, short z)> GravityObservable => _gravityMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
 
         public TechnicMediumHubAccelerometer()
         { }
@@ -21,9 +24,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubAccelerometer(IPoweredUpProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            GravityObservable = CreatePortModeValueObservable<short, (short x, short y, short z)>(ModeIndexGravity, pvd => (pvd.SIInputValues[0], pvd.SIInputValues[1], pvd.SIInputValues[2]));
-
-            ObserveOnLocalProperty(GravityObservable, g => Gravity = g);
+            _gravityMode = MultiValueMode<short>(ModeIndexGravity);
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
