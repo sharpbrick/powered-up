@@ -21,6 +21,21 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(expectedMode, message.ModeIndex);
             Assert.Equal(expectedDeltaInterval, message.DeltaInterval);
             Assert.Equal(expectedNotificationEnabled, message.NotificationEnabled);
+
+            // reverse
+            var reverseMessage = new PortInputFormatSingleMessage()
+            {
+                HubId = 0,
+                PortId = expectedPortId,
+                ModeIndex = expectedMode,
+                DeltaInterval = expectedDeltaInterval,
+                NotificationEnabled = expectedNotificationEnabled,
+            };
+
+            var reverseData = MessageEncoder.Encode(reverseMessage, null);
+            var reverseDataAsString = BytesStringUtil.DataToString(reverseData);
+
+            Assert.Equal(dataAsString, reverseDataAsString);
         }
     }
 }

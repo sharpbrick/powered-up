@@ -7,7 +7,17 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     public class PortInputFormatSingleEncoder : IMessageContentEncoder
     {
         public ushort CalculateContentLength(PoweredUpMessage message)
-            => throw new NotImplementedException();
+            => 7;
+
+        public void Encode(PoweredUpMessage message, in Span<byte> data)
+            => Encode(message as PortInputFormatSingleMessage, data);
+        public void Encode(PortInputFormatSingleMessage message, in Span<byte> data)
+        {
+            data[0] = message.PortId;
+            data[1] = message.ModeIndex;
+            BitConverter.TryWriteBytes(data.Slice(2, 4), message.DeltaInterval);
+            data[6] = (byte)(message.NotificationEnabled ? 0x01 : 0x00);
+        }
 
         public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
             => new PortInputFormatSingleMessage()
@@ -17,8 +27,5 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 DeltaInterval = BitConverter.ToUInt32(data.Slice(2, 4)),
                 NotificationEnabled = (data[6] == 0x01),
             };
-
-        public void Encode(PoweredUpMessage message, in Span<byte> data)
-            => throw new NotImplementedException();
     }
 }

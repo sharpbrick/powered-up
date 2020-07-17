@@ -1,8 +1,6 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
@@ -33,17 +31,41 @@ namespace SharpBrick.PoweredUp
 
             var voltageDevice = new Voltage(protocol, 0, 0x20);
 
-            short actual = 0;
+            short actualL = 0;
+            short actualS = 0;
 
-            using var _ = voltageDevice.VoltageLObservable.Subscribe(x => actual = x.SI);
+            using var d1 = voltageDevice.VoltageLObservable.Subscribe(x => actualL = x.SI);
+            using var d2 = voltageDevice.VoltageSObservable.Subscribe(x => actualS = x.SI);
 
             // assert and act
-            Assert.Equal(0, actual);
+            Assert.Equal(0, actualL);
 
             await mock.WriteUpstreamAsync("06-00-45-20-0F-00");
 
-            Assert.Equal(35, actual);
+            Assert.Equal(35, actualL);
             Assert.Equal(35, voltageDevice.VoltageL);
+            Assert.Equal(0, actualS);
+            Assert.Equal(0, voltageDevice.VoltageS);
+
+            // switch to other mode
+            await voltageDevice.SetupNotificationAsync(voltageDevice.ModeIndexVoltageS, true, 1);
+            // .. and device confirms it
+            await mock.WriteUpstreamAsync(new PortInputFormatSingleMessage()
+            {
+                HubId = 0,
+                PortId = 0x20,
+                ModeIndex = 1,
+                NotificationEnabled = true,
+            });
+
+            // act
+            await mock.WriteUpstreamAsync("06-00-45-20-0F-04");
+
+            // now other mode is updated.
+            Assert.Equal(35, actualL);
+            Assert.Equal(35, voltageDevice.VoltageL);
+            Assert.Equal(2440, actualS);
+            Assert.Equal(2440, voltageDevice.VoltageS);
         }
 
 
