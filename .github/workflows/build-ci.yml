@@ -8,11 +8,15 @@ on:
       - '!v*'
   pull_request:
 
+env:
+  # Set the DOTNET_SKIP_FIRST_TIME_EXPERIENCE environment variable to stop wasting time caching packages
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Disable sending usage data to Microsoft
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -22,4 +26,24 @@ jobs:
     - name: Build SharpBrick.PoweredUp
       run: dotnet build --configuration Release
     - name: Test SharpBrick.PoweredUp
-      run: dotnet test --no-build --configuration Release --logger trx
+      run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      #run: dotnet test --no-build --configuration Release --logger trx
+    - name: Code Coverage ReportGenerator
+      uses: danielpalme/ReportGenerator-GitHub-Action@4.6.1
+      with:
+        reports: 'test/SharpBrick.PoweredUp.Test/TestResults/coverage.info' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+        targetdir: './artifacts/coveragereport' # REQUIRED # The directory where the generated report should be saved.
+        reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
+        sourcedirs: '' # Optional directories which contain the corresponding source code (separated by semicolon). The source directories are used if coverage report contains classes without path information.
+        historydir: '' # Optional directory for storing persistent coverage information. Can be used in future reports to show coverage evolution.
+        plugins: '' # Optional plugin files for custom reports or custom history storage (separated by semicolon).
+        assemblyfilters: '+*' # Optional list of assemblies that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+        classfilters: '+*' # Optional list of classes that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+        filefilters: '+*' # Optional list of files that should be included or excluded in the report. Exclusion filters take precedence over inclusion filters. Wildcards are allowed.
+        verbosity: 'Info' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
+        title: '' # Optional title.
+        tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
+    - uses: actions/upload-artifact@v1
+      with:
+        name: artifacts
+        path: ./artifacts
