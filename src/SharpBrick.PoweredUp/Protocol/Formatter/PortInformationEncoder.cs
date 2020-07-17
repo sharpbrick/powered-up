@@ -25,8 +25,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         InformationType = informationType,
 
                         // capabilities
-                        OutputCapability = (data[2] & 0x00) == 0x00,
-                        InputCapability = (data[2] & 0x01) == 0x01,
+                        OutputCapability = (data[2] & 0x00) == 0x00, // seen from hub
+                        InputCapability = (data[2] & 0x01) == 0x01, // seen from hub
                         LogicalCombinableCapability = (data[2] & 0x02) == 0x02,
                         LogicalSynchronizableCapability = (data[2] & 0x03) == 0x03,
 

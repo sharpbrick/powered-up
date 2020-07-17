@@ -6,9 +6,44 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     public class HubAttachedIOEncoder : IMessageContentEncoder
     {
         public ushort CalculateContentLength(PoweredUpMessage message)
-            => throw new NotImplementedException();
+            => message switch
+            {
+                HubAttachedIOForAttachedDeviceMessage _ => 12,
+                HubAttachedIOForDetachedDeviceMessage _ => 2,
+                HubAttachedIOForAttachedVirtualDeviceMessage _ => 6,
+                _ => 0,
+            };
+
 
         public void Encode(PoweredUpMessage message, in Span<byte> data)
+        {
+            switch (message)
+            {
+                case HubAttachedIOForAttachedDeviceMessage x:
+                    Encode(x, data);
+                    break;
+                case HubAttachedIOForDetachedDeviceMessage x:
+                    Encode(x, data);
+                    break;
+                case HubAttachedIOForAttachedVirtualDeviceMessage x:
+                    Encode(x, data);
+                    break;
+            };
+        }
+
+        public void Encode(HubAttachedIOForAttachedDeviceMessage message, in Span<byte> data)
+        {
+            data[0] = message.PortId;
+            data[1] = (byte)message.Event;
+            BitConverter.TryWriteBytes(data.Slice(2, 2), (ushort)message.IOTypeId);
+            BitConverter.TryWriteBytes(data.Slice(4, 4), VersionNumberEncoder.Encode(message.HardwareRevision));
+            BitConverter.TryWriteBytes(data.Slice(8, 4), VersionNumberEncoder.Encode(message.SoftwareRevision));
+        }
+
+        public void Encode(HubAttachedIOForDetachedDeviceMessage message, in Span<byte> data)
+            => throw new NotImplementedException();
+
+        public void Encode(HubAttachedIOForAttachedVirtualDeviceMessage message, in Span<byte> data)
             => throw new NotImplementedException();
 
         public PoweredUpMessage Decode(byte hubId, in Span<byte> data)

@@ -12,6 +12,11 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.8.1
     public class HubAttachedIOForAttachedDeviceMessage : HubAttachedIOMessage
     {
+        public HubAttachedIOForAttachedDeviceMessage()
+        {
+            Event = HubAttachedIOEvent.AttachedIO;
+        }
+
         public DeviceType IOTypeId { get; set; }
         public Version HardwareRevision { get; set; }
         public Version SoftwareRevision { get; set; }
@@ -23,6 +28,11 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.8.1
     public class HubAttachedIOForAttachedVirtualDeviceMessage : HubAttachedIOMessage
     {
+        public HubAttachedIOForAttachedVirtualDeviceMessage()
+        {
+            Event = HubAttachedIOEvent.AttachedVirtualIO;
+        }
+
         public DeviceType IOTypeId { get; set; }
         public byte PortAId { get; set; }
         public byte PortBId { get; set; }
@@ -34,6 +44,10 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
     // spec chapter: 3.8.1
     public class HubAttachedIOForDetachedDeviceMessage : HubAttachedIOMessage
     {
+        public HubAttachedIOForDetachedDeviceMessage()
+        {
+            Event = HubAttachedIOEvent.DetachedIO;
+        }
 
         public override string ToString()
             => $"Dettached IO - Port {HubId}{PortId}";

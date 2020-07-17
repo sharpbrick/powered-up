@@ -18,9 +18,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         [InlineData(0x1_7_37_1510, "1.7.37.1510")]
         public void PropertyVersionNumberEncoding_DecodeVersion(int input, string expectedVersionAsString)
         {
+            var expected = Version.Parse(expectedVersionAsString);
             var actual = VersionNumberEncoder.Decode(input);
 
-            Assert.Equal(Version.Parse(expectedVersionAsString), actual);
+            Assert.Equal(expected, actual);
+
+            var x = VersionNumberEncoder.Encode(expected);
+
+            Assert.Equal(input, x);
         }
     }
 }
