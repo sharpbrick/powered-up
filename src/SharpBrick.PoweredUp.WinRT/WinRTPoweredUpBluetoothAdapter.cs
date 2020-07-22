@@ -37,6 +37,12 @@ namespace SharpBrick.PoweredUp.WinRT
                     reader.ReadBytes(data);
 
                     info.ManufacturerData = data;
+
+                    using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
+                    {
+                        info.Name = device.Name;
+                    }
+
                 }
 
                 info.BluetoothAddress = eventArgs.BluetoothAddress;

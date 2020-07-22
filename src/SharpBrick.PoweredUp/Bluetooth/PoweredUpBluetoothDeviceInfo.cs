@@ -4,5 +4,6 @@ namespace SharpBrick.PoweredUp.Bluetooth
     {
         public ulong BluetoothAddress { get; set; }
         public byte[] ManufacturerData { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -26,7 +26,8 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleTechnicMediumHubTiltSensor();
             //example = new Example.ExampleTechnicMediumHubTiltSensorImpacts();
             //example = new Example.ExampleDynamicDevice();
-            example = new Example.ExampleBluetoothByKnownAddress();
+            //example = new Example.ExampleBluetoothByKnownAddress();
+            example = new Example.ExampleBluetoothByName();
 
             example.InitHostAndDiscover(enableTrace);
 
