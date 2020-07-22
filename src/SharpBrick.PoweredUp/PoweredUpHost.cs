@@ -46,7 +46,7 @@ namespace SharpBrick.PoweredUp
             {
                 if (!_hubs.ContainsKey(deviceInfo.BluetoothAddress))
                 {
-                    var hub = _hubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData, ServiceProvider);
+                    var hub = _hubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData);
                     hub.ConnectWithBluetoothAdapter(_bluetoothAdapter, deviceInfo.BluetoothAddress);
 
                     _hubs.TryAdd(deviceInfo.BluetoothAddress, hub);
@@ -54,6 +54,16 @@ namespace SharpBrick.PoweredUp
                     onDiscovery(hub).Wait();
                 }
             }, token);
+        }
+
+        public THub Create<THub>(ulong bluetoothAddress) where THub : Hub
+        {
+            var hub = _hubFactory.Create<THub>();
+            hub.ConnectWithBluetoothAdapter(_bluetoothAdapter, bluetoothAddress);
+
+            _hubs.TryAdd(bluetoothAddress, hub);
+
+            return hub;
         }
     }
 }

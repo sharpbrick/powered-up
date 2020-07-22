@@ -24,30 +24,15 @@ namespace Example
                 .AddPoweredUp();
         }
 
-        public void CreateHostAndDiscover(bool enableTrace)
+        public void InitHostAndDiscover(bool enableTrace)
         {
-            var serviceCollection = new ServiceCollection()
-                // configure your favourite level of logging.
-                .AddLogging(builder =>
-                {
-                    builder
-                        .AddConsole();
+            InitHost(enableTrace);
+            Discover(enableTrace);
+        }
 
-                    if (enableTrace)
-                    {
-                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
-                    }
-                })
-                .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
-                ;
-
-            Configure(serviceCollection);
-
-            serviceProvider = serviceCollection.BuildServiceProvider();
-
+        public virtual void Discover(bool enableTrace)
+        {
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
-
-            host = serviceProvider.GetService<PoweredUpHost>();
 
             Hub result = null;
 
@@ -82,6 +67,30 @@ namespace Example
             cts.Cancel();
 
             selectedHub = result;
+        }
+
+        public void InitHost(bool enableTrace)
+        {
+            var serviceCollection = new ServiceCollection()
+                // configure your favourite level of logging.
+                .AddLogging(builder =>
+                {
+                    builder
+                        .AddConsole();
+
+                    if (enableTrace)
+                    {
+                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                    }
+                })
+                .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
+                ;
+
+            Configure(serviceCollection);
+
+            serviceProvider = serviceCollection.BuildServiceProvider();
+
+            host = serviceProvider.GetService<PoweredUpHost>();
         }
     }
 }
