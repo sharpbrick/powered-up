@@ -39,6 +39,7 @@ namespace SharpBrick.PoweredUp
             SetupOnHubChange();
             SetupOnPortChangeObservable(Protocol.UpstreamMessages);
             SetupHubAlertObservable(Protocol.UpstreamMessages);
+            SetupHubPropertyObservable(Protocol.UpstreamMessages);
         }
 
         #region Disposable Pattern

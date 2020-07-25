@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -34,6 +35,31 @@ namespace SharpBrick.PoweredUp
         public Task ResetHardwareNetworkIdAsync()
             => ResetHubPropertyAsync(HubProperty.HardwareNetworkId);
 
+        public IObservable<HubProperty> PropertyChangedObservable { get; private set; }
+        public IObservable<string> AdvertisementNameObservable { get; private set; }
+        public IObservable<bool> ButtonObservable { get; private set; }
+        public IObservable<sbyte> RssiObservable { get; private set; }
+        public IObservable<byte> BatteryVoltageInPercentObservable { get; private set; }
+
+        private void SetupHubPropertyObservable(IObservable<PoweredUpMessage> upstreamMessages)
+        {
+            PropertyChangedObservable = upstreamMessages
+                .OfType<HubPropertyMessage>()
+                .Where(msg => msg.Operation == HubPropertyOperation.Update)
+                .Select(msg => msg.Property);
+
+            AdvertisementNameObservable = BuildObservableForProperty<string>(upstreamMessages, HubProperty.AdvertisingName);
+            ButtonObservable = BuildObservableForProperty<bool>(upstreamMessages, HubProperty.Button);
+            RssiObservable = BuildObservableForProperty<sbyte>(upstreamMessages, HubProperty.Rssi);
+            BatteryVoltageInPercentObservable = BuildObservableForProperty<byte>(upstreamMessages, HubProperty.BatteryVoltage);
+        }
+
+        private IObservable<T> BuildObservableForProperty<T>(IObservable<PoweredUpMessage> upstreamMessages, HubProperty property)
+            => upstreamMessages
+                .OfType<HubPropertyMessage>()
+                .Where(msg => msg.Operation == HubPropertyOperation.Update && msg.Property == property)
+                .Cast<HubPropertyMessage<T>>()
+                .Select(msg => msg.Payload);
 
         private async Task InitialHubPropertiesQueryAsync()
         {
@@ -57,12 +83,28 @@ namespace SharpBrick.PoweredUp
         }
 
         public Task RequestHubPropertySingleUpdate(HubProperty property)
-            => Protocol.SendMessageReceiveResultAsync<HubPropertyMessage>(new HubPropertyMessage()
+        {
+            AssertIsConnected();
+
+            return Protocol.SendMessageReceiveResultAsync<HubPropertyMessage>(new HubPropertyMessage()
             {
                 HubId = HubId,
                 Property = property,
                 Operation = HubPropertyOperation.RequestUpdate
             }, msg => msg.Operation == HubPropertyOperation.Update && msg.Property == property);
+        }
+
+        public async Task SetupHubPropertyNotificationAsync(HubProperty property, bool enabled)
+        {
+            AssertIsConnected();
+
+            await Protocol.SendMessageAsync(new HubPropertyMessage()
+            {
+                HubId = HubId,
+                Operation = enabled ? HubPropertyOperation.EnableUpdates : HubPropertyOperation.DisableUpdates,
+                Property = property,
+            });
+        }
 
         public async Task SetHubPropertyAsync<T>(HubProperty property, T value)
         {
@@ -73,6 +115,8 @@ namespace SharpBrick.PoweredUp
             {
                 throw new ArgumentException("Not all properties can be set (only AdvertisingName, HardwareNetworkFamily, HardwareNetworkId)", nameof(property));
             }
+
+            AssertIsConnected();
 
             await Protocol.SendMessageAsync(new HubPropertyMessage<T>()
             {
@@ -93,6 +137,8 @@ namespace SharpBrick.PoweredUp
             {
                 throw new ArgumentException("Not all properties can be reset (only AdvertisingName, HardwareNetworkId)", nameof(property));
             }
+
+            AssertIsConnected();
 
             await Protocol.SendMessageAsync(new HubPropertyMessage()
             {

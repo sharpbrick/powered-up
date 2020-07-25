@@ -14,6 +14,9 @@ namespace Example
 
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
+                using var d1 = technicMediumHub.AdvertisementNameObservable.Subscribe(x => logger.LogInformation($"From Observable for AdvertisementName: {x}"));
+                using var d2 = technicMediumHub.PropertyChangedObservable.Subscribe(x => logger.LogInformation($"Property Changed: {x}"));
+
                 var originalName = technicMediumHub.AdvertisingName;
 
                 logger.LogInformation($"Original Name: {originalName}");
