@@ -96,6 +96,15 @@ namespace SharpBrick.PoweredUp
 
         public async Task SetupHubPropertyNotificationAsync(HubProperty property, bool enabled)
         {
+            if (property != HubProperty.AdvertisingName &&
+                property != HubProperty.Button &&
+                property != HubProperty.BatteryVoltage &&
+                property != HubProperty.Rssi
+                )
+            {
+                throw new ArgumentException("Not all properties can be monitored (only AdvertisingName, Button, BatteryVoltage, Rssi)", nameof(property));
+            }
+
             AssertIsConnected();
 
             await Protocol.SendMessageAsync(new HubPropertyMessage()
