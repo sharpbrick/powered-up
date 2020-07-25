@@ -35,10 +35,12 @@ Emojis are okay. With taste ;). GIFs are not.
 - <list of stuff changes>
 - <more list>
 
-#<issue ids>
+#<issue ids> (breaking|non-breaking)
 ````
 
 Please adhere to the common maximum line length (72 chars).
+
+Please declare for each commit whether the change is considered breaking (see docs/arch/breaking.md)
 
 
 ## Source Code

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace Example
 {

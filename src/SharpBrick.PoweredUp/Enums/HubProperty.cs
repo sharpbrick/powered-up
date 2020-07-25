@@ -1,4 +1,4 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp
 {
     // spec chapter: 3.5.3
     public enum HubProperty : byte
