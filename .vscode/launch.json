@@ -10,7 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Examples.dll",
-            "args": [],
+            "args": [
+                "--trace"
+            ],
             "cwd": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples",
             "console": "integratedTerminal",
             "stopAtEntry": false

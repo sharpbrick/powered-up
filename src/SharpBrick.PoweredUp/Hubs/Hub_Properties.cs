@@ -23,6 +23,17 @@ namespace SharpBrick.PoweredUp
         public byte[] SecondaryMacAddress { get; private set; }
         public byte HardwareNetworkFamily { get; private set; }
 
+        public Task SetAdvertisingNameAsync(string advertisingName)
+            => SetHubPropertyAsync<string>(HubProperty.AdvertisingName, advertisingName);
+        public Task SetHardwareNetworkIdAsync(byte hardwareNetworkId)
+            => SetHubPropertyAsync<byte>(HubProperty.HardwareNetworkId, hardwareNetworkId);
+        public Task SetHardwareNetworkFamilyAsync(byte hardwareNetworkFamily)
+            => SetHubPropertyAsync<byte>(HubProperty.HardwareNetworkFamily, hardwareNetworkFamily);
+        public Task ResetAdvertisingNameAsync()
+            => ResetHubPropertyAsync(HubProperty.AdvertisingName);
+        public Task ResetHardwareNetworkIdAsync()
+            => ResetHubPropertyAsync(HubProperty.HardwareNetworkId);
+
 
         private async Task InitialHubPropertiesQueryAsync()
         {
@@ -52,6 +63,32 @@ namespace SharpBrick.PoweredUp
                 Property = property,
                 Operation = HubPropertyOperation.RequestUpdate
             }, msg => msg.Operation == HubPropertyOperation.Update && msg.Property == property);
+
+        public async Task SetHubPropertyAsync<T>(HubProperty property, T value)
+        {
+
+            await Protocol.SendMessageAsync(new HubPropertyMessage<T>()
+            {
+                HubId = HubId,
+                Operation = HubPropertyOperation.Set,
+                Property = property,
+                Payload = value,
+            });
+
+            await RequestHubPropertySingleUpdate(property);
+        }
+
+        public async Task ResetHubPropertyAsync(HubProperty property)
+        {
+            await Protocol.SendMessageAsync(new HubPropertyMessage()
+            {
+                HubId = HubId,
+                Operation = HubPropertyOperation.Reset,
+                Property = property,
+            });
+
+            await RequestHubPropertySingleUpdate(property);
+        }
 
         private void OnHubPropertyMessage(HubPropertyMessage hubProperty)
         {
