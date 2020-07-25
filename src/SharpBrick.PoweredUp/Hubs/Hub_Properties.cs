@@ -66,6 +66,13 @@ namespace SharpBrick.PoweredUp
 
         public async Task SetHubPropertyAsync<T>(HubProperty property, T value)
         {
+            if (property != HubProperty.AdvertisingName &&
+                property != HubProperty.HardwareNetworkFamily &&
+                property != HubProperty.HardwareNetworkId
+                )
+            {
+                throw new ArgumentException("Not all properties can be set (only AdvertisingName, HardwareNetworkFamily, HardwareNetworkId)", nameof(property));
+            }
 
             await Protocol.SendMessageAsync(new HubPropertyMessage<T>()
             {
@@ -80,6 +87,13 @@ namespace SharpBrick.PoweredUp
 
         public async Task ResetHubPropertyAsync(HubProperty property)
         {
+            if (property != HubProperty.AdvertisingName &&
+                property != HubProperty.HardwareNetworkId
+                )
+            {
+                throw new ArgumentException("Not all properties can be reset (only AdvertisingName, HardwareNetworkId)", nameof(property));
+            }
+
             await Protocol.SendMessageAsync(new HubPropertyMessage()
             {
                 HubId = HubId,
