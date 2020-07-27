@@ -93,6 +93,15 @@ disposable.Dispose();
 Console.WriteLine(motor.AbsolutePosition);
 ````
 
+## Little Helpers
+
+````csharp
+using SharpBrick.PoweredUp;
+using static SharpBrick.PoweredUp.Directions; // CW & CCW starting version 2.1 
+
+await motor.GotoAbsolutePositionAsync(CW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+````
+
 ## Connecting to an unknown device
 
 ***Note:** Starting version 2.0*
