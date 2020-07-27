@@ -25,6 +25,8 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         {
             _gravityMode = MultiValueMode<short>(ModeIndexGravity);
+
+            ObserveForPropertyChanged(_gravityMode.Observable, nameof(Gravity));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

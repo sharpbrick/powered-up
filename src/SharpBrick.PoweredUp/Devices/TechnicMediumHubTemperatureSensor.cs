@@ -22,6 +22,8 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         {
             _temperatureMode = SingleValueMode<short>(ModeIndexTemperature);
+
+            ObserveForPropertyChanged(_temperatureMode.Observable, nameof(Temperature), nameof(TemperaturePct));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

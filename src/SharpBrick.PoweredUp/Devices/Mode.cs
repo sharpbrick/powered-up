@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -10,7 +11,7 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 namespace SharpBrick.PoweredUp
 {
     [DebuggerDisplay("Mode {_modeInfo.HubId}-{_modeInfo.PortId}-{_modeInfo.ModeIndex} {Name}")]
-    public class Mode : IDisposable
+    public class Mode : IDisposable, INotifyPropertyChanged
     {
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
         private IPoweredUpProtocol _protocol;
@@ -105,6 +106,22 @@ namespace SharpBrick.PoweredUp
                 throw new InvalidOperationException("The device needs to be connected to a protocol.");
             }
         }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void ObserveForPropertyChanged<T>(IObservable<T> observable, params string[] propertyNames)
+        {
+            _compositeDisposable.Add(observable.Subscribe(_ =>
+            {
+                foreach (var propertyName in propertyNames)
+                {
+                    OnPropertyChanged(propertyName);
+                }
+            }));
+        }
+        #endregion
 
         #region Disposable
         private bool disposedValue;

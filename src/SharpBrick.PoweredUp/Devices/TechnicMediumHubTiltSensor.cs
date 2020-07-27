@@ -30,6 +30,9 @@ namespace SharpBrick.PoweredUp
         {
             _positionMode = MultiValueMode<short>(ModeIndexPosition);
             _impactsMode = SingleValueMode<int>(ModeIndexImpacts);
+
+            ObserveForPropertyChanged(_positionMode.Observable, nameof(Position));
+            ObserveForPropertyChanged(_impactsMode.Observable, nameof(Impacts));
         }
 
         /// <summary>

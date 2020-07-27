@@ -23,6 +23,8 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         {
             _rotationMode = MultiValueMode<short>(ModeIndexRotation);
+
+            ObserveForPropertyChanged(_rotationMode.Observable, nameof(Rotation));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

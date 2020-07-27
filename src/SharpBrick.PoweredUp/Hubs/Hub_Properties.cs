@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
@@ -6,7 +7,7 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
 {
-    public abstract partial class Hub
+    public abstract partial class Hub : INotifyPropertyChanged
     {
         public string AdvertisingName { get; private set; }
         public bool Button { get; private set; }
@@ -164,63 +165,99 @@ namespace SharpBrick.PoweredUp
             if (hubProperty.Property == HubProperty.AdvertisingName && hubProperty is HubPropertyMessage<string> advData)
             {
                 AdvertisingName = advData.Payload;
+
+                OnPropertyChanged(nameof(AdvertisingName));
             }
             else if (hubProperty.Property == HubProperty.Button && hubProperty is HubPropertyMessage<bool> btnData)
             {
                 Button = btnData.Payload;
+
+                OnPropertyChanged(nameof(Button));
             }
             else if (hubProperty.Property == HubProperty.FwVersion && hubProperty is HubPropertyMessage<Version> fwVersionData)
             {
                 FirmwareVersion = fwVersionData.Payload;
+
+                OnPropertyChanged(nameof(FirmwareVersion));
             }
             else if (hubProperty.Property == HubProperty.HwVersion && hubProperty is HubPropertyMessage<Version> hwVersionData)
             {
                 HardwareVersion = hwVersionData.Payload;
+
+                OnPropertyChanged(nameof(HardwareVersion));
             }
             else if (hubProperty.Property == HubProperty.Rssi && hubProperty is HubPropertyMessage<sbyte> rssiData)
             {
                 Rssi = rssiData.Payload;
+
+                OnPropertyChanged(nameof(Rssi));
             }
             else if (hubProperty.Property == HubProperty.BatteryVoltage && hubProperty is HubPropertyMessage<byte> batteryVoltageData)
             {
                 BatteryVoltageInPercent = batteryVoltageData.Payload;
+
+                OnPropertyChanged(nameof(BatteryVoltageInPercent));
             }
             else if (hubProperty.Property == HubProperty.BatteryVoltage && hubProperty is HubPropertyMessage<BatteryType> batteryTypeData)
             {
                 BatteryType = batteryTypeData.Payload;
+
+                OnPropertyChanged(nameof(BatteryType));
             }
             else if (hubProperty.Property == HubProperty.ManufacturerName && hubProperty is HubPropertyMessage<string> manNameData)
             {
                 ManufacturerName = manNameData.Payload;
+
+                OnPropertyChanged(nameof(ManufacturerName));
             }
             else if (hubProperty.Property == HubProperty.RadioFirmwareVersion && hubProperty is HubPropertyMessage<string> radioData)
             {
                 RadioFirmwareVersion = radioData.Payload;
+
+                OnPropertyChanged(nameof(RadioFirmwareVersion));
             }
             else if (hubProperty.Property == HubProperty.LegoWirelessProtocolVersion && hubProperty is HubPropertyMessage<Version> lwpData)
             {
                 LegoWirelessProtocolVersion = lwpData.Payload;
+
+                OnPropertyChanged(nameof(LegoWirelessProtocolVersion));
             }
             else if (hubProperty.Property == HubProperty.SystemTypeId && hubProperty is HubPropertyMessage<SystemType> systemData)
             {
                 SystemType = systemData.Payload;
+
+                OnPropertyChanged(nameof(SystemType));
             }
             else if (hubProperty.Property == HubProperty.HardwareNetworkId && hubProperty is HubPropertyMessage<byte> hwNetData)
             {
                 HardwareNetworkId = hwNetData.Payload;
+
+                OnPropertyChanged(nameof(HardwareNetworkId));
             }
             else if (hubProperty.Property == HubProperty.PrimaryMacAddress && hubProperty is HubPropertyMessage<byte[]> primaryData)
             {
                 PrimaryMacAddress = primaryData.Payload;
+
+                OnPropertyChanged(nameof(PrimaryMacAddress));
             }
             else if (hubProperty.Property == HubProperty.SecondaryMacAddress && hubProperty is HubPropertyMessage<byte[]> secondaryData)
             {
                 SecondaryMacAddress = secondaryData.Payload;
+
+                OnPropertyChanged(nameof(SecondaryMacAddress));
             }
             else if (hubProperty.Property == HubProperty.HardwareNetworkFamily && hubProperty is HubPropertyMessage<byte> hwNetFamilyData)
             {
                 HardwareNetworkFamily = hwNetFamilyData.Payload;
+
+                OnPropertyChanged(nameof(HardwareNetworkFamily));
             }
         }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        #endregion
     }
 }

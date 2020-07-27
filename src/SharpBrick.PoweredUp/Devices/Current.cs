@@ -29,6 +29,9 @@ namespace SharpBrick.PoweredUp
         {
             _currentLMode = SingleValueMode<short>(ModeIndexCurrentL);
             _currentSMode = SingleValueMode<short>(ModeIndexCurrentS);
+
+            ObserveForPropertyChanged(_currentLMode.Observable, nameof(CurrentL), nameof(CurrentLPct));
+            ObserveForPropertyChanged(_currentSMode.Observable, nameof(CurrentS), nameof(CurrentSPct));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)

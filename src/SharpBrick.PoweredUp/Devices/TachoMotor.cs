@@ -28,6 +28,9 @@ namespace SharpBrick.PoweredUp
         {
             _speedMode = SingleValueMode<sbyte>(ModeIndexSpeed);
             _positionMode = SingleValueMode<int>(ModeIndexPosition);
+
+            ObserveForPropertyChanged(_speedMode.Observable, nameof(Speed), nameof(SpeedPct));
+            ObserveForPropertyChanged(_positionMode.Observable, nameof(Position), nameof(PositionPct));
         }
 
         /// <summary>

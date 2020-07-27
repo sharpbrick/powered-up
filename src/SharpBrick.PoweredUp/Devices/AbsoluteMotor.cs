@@ -22,6 +22,8 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         {
             _absoluteMode = SingleValueMode<short>(ModeIndexAbsolutePosition);
+
+            ObserveForPropertyChanged(_absoluteMode.Observable, nameof(AbsolutePosition), nameof(AbsolutePositionPct));
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -10,7 +11,7 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
 {
-    public abstract class Device : IDisposable
+    public abstract class Device : IDisposable, INotifyPropertyChanged
     {
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
         private ConcurrentDictionary<byte, Mode> _modes = new ConcurrentDictionary<byte, Mode>();
@@ -169,6 +170,22 @@ namespace SharpBrick.PoweredUp
                 throw new InvalidOperationException("This operation is not valid on a non-virtual port.");
             }
         }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void ObserveForPropertyChanged<T>(IObservable<T> observable, params string[] propertyNames)
+        {
+            _compositeDisposable.Add(observable.Subscribe(_ =>
+            {
+                foreach (var propertyName in propertyNames)
+                {
+                    OnPropertyChanged(propertyName);
+                }
+            }));
+        }
+        #endregion
 
         #region Disposable Pattern
         private bool disposedValue;

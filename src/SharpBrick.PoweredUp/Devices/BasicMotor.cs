@@ -21,6 +21,8 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         {
             _powerMode = SingleValueMode<sbyte>(ModeIndexPower);
+
+            ObserveForPropertyChanged(_powerMode.Observable, nameof(Power), nameof(PowerPct));
         }
 
         /// <summary>

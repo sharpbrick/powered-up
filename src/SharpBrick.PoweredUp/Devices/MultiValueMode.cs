@@ -19,6 +19,7 @@ namespace SharpBrick.PoweredUp
         {
             Observable = CreateObservable();
             ObserveOnLocalProperty(Observable, v => Raw = v.Raw, v => SI = v.SI, v => Pct = v.Pct);
+            ObserveForPropertyChanged(Observable, nameof(Raw), nameof(SI), nameof(Pct));
         }
         protected IObservable<Value<TPayload[]>> CreateObservable()
             => _modeValueObservable

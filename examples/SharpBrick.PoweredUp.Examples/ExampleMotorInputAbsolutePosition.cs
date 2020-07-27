@@ -39,7 +39,7 @@ namespace Example
 
                 using var disposable = motor.AbsolutePositionObservable.Subscribe(x => logger.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
                 using var disposable2 = motor.PositionObservable.Subscribe(x => logger.LogWarning($"Position: {x.SI} / {x.Pct}"));
-
+                motor.PropertyChanged += (sender, ea) => { logger.LogInformation($"Change on Property {ea.PropertyName}"); };
 
                 // relative movement from current positions
                 await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Pink);

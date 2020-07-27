@@ -29,6 +29,9 @@ namespace SharpBrick.PoweredUp
         {
             _voltageLMode = SingleValueMode<short>(ModeIndexVoltageL);
             _voltageSMode = SingleValueMode<short>(ModeIndexVoltageS);
+
+            ObserveForPropertyChanged(_voltageLMode.Observable, nameof(VoltageL), nameof(VoltageLPct));
+            ObserveForPropertyChanged(_voltageSMode.Observable, nameof(VoltageS), nameof(VoltageSPct));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
