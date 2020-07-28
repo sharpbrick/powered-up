@@ -53,9 +53,32 @@ namespace SharpBrick.PoweredUp
 
                     _hubs.Add((deviceInfo, hub));
 
+                    _logger.LogInformation($"Discovered log of type {hub.GetType().Name} with name '{deviceInfo.Name}' on Bluetooth Address '{deviceInfo.BluetoothAddress}'");
+
                     onDiscovery(hub).Wait();
                 }
             }, token);
+        }
+
+        public async Task<THub> DiscoverAsync<THub>(CancellationToken token = default)
+        {
+            var tcs = new TaskCompletionSource<THub>();
+
+            Discover(hub =>
+            {
+                if (hub is THub tHub)
+                {
+                    tcs.SetResult(tHub);
+                }
+
+                return Task.CompletedTask;
+            }, token);
+
+            var hub = await tcs.Task;
+
+            _logger.LogInformation($"End DiscoveryAsync for {typeof(THub).Name}");
+
+            return hub;
         }
 
         public THub Create<THub>(ulong bluetoothAddress) where THub : Hub
