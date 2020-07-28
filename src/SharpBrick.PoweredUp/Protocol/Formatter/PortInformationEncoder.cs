@@ -25,10 +25,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         InformationType = informationType,
 
                         // capabilities
-                        OutputCapability = (data[2] & 0x00) == 0x00, // seen from hub
-                        InputCapability = (data[2] & 0x01) == 0x01, // seen from hub
-                        LogicalCombinableCapability = (data[2] & 0x02) == 0x02,
-                        LogicalSynchronizableCapability = (data[2] & 0x03) == 0x03,
+                        OutputCapability = (data[2] & 0x01) == 0x01, // seen from hub
+                        InputCapability = (data[2] & 0x02) == 0x02, // seen from hub
+                        LogicalCombinableCapability = (data[2] & 0x04) == 0x04,
+                        LogicalSynchronizableCapability = (data[2] & 0x08) == 0x08,
 
                         TotalModeCount = data[3],
                         InputModes = BitConverter.ToUInt16(data.Slice(4, 2)),

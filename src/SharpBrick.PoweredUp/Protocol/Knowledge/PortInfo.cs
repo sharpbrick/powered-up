@@ -20,10 +20,10 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         public bool IsVirtual { get; internal set; }
 
         // PortInformationForModeInfoMessage
-        public bool OutputCapability { get; set; }
-        public bool InputCapability { get; set; }
-        public bool LogicalCombinableCapability { get; set; }
-        public bool LogicalSynchronizableCapability { get; set; }
+        public bool OutputCapability { get; set; } // seen from hub
+        public bool InputCapability { get; set; } // seen from hub
+        public bool LogicalCombinableCapability { get; set; } // combined mode possible
+        public bool LogicalSynchronizableCapability { get; set; } // capable for virtual port synchronized commands
 
         // PortInformationForPossibleModeCombinationsMessage
         public ushort[] ModeCombinations { get; set; }
