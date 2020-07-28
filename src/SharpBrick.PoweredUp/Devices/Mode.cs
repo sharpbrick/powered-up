@@ -60,6 +60,11 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
+            if (_modeInfo.IsOutput == false)
+            {
+                throw new InvalidOperationException("The protocol knowledge declares that this mode cannot be written to (IsOutput = false)");
+            }
+
             var response = await _protocol.SendPortOutputCommandAsync(new GenericWriteDirectModeDataMessage(_modeInfo.ModeIndex)
             {
                 HubId = _modeInfo.HubId,
@@ -88,6 +93,11 @@ namespace SharpBrick.PoweredUp
         public async Task SetupNotificationAsync(bool enabled, uint deltaInterval = 5)
         {
             AssertIsConnected();
+
+            if (_modeInfo.IsInput == false)
+            {
+                throw new InvalidOperationException("The protocol knowledge declares that this mode cannot be read (IsInput = false)");
+            }
 
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {

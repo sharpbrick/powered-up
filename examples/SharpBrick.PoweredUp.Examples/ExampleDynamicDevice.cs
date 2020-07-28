@@ -30,7 +30,7 @@ namespace Example
 
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
+            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleDynamicDevice>();
 
             using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
             {
