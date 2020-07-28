@@ -135,6 +135,15 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     break;
                 case HubAttachedIOForAttachedVirtualDeviceMessage msg:
                     port = knowledge.Port(msg.HubId, msg.PortId);
+                    var partOfVirtual = knowledge.Port(msg.HubId, msg.PortAId);
+
+                    ResetProtocolKnowledgeForPort(msg.HubId, port.PortId, knowledge);
+                    port.IsDeviceConnected = true;
+                    port.IOTypeId = msg.IOTypeId;
+                    port.HardwareRevision = partOfVirtual.HardwareRevision;
+                    port.SoftwareRevision = partOfVirtual.SoftwareRevision;
+
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, port, knowledge, serviceProvider);
 
                     port.IsVirtual = true;
                     break;

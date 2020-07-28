@@ -56,6 +56,19 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
+            var portInfo1 = Protocol.Knowledge.Port(HubId, portId1);
+            var portInfo2 = Protocol.Knowledge.Port(HubId, portId2);
+
+            if (portInfo1.IOTypeId != portInfo2.IOTypeId)
+            {
+                throw new InvalidOperationException("Cannot combine devices of different IOType/DeviceType");
+            }
+
+            if (portInfo1.LogicalSynchronizableCapability == false || portInfo2.LogicalSynchronizableCapability == false)
+            {
+                throw new InvalidOperationException("One of the devices does not support logical synchronization");
+            }
+
             var virtualPortAttachedMessage = await Protocol.SendMessageReceiveResultAsync<HubAttachedIOForAttachedVirtualDeviceMessage>(new VirtualPortSetupForConnectedMessage()
             {
                 HubId = HubId,
