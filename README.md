@@ -31,22 +31,23 @@ var serviceProvider = new ServiceCollection()
     
 var host = serviceProvider.GetService<PoweredUpHost>();
 
+var hub = await host.DiscoverAsync<TechnicMediumHub>(); // starting version 2.1
+await hub.ConnectAsync();
+````
+
+## Discovering Hubs for UI
+````csharp
+var host = serviceProvider.GetService<PoweredUpHost>();
+
 var cts = new CancellationTokenSource();
 host.Discover(async hub =>
 {
-    await hub.ConnectAsync();
+    await hub.ConnectAsync(); // to get some more properties from it
 
-    Console.WriteLine(hub.AdvertisingName);
-    Console.WriteLine(hub.SystemType.ToString());
-
-    cts.Cancel();
-    Console.WriteLine("Press RETURN to continue");
+    // show in UI
 }, cts.Token);
 
-Console.WriteLine("Press RETURN to cancel Scanning");
-Console.ReadLine();
-
-cts.Cancel();
+// Cancel Button => cts.Cancel();
 ````
 
 ## Sending Commands to Ports and Devices of a Hub
@@ -56,7 +57,7 @@ See source code in `examples/SharpBrick.PoweredUp.Examples` for more examples.
 ````csharp
 // do hub discovery before
 
-using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+using (var technicMediumHub = hub as TechnicMediumHub)
 {
     // optionally verify if everything is wired up correctly (v2.0 onwards)
     await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
