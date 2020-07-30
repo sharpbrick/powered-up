@@ -4,15 +4,14 @@ using SharpBrick.PoweredUp;
 
 namespace Example
 {
-    public class ExampleBluetoothByKnownAddress : BaseExample
+    public class ExampleDiscoverByType : BaseExample
     {
-        public const ulong ChangeMe_BluetoothAddress = 158897336311065;
         public TechnicMediumHub DirectlyConnectedHub { get; private set; }
 
         // device needs to be switched on!
         public override async Task DiscoverAsync(bool enableTrace)
         {
-            var hub = host.Create<TechnicMediumHub>(ChangeMe_BluetoothAddress);
+            var hub = await host.DiscoverAsync<TechnicMediumHub>();
 
             selectedHub = DirectlyConnectedHub = hub;
 

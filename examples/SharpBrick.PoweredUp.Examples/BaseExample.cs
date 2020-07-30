@@ -24,13 +24,13 @@ namespace Example
                 .AddPoweredUp();
         }
 
-        public void InitHostAndDiscover(bool enableTrace)
+        public async Task InitHostAndDiscoverAsync(bool enableTrace)
         {
             InitHost(enableTrace);
-            Discover(enableTrace);
+            await DiscoverAsync(enableTrace);
         }
 
-        public virtual void Discover(bool enableTrace)
+        public virtual Task DiscoverAsync(bool enableTrace)
         {
             var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
 
@@ -67,6 +67,8 @@ namespace Example
             cts.Cancel();
 
             selectedHub = result;
+
+            return Task.CompletedTask;
         }
 
         public void InitHost(bool enableTrace)
