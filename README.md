@@ -14,9 +14,9 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 # Features
 
 - **Multiple Programming Models**: SharpBrick.PoweredUp supports usage in a *device model* (hubs and devices as classes/properties; see examples below) or a *protocol level* (messages send up and down the Bluetooth Low Energy Protocol).
-- **Typed Devices with explicit Functions**: The SDK supports most commands described in the Lego Wireless Protocol in its typed devices (Motors, Lights, ..).
+- **Typed Devices with explicit Functions**: The SDK supports most commands described in the Lego Wireless Protocol in its typed devices (Motors, Lights, ..). They are self-describing to support a quick bootup of the SDK.
 - **Dynamic Devices**: The SDK can auto-discover new devices which are not yet known by the SDK. The device can be directly accessed either by writing data directly to a mode or receiving notification about value changes.
-- **Awaitable Commands**: Instead of waiting a defined amount of time for the devices to react, directly listens to the feedback messages the LEGO Wireless Protocol provides.
+- **Awaitable Commands**: Instead of waiting a defined amount of time for the devices to react, directly listens to the feedback messages the LEGO Wireless Protocol provides. No unecessary delays and race conditions.
 - **Port Value Combined Mode**: If supported by the device, the SDK allows you to configure the devices to combine multiple feedbacks of the same device within the same message (e.g. speed and absolute position of a motor).
 - **Virtual Port Creation**: Combine multiple devices of the same type into a virtual combined port. This allows synchronous access to multiple devices using the same message (e.g. using two motors for driving).
 - **Deployment Model Verification**: The SDK includes a model builder and a verification method to ensure that the wired devies are correctly reflecting the expectations in the program.
@@ -193,6 +193,21 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
 ````
 
 # SDK Status, Hardware Support, Contributions, ..
+
+Basic Architecture within the SDK
+````
++---------+
+|         |
+| Devices | <-+
+|         |   |   +-------------------+     +-------------+     +-----+
++---------+   +-> |                   |     |             |     |     |
+                  | PoweredUpProtocol | <-> | BLE Adapter | <-> | BLE |
++---------+   +-> |   (w/ Knowlege)   |     |             |     |     |
+|         |   |   +-------------------+     +-------------+     +-----+
+|   Hub   | <-+
+|         |
++---------+
+````
 
 ## Implementation Status
 
