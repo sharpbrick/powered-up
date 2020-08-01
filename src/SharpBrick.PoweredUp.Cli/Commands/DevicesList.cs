@@ -22,10 +22,10 @@ namespace SharpBrick.PoweredUp.Cli
                 .AddSingleton<ILoggerFactory>(loggerFactory)
                 .BuildServiceProvider();
 
-            using (var protocol = new PoweredUpProtocol(
-                new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()),
-                serviceProvider))
+            using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, loggerFactory.CreateLogger<BluetoothKernel>()))
+            using (var protocol = new PoweredUpProtocol(kernel, serviceProvider))
             {
+                kernel.BluetoothAddress = bluetoothAddress;
                 var discoverPorts = new DiscoverPorts(protocol, logger: loggerFactory.CreateLogger<DiscoverPorts>()); // register to upstream
 
                 if (enableTrace)

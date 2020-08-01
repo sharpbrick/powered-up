@@ -9,15 +9,14 @@ namespace SharpBrick.PoweredUp.Bluetooth
     {
         private readonly ILogger _logger;
         private readonly IPoweredUpBluetoothAdapter _bluetoothAdapter;
-        private readonly ulong _bluetoothAddress;
+        public ulong BluetoothAddress { get; set; }
         private IPoweredUpBluetoothDevice _device = null;
         private IPoweredUpBluetoothService _service = null;
         private IPoweredUpBluetoothCharacteristic _characteristic = null;
 
-        public BluetoothKernel(IPoweredUpBluetoothAdapter bluetoothAdapter, ulong bluetoothAddress, ILogger<BluetoothKernel> logger = default)
+        public BluetoothKernel(IPoweredUpBluetoothAdapter bluetoothAdapter, ILogger<BluetoothKernel> logger = default)
         {
             _bluetoothAdapter = bluetoothAdapter ?? throw new ArgumentNullException(nameof(bluetoothAdapter));
-            _bluetoothAddress = bluetoothAddress;
             _logger = logger;
         }
 
@@ -25,7 +24,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
 
         public async Task ConnectAsync()
         {
-            _device = await _bluetoothAdapter.GetDeviceAsync(_bluetoothAddress);
+            _device = await _bluetoothAdapter.GetDeviceAsync(BluetoothAddress);
             _service = await _device.GetServiceAsync(new Guid(PoweredUpBluetoothConstants.LegoHubService));
             _characteristic = await _service.GetCharacteristicAsync(new Guid(PoweredUpBluetoothConstants.LegoHubCharacteristic));
 
