@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.Functions;
 using static SharpBrick.PoweredUp.Directions;
@@ -13,7 +14,7 @@ namespace Example
             {
                 var motor = technicMediumHub.A.GetDevice<TechnicLargeLinearMotor>();
 
-                var calibration = new LinearMidCalibration(serviceProvider);
+                var calibration = serviceProvider.GetService<LinearMidCalibration>();
                 await calibration.ExecuteAsync(motor);
 
                 await Task.Delay(5000);
