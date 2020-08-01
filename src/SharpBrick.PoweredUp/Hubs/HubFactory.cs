@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Bluetooth;
 
 namespace SharpBrick.PoweredUp.Hubs
@@ -14,20 +13,33 @@ namespace SharpBrick.PoweredUp.Hubs
         }
 
         public Hub CreateByBluetoothManufacturerData(byte[] manufacturerData)
-            => (manufacturerData == null || manufacturerData.Length < 3) ? null : Create(GetSystemTypeFromManufacturerData((PoweredUpHubManufacturerData)manufacturerData[1]));
+        {
+            var hub = (manufacturerData == null || manufacturerData.Length < 3) ? null : Create(GetTypeFromSystemType(GetSystemTypeFromManufacturerData((PoweredUpHubManufacturerData)manufacturerData[1])));
+            hub.Configure(0x00);
+
+            return hub;
+        }
+
+        public THub Create<THub>() where THub : Hub
+        {
+            var hub = Create(typeof(THub)) as THub;
+            hub.Configure(0x00);
+
+            return hub;
+        }
+
+        private Hub Create(Type type)
+            => _serviceProvider.GetService(type) as Hub ?? throw new NotSupportedException($"Hub with type {type} not registered in service locator supported.");
 
         private SystemType GetSystemTypeFromManufacturerData(PoweredUpHubManufacturerData poweredUpHubManufacturerData)
             => (SystemType)poweredUpHubManufacturerData;
 
-        public Hub Create(SystemType hubType)
-            => hubType switch
+        public static Type GetTypeFromSystemType(SystemType systemType)
+            => systemType switch
             {
-                SystemType.LegoTechnic_MediumHub => ActivatorUtilities.CreateInstance<TechnicMediumHub>(_serviceProvider, (byte)0x00),
-                _ => throw new NotSupportedException($"Hub with type {hubType} not yet supported."),
+                SystemType.LegoTechnic_MediumHub => typeof(TechnicMediumHub),
+                _ => throw new NotSupportedException(),
             };
-
-        public THub Create<THub>() where THub : class
-            => Create(GetSystemTypeFromType(typeof(THub))) as THub;
 
         public static SystemType GetSystemTypeFromType(Type type)
             => type.Name switch
