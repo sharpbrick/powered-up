@@ -73,14 +73,16 @@ namespace SharpBrick.PoweredUp
         {
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
-                .AddSingleton<PoweredUpBluetoothAdapterMock>()
+                .AddSingleton<IPoweredUpBluetoothAdapter, PoweredUpBluetoothAdapterMock>()
+                .AddSingleton<BluetoothKernel>()
+                .AddSingleton<IPoweredUpProtocol, PoweredUpProtocol>()
                 .AddSingleton<IDeviceFactory, DeviceFactory>() // for protocol knowledge init
+
                 .BuildServiceProvider();
 
-            var poweredUpBluetoothAdapterMock = serviceProvider.GetService<PoweredUpBluetoothAdapterMock>();
+            var poweredUpBluetoothAdapterMock = serviceProvider.GetService<IPoweredUpBluetoothAdapter>() as PoweredUpBluetoothAdapterMock;
 
-            var kernel = ActivatorUtilities.CreateInstance<BluetoothKernel>(serviceProvider, (IPoweredUpBluetoothAdapter)poweredUpBluetoothAdapterMock, (ulong)0);
-            var protocol = ActivatorUtilities.CreateInstance<PoweredUpProtocol>(serviceProvider, kernel);
+            var protocol = serviceProvider.GetService<IPoweredUpProtocol>();
 
             protocol.ConnectAsync().Wait();
 
