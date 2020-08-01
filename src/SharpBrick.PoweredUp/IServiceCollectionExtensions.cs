@@ -9,9 +9,9 @@ namespace SharpBrick.PoweredUp
     {
         public static IServiceCollection AddPoweredUp(this IServiceCollection self)
             => self
-                .AddSingleton<IHubFactory, HubFactory>()
-                .AddSingleton<IDeviceFactory, DeviceFactory>()
                 .AddSingleton<PoweredUpHost>()
+                .AddScoped<IHubFactory, HubFactory>()
+                .AddScoped<IDeviceFactory, DeviceFactory>()
                 .AddTransient<LinearMidCalibration>();
     }
 }
