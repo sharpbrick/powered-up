@@ -11,6 +11,9 @@ namespace SharpBrick.PoweredUp.Functions
     {
         private IServiceProvider _serviceProvider;
 
+        public byte MaxPower { get; set; } = 10;
+        public byte Speed { get; set; } = 10;
+
         public LinearMidCalibration(IServiceProvider serviceProvider)
         {
             this._serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -32,7 +35,7 @@ namespace SharpBrick.PoweredUp.Functions
             await motor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
             logger.LogInformation("Start CW");
-            await motor.StartPowerAsync(CW * 10);
+            await motor.StartPowerAsync((sbyte)(CW * MaxPower));
 
             await motor.SpeedObservable.Where(x => x.SI == 0).FirstAsync().GetAwaiter();
             logger.LogInformation("Reached End by detecting no speed movement.");
@@ -41,7 +44,7 @@ namespace SharpBrick.PoweredUp.Functions
             logger.LogInformation($"CW End at {cwVal}.");
 
             logger.LogInformation("Start CCW");
-            await motor.StartPowerAsync(CCW * 10);
+            await motor.StartPowerAsync((sbyte)(CCW * MaxPower));
 
             await motor.SpeedObservable.Where(x => x.SI == 0).FirstAsync().GetAwaiter();
             logger.LogInformation("Reached End by detecting no speed movement.");
@@ -55,7 +58,7 @@ namespace SharpBrick.PoweredUp.Functions
             var extend = (uint)(range / 2);
             logger.LogInformation($"Total Range: {range} Extend from center: {extend}");
 
-            await motor.StartSpeedForDegreesAsync(extend, CW * 10, 10, SpecialSpeed.Hold, SpeedProfiles.None);
+            await motor.StartSpeedForDegreesAsync(extend, (sbyte)(CW * Speed), MaxPower, SpecialSpeed.Hold, SpeedProfiles.None);
 
             await motor.SpeedObservable.Where(x => x.SI == 0).FirstAsync().GetAwaiter();
             await motor.SetZeroAsync();
