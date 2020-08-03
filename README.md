@@ -209,6 +209,26 @@ Basic Architecture within the SDK
 +---------+
 ````
 
+
+DI Container Elements
+
+````
+                                              PoweredUpHost +----+
+                                                   +             |
+                                                   |             |
++-------------------- Scoped Service Provider ---------------------+
+|                                                  |             | |
+|                                                  v             +--->IPoweredUp
+| LinearMidCalibration +                         HubFactory      | |  BluetoothAdapter
+|                      |                                         | |
+| TechnicMediumHub +---+-> PoweredUpProtocol +-> BluetoothKernel + |
+|             +                       +                            |
+|             |                       |                            |
+|             +-----------------------+--------> DeviceFactory     |
+|                                                                  |
++------------------------------------------------------------------+
+````
+
 ## Implementation Status
 
 - Bluetooth Adapter
