@@ -2,9 +2,9 @@ using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -15,6 +15,7 @@ namespace SharpBrick.PoweredUp.Protocol
     {
         private readonly BluetoothKernel _kernel;
         private readonly ILogger<PoweredUpProtocol> _logger;
+        private readonly IDeviceFactory _deviceFactory;
         private Subject<(byte[] data, PoweredUpMessage message)> _upstreamSubject = null;
 
         public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
@@ -23,11 +24,12 @@ namespace SharpBrick.PoweredUp.Protocol
         public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject.Select(x => x.message);
         public IServiceProvider ServiceProvider { get; }
 
-        public PoweredUpProtocol(BluetoothKernel kernel, IServiceProvider serviceProvider)
+        public PoweredUpProtocol(BluetoothKernel kernel, ILogger<PoweredUpProtocol> logger, IDeviceFactory deviceFactory, IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-            _logger = serviceProvider.GetService<ILoggerFactory>()?.CreateLogger<PoweredUpProtocol>();
+            _logger = logger;
+            _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(_deviceFactory));
             _upstreamSubject = new Subject<(byte[] data, PoweredUpMessage message)>();
         }
 
@@ -41,7 +43,7 @@ namespace SharpBrick.PoweredUp.Protocol
                 {
                     var message = MessageEncoder.Decode(data, Knowledge);
 
-                    await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, ServiceProvider);
+                    await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, _deviceFactory);
 
                     _upstreamSubject.OnNext((data, message));
                 }
@@ -65,7 +67,7 @@ namespace SharpBrick.PoweredUp.Protocol
             {
                 var data = MessageEncoder.Encode(message, Knowledge);
 
-                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, ServiceProvider);
+                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, _deviceFactory);
 
                 await _kernel.SendBytesAsync(data);
             }

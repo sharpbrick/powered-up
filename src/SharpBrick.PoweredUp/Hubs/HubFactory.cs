@@ -29,7 +29,7 @@ namespace SharpBrick.PoweredUp.Hubs
         }
 
         private Hub Create(Type type)
-            => _serviceProvider.GetService(type) as Hub ?? throw new NotSupportedException($"Hub with type {type} not registered in service locator supported.");
+            => _serviceProvider.GetService(type) as Hub ?? throw new NotSupportedException($"Hub with type {type} not registered in service locator supported."); // ServiceLocator ok: transient factory
 
         private SystemType GetSystemTypeFromManufacturerData(PoweredUpHubManufacturerData poweredUpHubManufacturerData)
             => (SystemType)poweredUpHubManufacturerData;

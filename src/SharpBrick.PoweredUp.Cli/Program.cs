@@ -48,7 +48,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                             scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
 
-                            var deviceListCli = scopedServiceProvider.GetService<DevicesList>();
+                            var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
 
                             await deviceListCli.ExecuteAsync();
                         }
@@ -80,7 +80,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                             scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
 
-                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>();
+                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
 
                             var port = byte.Parse(portOption.Value());
 
@@ -122,7 +122,7 @@ namespace SharpBrick.PoweredUp.Cli
         {
             if (enableTrace)
             {
-                var traceMessages = serviceProvider.GetService<TraceMessages>();
+                var traceMessages = serviceProvider.GetService<TraceMessages>(); // ServiceLocator ok: transient factory
 
                 await traceMessages.ExecuteAsync();
             }
