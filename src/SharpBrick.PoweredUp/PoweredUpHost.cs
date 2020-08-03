@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Hubs;
+using SharpBrick.PoweredUp.Protocol;
 
 namespace SharpBrick.PoweredUp
 {
@@ -99,6 +100,15 @@ namespace SharpBrick.PoweredUp
             }, hub));
 
             return hub;
+        }
+
+        public IPoweredUpProtocol CreateProtocol(ulong bluetoothAddress)
+        {
+            var serviceProvider = CreateBluetoothScope(bluetoothAddress);
+
+            var protocol = serviceProvider.GetService<IPoweredUpProtocol>();
+
+            return protocol;
         }
 
         private IServiceProvider CreateBluetoothScope(ulong bluetoothAddress)

@@ -15,5 +15,7 @@ namespace SharpBrick.PoweredUp.Protocol
         IObservable<(byte[] data, PoweredUpMessage message)> UpstreamRawMessages { get; }
 
         ProtocolKnowledge Knowledge { get; }
+
+        IServiceProvider ServiceProvider { get; }
     }
 }

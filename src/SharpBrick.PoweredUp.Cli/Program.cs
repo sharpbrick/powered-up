@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.WinRT;
 
 namespace SharpBrick.PoweredUp.Cli
@@ -32,15 +34,24 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
-                        var loggerFactory = CreateLoggerFactory(enableTrace);
-                        var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
+                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                        using (var scope = CreateServiceProvider(enableTrace).CreateScope())
+                        {
+                            var scopedServiceProvider = scope.ServiceProvider;
 
-                        ulong bluetoothAddress = FindAndSelectHub(poweredUpBluetoothAdapter);
+                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                        if (bluetoothAddress == 0)
-                            return;
+                            ulong bluetoothAddress = FindAndSelectHub(scopedServiceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
-                        await DevicesList.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, enableTrace);
+                            if (bluetoothAddress == 0)
+                                return;
+
+                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+                            var deviceListCli = scopedServiceProvider.GetService<DevicesList>();
+
+                            await deviceListCli.ExecuteAsync();
+                        }
                     });
                 });
 
@@ -55,17 +66,26 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
-                        var loggerFactory = CreateLoggerFactory(enableTrace);
-                        var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
+                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                        using (var scope = CreateServiceProvider(enableTrace).CreateScope())
+                        {
+                            var scopedServiceProvider = scope.ServiceProvider;
 
-                        ulong bluetoothAddress = FindAndSelectHub(poweredUpBluetoothAdapter);
+                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                        if (bluetoothAddress == 0)
-                            return;
+                            ulong bluetoothAddress = FindAndSelectHub(scopedServiceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
-                        var port = byte.Parse(portOption.Value());
+                            if (bluetoothAddress == 0)
+                                return;
 
-                        await DumpStaticPortInfo.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, port, enableTrace);
+                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>();
+
+                            var port = byte.Parse(portOption.Value());
+
+                            await dumpStaticPortInfoCommand.ExecuteAsync(port);
+                        }
                     });
                 });
             });
@@ -73,23 +93,42 @@ namespace SharpBrick.PoweredUp.Cli
             await app.ExecuteAsync(args);
         }
 
-        private static ILoggerFactory CreateLoggerFactory(bool enableTrace)
-        {
-            return LoggerFactory.Create(builder =>
-            {
-                builder.ClearProviders();
-
-                if (enableTrace)
+        private static IServiceProvider CreateServiceProvider(bool enableTrace)
+            => new ServiceCollection()
+                .AddLogging(builder =>
                 {
-                    builder.AddConsole();
+                    builder.ClearProviders();
 
-                    builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
-                }
+                    if (enableTrace)
+                    {
+                        builder.AddConsole();
+
+                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                    }
+                })
+                .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
+                .AddPoweredUp()
+
+                // Add Functions
+                .AddTransient<DiscoverPorts>()
+                .AddTransient<TraceMessages>()
+
+                // Add CLI Commands
+                .AddTransient<DumpStaticPortInfo>()
+                .AddTransient<DevicesList>()
+                .BuildServiceProvider();
+
+        public static async Task AddTraceWriterAsync(IServiceProvider serviceProvider, bool enableTrace)
+        {
+            if (enableTrace)
+            {
+                var traceMessages = serviceProvider.GetService<TraceMessages>();
+
+                await traceMessages.ExecuteAsync();
             }
-            );
         }
 
-        private static ulong FindAndSelectHub(WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
+        private static ulong FindAndSelectHub(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
         {
             ulong result = 0;
             var devices = new ConcurrentBag<(int key, ulong bluetoothAddresss, PoweredUpHubManufacturerData deviceType)>();

@@ -2,57 +2,43 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
-using SharpBrick.PoweredUp.WinRT;
 using SharpBrick.PoweredUp.Utils;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace SharpBrick.PoweredUp.Cli
 {
-    public static class DevicesList
+    public class DevicesList
     {
-        public static async Task ExecuteAsync(ILoggerFactory loggerFactory, WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress, bool enableTrace)
+        private readonly IPoweredUpProtocol protocol;
+        private readonly DiscoverPorts discoverPorts;
+
+        public DevicesList(IPoweredUpProtocol protocol, DiscoverPorts discoverPorts)
         {
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton<ILoggerFactory>(loggerFactory)
-                .BuildServiceProvider();
+            this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
+            this.discoverPorts = discoverPorts ?? throw new ArgumentNullException(nameof(discoverPorts));
+        }
+        public async Task ExecuteAsync()
+        {
+            Console.WriteLine("Discover Ports. Receiving Messages ...");
 
-            using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, loggerFactory.CreateLogger<BluetoothKernel>()))
-            using (var protocol = new PoweredUpProtocol(kernel, serviceProvider))
-            {
-                kernel.BluetoothAddress = bluetoothAddress;
-                var discoverPorts = new DiscoverPorts(protocol, logger: loggerFactory.CreateLogger<DiscoverPorts>()); // register to upstream
+            await protocol.ConnectAsync(); // registering to bluetooth notification
 
-                if (enableTrace)
-                {
-                    var tracer = new TraceMessages(protocol, loggerFactory.CreateLogger<TraceMessages>());
+            await Task.Delay(2000); // await ports to be announced initially by device.
 
-                    await tracer.ExecuteAsync();
-                }
+            using var disposable = protocol.UpstreamMessages.Subscribe(x => Console.Write("."));
 
-                Console.WriteLine("Discover Ports. Receiving Messages ...");
+            await discoverPorts.ExecuteAsync();
 
-                await protocol.ConnectAsync(); // registering to bluetooth notification
+            await protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage() { HubId = 0, Action = HubAction.SwitchOffHub }, result => result.Action == HubAction.HubWillSwitchOff);
 
-                await Task.Delay(2000); // await ports to be announced initially by device.
+            Console.WriteLine(string.Empty);
 
-                using var disposable = protocol.UpstreamMessages.Subscribe(x => Console.Write("."));
+            Console.WriteLine($"Discover Ports Function: {discoverPorts.ReceivedMessages} / {discoverPorts.SentMessages}");
 
-                await discoverPorts.ExecuteAsync();
-
-                await protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage() { HubId = 0, Action = HubAction.SwitchOffHub }, result => result.Action == HubAction.HubWillSwitchOff);
-
-                Console.WriteLine(string.Empty);
-
-                Console.WriteLine($"Discover Ports Function: {discoverPorts.ReceivedMessages} / {discoverPorts.SentMessages}");
-
-                PrettyPrintKnowledge(System.Console.Out, protocol.Knowledge);
-            }
+            PrettyPrintKnowledge(System.Console.Out, protocol.Knowledge);
         }
 
         private static void PrettyPrintKnowledge(TextWriter writer, ProtocolKnowledge portKnowledge)
