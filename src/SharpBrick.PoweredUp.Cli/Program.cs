@@ -34,17 +34,18 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
+                        var serviceProvider = CreateServiceProvider(enableTrace);
+                        ulong bluetoothAddress = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
+
+                        if (bluetoothAddress == 0)
+                            return;
+
                         // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
-                        using (var scope = CreateServiceProvider(enableTrace).CreateScope())
+                        using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServiceProvider = scope.ServiceProvider;
 
                             await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
-
-                            ulong bluetoothAddress = FindAndSelectHub(scopedServiceProvider.GetService<IPoweredUpBluetoothAdapter>());
-
-                            if (bluetoothAddress == 0)
-                                return;
 
                             scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
 
@@ -66,17 +67,18 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
+                        var serviceProvider = CreateServiceProvider(enableTrace);
+                        ulong bluetoothAddress = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
+
+                        if (bluetoothAddress == 0)
+                            return;
+
                         // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
-                        using (var scope = CreateServiceProvider(enableTrace).CreateScope())
+                        using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServiceProvider = scope.ServiceProvider;
 
                             await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
-
-                            ulong bluetoothAddress = FindAndSelectHub(scopedServiceProvider.GetService<IPoweredUpBluetoothAdapter>());
-
-                            if (bluetoothAddress == 0)
-                                return;
 
                             scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
 
