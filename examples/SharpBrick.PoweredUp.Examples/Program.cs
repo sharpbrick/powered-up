@@ -30,7 +30,8 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleBluetoothByName();
             //example = new Example.ExampleSetHubProperty();
             //example = new Example.ExampleHubPropertyObserving();
-            example = new Example.ExampleDiscoverByType();
+            //example = new Example.ExampleDiscoverByType();
+            example = new Example.ExampleCalibrationSteering();
 
             await example.InitHostAndDiscoverAsync(enableTrace);
 

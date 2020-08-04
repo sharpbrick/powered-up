@@ -16,7 +16,6 @@ namespace SharpBrick.PoweredUp.Functions
         private readonly IPoweredUpProtocol _protocol;
         private readonly byte _hubId;
         private readonly ILogger<DiscoverPorts> _logger;
-        private readonly IDisposable _disposable;
         private TaskCompletionSource<int> _taskCompletionSource;
         private int _stageTwoCount;
         private int _stageTwoExpected;
@@ -110,7 +109,7 @@ namespace SharpBrick.PoweredUp.Functions
             {
                 var port = knowledge.Port(_hubId, msg.PortId);
 
-                RequestPortModePropertiesAsync(port);
+                _ = RequestPortModePropertiesAsync(port); // discard the task to supress the await error
             }
 
             if (applicableMessage)
