@@ -11,15 +11,13 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 var device = technicMediumHub.Voltage;
 
                 await device.SetupNotificationAsync(device.ModeIndexVoltageL, true);
 
-                var disposable = device.VoltageLObservable.Subscribe(x => logger.LogWarning($"Voltage L: {x.SI}mV ({x.Pct}%)"));
+                var disposable = device.VoltageLObservable.Subscribe(x => Log.LogWarning($"Voltage L: {x.SI}mV ({x.Pct}%)"));
 
                 await Task.Delay(10_000);
 

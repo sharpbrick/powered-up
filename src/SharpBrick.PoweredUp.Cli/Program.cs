@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.WinRT;
 
 namespace SharpBrick.PoweredUp.Cli
@@ -32,15 +34,25 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
-                        var loggerFactory = CreateLoggerFactory(enableTrace);
-                        var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
-
-                        ulong bluetoothAddress = FindAndSelectHub(poweredUpBluetoothAdapter);
+                        var serviceProvider = CreateServiceProvider(enableTrace);
+                        ulong bluetoothAddress = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                         if (bluetoothAddress == 0)
                             return;
 
-                        await DevicesList.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, enableTrace);
+                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                        using (var scope = serviceProvider.CreateScope())
+                        {
+                            var scopedServiceProvider = scope.ServiceProvider;
+
+                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+
+                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+                            var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
+
+                            await deviceListCli.ExecuteAsync();
+                        }
                     });
                 });
 
@@ -55,17 +67,27 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
-                        var loggerFactory = CreateLoggerFactory(enableTrace);
-                        var poweredUpBluetoothAdapter = new WinRTPoweredUpBluetoothAdapter();
-
-                        ulong bluetoothAddress = FindAndSelectHub(poweredUpBluetoothAdapter);
+                        var serviceProvider = CreateServiceProvider(enableTrace);
+                        ulong bluetoothAddress = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                         if (bluetoothAddress == 0)
                             return;
 
-                        var port = byte.Parse(portOption.Value());
+                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                        using (var scope = serviceProvider.CreateScope())
+                        {
+                            var scopedServiceProvider = scope.ServiceProvider;
 
-                        await DumpStaticPortInfo.ExecuteAsync(loggerFactory, poweredUpBluetoothAdapter, bluetoothAddress, port, enableTrace);
+                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+
+                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
+
+                            var port = byte.Parse(portOption.Value());
+
+                            await dumpStaticPortInfoCommand.ExecuteAsync(port);
+                        }
                     });
                 });
             });
@@ -73,23 +95,38 @@ namespace SharpBrick.PoweredUp.Cli
             await app.ExecuteAsync(args);
         }
 
-        private static ILoggerFactory CreateLoggerFactory(bool enableTrace)
-        {
-            return LoggerFactory.Create(builder =>
-            {
-                builder.ClearProviders();
-
-                if (enableTrace)
+        private static IServiceProvider CreateServiceProvider(bool enableTrace)
+            => new ServiceCollection()
+                .AddLogging(builder =>
                 {
-                    builder.AddConsole();
+                    builder.ClearProviders();
 
-                    builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
-                }
+                    if (enableTrace)
+                    {
+                        builder.AddConsole();
+
+                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                    }
+                })
+                .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
+                .AddPoweredUp()
+
+                // Add CLI Commands
+                .AddTransient<DumpStaticPortInfo>()
+                .AddTransient<DevicesList>()
+                .BuildServiceProvider();
+
+        public static async Task AddTraceWriterAsync(IServiceProvider serviceProvider, bool enableTrace)
+        {
+            if (enableTrace)
+            {
+                var traceMessages = serviceProvider.GetService<TraceMessages>(); // ServiceLocator ok: transient factory
+
+                await traceMessages.ExecuteAsync();
             }
-            );
         }
 
-        private static ulong FindAndSelectHub(WinRTPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
+        private static ulong FindAndSelectHub(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
         {
             ulong result = 0;
             var devices = new ConcurrentBag<(int key, ulong bluetoothAddresss, PoweredUpHubManufacturerData deviceType)>();

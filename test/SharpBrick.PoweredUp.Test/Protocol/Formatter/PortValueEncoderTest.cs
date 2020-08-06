@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 .BuildServiceProvider();
 
 
-            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicMediumHubTiltSensor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x63, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge, serviceProvider);
+            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicMediumHubTiltSensor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x63, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge, serviceProvider.GetService<IDeviceFactory>());
 
             // arrange
             var data = BytesStringUtil.StringToData(dataAsString);

@@ -30,9 +30,7 @@ namespace Example
 
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleDynamicDevice>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 // deployment model verification with unknown devices
                 await technicMediumHub.VerifyDeploymentModelAsync(mb => mb
@@ -47,7 +45,7 @@ namespace Example
 
                 // discover the unknown device using the LWP
                 await dynamicDeviceWhichIsAMotor.DiscoverAsync();
-                logger.LogInformation("Discovery completed");
+                Log.LogInformation("Discovery completed");
 
                 // use combined mode values from the device
                 await dynamicDeviceWhichIsAMotor.TryLockDeviceForCombinedModeNotificationSetupAsync(2, 3);
@@ -61,8 +59,8 @@ namespace Example
                 var aposMode = dynamicDeviceWhichIsAMotor.SingleValueMode<short>(3);
 
                 // use their observables to report values
-                using var disposable = posMode.Observable.Subscribe(x => logger.LogWarning($"Position: {x.SI} / {x.Pct}"));
-                using var disposable2 = aposMode.Observable.Subscribe(x => logger.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
+                using var disposable = posMode.Observable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
+                using var disposable2 = aposMode.Observable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
 
                 // or even write to them
                 await powerMode.WriteDirectModeDataAsync(0x64); // That is StartPower on a motor

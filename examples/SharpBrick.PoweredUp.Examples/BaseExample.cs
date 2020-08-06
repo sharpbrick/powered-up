@@ -12,9 +12,11 @@ namespace Example
 {
     public abstract class BaseExample
     {
-        protected PoweredUpHost host;
-        protected IServiceProvider serviceProvider;
-        public Hub selectedHub;
+        protected PoweredUpHost Host { get; set; }
+        protected IServiceProvider ServiceProvider { get; set; }
+        public Hub SelectedHub { get; set; }
+
+        public ILogger Log { get; private set; }
 
         public abstract Task ExecuteAsync();
 
@@ -27,46 +29,47 @@ namespace Example
         public async Task InitHostAndDiscoverAsync(bool enableTrace)
         {
             InitHost(enableTrace);
+
+            Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
+
             await DiscoverAsync(enableTrace);
         }
 
         public virtual Task DiscoverAsync(bool enableTrace)
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Main");
-
             Hub result = null;
 
-            logger.LogInformation("Finding Service");
+            Log.LogInformation("Finding Service");
             var cts = new CancellationTokenSource();
-            host.Discover(async hub =>
+            Host.Discover(async hub =>
             {
                 // add this when you are interested in a tracing of the message ("human readable")
                 if (enableTrace)
                 {
-                    var tracer = new TraceMessages(hub.Protocol, serviceProvider.GetService<ILoggerFactory>().CreateLogger<TraceMessages>());
+                    var tracer = hub.ServiceProvider.GetService<TraceMessages>();
 
                     await tracer.ExecuteAsync();
                 }
 
-                logger.LogInformation("Connecting to Hub");
+                Log.LogInformation("Connecting to Hub");
                 await hub.ConnectAsync();
 
                 result = hub;
 
-                logger.LogInformation(hub.AdvertisingName);
-                logger.LogInformation(hub.SystemType.ToString());
+                Log.LogInformation(hub.AdvertisingName);
+                Log.LogInformation(hub.SystemType.ToString());
 
                 cts.Cancel();
 
-                logger.LogInformation("Press RETURN to continue to the action");
+                Log.LogInformation("Press RETURN to continue to the action");
             }, cts.Token);
 
-            logger.LogInformation("Press RETURN to cancel Scanning");
+            Log.LogInformation("Press RETURN to cancel Scanning");
             Console.ReadLine();
 
             cts.Cancel();
 
-            selectedHub = result;
+            SelectedHub = result;
 
             return Task.CompletedTask;
         }
@@ -90,9 +93,9 @@ namespace Example
 
             Configure(serviceCollection);
 
-            serviceProvider = serviceCollection.BuildServiceProvider();
+            ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            host = serviceProvider.GetService<PoweredUpHost>();
+            Host = ServiceProvider.GetService<PoweredUpHost>();
         }
     }
 }

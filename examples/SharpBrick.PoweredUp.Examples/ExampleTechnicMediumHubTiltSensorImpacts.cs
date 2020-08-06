@@ -11,9 +11,7 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 var device = technicMediumHub.TiltSensor;
 
@@ -21,7 +19,7 @@ namespace Example
 
                 await device.SetupNotificationAsync(device.ModeIndexImpacts, true, deltaInterval: 1);
 
-                using var disposable = device.ImpactsObservable.Subscribe(x => logger.LogWarning($"Impact: {x.SI} / {x.Pct} / {x.Raw}"));
+                using var disposable = device.ImpactsObservable.Subscribe(x => Log.LogWarning($"Impact: {x.SI} / {x.Pct} / {x.Raw}"));
 
                 await Task.Delay(10_000);
 

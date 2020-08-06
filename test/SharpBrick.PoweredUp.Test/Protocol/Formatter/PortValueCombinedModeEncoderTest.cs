@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 .AddPoweredUp()
                 .BuildServiceProvider();
 
-            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicLargeLinearMotor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x00, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge, serviceProvider);
+            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicLargeLinearMotor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x00, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge, serviceProvider.GetService<IDeviceFactory>());
             KnowledgeManager.ApplyDynamicProtocolKnowledge(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
             {
                 PortId = 0,
@@ -32,7 +32,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x02, DataSet = 0, },
                         new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x03, DataSet = 0, },
                     }
-            }, knowledge, serviceProvider);
+            }, knowledge, serviceProvider.GetService<IDeviceFactory>());
 
             // arrange
             var data = BytesStringUtil.StringToData(dataAsString);

@@ -104,7 +104,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 
             return applicableMessage;
         }
-        public static Task ApplyDynamicProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge, IServiceProvider serviceProvider)
+        public static Task ApplyDynamicProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
         {
             HubInfo hub;
             PortInfo port;
@@ -125,7 +125,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     port.HardwareRevision = msg.HardwareRevision;
                     port.SoftwareRevision = msg.SoftwareRevision;
 
-                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, port, knowledge, serviceProvider);
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, port, knowledge, deviceFactory);
                     break;
                 case HubAttachedIOForDetachedDeviceMessage msg:
                     port = knowledge.Port(msg.HubId, msg.PortId);
@@ -143,7 +143,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     port.HardwareRevision = partOfVirtual.HardwareRevision;
                     port.SoftwareRevision = partOfVirtual.SoftwareRevision;
 
-                    AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, port, knowledge, serviceProvider);
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, port, knowledge, deviceFactory);
 
                     port.IsVirtual = true;
                     break;
@@ -176,9 +176,9 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             return Task.CompletedTask;
         }
 
-        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge, IServiceProvider serviceProvider)
+        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
         {
-            var device = serviceProvider.GetService<IDeviceFactory>().Create(type);
+            var device = deviceFactory.Create(type);
 
             if (device != null)
             {

@@ -9,6 +9,7 @@ namespace SharpBrick.PoweredUp.Examples
         {
             var enableTrace = (args.Length > 0 && args[0] == "--trace");
 
+            // NOTE: Examples are in their own root namespace to make namespace usage clear
             Example.BaseExample example;
 
             //example = new Example.ExampleColors();
@@ -33,9 +34,10 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleDiscoverByType();
             example = new Example.ExampleCalibrationSteering();
 
+            // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             await example.InitHostAndDiscoverAsync(enableTrace);
 
-            if (example.selectedHub != null)
+            if (example.SelectedHub != null)
             {
                 await example.ExecuteAsync();
             }

@@ -11,15 +11,13 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 var device = technicMediumHub.GyroSensor;
 
                 await device.SetupNotificationAsync(device.ModeIndexRotation, true);
 
-                var disposable = device.RotationObservable.Subscribe(x => logger.LogWarning($"Rotation: {x.x} / {x.y} / {x.z}"));
+                var disposable = device.RotationObservable.Subscribe(x => Log.LogWarning($"Rotation: {x.x} / {x.y} / {x.z}"));
 
                 await Task.Delay(10_000);
 

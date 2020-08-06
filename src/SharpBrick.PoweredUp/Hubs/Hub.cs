@@ -2,9 +2,8 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
@@ -14,32 +13,30 @@ namespace SharpBrick.PoweredUp
     {
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
         private readonly ILogger _logger;
+        private readonly IDeviceFactory _deviceFactory;
 
         public IPoweredUpProtocol Protocol { get; private set; }
-        public byte HubId { get; }
+        public byte HubId { get; private set; }
         public IServiceProvider ServiceProvider { get; }
         public bool IsConnected => Protocol != null;
 
-        public Hub(byte hubId, IServiceProvider serviceProvider, Port[] knownPorts)
+        public Hub(IPoweredUpProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, Port[] knownPorts)
         {
-            HubId = hubId;
+            Protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
+            _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(deviceFactory));
             ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
-            _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
-
-        }
-
-        public void ConnectWithBluetoothAdapter(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter, ulong bluetoothAddress)
-        {
-            _logger?.LogDebug("Init Hub with BluetoothKernel");
-            var kernel = ActivatorUtilities.CreateInstance<BluetoothKernel>(ServiceProvider, poweredUpBluetoothAdapter, bluetoothAddress);
-            _logger?.LogDebug("Init Hub with PoweredUpProtocol");
-            Protocol = ActivatorUtilities.CreateInstance<PoweredUpProtocol>(ServiceProvider, kernel);
+            _logger = logger;
 
             SetupOnHubChange();
             SetupOnPortChangeObservable(Protocol.UpstreamMessages);
             SetupHubAlertObservable(Protocol.UpstreamMessages);
             SetupHubPropertyObservable(Protocol.UpstreamMessages);
+        }
+
+        public void Configure(byte hubId)
+        {
+            HubId = hubId;
         }
 
         #region Disposable Pattern

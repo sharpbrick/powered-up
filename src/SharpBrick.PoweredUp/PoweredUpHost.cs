@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Hubs;
+using SharpBrick.PoweredUp.Protocol;
 
 namespace SharpBrick.PoweredUp
 {
@@ -16,17 +17,15 @@ namespace SharpBrick.PoweredUp
         private readonly IPoweredUpBluetoothAdapter _bluetoothAdapter;
         public IServiceProvider ServiceProvider { get; }
         private readonly ILogger<PoweredUpHost> _logger;
-        private readonly IHubFactory _hubFactory;
         private ConcurrentBag<(PoweredUpBluetoothDeviceInfo Info, Hub Hub)> _hubs = new ConcurrentBag<(PoweredUpBluetoothDeviceInfo, Hub)>();
 
         public IEnumerable<Hub> Hubs => _hubs.Select(i => i.Hub);
 
-        public PoweredUpHost(IPoweredUpBluetoothAdapter bluetoothAdapter, IServiceProvider serviceProvider)
+        public PoweredUpHost(IPoweredUpBluetoothAdapter bluetoothAdapter, IServiceProvider serviceProvider, ILogger<PoweredUpHost> logger)
         {
             _bluetoothAdapter = bluetoothAdapter;
             ServiceProvider = serviceProvider;
-            _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<PoweredUpHost>();
-            _hubFactory = serviceProvider.GetService<IHubFactory>();
+            _logger = logger;
         }
 
         //ctr with auto-finding bt adapter
@@ -46,16 +45,24 @@ namespace SharpBrick.PoweredUp
         {
             _bluetoothAdapter.Discover(deviceInfo =>
             {
-                if (!_hubs.Any(i => i.Item1.BluetoothAddress == deviceInfo.BluetoothAddress))
+                try
                 {
-                    var hub = _hubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData);
-                    hub.ConnectWithBluetoothAdapter(_bluetoothAdapter, deviceInfo.BluetoothAddress);
+                    if (!_hubs.Any(i => i.Item1.BluetoothAddress == deviceInfo.BluetoothAddress))
+                    {
+                        var hub = CreateHubInBluetoothScope(deviceInfo.BluetoothAddress, hubFactory => hubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData));
 
-                    _hubs.Add((deviceInfo, hub));
+                        _hubs.Add((deviceInfo, hub));
 
-                    _logger.LogInformation($"Discovered log of type {hub.GetType().Name} with name '{deviceInfo.Name}' on Bluetooth Address '{deviceInfo.BluetoothAddress}'");
+                        _logger.LogInformation($"Discovered log of type {hub.GetType().Name} with name '{deviceInfo.Name}' on Bluetooth Address '{deviceInfo.BluetoothAddress}'");
 
-                    onDiscovery(hub).Wait();
+                        onDiscovery(hub).Wait();
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, $"Exception discovery handler within {nameof(Discover)}");
+
+                    throw;
                 }
             }, token);
         }
@@ -83,8 +90,7 @@ namespace SharpBrick.PoweredUp
 
         public THub Create<THub>(ulong bluetoothAddress) where THub : Hub
         {
-            var hub = _hubFactory.Create<THub>();
-            hub.ConnectWithBluetoothAdapter(_bluetoothAdapter, bluetoothAddress);
+            var hub = CreateHubInBluetoothScope(bluetoothAddress, hubFactory => hubFactory.Create<THub>());
 
             _hubs.Add((new PoweredUpBluetoothDeviceInfo()
             {
@@ -92,6 +98,38 @@ namespace SharpBrick.PoweredUp
                 Name = string.Empty,
                 ManufacturerData = Array.Empty<byte>(),
             }, hub));
+
+            return hub;
+        }
+
+        public IPoweredUpProtocol CreateProtocol(ulong bluetoothAddress)
+        {
+            var protocolScope = CreateProtocolScope(bluetoothAddress);
+
+            var protocol = protocolScope.ServiceProvider.GetService<IPoweredUpProtocol>();
+
+            return protocol;
+        }
+
+        public IServiceScope CreateProtocolScope(ulong bluetoothAddress)
+        {
+            var scope = ServiceProvider.CreateScope();
+            var scopedServiceProvider = scope.ServiceProvider;
+
+            // initialize scoped bluetooth kernel to bluetooth address.
+            var kernel = scopedServiceProvider.GetService<BluetoothKernel>();
+            kernel.BluetoothAddress = bluetoothAddress;
+
+            return scope;
+        }
+
+        private THub CreateHubInBluetoothScope<THub>(ulong bluetoothAddress, Func<IHubFactory, THub> factory) where THub : Hub
+        {
+            var protocolScope = CreateProtocolScope(bluetoothAddress);
+
+            var hubFactory = protocolScope.ServiceProvider.GetService<IHubFactory>();
+
+            var hub = factory(hubFactory);
 
             return hub;
         }

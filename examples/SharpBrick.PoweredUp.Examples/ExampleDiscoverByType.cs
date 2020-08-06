@@ -11,9 +11,9 @@ namespace Example
         // device needs to be switched on!
         public override async Task DiscoverAsync(bool enableTrace)
         {
-            var hub = await host.DiscoverAsync<TechnicMediumHub>();
+            var hub = await Host.DiscoverAsync<TechnicMediumHub>();
 
-            selectedHub = DirectlyConnectedHub = hub;
+            SelectedHub = DirectlyConnectedHub = hub;
 
             await hub.ConnectAsync();
         }
