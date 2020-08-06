@@ -16,10 +16,11 @@ namespace Example
 
                 var calibration = ServiceProvider.GetService<LinearMidCalibration>();
                 await calibration.ExecuteAsync(motor);
+                await technicMediumHub.WaitButtonClickAsync();
 
-                await Task.Delay(5000);
                 await motor.GotoAbsolutePositionAsync(CW * 50, 20, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile);
-                await Task.Delay(5000);
+                await technicMediumHub.WaitButtonClickAsync();
+
                 await motor.GotoAbsolutePositionAsync(CCW * 50, 20, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile);
                 await Task.Delay(5000);
 
