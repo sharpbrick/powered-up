@@ -104,29 +104,30 @@ namespace SharpBrick.PoweredUp
 
         public IPoweredUpProtocol CreateProtocol(ulong bluetoothAddress)
         {
-            var serviceProvider = CreateBluetoothScope(bluetoothAddress);
+            var protocolScope = CreateProtocolScope(bluetoothAddress);
 
-            var protocol = serviceProvider.GetService<IPoweredUpProtocol>();
+            var protocol = protocolScope.ServiceProvider.GetService<IPoweredUpProtocol>();
 
             return protocol;
         }
 
-        private IServiceProvider CreateBluetoothScope(ulong bluetoothAddress)
+        public IServiceScope CreateProtocolScope(ulong bluetoothAddress)
         {
-            var scopedServiceProvider = ServiceProvider.CreateScope().ServiceProvider;
+            var scope = ServiceProvider.CreateScope();
+            var scopedServiceProvider = scope.ServiceProvider;
 
             // initialize scoped bluetooth kernel to bluetooth address.
             var kernel = scopedServiceProvider.GetService<BluetoothKernel>();
             kernel.BluetoothAddress = bluetoothAddress;
 
-            return scopedServiceProvider;
+            return scope;
         }
 
         private THub CreateHubInBluetoothScope<THub>(ulong bluetoothAddress, Func<IHubFactory, THub> factory) where THub : Hub
         {
-            var scopedServiceProvider = CreateBluetoothScope(bluetoothAddress);
+            var protocolScope = CreateProtocolScope(bluetoothAddress);
 
-            var hubFactory = scopedServiceProvider.GetService<IHubFactory>();
+            var hubFactory = protocolScope.ServiceProvider.GetService<IHubFactory>();
 
             var hub = factory(hubFactory);
 

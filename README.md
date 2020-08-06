@@ -159,11 +159,21 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 ## Connect to Hub and Send a Message and retrieving answers (directly on protocol layer)
 
 ````csharp
-using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddress, loggerFactory.CreateLogger<BluetoothKernel>()))
-{    
-    var protocol = new PoweredUpProtocol(kernel);
 
-    await protocol.ConnectAsync();
+var serviceProvider = new ServiceCollection()
+    .AddLogging()
+    .AddPoweredUp()
+    .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>() // using WinRT Bluetooth on Windows
+    .BuildServiceProvider();
+
+using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
+{
+    // init BT layer with right bluetooth address
+    scope.ServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+    var protocol = scope.GetService<IPoweredUpProtocol>();
+
+    await protocol.ConnectAsync(); // also connects underlying BT connection
     
     using disposable = protocol.UpstreamMessages.Subscribe(message =>
     {
@@ -178,7 +188,7 @@ using (var kernel = new BluetoothKernel(poweredUpBluetoothAdapter, bluetoothAddr
         Operation = HubPropertyOperation.RequestUpdate
     });
 
-    Console.Readline(); // allow the messages to be processed and displayed.
+    Console.Readline(); // allow the messages to be processed and displayed. (alternative: SendMessageReceiveResultAsync, SendPortOutputCommandAsync, ..)
 
     // fun with light on hub 0 and built-in LED on port 50
     var rgbLight = new RgbLight(protocol, 0, 50);
