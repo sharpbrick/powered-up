@@ -11,9 +11,7 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputCombinedMode>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
                     .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
@@ -33,15 +31,15 @@ namespace Example
 
                 await motor.StartPowerAsync(80);
 
-                var disposable1 = motor.SpeedObservable.Subscribe(x => logger.LogWarning($"Speed: {x.SI} / {x.Pct}"));
+                var disposable1 = motor.SpeedObservable.Subscribe(x => Log.LogWarning($"Speed: {x.SI} / {x.Pct}"));
 
-                var disposable2 = motor.PositionObservable.Subscribe(x => logger.LogWarning($"Position: {x.SI} / {x.Pct}"));
+                var disposable2 = motor.PositionObservable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
 
-                var disposable3 = motor.AbsolutePositionObservable.Subscribe(x => logger.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
+                var disposable3 = motor.AbsolutePositionObservable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
 
                 await Task.Delay(2000);
 
-                logger.LogWarning($"Position: {motor.AbsolutePosition}");
+                Log.LogWarning($"Position: {motor.AbsolutePosition}");
 
                 await Task.Delay(2000);
 

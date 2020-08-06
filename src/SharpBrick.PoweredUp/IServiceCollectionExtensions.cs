@@ -24,6 +24,8 @@ namespace SharpBrick.PoweredUp
                 .AddTransient<TechnicMediumHub>()
 
                 // functions
+                .AddTransient<DiscoverPorts>()
+                .AddTransient<TraceMessages>()
                 .AddTransient<LinearMidCalibration>();
     }
 }

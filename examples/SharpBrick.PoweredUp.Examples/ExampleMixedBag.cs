@@ -12,9 +12,7 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
                     .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
@@ -26,7 +24,7 @@ namespace Example
 
                 technicMediumHub.Current.CurrentLObservable.Subscribe(v =>
                 {
-                    logger.LogWarning($"Current: {v.Pct}% {v.SI}mA / {technicMediumHub.Current.CurrentL}mA");
+                    Log.LogWarning($"Current: {v.Pct}% {v.SI}mA / {technicMediumHub.Current.CurrentL}mA");
                 });
 
                 await technicMediumHub.Current.SetupNotificationAsync(0x00, true, 1);

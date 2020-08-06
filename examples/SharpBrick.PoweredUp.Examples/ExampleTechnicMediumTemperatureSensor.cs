@@ -11,21 +11,19 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 var device1 = technicMediumHub.Temperature1;
 
                 await device1.SetupNotificationAsync(device1.ModeIndexTemperature, true);
 
-                var disposable1 = device1.TemperatureObservable.Subscribe(x => logger.LogWarning($"Temperature 1: {x.SI}° ({x.Pct}%)"));
+                var disposable1 = device1.TemperatureObservable.Subscribe(x => Log.LogWarning($"Temperature 1: {x.SI}° ({x.Pct}%)"));
 
                 var device2 = technicMediumHub.Temperature1;
 
                 await device2.SetupNotificationAsync(device2.ModeIndexTemperature, true);
 
-                var disposable2 = device2.TemperatureObservable.Subscribe(x => logger.LogWarning($"Temperature 2: {x.SI}° ({x.Pct}%)"));
+                var disposable2 = device2.TemperatureObservable.Subscribe(x => Log.LogWarning($"Temperature 2: {x.SI}° ({x.Pct}%)"));
 
                 await Task.Delay(10_000);
 

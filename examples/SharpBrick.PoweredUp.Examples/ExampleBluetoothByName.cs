@@ -10,7 +10,7 @@ namespace Example
 
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = host.FindByName<TechnicMediumHub>("Technic Hub"))
+            using (var technicMediumHub = Host.FindByName<TechnicMediumHub>("Technic Hub"))
             {
                 await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0x00);
 

@@ -8,7 +8,7 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 technicMediumHub.AlertObservable.Subscribe(x => Console.WriteLine($"Alert: {x}"));
 

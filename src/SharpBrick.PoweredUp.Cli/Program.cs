@@ -111,10 +111,6 @@ namespace SharpBrick.PoweredUp.Cli
                 .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
                 .AddPoweredUp()
 
-                // Add Functions
-                .AddTransient<DiscoverPorts>()
-                .AddTransient<TraceMessages>()
-
                 // Add CLI Commands
                 .AddTransient<DumpStaticPortInfo>()
                 .AddTransient<DevicesList>()

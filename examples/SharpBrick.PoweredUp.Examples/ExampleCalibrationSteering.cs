@@ -10,11 +10,11 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 var motor = technicMediumHub.A.GetDevice<TechnicLargeLinearMotor>();
 
-                var calibration = serviceProvider.GetService<LinearMidCalibration>();
+                var calibration = ServiceProvider.GetService<LinearMidCalibration>();
                 await calibration.ExecuteAsync(motor);
 
                 await Task.Delay(5000);

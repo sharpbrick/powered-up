@@ -11,9 +11,7 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<ExampleMotorInputAbsolutePosition>();
-
-            using (var technicMediumHub = host.FindByType<TechnicMediumHub>())
+            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
             {
                 await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
                     .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
@@ -37,9 +35,9 @@ namespace Example
                 await motor.SetupNotificationAsync(motor.ModeIndexPosition, true);
                 await motor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
-                using var disposable = motor.AbsolutePositionObservable.Subscribe(x => logger.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
-                using var disposable2 = motor.PositionObservable.Subscribe(x => logger.LogWarning($"Position: {x.SI} / {x.Pct}"));
-                motor.PropertyChanged += (sender, ea) => { logger.LogInformation($"Change on Property {ea.PropertyName}"); };
+                using var disposable = motor.AbsolutePositionObservable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
+                using var disposable2 = motor.PositionObservable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
+                motor.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
 
                 // relative movement from current positions
                 await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Pink);
