@@ -10,8 +10,11 @@ namespace SharpBrick.PoweredUp.Functions
     {
         private readonly ILogger<LinearMidCalibration> _logger;
 
-        public byte MaxPower { get; set; } = 10;
+        public byte MaxPower { get; set; } = 20;
         public byte Speed { get; set; } = 10;
+
+        public int RangeResult { get; private set; }
+        public uint ExtendResult { get; private set; }
 
         public LinearMidCalibration(ILogger<LinearMidCalibration> logger)
         {
@@ -62,6 +65,9 @@ namespace SharpBrick.PoweredUp.Functions
             _logger.LogInformation($"Moved to center. Reset Position.");
 
             await motor.UnlockFromCombinedModeNotificationSetupAsync(false);
+
+            RangeResult = range;
+            ExtendResult = extend;
             _logger.LogInformation($"End Linear Mid Calibration");
         }
     }
