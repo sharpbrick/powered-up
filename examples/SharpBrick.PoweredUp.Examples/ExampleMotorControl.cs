@@ -36,9 +36,9 @@ namespace Example
 
                 await Task.Delay(10_000);
 
-                await motor.GotoAbsolutePositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(2000);
-                await motor.GotoAbsolutePositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
 
                 await technicMediumHub.SwitchOffAsync();
             }
