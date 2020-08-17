@@ -160,6 +160,20 @@ namespace SharpBrick.PoweredUp
             await RequestHubPropertySingleUpdate(property);
         }
 
+        public async Task WaitButtonClickAsync()
+        {
+            var awaitable = ButtonObservable
+                .Where(x => x == true)
+                .FirstAsync()
+                .GetAwaiter();
+
+            await SetupHubPropertyNotificationAsync(HubProperty.Button, true);
+
+            await awaitable;
+
+            await SetupHubPropertyNotificationAsync(HubProperty.Button, false);
+        }
+
         private void OnHubPropertyMessage(HubPropertyMessage hubProperty)
         {
             if (hubProperty.Property == HubProperty.AdvertisingName && hubProperty is HubPropertyMessage<string> advData)
