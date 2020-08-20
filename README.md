@@ -265,7 +265,7 @@ DI Container Elements
     - [X] Technic Medium Hub - Accelerometer
     - [X] Technic Medium Hub - Gyro Sensor
     - [X] Technic Medium Hub - Tilt Sensor
-    - [ ] Technic Medium Hub - Gesture Sensor
+    - [X] Technic Medium Hub - Gesture Sensor
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
     - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
