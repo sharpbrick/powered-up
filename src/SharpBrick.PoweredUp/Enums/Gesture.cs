@@ -1,6 +1,5 @@
 namespace SharpBrick.PoweredUp
 {
-    // some are free fall, tap, shake, ??
     public enum Gesture : int
     {
         None = 0, // UNSPECED
