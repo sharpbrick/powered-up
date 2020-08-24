@@ -18,10 +18,10 @@ namespace Example
                 await calibration.ExecuteAsync(motor);
                 await technicMediumHub.WaitButtonClickAsync();
 
-                await motor.GotoAbsolutePositionAsync(CW * 50, 20, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile);
+                await motor.GotoPositionAsync(CW * 50, 20, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile);
                 await technicMediumHub.WaitButtonClickAsync();
 
-                await motor.GotoAbsolutePositionAsync(CCW * 50, 20, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile);
+                await motor.GotoPositionAsync(CCW * 50, 20, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile);
                 await Task.Delay(5000);
 
                 await technicMediumHub.SwitchOffAsync();

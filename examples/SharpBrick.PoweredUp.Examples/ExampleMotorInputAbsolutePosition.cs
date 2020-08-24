@@ -52,13 +52,13 @@ namespace Example
                 // absolute movement to relative to zero point (SetZeroAsync or initial boot position)
                 await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Orange);
 
-                await motor.GotoAbsolutePositionAsync(0, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(0, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(1000);
-                await motor.GotoAbsolutePositionAsync(90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(1000);
-                await motor.GotoAbsolutePositionAsync(180, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(180, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(1000);
-                await motor.GotoAbsolutePositionAsync(-90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(-90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(1000);
 
                 await motor.GotoRealZeroAsync();
