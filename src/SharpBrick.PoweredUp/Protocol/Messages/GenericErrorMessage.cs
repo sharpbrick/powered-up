@@ -1,7 +1,7 @@
 ﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.9.1
-    public class GenericErrorMessage : PoweredUpMessage
+    public class GenericErrorMessage : LegoWirelessMessage
     {
         public byte CommandType { get; set; }
         public ErrorCode ErrorCode { get; set; }

@@ -89,7 +89,7 @@ namespace SharpBrick.PoweredUp
             _compositeDisposable.Add(disposable);
         }
 
-        private void OnHubChange(PoweredUpMessage message)
+        private void OnHubChange(LegoWirelessMessage message)
         {
             if (message is HubPropertyMessage hubProperty && hubProperty.Operation == HubPropertyOperation.Update)
             {

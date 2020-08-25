@@ -281,7 +281,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 Data = data,
             });
 
-        private void PortOutputCommandEncoder_Encode(string expectedDataAsString, PoweredUpMessage message)
+        private void PortOutputCommandEncoder_Encode(string expectedDataAsString, LegoWirelessMessage message)
         {
             // act
             var data = MessageEncoder.Encode(message, null);

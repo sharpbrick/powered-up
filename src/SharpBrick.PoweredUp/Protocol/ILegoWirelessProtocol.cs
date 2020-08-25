@@ -10,9 +10,9 @@ namespace SharpBrick.PoweredUp.Protocol
         Task ConnectAsync();
         Task DisconnectAsync();
 
-        Task SendMessageAsync(PoweredUpMessage message);
-        IObservable<PoweredUpMessage> UpstreamMessages { get; }
-        IObservable<(byte[] data, PoweredUpMessage message)> UpstreamRawMessages { get; }
+        Task SendMessageAsync(LegoWirelessMessage message);
+        IObservable<LegoWirelessMessage> UpstreamMessages { get; }
+        IObservable<(byte[] data, LegoWirelessMessage message)> UpstreamRawMessages { get; }
 
         ProtocolKnowledge Knowledge { get; }
 

@@ -16,10 +16,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             _knowledge = knowledge;
         }
 
-        public ushort CalculateContentLength(PoweredUpMessage message)
+        public ushort CalculateContentLength(LegoWirelessMessage message)
             => throw new NotImplementedException();
 
-        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
+        public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
         {
             var remainingSlice = data;
 
@@ -141,7 +141,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             return (positionInRawRange * (max - min)) + min;
         }
 
-        public void Encode(PoweredUpMessage message, in Span<byte> data)
+        public void Encode(LegoWirelessMessage message, in Span<byte> data)
             => throw new NotImplementedException();
     }
 }

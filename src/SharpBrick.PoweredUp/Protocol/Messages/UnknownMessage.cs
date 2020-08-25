@@ -2,7 +2,7 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class UnknownMessage : PoweredUpMessage
+    public class UnknownMessage : LegoWirelessMessage
     {
         public byte[] Data { get; set; }
 

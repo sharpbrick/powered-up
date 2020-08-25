@@ -99,7 +99,7 @@ namespace SharpBrick.PoweredUp.Functions
             CheckEndOfDiscovery();
         }
 
-        private void UpdateKnowledge(byte[] data, PoweredUpMessage message)
+        private void UpdateKnowledge(byte[] data, LegoWirelessMessage message)
         {
             var knowledge = _protocol.Knowledge;
 

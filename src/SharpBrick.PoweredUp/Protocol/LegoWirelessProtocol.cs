@@ -16,12 +16,12 @@ namespace SharpBrick.PoweredUp.Protocol
         private readonly BluetoothKernel _kernel;
         private readonly ILogger<LegoWirelessProtocol> _logger;
         private readonly IDeviceFactory _deviceFactory;
-        private Subject<(byte[] data, PoweredUpMessage message)> _upstreamSubject = null;
+        private Subject<(byte[] data, LegoWirelessMessage message)> _upstreamSubject = null;
 
         public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
 
-        public IObservable<(byte[] data, PoweredUpMessage message)> UpstreamRawMessages => _upstreamSubject;
-        public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject.Select(x => x.message);
+        public IObservable<(byte[] data, LegoWirelessMessage message)> UpstreamRawMessages => _upstreamSubject;
+        public IObservable<LegoWirelessMessage> UpstreamMessages => _upstreamSubject.Select(x => x.message);
         public IServiceProvider ServiceProvider { get; }
 
         public LegoWirelessProtocol(BluetoothKernel kernel, ILogger<LegoWirelessProtocol> logger, IDeviceFactory deviceFactory, IServiceProvider serviceProvider)
@@ -30,7 +30,7 @@ namespace SharpBrick.PoweredUp.Protocol
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
             _logger = logger;
             _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(_deviceFactory));
-            _upstreamSubject = new Subject<(byte[] data, PoweredUpMessage message)>();
+            _upstreamSubject = new Subject<(byte[] data, LegoWirelessMessage message)>();
         }
 
         public async Task ConnectAsync()
@@ -61,7 +61,7 @@ namespace SharpBrick.PoweredUp.Protocol
             await _kernel.DisconnectAsync();
         }
 
-        public async Task SendMessageAsync(PoweredUpMessage message)
+        public async Task SendMessageAsync(LegoWirelessMessage message)
         {
             try
             {

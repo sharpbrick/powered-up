@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class HubAttachedIOEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(PoweredUpMessage message)
+        public ushort CalculateContentLength(LegoWirelessMessage message)
             => message switch
             {
                 HubAttachedIOForAttachedDeviceMessage _ => 12,
@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             };
 
 
-        public void Encode(PoweredUpMessage message, in Span<byte> data)
+        public void Encode(LegoWirelessMessage message, in Span<byte> data)
         {
             switch (message)
             {
@@ -46,7 +46,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void Encode(HubAttachedIOForAttachedVirtualDeviceMessage message, in Span<byte> data)
             => throw new NotImplementedException();
 
-        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
+        public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
         {
             byte portId = data[0];
             HubAttachedIOEvent ev = (HubAttachedIOEvent)data[1];

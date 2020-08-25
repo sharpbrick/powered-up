@@ -6,10 +6,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     // spec chapter: 3.23
     public class PortInputFormatSingleEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(PoweredUpMessage message)
+        public ushort CalculateContentLength(LegoWirelessMessage message)
             => 7;
 
-        public void Encode(PoweredUpMessage message, in Span<byte> data)
+        public void Encode(LegoWirelessMessage message, in Span<byte> data)
             => Encode(message as PortInputFormatSingleMessage, data);
         public void Encode(PortInputFormatSingleMessage message, in Span<byte> data)
         {
@@ -19,7 +19,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             data[6] = (byte)(message.NotificationEnabled ? 0x01 : 0x00);
         }
 
-        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
+        public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
             => new PortInputFormatSingleMessage()
             {
                 PortId = data[0],

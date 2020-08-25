@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public Port Port(string friendlyName)
             => _ports.Values.FirstOrDefault(p => p.FriendlyName == friendlyName) ?? default;
 
-        private void SetupOnPortChangeObservable(IObservable<PoweredUpMessage> upstreamMessages)
+        private void SetupOnPortChangeObservable(IObservable<LegoWirelessMessage> upstreamMessages)
         {
             PortChangeObservable = upstreamMessages
                 .OfType<HubAttachedIOMessage>()

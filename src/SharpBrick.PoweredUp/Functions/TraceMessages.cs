@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp.Functions
 
         public Task ExecuteAsync()
         {
-            void TraceMessage(PoweredUpMessage message)
+            void TraceMessage(LegoWirelessMessage message)
             {
                 try
                 {
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp.Functions
             return Task.CompletedTask;
         }
 
-        private static string MessageToString(PoweredUpMessage message)
+        private static string MessageToString(LegoWirelessMessage message)
         {
             var result = message.ToString();
 

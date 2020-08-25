@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp.Protocol
 {
     public static class ILegoWirelessProtocolExtensions
     {
-        public static async Task<TResultMessage> SendMessageReceiveResultAsync<TResultMessage>(this ILegoWirelessProtocol self, PoweredUpMessage message, Func<TResultMessage, bool> filter = default)
+        public static async Task<TResultMessage> SendMessageReceiveResultAsync<TResultMessage>(this ILegoWirelessProtocol self, LegoWirelessMessage message, Func<TResultMessage, bool> filter = default)
         {
             var awaitable = self.UpstreamMessages
                 .OfType<TResultMessage>()
