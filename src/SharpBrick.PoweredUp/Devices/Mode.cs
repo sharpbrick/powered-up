@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp
     public class Mode : IDisposable, INotifyPropertyChanged
     {
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
-        private IPoweredUpProtocol _protocol;
+        private ILegoWirelessProtocol _protocol;
         private PortModeInfo _modeInfo;
         protected IObservable<PortValueData> _modeValueObservable;
 
@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public string Name => _modeInfo.Name;
         public string Symbol => _modeInfo.Symbol;
 
-        public static Mode Create(IPoweredUpProtocol protocol, byte hubId, byte portId, byte modeIndex, IObservable<PortValueData> modeValueObservable)
+        public static Mode Create(ILegoWirelessProtocol protocol, byte hubId, byte portId, byte modeIndex, IObservable<PortValueData> modeValueObservable)
         {
             var modeInfo = protocol.Knowledge.PortMode(hubId, portId, modeIndex);
 
@@ -49,7 +49,7 @@ namespace SharpBrick.PoweredUp
             return result;
         }
 
-        protected Mode(IPoweredUpProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
+        protected Mode(ILegoWirelessProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
         {
             this._protocol = protocol;
             this._modeInfo = modeInfo;

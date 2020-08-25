@@ -102,11 +102,11 @@ namespace SharpBrick.PoweredUp
             return hub;
         }
 
-        public IPoweredUpProtocol CreateProtocol(ulong bluetoothAddress)
+        public ILegoWirelessProtocol CreateProtocol(ulong bluetoothAddress)
         {
             var protocolScope = CreateProtocolScope(bluetoothAddress);
 
-            var protocol = protocolScope.ServiceProvider.GetService<IPoweredUpProtocol>();
+            var protocol = protocolScope.ServiceProvider.GetService<ILegoWirelessProtocol>();
 
             return protocol;
         }

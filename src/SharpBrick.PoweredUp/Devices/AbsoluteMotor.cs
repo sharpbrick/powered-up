@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp
         public AbsoluteMotor()
         { }
 
-        protected AbsoluteMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        protected AbsoluteMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _absoluteMode = SingleValueMode<short>(ModeIndexAbsolutePosition);

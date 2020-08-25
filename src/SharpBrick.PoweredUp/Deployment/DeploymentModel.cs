@@ -28,7 +28,7 @@ namespace SharpBrick.PoweredUp.Deployment
         /// </summary>
         /// <param name="protocols"></param>
         /// <returns></returns>
-        public DeploymentModelError[] Verify(params IPoweredUpProtocol[] protocols)
+        public DeploymentModelError[] Verify(params ILegoWirelessProtocol[] protocols)
         {
             //TODO: match best hub with best protocol
 
@@ -42,7 +42,7 @@ namespace SharpBrick.PoweredUp.Deployment
         /// <param name="hubId"></param>
         /// <param name="hubModel"></param>
         /// <returns></returns>
-        public DeploymentModelError[] Verify(IPoweredUpProtocol protocol, byte hubId, DeploymentHubModel hubModel)
+        public DeploymentModelError[] Verify(ILegoWirelessProtocol protocol, byte hubId, DeploymentHubModel hubModel)
         {
             if (protocol is null)
             {

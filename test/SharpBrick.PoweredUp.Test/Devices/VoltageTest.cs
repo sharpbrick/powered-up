@@ -69,20 +69,20 @@ namespace SharpBrick.PoweredUp
         }
 
 
-        internal (IPoweredUpProtocol protocol, PoweredUpBluetoothCharacteristicMock mock) CreateProtocolAndMock()
+        internal (ILegoWirelessProtocol protocol, PoweredUpBluetoothCharacteristicMock mock) CreateProtocolAndMock()
         {
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .AddSingleton<IPoweredUpBluetoothAdapter, PoweredUpBluetoothAdapterMock>()
                 .AddSingleton<BluetoothKernel>()
-                .AddSingleton<IPoweredUpProtocol, PoweredUpProtocol>()
+                .AddSingleton<ILegoWirelessProtocol, LegoWirelessProtocol>()
                 .AddSingleton<IDeviceFactory, DeviceFactory>() // for protocol knowledge init
 
                 .BuildServiceProvider();
 
             var poweredUpBluetoothAdapterMock = serviceProvider.GetService<IPoweredUpBluetoothAdapter>() as PoweredUpBluetoothAdapterMock;
 
-            var protocol = serviceProvider.GetService<IPoweredUpProtocol>();
+            var protocol = serviceProvider.GetService<ILegoWirelessProtocol>();
 
             protocol.ConnectAsync().Wait();
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -11,10 +11,10 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol
 {
-    public class PoweredUpProtocol : IPoweredUpProtocol
+    public class LegoWirelessProtocol : ILegoWirelessProtocol
     {
         private readonly BluetoothKernel _kernel;
-        private readonly ILogger<PoweredUpProtocol> _logger;
+        private readonly ILogger<LegoWirelessProtocol> _logger;
         private readonly IDeviceFactory _deviceFactory;
         private Subject<(byte[] data, PoweredUpMessage message)> _upstreamSubject = null;
 
@@ -24,7 +24,7 @@ namespace SharpBrick.PoweredUp.Protocol
         public IObservable<PoweredUpMessage> UpstreamMessages => _upstreamSubject.Select(x => x.message);
         public IServiceProvider ServiceProvider { get; }
 
-        public PoweredUpProtocol(BluetoothKernel kernel, ILogger<PoweredUpProtocol> logger, IDeviceFactory deviceFactory, IServiceProvider serviceProvider)
+        public LegoWirelessProtocol(BluetoothKernel kernel, ILogger<LegoWirelessProtocol> logger, IDeviceFactory deviceFactory, IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
@@ -49,7 +49,7 @@ namespace SharpBrick.PoweredUp.Protocol
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Exception in PoweredUpProtocol Decode/Knowledge");
+                    _logger.LogError(e, "Exception in LegoWirelessProtocol Decode/Knowledge");
 
                     throw;
                 }
@@ -73,7 +73,7 @@ namespace SharpBrick.PoweredUp.Protocol
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Exception in PoweredUpProtocol Encode/Knowledge");
+                _logger.LogError(e, "Exception in LegoWirelessProtocol Encode/Knowledge");
 
                 throw;
             }
@@ -94,7 +94,7 @@ namespace SharpBrick.PoweredUp.Protocol
             }
         }
 
-        // ~PoweredUpProtocol()
+        // ~LegoWirelessProtocol()
         // {
         //     Dispose(disposing: false);
         // }

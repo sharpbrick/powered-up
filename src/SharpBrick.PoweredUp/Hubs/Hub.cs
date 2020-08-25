@@ -15,12 +15,12 @@ namespace SharpBrick.PoweredUp
         private readonly ILogger _logger;
         private readonly IDeviceFactory _deviceFactory;
 
-        public IPoweredUpProtocol Protocol { get; private set; }
+        public ILegoWirelessProtocol Protocol { get; private set; }
         public byte HubId { get; private set; }
         public IServiceProvider ServiceProvider { get; }
         public bool IsConnected => Protocol != null;
 
-        public Hub(IPoweredUpProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, Port[] knownPorts)
+        public Hub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, Port[] knownPorts)
         {
             Protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(deviceFactory));

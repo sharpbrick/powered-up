@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubAccelerometer()
         { }
 
-        public TechnicMediumHubAccelerometer(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubAccelerometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _gravityMode = MultiValueMode<short>(ModeIndexGravity);

@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol
 {
-    public interface IPoweredUpProtocol : IDisposable
+    public interface ILegoWirelessProtocol : IDisposable
     {
         Task ConnectAsync();
         Task DisconnectAsync();

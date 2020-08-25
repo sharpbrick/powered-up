@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp
         public DynamicDevice()
         { }
 
-        public DynamicDevice(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public DynamicDevice(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 

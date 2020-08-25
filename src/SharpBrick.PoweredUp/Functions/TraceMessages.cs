@@ -10,10 +10,10 @@ namespace SharpBrick.PoweredUp.Functions
 {
     public class TraceMessages
     {
-        private IPoweredUpProtocol _protocol;
+        private ILegoWirelessProtocol _protocol;
         private readonly ILogger<TraceMessages> _logger;
 
-        public TraceMessages(IPoweredUpProtocol protocol, ILogger<TraceMessages> logger = default)
+        public TraceMessages(ILegoWirelessProtocol protocol, ILogger<TraceMessages> logger = default)
         {
             _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _logger = logger;

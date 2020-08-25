@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -6,9 +6,9 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol
 {
-    public static class IPoweredUpProtocolExtensions
+    public static class ILegoWirelessProtocolExtensions
     {
-        public static async Task<TResultMessage> SendMessageReceiveResultAsync<TResultMessage>(this IPoweredUpProtocol self, PoweredUpMessage message, Func<TResultMessage, bool> filter = default)
+        public static async Task<TResultMessage> SendMessageReceiveResultAsync<TResultMessage>(this ILegoWirelessProtocol self, PoweredUpMessage message, Func<TResultMessage, bool> filter = default)
         {
             var awaitable = self.UpstreamMessages
                 .OfType<TResultMessage>()
@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp.Protocol
             return result;
         }
 
-        public static async Task<PortFeedback> SendPortOutputCommandAsync(this IPoweredUpProtocol self, PortOutputCommandMessage message)
+        public static async Task<PortFeedback> SendPortOutputCommandAsync(this ILegoWirelessProtocol self, PortOutputCommandMessage message)
         {
             var portId = message.PortId;
 

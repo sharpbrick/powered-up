@@ -13,7 +13,7 @@ namespace SharpBrick.PoweredUp
         public RgbLight()
         { }
 
-        public RgbLight(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public RgbLight(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 
