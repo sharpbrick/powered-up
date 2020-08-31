@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubTemperatureSensor()
         { }
 
-        public TechnicMediumHubTemperatureSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubTemperatureSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _temperatureMode = SingleValueMode<short>(ModeIndexTemperature);

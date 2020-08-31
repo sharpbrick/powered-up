@@ -1,6 +1,6 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class VirtualPortSetupMessage : PoweredUpMessage
+    public class VirtualPortSetupMessage : LegoWirelessMessage
     {
         public VirtualPortSubCommand SubCommand { get; set; }
     }

@@ -15,7 +15,7 @@ namespace Example
         public IPoweredUpDevice Create(DeviceType deviceType)
             => null;
 
-        public IPoweredUpDevice CreateConnected(DeviceType deviceType, IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public IPoweredUpDevice CreateConnected(DeviceType deviceType, ILegoWirelessProtocol protocol, byte hubId, byte portId)
             => new DynamicDevice(protocol, hubId, portId);
     }
     public class ExampleDynamicDevice : BaseExample

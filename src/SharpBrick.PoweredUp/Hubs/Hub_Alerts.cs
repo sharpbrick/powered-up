@@ -9,7 +9,7 @@ namespace SharpBrick.PoweredUp
     {
         public IObservable<HubAlert> AlertObservable { get; private set; }
 
-        private void SetupHubAlertObservable(IObservable<PoweredUpMessage> upstreamMessages)
+        private void SetupHubAlertObservable(IObservable<LegoWirelessMessage> upstreamMessages)
         {
             AlertObservable = upstreamMessages
                 .OfType<HubAlertMessage>()

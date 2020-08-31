@@ -1,6 +1,6 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public abstract class PortOutputCommandMessage : PoweredUpMessage
+    public abstract class PortOutputCommandMessage : LegoWirelessMessage
     {
         public PortOutputCommandMessage(PortOutputSubCommand subCommand)
         {

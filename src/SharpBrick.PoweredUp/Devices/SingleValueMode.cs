@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp
 
         public IObservable<Value<TPayload>> Observable { get; }
 
-        public SingleValueMode(IPoweredUpProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
+        public SingleValueMode(ILegoWirelessProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
                 : base(protocol, modeInfo, modeValueObservable)
         {
             Observable = CreateObservable();

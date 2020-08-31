@@ -42,7 +42,7 @@ namespace SharpBrick.PoweredUp
         public IObservable<sbyte> RssiObservable { get; private set; }
         public IObservable<byte> BatteryVoltageInPercentObservable { get; private set; }
 
-        private void SetupHubPropertyObservable(IObservable<PoweredUpMessage> upstreamMessages)
+        private void SetupHubPropertyObservable(IObservable<LegoWirelessMessage> upstreamMessages)
         {
             PropertyChangedObservable = upstreamMessages
                 .OfType<HubPropertyMessage>()
@@ -55,7 +55,7 @@ namespace SharpBrick.PoweredUp
             BatteryVoltageInPercentObservable = BuildObservableForProperty<byte>(upstreamMessages, HubProperty.BatteryVoltage);
         }
 
-        private IObservable<T> BuildObservableForProperty<T>(IObservable<PoweredUpMessage> upstreamMessages, HubProperty property)
+        private IObservable<T> BuildObservableForProperty<T>(IObservable<LegoWirelessMessage> upstreamMessages, HubProperty property)
             => upstreamMessages
                 .OfType<HubPropertyMessage>()
                 .Where(msg => msg.Operation == HubPropertyOperation.Update && msg.Property == property)

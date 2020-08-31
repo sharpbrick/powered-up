@@ -13,7 +13,7 @@ namespace SharpBrick.PoweredUp.Functions
     {
         private object lockObject = new object();
 
-        private readonly IPoweredUpProtocol _protocol;
+        private readonly ILegoWirelessProtocol _protocol;
         private readonly byte _hubId;
         private readonly ILogger<DiscoverPorts> _logger;
         private TaskCompletionSource<int> _taskCompletionSource;
@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp.Functions
 
         public ConcurrentBag<byte[]> ReceivedMessagesData { get; private set; }
 
-        public DiscoverPorts(IPoweredUpProtocol protocol, byte hubId = 0, ILogger<DiscoverPorts> logger = default)
+        public DiscoverPorts(ILegoWirelessProtocol protocol, byte hubId = 0, ILogger<DiscoverPorts> logger = default)
         {
             _protocol = protocol ?? throw new System.ArgumentNullException(nameof(protocol));
             _hubId = hubId;
@@ -99,7 +99,7 @@ namespace SharpBrick.PoweredUp.Functions
             CheckEndOfDiscovery();
         }
 
-        private void UpdateKnowledge(byte[] data, PoweredUpMessage message)
+        private void UpdateKnowledge(byte[] data, LegoWirelessMessage message)
         {
             var knowledge = _protocol.Knowledge;
 

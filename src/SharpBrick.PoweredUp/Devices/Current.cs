@@ -24,7 +24,7 @@ namespace SharpBrick.PoweredUp
         public Current()
         { }
 
-        public Current(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public Current(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _currentLMode = SingleValueMode<short>(ModeIndexCurrentL);

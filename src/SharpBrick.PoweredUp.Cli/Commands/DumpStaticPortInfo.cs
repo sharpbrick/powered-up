@@ -10,10 +10,10 @@ namespace SharpBrick.PoweredUp.Cli
 {
     public class DumpStaticPortInfo
     {
-        private readonly IPoweredUpProtocol protocol;
+        private readonly ILegoWirelessProtocol protocol;
         private readonly DiscoverPorts discoverPorts;
 
-        public DumpStaticPortInfo(IPoweredUpProtocol protocol, DiscoverPorts discoverPorts)
+        public DumpStaticPortInfo(ILegoWirelessProtocol protocol, DiscoverPorts discoverPorts)
         {
             this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             this.discoverPorts = discoverPorts ?? throw new ArgumentNullException(nameof(discoverPorts));

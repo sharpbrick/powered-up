@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class VirtualPortSetupEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(PoweredUpMessage message)
+        public ushort CalculateContentLength(LegoWirelessMessage message)
             => message switch
             {
                 VirtualPortSetupForConnectedMessage msg => 3,
@@ -13,10 +13,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => throw new NotSupportedException(),
             };
 
-        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
+        public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
             => throw new NotImplementedException();
 
-        public void Encode(PoweredUpMessage message, in Span<byte> data)
+        public void Encode(LegoWirelessMessage message, in Span<byte> data)
         {
             switch (message)
             {

@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public TachoMotor()
         { }
 
-        protected TachoMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        protected TachoMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _speedMode = SingleValueMode<sbyte>(ModeIndexSpeed);

@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp
                 .AddScoped<BluetoothKernel>()
                 .AddScoped<IHubFactory, HubFactory>()
                 .AddScoped<IDeviceFactory, DeviceFactory>()
-                .AddScoped<IPoweredUpProtocol, PoweredUpProtocol>()
+                .AddScoped<ILegoWirelessProtocol, LegoWirelessProtocol>()
 
                 // hubs
                 .AddTransient<TechnicMediumHub>()

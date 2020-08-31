@@ -12,10 +12,10 @@ namespace SharpBrick.PoweredUp.Cli
 {
     public class DevicesList
     {
-        private readonly IPoweredUpProtocol protocol;
+        private readonly ILegoWirelessProtocol protocol;
         private readonly DiscoverPorts discoverPorts;
 
-        public DevicesList(IPoweredUpProtocol protocol, DiscoverPorts discoverPorts)
+        public DevicesList(ILegoWirelessProtocol protocol, DiscoverPorts discoverPorts)
         {
             this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             this.discoverPorts = discoverPorts ?? throw new ArgumentNullException(nameof(discoverPorts));

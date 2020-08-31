@@ -17,7 +17,7 @@ namespace SharpBrick.PoweredUp
         public BasicMotor()
         { }
 
-        public BasicMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public BasicMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _powerMode = SingleValueMode<sbyte>(ModeIndexPower);

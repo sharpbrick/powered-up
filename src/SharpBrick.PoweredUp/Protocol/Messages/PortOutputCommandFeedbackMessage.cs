@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortOutputCommandFeedbackMessage : PoweredUpMessage
+    public class PortOutputCommandFeedbackMessage : LegoWirelessMessage
     {
         public PortOutputCommandFeedback[] Feedbacks { get; set; }
 

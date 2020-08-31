@@ -91,7 +91,7 @@ namespace SharpBrick.PoweredUp
             return Task.FromResult(true);
         }
 
-        public Task WriteUpstreamAsync(PoweredUpMessage message)
+        public Task WriteUpstreamAsync(LegoWirelessMessage message)
             => WriteUpstreamAsync(MessageEncoder.Encode(message, null));
 
         public Task WriteUpstreamAsync(string message)
