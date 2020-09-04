@@ -158,6 +158,8 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 
 ## Connect to Hub and Send a Message and retrieving answers (directly on protocol layer)
 
+***Note**: The `ILegoWirelessProtocol` class was renamed in 3.0. Previously it is known as `IPoweredUpProtocol`.*
+
 ````csharp
 
 var serviceProvider = new ServiceCollection()
@@ -245,7 +247,7 @@ DI Container Elements
   - [X] .NET Core 3.1 (on Windows 10 using WinRT)
     - Library uses `Span<T>` / C# 8.0 and is therefore not supported in .NET Framework 1.0 - 4.8 and UWP Apps until arrival of .NET 5 (WinForms and WPF work in .NET Core 3.1)
     - Library uses WinRT for communication therefore only Windows 10
-  - [ ] Xamarin (on iOS / Android using Xamarin.Essentials)
+  - [ ] Xamarin (on iOS / Android using ?)
   - [ ] Blazor (on Browser using WebBluetooth)
 - Hub Model
   - Hubs
@@ -265,7 +267,7 @@ DI Container Elements
     - [X] Technic Medium Hub - Accelerometer
     - [X] Technic Medium Hub - Gyro Sensor
     - [X] Technic Medium Hub - Tilt Sensor
-    - [X] Technic Medium Hub - Gesture Sensor
+    - [X] Technic Medium Hub - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
     - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
