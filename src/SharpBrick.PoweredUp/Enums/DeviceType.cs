@@ -27,7 +27,7 @@
         TechnicXLargeLinearMotor = 0x002F, // UNSPECED, TECHNIC_XLARGE_LINEAR_MOTOR
         TechnicMediumAngularMotor = 0x0030, // UNSPECED, TECHNIC_MEDIUM_ANGULAR_MOTOR (Spike Prime)
         TechnicLargeAngularMotor = 0x0031, // UNSPECED, TECHNIC_LARGE_ANGULAR_MOTOR (Spike Prime)
-        TechnicMediumHubGestSensor = 0x0036, // UNSPECED, TECHNIC_MEDIUM_HUB_GEST_SENSOR
+        TechnicMediumHubGestureSensor = 0x0036, // UNSPECED, TECHNIC_MEDIUM_HUB_GEST_SENSOR
         RemoteControlButton = 0x0037, // UNSPECED, REMOTE_CONTROL_BUTTON
         RemoteControlRssi = 0x0038, // UNSPECED, REMOTE_CONTROL_RSSI
         TechnicMediumHubAccelerometer = 0x0039, // UNSPECED, TECHNIC_MEDIUM_HUB_ACCELEROMETER

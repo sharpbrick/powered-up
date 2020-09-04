@@ -9,7 +9,7 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
-    public class TechnicMediumHubGestSensor : Device, IPoweredUpDevice
+    public class TechnicMediumHubGestureSensor : Device, IPoweredUpDevice
     {
         protected SingleValueMode<sbyte> _gestureMode;
         public byte ModeIndexGesture { get; protected set; } = 0;
@@ -17,14 +17,14 @@ namespace SharpBrick.PoweredUp
         public Gesture Gesture => (Gesture)_gestureMode.SI;
         public IObservable<Gesture> GestureObservable => _gestureMode.Observable.Select(x => (Gesture)x.SI);
 
-        public TechnicMediumHubGestSensor()
+        public TechnicMediumHubGestureSensor()
         { }
 
-        public TechnicMediumHubGestSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubGestureSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _gestureMode = SingleValueMode<sbyte>(ModeIndexGesture);
-            
+
             ObserveForPropertyChanged(_gestureMode.Observable, nameof(Gesture));
         }
 

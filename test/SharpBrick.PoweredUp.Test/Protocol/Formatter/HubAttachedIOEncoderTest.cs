@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         [InlineData("0F-00-04-61-01-39-00-01-00-00-00-01-00-00-00", DeviceType.TechnicMediumHubAccelerometer, 97, "0.0.0.1", "0.0.0.1")]
         [InlineData("0F-00-04-62-01-3A-00-01-00-00-00-01-00-00-00", DeviceType.TechnicMediumHubGyroSensor, 98, "0.0.0.1", "0.0.0.1")]
         [InlineData("0F-00-04-63-01-3B-00-01-00-00-00-01-00-00-00", DeviceType.TechnicMediumHubTiltSensor, 99, "0.0.0.1", "0.0.0.1")]
-        [InlineData("0F-00-04-64-01-36-00-01-00-00-00-01-00-00-00", DeviceType.TechnicMediumHubGestSensor, 100, "0.0.0.1", "0.0.0.1")]
+        [InlineData("0F-00-04-64-01-36-00-01-00-00-00-01-00-00-00", DeviceType.TechnicMediumHubGestureSensor, 100, "0.0.0.1", "0.0.0.1")]
         public void HubAttachedIOEncoder_Decode_Attached<T>(string messageAsString, DeviceType expectedType, byte expectedPortId, string expectedHwVersion, string expectedSwVersion)
         {
             // arrange
