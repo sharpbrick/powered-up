@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp
         Gesture1 = 1, // UNSPECED
 
         /// <summary>
-        /// Some undocumented gesture.
+        /// Some undocumented gesture (maybe bounce).
         /// 
         /// Mapping is not well understood. Please contribute an issue if you have found an issue, additional insight or documentation.
         /// </summary>
