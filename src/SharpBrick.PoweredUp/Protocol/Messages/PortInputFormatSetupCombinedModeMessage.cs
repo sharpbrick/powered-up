@@ -1,6 +1,6 @@
 ﻿namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortInputFormatSetupCombinedModeMessage : PoweredUpMessage
+    public class PortInputFormatSetupCombinedModeMessage : LegoWirelessMessage
     {
         public byte PortId { get; set; }
         public PortInputFormatSetupCombinedSubCommand SubCommand { get; set; }

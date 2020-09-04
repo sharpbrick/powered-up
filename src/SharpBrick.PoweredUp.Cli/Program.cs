@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Functions;
-using SharpBrick.PoweredUp.WinRT;
 
 namespace SharpBrick.PoweredUp.Cli
 {
@@ -108,7 +107,7 @@ namespace SharpBrick.PoweredUp.Cli
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
                 })
-                .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>()
+                .AddWinRTBluetooth()
                 .AddPoweredUp()
 
                 // Add CLI Commands

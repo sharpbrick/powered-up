@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Devices
             return (type == null) ? null : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type);
         }
 
-        public IPoweredUpDevice CreateConnected(DeviceType deviceType, IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public IPoweredUpDevice CreateConnected(DeviceType deviceType, ILegoWirelessProtocol protocol, byte hubId, byte portId)
         {
             var type = GetTypeFromDeviceType(deviceType);
 

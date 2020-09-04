@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubGestSensor()
         { }
 
-        public TechnicMediumHubGestSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubGestSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _gestureMode = SingleValueMode<sbyte>(ModeIndexGesture);

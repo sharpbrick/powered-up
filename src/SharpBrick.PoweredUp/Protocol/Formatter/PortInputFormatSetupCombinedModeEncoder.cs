@@ -5,13 +5,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class PortInputFormatSetupCombinedModeEncoder : IMessageContentEncoder
     {
-        public ushort CalculateContentLength(PoweredUpMessage message)
+        public ushort CalculateContentLength(LegoWirelessMessage message)
             => (ushort)(message is PortInputFormatSetupCombinedModeForSetModeDataSetMessage setMessage ? 3 + setMessage.ModeDataSets.Length : 2);
 
-        public PoweredUpMessage Decode(byte hubId, in Span<byte> data)
+        public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
             => throw new NotImplementedException();
 
-        public void Encode(PoweredUpMessage message, in Span<byte> data)
+        public void Encode(LegoWirelessMessage message, in Span<byte> data)
             => Encode(message as PortInputFormatSetupCombinedModeMessage ?? throw new ArgumentException(nameof(message)), data);
         public void Encode(PortInputFormatSetupCombinedModeMessage message, in Span<byte> data)
         {

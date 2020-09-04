@@ -32,9 +32,9 @@ namespace Example
                 // simple motor control
                 var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
-                await motor.GotoAbsolutePositionAsync(CW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(CW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(2000);
-                await motor.GotoAbsolutePositionAsync(CCW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motor.GotoPositionAsync(CCW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
                 await Task.Delay(2000);
                 await motor.StartPowerAsync(100);
                 await Task.Delay(5000);

@@ -21,7 +21,7 @@ namespace Example
 
                 var motorsOnVirtualPort = virtualPort.GetDevice<TechnicXLargeLinearMotor>();
 
-                await motorsOnVirtualPort.GotoAbsolutePositionAsync(90, -45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+                await motorsOnVirtualPort.GotoPositionAsync(90, -45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
 
                 await Task.Delay(3000);
 

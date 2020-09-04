@@ -6,7 +6,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 {
     public class MessageEncoder
     {
-        public static byte[] Encode(PoweredUpMessage message, ProtocolKnowledge knowledge)
+        public static byte[] Encode(LegoWirelessMessage message, ProtocolKnowledge knowledge)
         {
             var messageType = message switch
             {
@@ -71,7 +71,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => null,
             };
 
-        public static PoweredUpMessage Decode(in Span<byte> data, ProtocolKnowledge knowledge)
+        public static LegoWirelessMessage Decode(in Span<byte> data, ProtocolKnowledge knowledge)
         {
             var (length, hubId, messageType, headerLength) = CommonMessageHeaderEncoder.ParseCommonHeader(data);
 
@@ -79,7 +79,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             var content = data.Slice(headerLength);
 
-            PoweredUpMessage result;
+            LegoWirelessMessage result;
 
             if (encoder != null)
             {

@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public static class KnowledgeManager
     {
-        public static bool ApplyStaticProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge)
+        public static bool ApplyStaticProtocolKnowledge(LegoWirelessMessage message, ProtocolKnowledge knowledge)
         {
             var applicableMessage = true;
 
@@ -104,7 +104,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 
             return applicableMessage;
         }
-        public static Task ApplyDynamicProtocolKnowledge(PoweredUpMessage message, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
+        public static Task ApplyDynamicProtocolKnowledge(LegoWirelessMessage message, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
         {
             HubInfo hub;
             PortInfo port;

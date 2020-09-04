@@ -24,7 +24,7 @@ namespace SharpBrick.PoweredUp
         public Voltage()
         { }
 
-        public Voltage(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public Voltage(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _voltageLMode = SingleValueMode<short>(ModeIndexVoltageL);

@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp
         public AbsoluteMotor()
         { }
 
-        protected AbsoluteMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        protected AbsoluteMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _absoluteMode = SingleValueMode<short>(ModeIndexAbsolutePosition);
@@ -38,10 +38,10 @@ namespace SharpBrick.PoweredUp
         /// <param name="absolutePosition">Absolute Position (0 is the position at the start of the motor)</param>
         /// <param name="speed">The speed used to move to the absolute position.</param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake.. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> GotoAbsolutePositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> GotoPositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
@@ -75,10 +75,10 @@ namespace SharpBrick.PoweredUp
         /// <param name="absolutePosition2">Absolute Position of motor 2 (0 is the position at the start of the motor)</param>
         /// <param name="speed">The speed used to move to the absolute position.</param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> GotoAbsolutePositionAsync(int absolutePosition1, int absolutePosition2, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> GotoPositionAsync(int absolutePosition1, int absolutePosition2, sbyte speed, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
@@ -102,7 +102,7 @@ namespace SharpBrick.PoweredUp
             return response;
         }
 
-        private async Task<int> GetAbsolutePositionAsync()
+        private async Task<int> GetPositionAsync()
         {
             AssertIsConnected();
 
@@ -125,7 +125,7 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            var currentPosition = await GetAbsolutePositionAsync();
+            var currentPosition = await GetPositionAsync();
 
             sbyte speed = 5;
 

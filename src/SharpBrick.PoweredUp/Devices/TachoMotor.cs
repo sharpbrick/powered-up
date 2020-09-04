@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public TachoMotor()
         { }
 
-        protected TachoMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        protected TachoMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _speedMode = SingleValueMode<sbyte>(ModeIndexSpeed);
@@ -106,9 +106,9 @@ namespace SharpBrick.PoweredUp
         /// - Stop Motor (hold position): 0 (use StartPower for floating and braking)
         /// </param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> StartSpeedAsync(sbyte speed, byte maxPower, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedAsync(sbyte speed, byte maxPower, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
@@ -140,9 +140,9 @@ namespace SharpBrick.PoweredUp
         /// - Stop Motor (hold position): 0 (use StartPower for floating and braking)
         /// </param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> StartSpeedAsync(sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedAsync(sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidSpeed(speedOnMotor1, nameof(speedOnMotor1));
             AssertValidSpeed(speedOnMotor2, nameof(speedOnMotor2));
@@ -174,10 +174,10 @@ namespace SharpBrick.PoweredUp
         /// - Stop Motor (hold position): 0 (use StartPower for floating and braking)
         /// </param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to  None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> StartSpeedForTimeAsync(ushort timeInMs, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForTimeAsync(ushort timeInMs, sbyte speed, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidSpeed(speed, nameof(speed));
             AssertValidMaxPower(maxPower, nameof(maxPower));
@@ -212,10 +212,10 @@ namespace SharpBrick.PoweredUp
         /// - Stop Motor (hold position): 0 (use StartPower for floating and braking)
         /// </param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> StartSpeedForTimeAsync(ushort timeInMs, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForTimeAsync(ushort timeInMs, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidSpeed(speedOnMotor1, nameof(speedOnMotor1));
             AssertValidSpeed(speedOnMotor2, nameof(speedOnMotor2));
@@ -251,10 +251,10 @@ namespace SharpBrick.PoweredUp
         /// <param name="degrees"></param>
         /// <param name="speed"></param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForDegreesAsync(uint degrees, sbyte speed, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidDegrees(degrees, nameof(degrees));
             AssertValidSpeed(speed, nameof(speed));
@@ -289,10 +289,10 @@ namespace SharpBrick.PoweredUp
         /// <param name="speedOnMotor1"></param>
         /// <param name="speedOnMotor2"></param>
         /// <param name="maxPower">Maximum Power level used.</param>
-        /// <param name="endState">After time has expired, either Float, Hold or Brake.</param>
-        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
         /// <returns></returns>
-        public async Task<PortFeedback> StartSpeedForDegreesAsync(uint degrees, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState, SpeedProfiles profile)
+        public async Task<PortFeedback> StartSpeedForDegreesAsync(uint degrees, sbyte speedOnMotor1, sbyte speedOnMotor2, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
         {
             AssertValidDegrees(degrees, nameof(degrees));
             AssertValidSpeed(speedOnMotor1, nameof(speedOnMotor1));

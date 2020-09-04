@@ -6,7 +6,7 @@
 
 # Supported Namespaces
 
-- `SharpBrick.PoweredUp` (all devices, all hubs, PoweredUpHost, IPoweredUpProtocol)
+- `SharpBrick.PoweredUp` (all devices, all hubs, PoweredUpHost, ILegoWirelessProtocol)
 - `SharpBrick.PoweredUp.Deployment` (builder and model verifer)
 
 # Internal Namespaces

@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp
         public TechnicLargeLinearMotor()
             : base()
         { }
-        public TechnicLargeLinearMotor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public TechnicLargeLinearMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 

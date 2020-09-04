@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortValueSingleMessage : PoweredUpMessage
+    public class PortValueSingleMessage : LegoWirelessMessage
     {
         public PortValueData[] Data { get; set; }
 

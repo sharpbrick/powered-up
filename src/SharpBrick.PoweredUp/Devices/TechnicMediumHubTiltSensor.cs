@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubTiltSensor()
         { }
 
-        public TechnicMediumHubTiltSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubTiltSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _positionMode = MultiValueMode<short>(ModeIndexPosition);

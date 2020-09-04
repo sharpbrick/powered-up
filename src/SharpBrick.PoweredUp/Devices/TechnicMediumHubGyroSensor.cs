@@ -19,7 +19,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubGyroSensor()
         { }
 
-        public TechnicMediumHubGyroSensor(IPoweredUpProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubGyroSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
             _rotationMode = MultiValueMode<short>(ModeIndexRotation);

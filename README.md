@@ -171,7 +171,7 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
     // init BT layer with right bluetooth address
     scope.ServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
 
-    var protocol = scope.GetService<IPoweredUpProtocol>();
+    var protocol = scope.GetService<ILegoWirelessProtocol>();
 
     await protocol.ConnectAsync(); // also connects underlying BT connection
     
@@ -209,11 +209,11 @@ Basic Architecture within the SDK
 +---------+
 |         |
 | Devices | <-+
-|         |   |   +-------------------+     +-------------+     +-----+
-+---------+   +-> |                   |     |             |     |     |
-                  | PoweredUpProtocol | <-> | BLE Adapter | <-> | BLE |
-+---------+   +-> |   (w/ Knowlege)   |     |             |     |     |
-|         |   |   +-------------------+     +-------------+     +-----+
+|         |   |   +-----------------------+     +-------------+     +-----+
++---------+   +-> |                       |     |             |     |     |
+                  | ILegoWirelessProtocol | <-> | BLE Adapter | <-> | BLE |
++---------+   +-> |    (w/ Knowlege)      |     |             |     |     |
+|         |   |   +-----------------------+     +-------------+     +-----+
 |   Hub   | <-+
 |         |
 +---------+
@@ -223,20 +223,20 @@ Basic Architecture within the SDK
 DI Container Elements
 
 ````
-                                              PoweredUpHost +----+
-                                                   +             |
-                                                   |             |
-+-------------------- Scoped Service Provider ---------------------+
-|                                                  |             | |
-|                                                  v             +--->IPoweredUp
-| LinearMidCalibration +                         HubFactory      | |  BluetoothAdapter
-|                      |                                         | |
-| TechnicMediumHub +---+-> PoweredUpProtocol +-> BluetoothKernel + |
-|             +                       +                            |
-|             |                       |                            |
-|             +-----------------------+--------> DeviceFactory     |
-|                                                                  |
-+------------------------------------------------------------------+
+                                              PoweredUpHost +-------+
+                                                   +                |
+                                                   |                |
++-------------------- Scoped Service Provider ------------------------+
+|                                                  |                | |
+|                                                  v                +--->IPoweredUp
+| LinearMidCalibration +                         HubFactory         | |  BluetoothAdapter
+|                      |                                            | |
+| TechnicMediumHub +---+-> LegoWirelessProtocol +-> BluetoothKernel + |
+|             +                       +                               |
+|             |                       |                               |
+|             +-----------------------+--------> DeviceFactory        |
+|                                                                     |
++---------------------------------------------------------------------+
 ````
 
 ## Implementation Status

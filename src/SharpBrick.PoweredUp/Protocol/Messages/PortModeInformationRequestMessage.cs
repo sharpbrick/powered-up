@@ -1,7 +1,7 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.16.1
-    public class PortModeInformationRequestMessage : PoweredUpMessage
+    public class PortModeInformationRequestMessage : LegoWirelessMessage
     {
         public byte PortId { get; set; }
         public byte Mode { get; set; }
