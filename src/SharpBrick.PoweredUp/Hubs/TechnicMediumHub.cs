@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp
                 new Port(97, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubAccelerometer),
                 new Port(98, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGyroSensor),
                 new Port(99, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubTiltSensor),
-                new Port(100, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGestSensor),
+                new Port(100, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGestureSensor),
             })
         { }
 
@@ -38,6 +38,6 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubAccelerometer Accelerometer => Port(97).GetDevice<TechnicMediumHubAccelerometer>();
         public TechnicMediumHubGyroSensor GyroSensor => Port(98).GetDevice<TechnicMediumHubGyroSensor>();
         public TechnicMediumHubTiltSensor TiltSensor => Port(99).GetDevice<TechnicMediumHubTiltSensor>();
-        public TechnicMediumHubGestSensor GestureSensor => Port(100).GetDevice<TechnicMediumHubGestSensor>();
+        public TechnicMediumHubGestureSensor GestureSensor => Port(100).GetDevice<TechnicMediumHubGestureSensor>();
     }
 }
