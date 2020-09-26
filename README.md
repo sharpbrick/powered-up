@@ -1,6 +1,6 @@
 # SharpBrick.PoweredUp
 
-SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered Up products.
+SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered UP products.
 
 [![Nuget](https://img.shields.io/nuget/v/SharpBrick.PoweredUp?style=flat-square)](https://www.nuget.org/packages/SharpBrick.PoweredUp/)
 ![license:MIT](https://img.shields.io/github/license/sharpbrick/powered-up?style=flat-square)
@@ -37,12 +37,12 @@ using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
     .BuildServiceProvider();
     
 var host = serviceProvider.GetService<PoweredUpHost>();
 
-var hub = await host.DiscoverAsync<TechnicMediumHub>(); // starting version 2.1
+var hub = await host.DiscoverAsync<TechnicMediumHub>();
 await hub.ConnectAsync();
 ````
 
@@ -81,9 +81,9 @@ using (var technicMediumHub = hub as TechnicMediumHub)
 
     var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
-    await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
     await Task.Delay(2000);
-    await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 
     await technicMediumHub.SwitchOffAsync();
 }
@@ -105,18 +105,7 @@ disposable.Dispose();
 Console.WriteLine(motor.AbsolutePosition);
 ````
 
-## Little Helpers
-
-````csharp
-using SharpBrick.PoweredUp;
-using static SharpBrick.PoweredUp.Directions; // CW & CCW starting version 2.1 
-
-await motor.GotoAbsolutePositionAsync(CW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-````
-
 ## Connecting to an unknown device
-
-***Note:** Starting version 2.0*
 
 ````csharp
 // deployment model verification with unknown devices
@@ -165,7 +154,7 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
     .BuildServiceProvider();
 
 using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
@@ -198,9 +187,9 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
 
     // fun with motor on hub 0 and port 0
     var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
-    await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
     await Task.Delay(2000);
-    await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 }
 ````
 
