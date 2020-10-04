@@ -9,12 +9,33 @@ namespace SharpBrick.PoweredUp
 {
     public class MarioHubTagSensor : Device, IPoweredUpDevice
     {
+        protected MultiValueMode<short> _tagMode;
+        protected MultiValueMode<sbyte> _rgbMode;
+
+        public byte ModeIndexTag { get; protected set; } = 0;
+        public byte ModeIndexRgb { get; protected set; } = 1;
+
+
+        public MarioBarcode Barcode => (MarioBarcode)_tagMode.SI[0];
+        public MarioColor ColorNo => (MarioColor)_tagMode.SI[1];
+        public IObservable<MarioBarcode> BarcodeObservable => _tagMode.Observable.Select(x => (MarioBarcode)x.SI[0]);
+        public IObservable<MarioColor> ColorNoObservable => _tagMode.Observable.Select(x => (MarioColor)x.SI[1]);
+
+        public (byte red, byte green, byte blue) RgbColor => ((byte)_rgbMode.SI[0], (byte)_rgbMode.SI[1], (byte)_rgbMode.SI[2]);
+        public IObservable<(byte red, byte green, byte blue)> RgbColorObservable => _rgbMode.Observable.Select(x => ((byte)x.SI[0], (byte)x.SI[1], (byte)x.SI[2]));
+
         public MarioHubTagSensor()
         { }
 
         public MarioHubTagSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
+            _tagMode = MultiValueMode<short>(ModeIndexTag);
+            _rgbMode = MultiValueMode<sbyte>(ModeIndexRgb);
+
+            ObserveForPropertyChanged(_tagMode.Observable, nameof(Barcode));
+            ObserveForPropertyChanged(_tagMode.Observable, nameof(ColorNo));
+            ObserveForPropertyChanged(_rgbMode.Observable, nameof(RgbColor));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
