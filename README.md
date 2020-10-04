@@ -270,7 +270,7 @@ DI Container Elements
 - Features
   - [X] Dynamic Device
   - [X] Deployment Verifier
-- Command Line (`dotnet install -g SharpBrick.PoweredUp.Cli`)
+- Command Line (`dotnet tool install -g SharpBrick.PoweredUp.Cli`)
   - [X] `poweredup device list` (discover all connected devices and their port (mode) properties)
   - [X] `poweredup device dump-static-port -p <port number>` (see [adding new devices tutorial](docs/development/adding-new-device.md))
 
