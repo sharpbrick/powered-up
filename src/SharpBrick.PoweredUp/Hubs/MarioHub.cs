@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp
     public class MarioHub : Hub
     {
         public MarioHub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<MarioHub> logger, IServiceProvider serviceProvider = default)
-            : base(protocol, deviceFactory, logger, serviceProvider, new Port[] {
+            : base(protocol, deviceFactory, logger, serviceProvider, SystemType.LegoSystem_Mario, new Port[] {
                 new Port(0, string.Empty, false, expectedDevice: DeviceType.MarioHubAccelerometer),
                 new Port(1, string.Empty, false, expectedDevice: DeviceType.MarioHubTagSensor),
                 new Port(2, string.Empty, false, expectedDevice: DeviceType.MarioHubPants),
