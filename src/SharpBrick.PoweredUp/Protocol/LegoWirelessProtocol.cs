@@ -33,8 +33,17 @@ namespace SharpBrick.PoweredUp.Protocol
             _upstreamSubject = new Subject<(byte[] data, LegoWirelessMessage message)>();
         }
 
-        public async Task ConnectAsync()
+        public async Task ConnectAsync(SystemType knownSystemType = default)
         {
+            // sets initial system type to provided value. This alllows sensitive IPoweredUpDevice to provide the right GetStaticPortInfo (even on initial HubAttachedIO before a HubProperty<SystemType> can be queried).
+            await KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubPropertyMessage<SystemType>()
+            {
+                HubId = 0x00,
+                Operation = HubPropertyOperation.Update,
+                Property = HubProperty.SystemTypeId,
+                Payload = knownSystemType,
+            }, Knowledge, _deviceFactory);
+
             await _kernel.ConnectAsync();
 
             await _kernel.ReceiveBytesAsync(async data =>

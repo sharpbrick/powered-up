@@ -27,7 +27,7 @@ namespace SharpBrick.PoweredUp
             ObserveForPropertyChanged(_rotationMode.Observable, nameof(Rotation));
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-62-01-02-01-01-00-00-00
 05-00-43-62-02
