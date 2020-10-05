@@ -18,11 +18,11 @@ namespace SharpBrick.PoweredUp.Cli
             this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             this.discoverPorts = discoverPorts ?? throw new ArgumentNullException(nameof(discoverPorts));
         }
-        public async Task ExecuteAsync(byte portId)
+        public async Task ExecuteAsync(SystemType knownSystemType, byte portId)
         {
             Console.WriteLine($"Discover Port {portId}. Receiving Messages ...");
 
-            await protocol.ConnectAsync(); // registering to bluetooth notification
+            await protocol.ConnectAsync(knownSystemType); // registering to bluetooth notification
 
             await Task.Delay(2000); // await ports to be announced initially by device.
 
