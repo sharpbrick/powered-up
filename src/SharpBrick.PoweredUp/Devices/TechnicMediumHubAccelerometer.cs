@@ -29,7 +29,7 @@ namespace SharpBrick.PoweredUp
             ObserveForPropertyChanged(_gravityMode.Observable, nameof(Gravity));
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-61-01-02-02-03-00-00-00
 05-00-43-61-02

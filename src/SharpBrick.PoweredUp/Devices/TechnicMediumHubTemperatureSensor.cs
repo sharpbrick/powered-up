@@ -26,7 +26,7 @@ namespace SharpBrick.PoweredUp
             ObserveForPropertyChanged(_temperatureMode.Observable, nameof(Temperature), nameof(TemperaturePct));
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-60-01-02-01-01-00-00-00
 05-00-43-60-02
