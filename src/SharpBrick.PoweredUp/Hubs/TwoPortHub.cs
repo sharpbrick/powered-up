@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp
     public class TwoPortHub : Hub
     {
         public TwoPortHub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<TwoPortHub> logger, IServiceProvider serviceProvider = default)
-            : base(protocol, deviceFactory, logger, serviceProvider, new Port[] {
+            : base(protocol, deviceFactory, logger, serviceProvider, SystemType.LegoSystem_TwoPortHub, new Port[] {
                 new Port(0, nameof(A), true),
                 new Port(1, nameof(B), true),
                 new Port(50, string.Empty, false, expectedDevice: DeviceType.RgbLight),
