@@ -38,6 +38,7 @@ namespace SharpBrick.PoweredUp.Hubs
             => systemType switch
             {
                 SystemType.LegoTechnic_MediumHub => typeof(TechnicMediumHub),
+                SystemType.LegoSystem_MoveHub => typeof(MoveHub),
                 _ => throw new NotSupportedException(),
             };
 
@@ -45,6 +46,7 @@ namespace SharpBrick.PoweredUp.Hubs
             => type.Name switch
             {
                 nameof(TechnicMediumHub) => SystemType.LegoTechnic_MediumHub,
+                nameof(MoveHub) => SystemType.LegoSystem_MoveHub,
                 _ => throw new NotSupportedException(),
             };
     }
