@@ -17,7 +17,7 @@ namespace SharpBrick.PoweredUp
         {
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-03-01-02-04-0F-00-00-00
 05-00-43-03-02
