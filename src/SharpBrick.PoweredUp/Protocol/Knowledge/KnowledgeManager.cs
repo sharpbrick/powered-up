@@ -117,6 +117,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     hub.SystemType = msg.Payload;
                     break;
                 case HubAttachedIOForAttachedDeviceMessage msg:
+                    hub = knowledge.Hub(msg.HubId);
                     port = knowledge.Port(msg.HubId, msg.PortId);
 
                     ResetProtocolKnowledgeForPort(msg.HubId, port.PortId, knowledge);
@@ -125,7 +126,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     port.HardwareRevision = msg.HardwareRevision;
                     port.SoftwareRevision = msg.SoftwareRevision;
 
-                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, port, knowledge, deviceFactory);
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, hub, port, knowledge, deviceFactory);
                     break;
                 case HubAttachedIOForDetachedDeviceMessage msg:
                     port = knowledge.Port(msg.HubId, msg.PortId);
@@ -134,6 +135,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     port.IsDeviceConnected = false;
                     break;
                 case HubAttachedIOForAttachedVirtualDeviceMessage msg:
+                    hub = knowledge.Hub(msg.HubId);
                     port = knowledge.Port(msg.HubId, msg.PortId);
                     var partOfVirtual = knowledge.Port(msg.HubId, msg.PortAId);
 
@@ -143,7 +145,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     port.HardwareRevision = partOfVirtual.HardwareRevision;
                     port.SoftwareRevision = partOfVirtual.SoftwareRevision;
 
-                    AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, port, knowledge, deviceFactory);
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, hub, port, knowledge, deviceFactory);
 
                     port.IsVirtual = true;
                     break;
@@ -176,13 +178,13 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             return Task.CompletedTask;
         }
 
-        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, PortInfo port, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
+        private static void AddCachePortAndPortModeInformation(DeviceType type, Version hardwareRevision, Version softwareRevision, HubInfo hub, PortInfo port, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
         {
             var device = deviceFactory.Create(type);
 
             if (device != null)
             {
-                foreach (var message in device.GetStaticPortInfoMessages(hardwareRevision, softwareRevision).Select(b => MessageEncoder.Decode(b, null)))
+                foreach (var message in device.GetStaticPortInfoMessages(hardwareRevision, softwareRevision, hub.SystemType).Select(b => MessageEncoder.Decode(b, null)))
                 {
                     switch (message)
                     {

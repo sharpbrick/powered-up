@@ -7,7 +7,7 @@ namespace SharpBrick.PoweredUp.Protocol
 {
     public interface ILegoWirelessProtocol : IDisposable
     {
-        Task ConnectAsync();
+        Task ConnectAsync(SystemType initialSystemType = default);
         Task DisconnectAsync();
 
         Task SendMessageAsync(LegoWirelessMessage message);
