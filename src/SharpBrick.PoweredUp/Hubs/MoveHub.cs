@@ -32,6 +32,6 @@ namespace SharpBrick.PoweredUp
         public RgbLight RgbLight => Port(50).GetDevice<RgbLight>();
         public Current Current => Port(59).GetDevice<Current>();
         public Voltage Voltage => Port(60).GetDevice<Voltage>();
-       
+        
     }
 }
