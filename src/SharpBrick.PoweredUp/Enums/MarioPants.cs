@@ -1,7 +1,7 @@
 namespace SharpBrick.PoweredUp
 {
     // UNSPECED: https://github.com/bricklife/LEGO-Mario-Reveng/blob/master/IOType-0x4a.md
-    public enum Pants : sbyte
+    public enum MarioPants : sbyte
     {
         None = 0b00_0000,
         Propeller = 0b00_1100,

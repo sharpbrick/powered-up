@@ -14,8 +14,8 @@ namespace SharpBrick.PoweredUp
 
         public byte ModeIndexPants { get; protected set; } = 0;
 
-        public Pants Pants => (Pants)_pantsMode.SI;
-        public IObservable<Pants> PantsObservable => _pantsMode.Observable.Select(x => (Pants)x.SI);
+        public MarioPants Pants => (MarioPants)_pantsMode.SI;
+        public IObservable<MarioPants> PantsObservable => _pantsMode.Observable.Select(x => (MarioPants)x.SI);
 
         public MarioHubPants()
         { }
