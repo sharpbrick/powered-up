@@ -2,6 +2,7 @@
 using HashtagChris.DotNetBlueZ.Extensions;
 
 using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.BlueZ.Utilities;
 
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ namespace SharpBrick.PoweredUp.BlueZ
     public class BlueZPoweredUpBluetoothAdapter : IPoweredUpBluetoothAdapter
     {
         private readonly Adapter _adapter;
+        private readonly BluetoothAddressFormatter _bluetoothAddressFormatter;
 
-        public BlueZPoweredUpBluetoothAdapter()
+        public BlueZPoweredUpBluetoothAdapter(BluetoothAddressFormatter bluetoothAddressFormatter)
         {
             _adapter = BlueZManager.GetAdaptersAsync().Result.FirstOrDefault();
+            _bluetoothAddressFormatter = bluetoothAddressFormatter;
         }
 
         public async void Discover(Action<PoweredUpBluetoothDeviceInfo> discoveryHandler, CancellationToken cancellationToken = default)
@@ -40,13 +43,14 @@ namespace SharpBrick.PoweredUp.BlueZ
 
                 if (manufacturerData.Count > 0)
                 {
-
-                    info.ManufacturerData = manufacturerData[0] as byte[];
+                    info.ManufacturerData = (byte[])manufacturerData.First().Value;
 
                     info.Name = await eventArgs.Device.GetNameAsync();
                 }
 
-                info.BluetoothAddress = ulong.Parse(await eventArgs.Device.GetAddressAsync());
+                var btAddress = await eventArgs.Device.GetAddressAsync();
+
+                info.BluetoothAddress = _bluetoothAddressFormatter.ConvertToInteger(btAddress);
 
                 discoveryHandler(info);
             }
@@ -54,7 +58,7 @@ namespace SharpBrick.PoweredUp.BlueZ
 
         public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
         {
-            var device = await _adapter.GetDeviceAsync(bluetoothAddress.ToString());
+            var device = await _adapter.GetDeviceAsync(_bluetoothAddressFormatter.ConvertToMacString(bluetoothAddress));
 
             return new BlueZPoweredUpBluetoothDevice(device);
         }
