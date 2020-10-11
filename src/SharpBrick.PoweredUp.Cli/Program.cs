@@ -34,7 +34,7 @@ namespace SharpBrick.PoweredUp.Cli
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
                         var serviceProvider = CreateServiceProvider(enableTrace);
-                        ulong bluetoothAddress = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
+                        (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                         if (bluetoothAddress == 0)
                             return;
@@ -50,7 +50,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                             var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
 
-                            await deviceListCli.ExecuteAsync();
+                            await deviceListCli.ExecuteAsync(systemType);
                         }
                     });
                 });
@@ -67,7 +67,7 @@ namespace SharpBrick.PoweredUp.Cli
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
                         var serviceProvider = CreateServiceProvider(enableTrace);
-                        ulong bluetoothAddress = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
+                        (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                         if (bluetoothAddress == 0)
                             return;
@@ -85,7 +85,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                             var port = byte.Parse(portOption.Value());
 
-                            await dumpStaticPortInfoCommand.ExecuteAsync(port);
+                            await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port);
                         }
                     });
                 });
@@ -125,9 +125,10 @@ namespace SharpBrick.PoweredUp.Cli
             }
         }
 
-        private static ulong FindAndSelectHub(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
+        private static (ulong bluetoothAddress, SystemType systemType) FindAndSelectHub(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
         {
-            ulong result = 0;
+            ulong resultBluetooth = 0;
+            SystemType resultSystemType = default;
             var devices = new ConcurrentBag<(int key, ulong bluetoothAddresss, PoweredUpHubManufacturerData deviceType)>();
             var cts = new CancellationTokenSource();
             int idx = 1;
@@ -155,15 +156,16 @@ namespace SharpBrick.PoweredUp.Cli
             {
                 var selected = devices.FirstOrDefault(kv => kv.key == key);
 
-                result = selected.bluetoothAddresss; // default is 0
+                resultBluetooth = selected.bluetoothAddresss; // default is 0
+                resultSystemType = (SystemType)selected.deviceType;
 
-                if (result != default)
+                if (resultBluetooth != default)
                 {
                     Console.WriteLine($"Selected {selected.deviceType} with key {selected.key}");
                 }
             }
 
-            return result;
+            return (resultBluetooth, resultSystemType);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp
         public async Task Voltage_VoltageLObservable_Receive()
         {
             // arrange
-            var (protocol, mock) = CreateProtocolAndMock();
+            var (protocol, mock) = CreateProtocolAndMock(SystemType.LegoTechnic_MediumHub);
 
             // announce voltage device in protocol
             await mock.WriteUpstreamAsync(new HubAttachedIOForAttachedDeviceMessage()
@@ -69,7 +69,7 @@ namespace SharpBrick.PoweredUp
         }
 
 
-        internal (ILegoWirelessProtocol protocol, PoweredUpBluetoothCharacteristicMock mock) CreateProtocolAndMock()
+        internal (ILegoWirelessProtocol protocol, PoweredUpBluetoothCharacteristicMock mock) CreateProtocolAndMock(SystemType knownSystemType)
         {
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
@@ -84,7 +84,7 @@ namespace SharpBrick.PoweredUp
 
             var protocol = serviceProvider.GetService<ILegoWirelessProtocol>();
 
-            protocol.ConnectAsync().Wait();
+            protocol.ConnectAsync(knownSystemType).Wait();
 
             return (protocol, poweredUpBluetoothAdapterMock.MockCharacteristic);
         }

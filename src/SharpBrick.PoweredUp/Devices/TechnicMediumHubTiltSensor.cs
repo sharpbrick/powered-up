@@ -120,7 +120,7 @@ namespace SharpBrick.PoweredUp
             return response;
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => (softwareVersion.ToString(), hardwareVersion.ToString()) switch
             {
                 ("0.0.0.1", "0.0.0.1") =>
