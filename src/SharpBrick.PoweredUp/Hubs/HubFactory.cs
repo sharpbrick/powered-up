@@ -37,6 +37,7 @@ namespace SharpBrick.PoweredUp.Hubs
         public static Type GetTypeFromSystemType(SystemType systemType)
             => systemType switch
             {
+                SystemType.LegoSystem_TwoPortHub => typeof(TwoPortHub),
                 SystemType.LegoTechnic_MediumHub => typeof(TechnicMediumHub),
                 SystemType.LegoSystem_Mario => typeof(MarioHub),
                 _ => throw new NotSupportedException(),
@@ -45,6 +46,7 @@ namespace SharpBrick.PoweredUp.Hubs
         public static SystemType GetSystemTypeFromType(Type type)
             => type.Name switch
             {
+                nameof(TwoPortHub) => SystemType.LegoSystem_TwoPortHub,
                 nameof(TechnicMediumHub) => SystemType.LegoTechnic_MediumHub,
                 nameof(MarioHub) => SystemType.LegoSystem_Mario,
                 _ => throw new NotSupportedException(),
