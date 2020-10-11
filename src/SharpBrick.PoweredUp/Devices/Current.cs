@@ -35,7 +35,9 @@ namespace SharpBrick.PoweredUp
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+            => ((softwareVersion, hardwareVersion, systemType) switch
+            {
+                (_, _, SystemType.LegoTechnic_MediumHub) => @"
 0B-00-43-3B-01-02-02-03-00-00-00
 05-00-43-3B-02
 11-00-44-3B-00-00-43-55-52-20-4C-00-00-00-00-00-00
@@ -52,6 +54,26 @@ namespace SharpBrick.PoweredUp
 0A-00-44-3B-01-04-6D-41-00-00
 08-00-44-3B-01-05-10-00
 0A-00-44-3B-01-80-01-01-04-00
-".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
+",
+                (_, _, SystemType.LegoSystem_TwoPortHub) => @"
+0B-00-43-3B-01-02-02-03-00-00-00
+05-00-43-3B-02
+12-00-44-3B-00-00-43-55-52-20-4C-00-00-00-00-00-00-00
+0E-00-44-3B-00-01-00-00-00-00-00-F0-7F-45
+0E-00-44-3B-00-02-00-00-00-00-00-00-C8-42
+0E-00-44-3B-00-03-00-00-00-00-00-C0-18-45
+0B-00-44-3B-00-04-6D-41-00-00-00
+08-00-44-3B-00-05-10-00
+0A-00-44-3B-00-80-01-01-04-00
+12-00-44-3B-01-00-43-55-52-20-53-00-00-00-00-00-00-00
+0E-00-44-3B-01-01-00-00-00-00-00-F0-7F-45
+0E-00-44-3B-01-02-00-00-00-00-00-00-C8-42
+0E-00-44-3B-01-03-00-00-00-00-00-C0-18-45
+0B-00-44-3B-01-04-6D-41-00-00-00
+08-00-44-3B-01-05-10-00
+0A-00-44-3B-01-80-01-01-04-00
+",
+                _ => throw new NotSupportedException(),
+            }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
     }
 }
