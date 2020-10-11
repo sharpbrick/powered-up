@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="HashtagChris.DotNetBlueZ" Version="1.2.0" />
+    <PackageReference Include="Polly" Version="7.2.1" />
   </ItemGroup>
 
   <ItemGroup>

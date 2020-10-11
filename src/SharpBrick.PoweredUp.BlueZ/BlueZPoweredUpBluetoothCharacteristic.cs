@@ -1,5 +1,7 @@
 ﻿using HashtagChris.DotNetBlueZ;
 
+using Polly;
+
 using SharpBrick.PoweredUp.Bluetooth;
 
 using System;
@@ -13,7 +15,7 @@ namespace SharpBrick.PoweredUp.BlueZ
 {
     public class BlueZPoweredUpBluetoothCharacteristic : IPoweredUpBluetoothCharacteristic
     {
-        public Guid Uuid => Guid.Empty;
+        public Guid Uuid => Guid.Parse(_characteristic.GetUUIDAsync().Result);
 
         private readonly GattCharacteristic _characteristic;
 
@@ -22,7 +24,7 @@ namespace SharpBrick.PoweredUp.BlueZ
             _characteristic = gattCharacteristic ?? throw new ArgumentNullException(nameof(gattCharacteristic));
         }
 
-        public Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler)
+        public async Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler)
         {
             if (notificationHandler is null)
             {
@@ -36,7 +38,9 @@ namespace SharpBrick.PoweredUp.BlueZ
                 return notificationHandler(args.Value);
             }
 
-            return Task.FromResult(true);
+            //await _characteristic.StartNotifyAsync();
+            
+            return true;
         }
 
         public async Task<bool> WriteValueAsync(byte[] data)
@@ -46,7 +50,13 @@ namespace SharpBrick.PoweredUp.BlueZ
                 throw new ArgumentNullException(nameof(data));
             }
 
-            await _characteristic.WriteValueAsync(data, null);
+            await _characteristic.WriteValueAsync(data, new Dictionary<string,object>());
+
+            await Policy
+              .Handle<Tmds.DBus.DBusException>()
+              .WaitAndRetryForeverAsync(_ => TimeSpan.FromMilliseconds(100))
+              .ExecuteAsync(() => _characteristic.WriteValueAsync(data, new Dictionary<string, object>()));
+
 
             return true;
         }
