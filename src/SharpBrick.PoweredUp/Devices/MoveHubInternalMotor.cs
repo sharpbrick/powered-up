@@ -15,7 +15,7 @@ namespace SharpBrick.PoweredUp
             : base(protocol, hubId, portId)
         { }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-00-01-0F-03-06-00-07-00
 07-00-43-00-02-06-00

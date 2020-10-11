@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp
     public class MoveHub : Hub
     {
         public MoveHub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<MoveHub> logger, IServiceProvider serviceProvider = default)
-            : base(protocol, deviceFactory, logger, serviceProvider, new Port[] {
+            : base(protocol, deviceFactory, logger, serviceProvider, SystemType.LegoSystem_MoveHub, new Port[] {
                 new Port(0, nameof(A), false, expectedDevice: DeviceType.InternalMotorWithTacho),
                 new Port(1, nameof(B), false, expectedDevice: DeviceType.InternalMotorWithTacho),
                 new Port(2, nameof(C), true),
