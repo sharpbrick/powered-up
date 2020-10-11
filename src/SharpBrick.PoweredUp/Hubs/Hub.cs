@@ -14,17 +14,19 @@ namespace SharpBrick.PoweredUp
         private CompositeDisposable _compositeDisposable = new CompositeDisposable();
         private readonly ILogger _logger;
         private readonly IDeviceFactory _deviceFactory;
+        private readonly SystemType _knownSystemType;
 
         public ILegoWirelessProtocol Protocol { get; private set; }
         public byte HubId { get; private set; }
         public IServiceProvider ServiceProvider { get; }
         public bool IsConnected => Protocol != null;
 
-        public Hub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, Port[] knownPorts)
+        public Hub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, SystemType knownSystemType, Port[] knownPorts)
         {
             Protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(deviceFactory));
             ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _knownSystemType = knownSystemType;
             AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
             _logger = logger;
 
@@ -59,7 +61,7 @@ namespace SharpBrick.PoweredUp
             var expectedDevicesCompletedTask = ExpectedDevicesCompletedAsync();
 
             _logger?.LogDebug("Connecting BluetoothKernel");
-            await Protocol.ConnectAsync();
+            await Protocol.ConnectAsync(_knownSystemType);
 
             await expectedDevicesCompletedTask;
             _logger?.LogDebug("Hub Attached IO expected devices completed");

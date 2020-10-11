@@ -246,7 +246,7 @@ DI Container Elements
     - [X] Actions
     - [X] Create Virtual Ports
     - [X] Technic Medium Hub
-    - [ ] Hub (88009)
+    - [X] Two Port Hub (88009)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
     - [X] Technic Medium Hub - Rgb Light
@@ -260,9 +260,9 @@ DI Container Elements
     - [X] Technic XLarge Motor
     - [X] Technic Large Motor
     - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
-    - [ ] Hub (88009) - Rgb Light
-    - [ ] Hub (88009) - Current
-    - [ ] Hub (88009) - Voltage
+    - [X] Hub (88009) - Rgb Light
+    - [X] Hub (88009) - Current
+    - [X] Hub (88009) - Voltage
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
@@ -270,7 +270,7 @@ DI Container Elements
 - Features
   - [X] Dynamic Device
   - [X] Deployment Verifier
-- Command Line (`dotnet install -g SharpBrick.PoweredUp.Cli`)
+- Command Line (`dotnet tool install -g SharpBrick.PoweredUp.Cli`)
   - [X] `poweredup device list` (discover all connected devices and their port (mode) properties)
   - [X] `poweredup device dump-static-port -p <port number>` (see [adding new devices tutorial](docs/development/adding-new-device.md))
 
@@ -298,3 +298,7 @@ DI Container Elements
 SharpBrick is an organization intended to host volunteers willing to contribute to the SharpBrick.PoweredUp and related projects. Everyone is welcome (private and commercial entities). Please read our **[Code of Conduct](CODE_OF_CONDUCT.md)** before participating in our project.
 
 The product is licensed under **MIT License** to allow a easy and wide adoption into prviate and commercial products.
+
+## Thanks ...
+
+Thanks to @nathankellenicki and @corneliusmunz for their code, answers, testing and other important contributions.

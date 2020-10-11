@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp
     public class TechnicMediumHub : Hub
     {
         public TechnicMediumHub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<TechnicMediumHub> logger, IServiceProvider serviceProvider = default)
-            : base(protocol, deviceFactory, logger, serviceProvider, new Port[] {
+            : base(protocol, deviceFactory, logger, serviceProvider, SystemType.LegoTechnic_MediumHub, new Port[] {
                 new Port(0, nameof(A), true),
                 new Port(1, nameof(B), true),
                 new Port(2, nameof(C), true),
