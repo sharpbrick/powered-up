@@ -15,7 +15,7 @@
         ExternalTiltSensor = 0x0022, // TILT_SENSOR
         MotionSensor = 0x0023, // MOTION_SENSOR
         VisionSensor = 0x0025, // COLOR_DISTANCE_SENSOR
-        ExternalMotorWithTacho = 0x0026, // MEDIUM_LINEAR_MOTOR
+        MediumLinearMotor = 0x0026, // MEDIUM_LINEAR_MOTOR
         InternalMotorWithTacho = 0x0027, // MOVE_HUB_MEDIUM_LINEAR_MOTOR
         InternalTilt = 0x0028, // MOVE_HUB_TILT_SENSOR
 
