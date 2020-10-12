@@ -245,24 +245,26 @@ DI Container Elements
     - [X] Alerts
     - [X] Actions
     - [X] Create Virtual Ports
-    - [X] Technic Medium Hub
     - [X] Two Port Hub (88009)
+    - [X] Technic Medium Hub (88012)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
-    - [X] Technic Medium Hub - Rgb Light
-    - [X] Technic Medium Hub - Current
-    - [X] Technic Medium Hub - Voltage
-    - [X] Technic Medium Hub - Temperature Sensor 1 + 2
-    - [X] Technic Medium Hub - Accelerometer
-    - [X] Technic Medium Hub - Gyro Sensor
-    - [X] Technic Medium Hub - Tilt Sensor
-    - [X] Technic Medium Hub - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
-    - [X] Technic XLarge Motor
-    - [X] Technic Large Motor
-    - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
+    - [X] Technic Medium Hub (88012) - Rgb Light
+    - [X] Technic Medium Hub (88012) - Current
+    - [X] Technic Medium Hub (88012) - Voltage
+    - [X] Technic Medium Hub (88012) - Temperature Sensor 1 + 2
+    - [X] Technic Medium Hub (88012) - Accelerometer
+    - [X] Technic Medium Hub (88012) - Gyro Sensor
+    - [X] Technic Medium Hub (88012) - Tilt Sensor
+    - [X] Technic Medium Hub (88012) - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
     - [X] Hub (88009) - Rgb Light
     - [X] Hub (88009) - Current
     - [X] Hub (88009) - Voltage
+    - [X] Medium Linear Motor (88008)
+    - [X] Train Motor (88011)
+    - [X] Technic Large Motor (88013)
+    - [X] Technic XLarge Motor (88014)
+    - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
@@ -301,4 +303,4 @@ The product is licensed under **MIT License** to allow a easy and wide adoption 
 
 ## Thanks ...
 
-Thanks to @nathankellenicki and @corneliusmunz for their code, answers, testing and other important contributions.
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.
