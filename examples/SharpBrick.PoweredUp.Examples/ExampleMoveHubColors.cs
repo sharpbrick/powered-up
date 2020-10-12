@@ -8,17 +8,17 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<MoveHub>())
+            using (var moveHub = Host.FindByType<MoveHub>())
             {
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+                await moveHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
                 await Task.Delay(2000);
 
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0x00);
+                await moveHub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0x00);
 
                 await Task.Delay(2000);
 
-                await technicMediumHub.SwitchOffAsync();
+                await moveHub.SwitchOffAsync();
             }
         }
     }
