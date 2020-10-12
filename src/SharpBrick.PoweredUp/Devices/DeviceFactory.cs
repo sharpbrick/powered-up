@@ -40,6 +40,7 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.TechnicMediumHubGyroSensor => typeof(TechnicMediumHubGyroSensor),
                 DeviceType.TechnicMediumHubTiltSensor => typeof(TechnicMediumHubTiltSensor),
                 DeviceType.TechnicMediumHubTemperatureSensor => typeof(TechnicMediumHubTemperatureSensor),
+                DeviceType.MediumLinearMotor => typeof(MediumLinearMotor),
                 DeviceType.InternalMotorWithTacho => typeof(MoveHubInternalMotor),
                 _ => null,
             };
@@ -57,6 +58,7 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(TechnicMediumHubGyroSensor) => DeviceType.TechnicMediumHubGyroSensor,
                 nameof(TechnicMediumHubTiltSensor) => DeviceType.TechnicMediumHubTiltSensor,
                 nameof(TechnicMediumHubTemperatureSensor) => DeviceType.TechnicMediumHubTemperatureSensor,
+                nameof(MediumLinearMotor) => DeviceType.MediumLinearMotor,
                 nameof(MoveHubInternalMotor) => DeviceType.InternalMotorWithTacho,
                 _ => DeviceType.Unknown,
             };
