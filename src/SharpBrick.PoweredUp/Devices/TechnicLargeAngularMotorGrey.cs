@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
@@ -6,12 +6,12 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
-    public class TechnicLargeAngularMotor : AbsoluteMotor, IPoweredUpDevice
+    public class TechnicLargeAngularMotorGrey : AbsoluteMotor, IPoweredUpDevice
     {
-        public TechnicLargeAngularMotor()
+        public TechnicLargeAngularMotorGrey()
             : base()
         { }
-        public TechnicLargeAngularMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        public TechnicLargeAngularMotorGrey(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         { }
 
