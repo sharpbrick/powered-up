@@ -264,7 +264,10 @@ DI Container Elements
     - [X] Train Motor (88011)
     - [X] Technic Large Motor (88013)
     - [X] Technic XLarge Motor (88014)
-    - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
+    - [ ] Technic Medium Angular Motor (Spike)
+    - [ ] Technic Medium Angular Motor (Grey)
+    - [ ] Technic Large Angular Motor (Spike)
+    - [X] Technic Large Angular Motor (Grey)
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
