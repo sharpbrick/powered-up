@@ -86,7 +86,8 @@ namespace Example
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
                 })
-                .AddWinRTBluetooth()
+                .AddBlueZBluetooth()
+                //.AddWinRTBluetooth()
                 ;
 
             Configure(serviceCollection);

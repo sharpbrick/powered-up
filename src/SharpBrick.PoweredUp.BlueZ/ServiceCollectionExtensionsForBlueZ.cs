@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.BlueZ;
 using SharpBrick.PoweredUp.BlueZ.Utilities;
 
-namespace SharpBrick.PoweredUp.BlueZ
+namespace SharpBrick.PoweredUp
 {
     public static class ServiceCollectionExtensionsForBlueZ
     {

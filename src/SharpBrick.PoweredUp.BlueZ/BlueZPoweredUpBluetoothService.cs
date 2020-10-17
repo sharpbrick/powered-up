@@ -1,7 +1,4 @@
-﻿using HashtagChris.DotNetBlueZ;
-using HashtagChris.DotNetBlueZ.Extensions;
-
-using SharpBrick.PoweredUp.Bluetooth;
+﻿using SharpBrick.PoweredUp.Bluetooth;
 
 using System;
 using System.Linq;
@@ -16,9 +13,9 @@ namespace SharpBrick.PoweredUp.BlueZ
         public Guid Uuid => Guid.Parse(_service.GetUUIDAsync().Result);
 
 
-        public BlueZPoweredUpBluetoothService(IGattService1 gattService)
+        internal BlueZPoweredUpBluetoothService(IGattService1 service)
         {
-            _service = gattService ?? throw new ArgumentNullException(nameof(gattService));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         public void Dispose()
@@ -26,11 +23,11 @@ namespace SharpBrick.PoweredUp.BlueZ
             throw new NotImplementedException();
         }
 
-        public async Task<IPoweredUpBluetoothCharacteristic> GetCharacteristicAsync(Guid guid)
+        public Task<IPoweredUpBluetoothCharacteristic> GetCharacteristicAsync(Guid guid)
         {
-            var characteristic = await _service.GetCharacteristicAsync(guid.ToString());
-
-            return new BlueZPoweredUpBluetoothCharacteristic(characteristic);
+            /*var characteristic = await _service.GetCharacteristicAsync(guid.ToString());
+*/
+            return Task.FromResult<IPoweredUpBluetoothCharacteristic>(new BlueZPoweredUpBluetoothCharacteristic(guid));
         }
     }
 }
