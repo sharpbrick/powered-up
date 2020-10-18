@@ -11,6 +11,7 @@ namespace SharpBrick.PoweredUp.BlueZ
     public class BlueZPoweredUpBluetoothDevice : IPoweredUpBluetoothDevice
     {
         private readonly IDevice1 _device;
+        private readonly BlueZPoweredUpBluetoothAdapter _adapter;
         private readonly ILogger _logger;
 
         public bool IsConnected { get; private set; } = false;
@@ -21,9 +22,10 @@ namespace SharpBrick.PoweredUp.BlueZ
 
         public string Name => _device.GetNameAsync().Result;
 
-        internal BlueZPoweredUpBluetoothDevice(IDevice1 device, ILogger logger)
+        internal BlueZPoweredUpBluetoothDevice(IDevice1 device, BlueZPoweredUpBluetoothAdapter adapter, ILogger logger)
         {
             _device = device ?? throw new ArgumentNullException(nameof(device));
+            _adapter = adapter;
             _logger = logger;
             AttachEventHandlers().Wait();
         }
@@ -35,10 +37,22 @@ namespace SharpBrick.PoweredUp.BlueZ
 
         private  async Task AttachEventHandlers()
         {
-            await _device.WatchPropertiesAsync(PopertyChangedHandler);
+            // if (_adapter.IsDiscovering)
+            // {
+            //     await _adapter.StopDiscoveryAsync();
+            // }
+
+            // await Task.Delay(TimeSpan.FromSeconds(2));
+
+            // if (_adapter.IsDiscovering)
+            // {
+            //     throw new Exception("Cannot watch device properties if the adapter is discovering");
+            // }
+
+            await _device.WatchPropertiesAsync(PropertyChangedHandler);
         }
 
-        private void PopertyChangedHandler(PropertyChanges changes)
+        private void PropertyChangedHandler(PropertyChanges changes)
         {
             foreach (var changed in changes.Changed)
             {
@@ -90,7 +104,7 @@ namespace SharpBrick.PoweredUp.BlueZ
                 }
             }
 
-            return new BlueZPoweredUpBluetoothService(_serviceCache[serviceId]);
+            return new BlueZPoweredUpBluetoothService(_serviceCache[serviceId], _logger);
         }
     }
 }

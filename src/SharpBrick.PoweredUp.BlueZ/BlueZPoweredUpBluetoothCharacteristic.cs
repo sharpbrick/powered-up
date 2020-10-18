@@ -1,4 +1,5 @@
-﻿using Polly;
+﻿using Microsoft.Extensions.Logging;
+using Polly;
 
 using SharpBrick.PoweredUp.Bluetooth;
 
@@ -16,29 +17,38 @@ namespace SharpBrick.PoweredUp.BlueZ
         public Guid Uuid => Guid.Parse(_characteristic.GetUUIDAsync().Result);
 
         private readonly IGattCharacteristic1 _characteristic;
+        private readonly ILogger _logger;
 
-        public BlueZPoweredUpBluetoothCharacteristic(Guid characteristicUuid)
+        internal BlueZPoweredUpBluetoothCharacteristic(IGattCharacteristic1 characteristic, ILogger logger)
         {
-            //_characteristic = gattCharacteristic ?? throw new ArgumentNullException(nameof(gattCharacteristic));
+            _logger = logger;
+            _characteristic = characteristic ?? throw new ArgumentNullException(nameof(characteristic));
         }
 
-        public Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler)
+        public async Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler)
         {
-            // if (notificationHandler is null)
-            // {
-            //     throw new ArgumentNullException(nameof(notificationHandler));
-            // }
 
-            // _characteristic.Value += ValueChangedHandler;
+            if (notificationHandler is null)
+            {
+                 throw new ArgumentNullException(nameof(notificationHandler));
+            }
 
-            // Task ValueChangedHandler(GattCharacteristic sender, GattCharacteristicValueEventArgs args)
-            // {
-            //     return notificationHandler(args.Value);
-            // }
+            await _characteristic.WatchPropertiesAsync(PropertyChangedHandler);
 
-            // //await _characteristic.StartNotifyAsync();
+            void PropertyChangedHandler(PropertyChanges changes)
+            {
+                foreach (var changed in changes.Changed)
+                {
+                    if (changed.Key == "Value")
+                    {
+                        notificationHandler((byte[])changed.Value);
+                    }
+                }
+            }
+
+            await _characteristic.StartNotifyAsync();
             
-            return Task.FromResult(true);
+            return true;
         }
 
         public async Task<bool> WriteValueAsync(byte[] data)
@@ -48,7 +58,7 @@ namespace SharpBrick.PoweredUp.BlueZ
                 throw new ArgumentNullException(nameof(data));
             }
 
-            await _characteristic.WriteValueAsync(data, new Dictionary<string,object>());
+            //await _characteristic.WriteValueAsync(data, new Dictionary<string,object>());
 
             await Policy
               .Handle<Tmds.DBus.DBusException>()
