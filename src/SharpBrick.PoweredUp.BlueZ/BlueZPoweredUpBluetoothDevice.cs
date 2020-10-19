@@ -27,7 +27,6 @@ namespace SharpBrick.PoweredUp.BlueZ
             _device = device ?? throw new ArgumentNullException(nameof(device));
             _adapter = adapter;
             _logger = logger;
-            AttachEventHandlers().Wait();
         }
 
         public void Dispose()
@@ -35,22 +34,21 @@ namespace SharpBrick.PoweredUp.BlueZ
             throw new NotImplementedException();
         }
 
-        private  async Task AttachEventHandlers()
-        {
-            // if (_adapter.IsDiscovering)
-            // {
-            //     await _adapter.StopDiscoveryAsync();
-            // }
+        // private  async Task AttachEventHandlers()
+        // {
+        //     // if (_adapter.IsDiscovering)
+        //     // {
+        //     //     await _adapter.StopDiscoveryAsync();
+        //     // }
 
-            // await Task.Delay(TimeSpan.FromSeconds(2));
+        //     // await Task.Delay(TimeSpan.FromSeconds(2));
 
-            // if (_adapter.IsDiscovering)
-            // {
-            //     throw new Exception("Cannot watch device properties if the adapter is discovering");
-            // }
+        //     // if (_adapter.IsDiscovering)
+        //     // {
+        //     //     throw new Exception("Cannot watch device properties if the adapter is discovering");
+        //     // }
 
-            await _device.WatchPropertiesAsync(PropertyChangedHandler);
-        }
+        // }
 
         private void PropertyChangedHandler(PropertyChanges changes)
         {
@@ -71,21 +69,45 @@ namespace SharpBrick.PoweredUp.BlueZ
         public async Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
         {
             TimeSpan timeout = TimeSpan.FromSeconds(15);
+
+            await _device.WatchPropertiesAsync(PropertyChangedHandler).ConfigureAwait(false);
+
             try
             {
-                await _device.ConnectAsync();
+                await _device.ConnectAsync().ConfigureAwait(false);
             } 
-            catch (TimeoutException)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "error connecting to device");
                 return null;
             }
 
-            // very crude, wait 10 seconds, convert property changed event handling to reactive code
-            await Task.Delay(TimeSpan.FromSeconds(10));
+            // if (_adapter.IsDiscovering)
+            // {
+            //     await _adapter.StopDiscoveryAsync();
+            // }
 
-            if (!IsConnected || !ServicesResolved)
+            // await Task.Delay(TimeSpan.FromSeconds(2));
+
+            // if (_adapter.IsDiscovering)
+            // {
+            //     throw new Exception("Cannot watch device properties if the adapter is discovering");
+            // }
+
+            // very crude, wait 5 seconds, convert property changed event handling to reactive code
+
+            var isConnected = await _device.GetAsync<bool>("Connected");
+            _logger.LogWarning("IsConnected = {IsConnected}", isConnected);
+            var servicesResolved = await _device.GetAsync<bool>("ServicesResolved");
+            _logger.LogWarning("ServicesResolved = {ServicesResolved}", servicesResolved);
+
+            if (!isConnected || !servicesResolved)
             {
-                throw new Exception("Connection failed after 10 seconds");
+                await Task.Delay(TimeSpan.FromSeconds(10));
+                if (!IsConnected || !ServicesResolved)
+                {
+                    throw new Exception("Connection failed after 10 seconds");
+                }
             }
 
             var objectManager = Connection.System.CreateProxy<IObjectManager>("org.bluez", "/");

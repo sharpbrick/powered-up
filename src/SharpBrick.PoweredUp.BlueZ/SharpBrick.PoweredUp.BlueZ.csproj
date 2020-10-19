@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
+    <ProjectReference Include="..\..\..\Tmds.DBus\src\Tmds.DBus\Tmds.DBus.csproj" />
   </ItemGroup>
 
 </Project>

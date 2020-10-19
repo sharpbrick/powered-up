@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public PoweredUpBluetoothServiceMock MockService { get; }
         public PoweredUpBluetoothCharacteristicMock MockCharacteristic { get; }
 
-        public void Discover(Action<PoweredUpBluetoothDeviceInfo> discoveryHandler, CancellationToken cancellationToken = default)
+        public void Discover(Func<PoweredUpBluetoothDeviceInfo,Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

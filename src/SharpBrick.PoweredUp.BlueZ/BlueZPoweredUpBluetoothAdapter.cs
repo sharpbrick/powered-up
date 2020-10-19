@@ -13,7 +13,7 @@ namespace SharpBrick.PoweredUp.BlueZ
 {
     public class BlueZPoweredUpBluetoothAdapter : IPoweredUpBluetoothAdapter
     {
-        private readonly IAdapter1 _adapter;
+        private IAdapter1 _adapter;
         private readonly BluetoothAddressFormatter _bluetoothAddressFormatter;
         private readonly ILogger<BlueZPoweredUpBluetoothAdapter> _logger;
 
@@ -25,13 +25,7 @@ namespace SharpBrick.PoweredUp.BlueZ
         {
             _logger = logger;
             _bluetoothAddressFormatter = bluetoothAddressFormatter;
-            _adapter = GetAdapterAsync().Result;
-            
-            AttachEventHandlers().Wait();
-            _adapter.SetDiscoveryFilterAsync(new Dictionary<string,object>()
-            {
-                { "UUIDs", new string[] { PoweredUpBluetoothConstants.LegoHubService } }
-            });
+
         }
 
         internal async Task StopDiscoveryAsync()
@@ -67,15 +61,23 @@ namespace SharpBrick.PoweredUp.BlueZ
             });
         }
 
-        public async void Discover(Action<PoweredUpBluetoothDeviceInfo> discoveryHandler, CancellationToken cancellationToken = default)
+        public async void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
-
-            cancellationToken.Register(async () =>
+            _adapter = GetAdapterAsync().Result;
+            
+            //AttachEventHandlers().Wait();
+            await _adapter.SetDiscoveryFilterAsync(new Dictionary<string,object>()
             {
-                //await _adapter.StopDiscoveryAsync();
+                { "UUIDs", new string[] { PoweredUpBluetoothConstants.LegoHubService } }
             });
 
-            //await _adapter.StartDiscoveryAsync();
+            await AttachEventHandlers();
+            cancellationToken.Register(async () =>
+            {
+                await _adapter.StopDiscoveryAsync();
+            });
+
+            await _adapter.StartDiscoveryAsync();
 
             // make sure handler is executed for existing devices, since they will not be found by the interface watcher
             await GetExistingDevicesAsync(DeviceFoundHandler);
@@ -93,23 +95,28 @@ namespace SharpBrick.PoweredUp.BlueZ
                     var info = new PoweredUpBluetoothDeviceInfo();
 
                     var device = Connection.System.CreateProxy<IDevice1>("org.bluez", args.path);
+                    try {
+                        var manufacturerData = await device.GetManufacturerDataAsync();
 
-                    var manufacturerData = await device.GetManufacturerDataAsync();
+                        if (manufacturerData.Count > 0)
+                        {
+                            info.ManufacturerData = (byte[])manufacturerData.First().Value;
 
-                    if (manufacturerData.Count > 0)
+                            info.Name = await device.GetNameAsync();
+                        }
+
+                        var btAddress = await device.GetAddressAsync();
+
+                        info.BluetoothAddress = _bluetoothAddressFormatter.ConvertToInteger(btAddress);
+
+                        _deviceCache.Add(info.BluetoothAddress, device);
+
+                        await discoveryHandler(info);
+                    } 
+                    catch (Exception ex)
                     {
-                        info.ManufacturerData = (byte[])manufacturerData.First().Value;
-
-                        info.Name = await device.GetNameAsync();
+                        _logger.LogError(ex, "Unable to get device info for device {DevicePath}", args.path);
                     }
-
-                    var btAddress = await device.GetAddressAsync();
-
-                    info.BluetoothAddress = _bluetoothAddressFormatter.ConvertToInteger(btAddress);
-
-                    _deviceCache.Add(info.BluetoothAddress, device);
-
-                    discoveryHandler(info);
                 }
             }
 
@@ -131,7 +138,7 @@ namespace SharpBrick.PoweredUp.BlueZ
             }
         }
 
-        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
+        public Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
         {
             if (!_deviceCache.ContainsKey(bluetoothAddress))
             {
@@ -140,7 +147,7 @@ namespace SharpBrick.PoweredUp.BlueZ
 
             //await _adapter.StopDiscoveryAsync();
             
-            return new BlueZPoweredUpBluetoothDevice(_deviceCache[bluetoothAddress], this, _logger);
+            return Task.FromResult<IPoweredUpBluetoothDevice>(new BlueZPoweredUpBluetoothDevice(_deviceCache[bluetoothAddress], this, _logger));
         }
     }
 }
