@@ -146,6 +146,9 @@ namespace SharpBrick.PoweredUp.Cli
 
                     idx++;
                 }
+
+                return Task.CompletedTask;
+
             }, cts.Token);
 
             var input = Console.ReadLine();
