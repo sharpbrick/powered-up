@@ -43,7 +43,7 @@ namespace SharpBrick.PoweredUp
 
         public void Discover(Func<Hub, Task> onDiscovery, CancellationToken token = default)
         {
-            _bluetoothAdapter.Discover(deviceInfo =>
+            _bluetoothAdapter.Discover(async deviceInfo =>
             {
                 try
                 {
@@ -55,7 +55,7 @@ namespace SharpBrick.PoweredUp
 
                         _logger.LogInformation($"Discovered log of type {hub.GetType().Name} with name '{deviceInfo.Name}' on Bluetooth Address '{deviceInfo.BluetoothAddress}'");
 
-                        onDiscovery(hub).Wait();
+                        await onDiscovery(hub);
                     }
                 }
                 catch (Exception e)
