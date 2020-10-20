@@ -30,14 +30,36 @@ namespace SharpBrick.PoweredUp.Cli
 
             await _protocol.ConnectAsync((SystemType)systemType); // registering to bluetooth notification
 
-            await _mock.MockCharacteristic.AttachIO((DeviceType)deviceType, hubId, portId, hw, sw);
+            if (systemType != 0)
+            {
+                Console.Error.WriteLine("Command Line provided Device Type, hubId, portId and versions hw/sw");
+                await _mock.MockCharacteristic.AttachIO((DeviceType)deviceType, hubId, portId, hw, sw);
+            }
+
+            var foundSystemType = false;
+            var foundAttachedIO = false;
 
             var line = await reader.ReadLineAsync();
             while (line != null)
             {
+                if (line.Substring(6, 8) == "01-0B-06") // property msg - systemtype - update
+                {
+                    foundSystemType = true;
+                }
+                if (line.Substring(6, 2) == "04" && line.Substring(12, 2) == "01") // attached io msg (04) - port - attach event
+                {
+                    foundAttachedIO = true;
+                }
                 await _mock.MockCharacteristic.WriteUpstreamAsync(line);
 
                 line = await reader.ReadLineAsync();
+            }
+
+            if (systemType == 0 && (foundSystemType == false || foundAttachedIO == false))
+            {
+                Console.Error.WriteLine("#############################");
+                Console.Error.WriteLine("SystemType and/or attached IO message not found in data or command line arguments");
+                Console.Error.WriteLine("#############################");
             }
 
             DevicesList.PrettyPrintKnowledge(System.Console.Out, _protocol.Knowledge);
