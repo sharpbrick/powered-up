@@ -63,10 +63,12 @@ namespace SharpBrick.PoweredUp.Cli
                     var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
                     var portOption = deviceDumpStaticPortApp.Option("-p", "Port to Dump", CommandOptionType.SingleValue);
+                    var headerOption = deviceDumpStaticPortApp.Option("-f", "Add Hub and IOType Header", CommandOptionType.NoValue);
 
                     deviceDumpStaticPortApp.OnExecuteAsync(async cts =>
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+                        var headerEnabled = headerOption.Values.Count > 0;
 
                         var serviceProvider = CreateServiceProvider(enableTrace);
                         (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
@@ -87,7 +89,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                             var port = byte.Parse(portOption.Value());
 
-                            await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port);
+                            await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port, headerEnabled);
                         }
                     });
                 });
