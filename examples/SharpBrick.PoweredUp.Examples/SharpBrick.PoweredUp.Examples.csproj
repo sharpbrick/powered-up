@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj" />
+    <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.BlueZ\SharpBrick.PoweredUp.BlueZ.csproj" />
   </ItemGroup>
 
   <ItemGroup>

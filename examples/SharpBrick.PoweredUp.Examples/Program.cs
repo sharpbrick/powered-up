@@ -18,7 +18,7 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleMotorVirtualPort();
             //example = new Example.ExampleHubActions();
             //example = new Example.ExampleTechnicMediumHubAccelerometer();
-            //example = new Example.ExampleTechnicMediumHubGyroSensor();
+            example = new Example.ExampleTechnicMediumHubGyroSensor();
             //example = new Example.ExampleVoltage();
             //example = new Example.ExampleTechnicMediumTemperatureSensor();
             //example = new Example.ExampleMotorInputCombinedMode();
@@ -33,7 +33,7 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleHubPropertyObserving();
             //example = new Example.ExampleDiscoverByType();
             //example = new Example.ExampleCalibrationSteering();
-            example = new Example.ExampleTechnicMediumHubGestSensor();
+            //example = new Example.ExampleTechnicMediumHubGestSensor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             await example.InitHostAndDiscoverAsync(enableTrace);

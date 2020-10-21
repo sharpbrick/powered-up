@@ -38,6 +38,7 @@ var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
     .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
+    //.AddBlueZBluetooth() // using BlueZ Bluetooth on Linux
     .BuildServiceProvider();
     
 var host = serviceProvider.GetService<PoweredUpHost>();
@@ -155,6 +156,7 @@ var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
     .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
+    //.AddBlueZBluetooth() // using BlueZ Bluetooth on Linux
     .BuildServiceProvider();
 
 using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
@@ -236,6 +238,8 @@ DI Container Elements
   - [X] .NET Core 3.1 (on Windows 10 using WinRT)
     - Library uses `Span<T>` / C# 8.0 and is therefore not supported in .NET Framework 1.0 - 4.8 and UWP Apps until arrival of .NET 5 (WinForms and WPF work in .NET Core 3.1)
     - Library uses WinRT for communication therefore only Windows 10
+  - [X] .NET Core 3.1 / .NET 5 on Linux using BlueZ
+    - Requires `bluez` to be installed and configured.
   - [ ] Xamarin (on iOS / Android using ?)
   - [ ] Blazor (on Browser using WebBluetooth)
 - Hub Model

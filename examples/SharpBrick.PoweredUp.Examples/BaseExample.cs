@@ -84,9 +84,10 @@ namespace Example
                     if (enableTrace)
                     {
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                        builder.AddFilter("SharpBrick.PoweredUp.BlueZ.BlueZPoweredUpBluetoothAdapter", LogLevel.Debug);
                     }
                 })
-                .AddWinRTBluetooth()
+                .AddBlueZBluetooth()
                 ;
 
             Configure(serviceCollection);
