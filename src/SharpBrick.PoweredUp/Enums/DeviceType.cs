@@ -15,7 +15,7 @@
         ExternalTiltSensor = 0x0022, // TILT_SENSOR
         MotionSensor = 0x0023, // MOTION_SENSOR
         VisionSensor = 0x0025, // COLOR_DISTANCE_SENSOR
-        ExternalMotorWithTacho = 0x0026, // MEDIUM_LINEAR_MOTOR
+        MediumLinearMotor = 0x0026, // MEDIUM_LINEAR_MOTOR
         InternalMotorWithTacho = 0x0027, // MOVE_HUB_MEDIUM_LINEAR_MOTOR
         InternalTilt = 0x0028, // MOVE_HUB_TILT_SENSOR
 
@@ -41,5 +41,7 @@
         MarioHubTagSensor = 0x049, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
         MarioHubPants = 0x004A, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
         MarioHubDebug = 0x0046, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        TechnicMediumAngularMotorGrey = 0x004B, // UNSPECED, TECHNIC_MEDIUM_ANGULAR_MOTOR_GREY (Control+)
+        TechnicLargeAngularMotorGrey = 0x004C, // UNSPECED, TECHNIC_LARGE_ANGULAR_MOTOR_GREY (Control+)
     }
 }

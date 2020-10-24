@@ -33,8 +33,10 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.Voltage => typeof(Voltage),
                 DeviceType.Current => typeof(Current),
                 DeviceType.RgbLight => typeof(RgbLight),
+                DeviceType.SystemTrainMotor => typeof(SystemTrainMotor),
                 DeviceType.TechnicLargeLinearMotor => typeof(TechnicLargeLinearMotor),
                 DeviceType.TechnicXLargeLinearMotor => typeof(TechnicXLargeLinearMotor),
+                DeviceType.TechnicLargeAngularMotorGrey => typeof(TechnicLargeAngularMotorGrey),
                 DeviceType.TechnicMediumHubGestureSensor => typeof(TechnicMediumHubGestureSensor),
                 DeviceType.TechnicMediumHubAccelerometer => typeof(TechnicMediumHubAccelerometer),
                 DeviceType.TechnicMediumHubGyroSensor => typeof(TechnicMediumHubGyroSensor),
@@ -44,6 +46,7 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.MarioHubTagSensor => typeof(MarioHubTagSensor),
                 DeviceType.MarioHubPants => typeof(MarioHubPants),
                 DeviceType.MarioHubDebug => typeof(MarioHubDebug),
+                DeviceType.MediumLinearMotor => typeof(MediumLinearMotor),
                 _ => null,
             };
 
@@ -53,8 +56,10 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(Voltage) => DeviceType.Voltage,
                 nameof(Current) => DeviceType.Current,
                 nameof(RgbLight) => DeviceType.RgbLight,
+                nameof(SystemTrainMotor) => DeviceType.SystemTrainMotor,
                 nameof(TechnicLargeLinearMotor) => DeviceType.TechnicLargeLinearMotor,
                 nameof(TechnicXLargeLinearMotor) => DeviceType.TechnicXLargeLinearMotor,
+                nameof(TechnicLargeAngularMotorGrey) => DeviceType.TechnicLargeAngularMotorGrey,
                 nameof(TechnicMediumHubGestureSensor) => DeviceType.TechnicMediumHubGestureSensor,
                 nameof(TechnicMediumHubAccelerometer) => DeviceType.TechnicMediumHubAccelerometer,
                 nameof(TechnicMediumHubGyroSensor) => DeviceType.TechnicMediumHubGyroSensor,
@@ -64,6 +69,7 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(MarioHubTagSensor) => DeviceType.MarioHubTagSensor,
                 nameof(MarioHubPants) => DeviceType.MarioHubPants,
                 nameof(MarioHubDebug) => DeviceType.MarioHubDebug,
+                nameof(MediumLinearMotor) => DeviceType.MediumLinearMotor,
                 _ => DeviceType.Unknown,
             };
     }

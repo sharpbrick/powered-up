@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp.WinRT
 {
     public class WinRTPoweredUpBluetoothAdapter : IPoweredUpBluetoothAdapter
     {
-        public void Discover(Action<PoweredUpBluetoothDeviceInfo> discoveryHandler, CancellationToken cancellationToken = default)
+        public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
             BluetoothLEAdvertisementWatcher watcher = new BluetoothLEAdvertisementWatcher();
             watcher.ScanningMode = BluetoothLEScanningMode.Active;
@@ -26,7 +26,7 @@ namespace SharpBrick.PoweredUp.WinRT
 
             watcher.Start();
 
-            void ReceivedHandler(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
+            async void ReceivedHandler(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
             {
                 var info = new PoweredUpBluetoothDeviceInfo();
 
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp.WinRT
 
                 info.BluetoothAddress = eventArgs.BluetoothAddress;
 
-                discoveryHandler(info);
+                await discoveryHandler(info);
             }
         }
 

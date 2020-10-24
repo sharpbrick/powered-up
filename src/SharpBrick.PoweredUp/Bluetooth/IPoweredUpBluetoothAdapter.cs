@@ -6,7 +6,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
 {
     public interface IPoweredUpBluetoothAdapter
     {
-        void Discover(Action<PoweredUpBluetoothDeviceInfo> discoveryHandler, CancellationToken cancellationToken = default);
+        void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default);
 
         Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress);
     }
