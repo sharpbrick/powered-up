@@ -14,6 +14,23 @@ namespace SharpBrick.PoweredUp
                 new Port(2, string.Empty, false, expectedDevice: DeviceType.MarioHubPants),
                 new Port(3, string.Empty, false, expectedDevice: DeviceType.MarioHubDebug),
                 new Port(6, string.Empty, false, expectedDevice: DeviceType.Voltage),
+            },
+            knownProperties: new HubProperty[] {
+                HubProperty.AdvertisingName,
+                HubProperty.Button,
+                HubProperty.FwVersion,
+                HubProperty.HwVersion,
+                HubProperty.Rssi,
+                HubProperty.BatteryVoltage,
+                HubProperty.BatteryType,
+                HubProperty.ManufacturerName,
+                HubProperty.RadioFirmwareVersion,
+                HubProperty.LegoWirelessProtocolVersion,
+                HubProperty.SystemTypeId,
+                // HubProperty.HardwareNetworkId, // Throws command not recognized error for MarioHub
+                HubProperty.PrimaryMacAddress,
+                HubProperty.SecondaryMacAddress,
+                //HubProperty.HardwareNetworkFamily, // may throw command not recognized error for MarioHub
             })
         { }
 
