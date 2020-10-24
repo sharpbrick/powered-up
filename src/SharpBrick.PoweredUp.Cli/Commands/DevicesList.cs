@@ -45,6 +45,22 @@ namespace SharpBrick.PoweredUp.Cli
         {
             string Intent(int depth) => "                        ".Substring(0, depth * 2);
 
+            string MinMaxDescription(float rawMin, float rawMax, float min, float max)
+            {
+                bool isPassThrough = (rawMax == max) && (rawMin == min);
+                bool isTranslation = (rawMax - rawMin) == (max - min);
+                bool isScaling = !((rawMax == max) && (rawMin == min));
+
+                return (isPassThrough, isTranslation, isScaling) switch
+                {
+                    (true, _, _) => " (pass-through)",
+                    (false, false, false) => string.Empty,
+                    (false, false, true) => " (scaling)",
+                    (false, true, false) => " (translation)",
+                    (false, true, true) => " (scaling, translation)",
+                };
+            }
+
             foreach (var hub in portKnowledge.Hubs.OrderBy(h => h.HubId))
             {
                 Console.WriteLine($"{Intent(0)}- Hub: 0x{hub.HubId:X2} / {hub.HubId}");
@@ -94,9 +110,9 @@ namespace SharpBrick.PoweredUp.Cli
                         writer.WriteLine($"{Intent(3)}- Port Mode Information");
                         writer.WriteLine($"{Intent(4)}DataSet: {mode.NumberOfDatasets}x {mode.DatasetType}, TotalFigures: {mode.TotalFigures}, Decimals: {mode.Decimals}");
 
-                        if (mode.IsInput)
+                        if (mode.IsInput || (!mode.IsInput && (mode.InputSupportsNull || mode.InputSupportFunctionalMapping20 || mode.InputAbsolute || mode.InputDiscrete || mode.InputRelative)))
                         {
-                            writer.Write($"{Intent(4)}Input Mapping: ");
+                            writer.Write($"{Intent(4)}Input Mapping:");
                             if (mode.InputSupportsNull)
                             {
                                 writer.Write(" SupportsNull");
@@ -120,9 +136,9 @@ namespace SharpBrick.PoweredUp.Cli
                             writer.WriteLine();
                         }
 
-                        if (mode.IsOutput)
+                        if (mode.IsOutput || (!mode.IsOutput && (mode.OutputSupportsNull || mode.OutputSupportFunctionalMapping20 || mode.OutputAbsolute || mode.OutputDiscrete || mode.OutputRelative)))
                         {
-                            writer.Write($"{Intent(4)}Output Mapping: ");
+                            writer.Write($"{Intent(4)}Output Mapping:");
                             if (mode.OutputSupportsNull)
                             {
                                 writer.Write(" SupportsNull");
@@ -147,8 +163,8 @@ namespace SharpBrick.PoweredUp.Cli
                         }
 
                         writer.WriteLine($"{Intent(4)}Raw Min: {mode.RawMin,7}, Max: {mode.RawMax,7}");
-                        writer.WriteLine($"{Intent(4)}Pct Min: {mode.PctMin,7}, Max: {mode.PctMax,7}");
-                        writer.WriteLine($"{Intent(4)}SI  Min: {mode.SIMin,7}, Max: {mode.SIMax,7}");
+                        writer.WriteLine($"{Intent(4)}Pct Min: {mode.PctMin,7}, Max: {mode.PctMax,7}{MinMaxDescription(mode.RawMin, mode.RawMax, mode.PctMin, mode.PctMax)}");
+                        writer.WriteLine($"{Intent(4)}SI  Min: {mode.SIMin,7}, Max: {mode.SIMax,7}{MinMaxDescription(mode.RawMin, mode.RawMax, mode.SIMin, mode.SIMax)}");
 
                         if (showConfiguration)
                         {
