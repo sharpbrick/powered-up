@@ -22,6 +22,23 @@ namespace SharpBrick.PoweredUp
                 new Port(98, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGyroSensor),
                 new Port(99, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubTiltSensor),
                 new Port(100, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGestureSensor),
+            },
+            knownProperties: new HubProperty[] {
+                HubProperty.AdvertisingName,
+                HubProperty.Button,
+                HubProperty.FwVersion,
+                HubProperty.HwVersion,
+                HubProperty.Rssi,
+                HubProperty.BatteryVoltage,
+                HubProperty.BatteryType,
+                HubProperty.ManufacturerName,
+                HubProperty.RadioFirmwareVersion,
+                HubProperty.LegoWirelessProtocolVersion,
+                HubProperty.SystemTypeId,
+                HubProperty.HardwareNetworkId,
+                HubProperty.PrimaryMacAddress,
+                HubProperty.SecondaryMacAddress,
+                //HubProperty.HardwareNetworkFamily, //  Throws command not recognized error for TechnicMediumHub
             })
         { }
 
