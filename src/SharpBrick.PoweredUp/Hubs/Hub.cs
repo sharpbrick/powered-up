@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace SharpBrick.PoweredUp
         public IServiceProvider ServiceProvider { get; }
         public bool IsConnected => Protocol != null;
 
-        public Hub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, SystemType knownSystemType, Port[] knownPorts)
+        public Hub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, SystemType knownSystemType, Port[] knownPorts, IEnumerable<HubProperty> knownProperties = default)
         {
             Protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(deviceFactory));
@@ -30,6 +31,7 @@ namespace SharpBrick.PoweredUp
             AddKnownPorts(knownPorts ?? throw new ArgumentNullException(nameof(knownPorts)));
             _logger = logger;
 
+            SetupHubProperties(knownProperties);
             SetupOnHubChange();
             SetupOnPortChangeObservable(Protocol.UpstreamMessages);
             SetupHubAlertObservable(Protocol.UpstreamMessages);

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
@@ -42,6 +44,29 @@ namespace SharpBrick.PoweredUp
         public IObservable<sbyte> RssiObservable { get; private set; }
         public IObservable<byte> BatteryVoltageInPercentObservable { get; private set; }
 
+        private IEnumerable<HubProperty> _knownProperties;
+
+        private void SetupHubProperties(IEnumerable<HubProperty> knownProperties)
+        {
+            _knownProperties = knownProperties ?? new HubProperty[] {
+                HubProperty.AdvertisingName,
+                HubProperty.Button,
+                HubProperty.FwVersion,
+                HubProperty.HwVersion,
+                HubProperty.Rssi,
+                HubProperty.BatteryVoltage,
+                HubProperty.BatteryType,
+                HubProperty.ManufacturerName,
+                HubProperty.RadioFirmwareVersion,
+                HubProperty.LegoWirelessProtocolVersion,
+                HubProperty.SystemTypeId,
+                HubProperty.HardwareNetworkId,
+                HubProperty.PrimaryMacAddress,
+                HubProperty.SecondaryMacAddress,
+                HubProperty.HardwareNetworkFamily,
+            };
+        }
+
         private void SetupHubPropertyObservable(IObservable<LegoWirelessMessage> upstreamMessages)
         {
             PropertyChangedObservable = upstreamMessages
@@ -64,23 +89,7 @@ namespace SharpBrick.PoweredUp
 
         private async Task InitialHubPropertiesQueryAsync()
         {
-            await Task.WhenAll(
-                RequestHubPropertySingleUpdate(HubProperty.AdvertisingName),
-                RequestHubPropertySingleUpdate(HubProperty.Button),
-                RequestHubPropertySingleUpdate(HubProperty.FwVersion),
-                RequestHubPropertySingleUpdate(HubProperty.HwVersion),
-                RequestHubPropertySingleUpdate(HubProperty.Rssi),
-                RequestHubPropertySingleUpdate(HubProperty.BatteryVoltage),
-                RequestHubPropertySingleUpdate(HubProperty.BatteryType),
-                RequestHubPropertySingleUpdate(HubProperty.ManufacturerName),
-                RequestHubPropertySingleUpdate(HubProperty.RadioFirmwareVersion),
-                RequestHubPropertySingleUpdate(HubProperty.LegoWirelessProtocolVersion),
-                RequestHubPropertySingleUpdate(HubProperty.SystemTypeId),
-                RequestHubPropertySingleUpdate(HubProperty.HardwareNetworkId),
-                RequestHubPropertySingleUpdate(HubProperty.PrimaryMacAddress),
-                RequestHubPropertySingleUpdate(HubProperty.SecondaryMacAddress)
-            // RequestHubPropertySingleUpdate(HubProperty.HardwareNetworkFamily) does not work .. at least for TechnicMediumHub. Throws command not recognized error.
-            );
+            await Task.WhenAll(_knownProperties.Select(property => RequestHubPropertySingleUpdate(property)));
         }
 
         public Task RequestHubPropertySingleUpdate(HubProperty property)

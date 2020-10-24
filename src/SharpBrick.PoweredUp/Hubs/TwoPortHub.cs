@@ -14,6 +14,23 @@ namespace SharpBrick.PoweredUp
                 new Port(50, string.Empty, false, expectedDevice: DeviceType.RgbLight),
                 new Port(59, string.Empty, false, expectedDevice: DeviceType.Current),
                 new Port(60, string.Empty, false, expectedDevice: DeviceType.Voltage),
+            },
+            knownProperties: new HubProperty[] {
+                HubProperty.AdvertisingName,
+                HubProperty.Button,
+                HubProperty.FwVersion,
+                HubProperty.HwVersion,
+                HubProperty.Rssi,
+                HubProperty.BatteryVoltage,
+                HubProperty.BatteryType,
+                HubProperty.ManufacturerName,
+                HubProperty.RadioFirmwareVersion,
+                HubProperty.LegoWirelessProtocolVersion,
+                HubProperty.SystemTypeId,
+                HubProperty.HardwareNetworkId,
+                HubProperty.PrimaryMacAddress,
+                HubProperty.SecondaryMacAddress,
+                //HubProperty.HardwareNetworkFamily, // support status unknown for TwoPortHub
             })
         { }
 
