@@ -27,7 +27,17 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 HubPropertyOperation.DisableUpdates => 0,
                 HubPropertyOperation.Reset => 0,
                 HubPropertyOperation.RequestUpdate => 0,
-                HubPropertyOperation.Update => throw new NotImplementedException(),
+                HubPropertyOperation.Update => message switch
+                {
+                    HubPropertyMessage<string> msg => msg.Payload.Length,
+                    HubPropertyMessage<byte[]> msg => msg.Payload.Length,
+                    HubPropertyMessage<Version> msg => msg.Property switch
+                    {
+                        HubProperty.LegoWirelessProtocolVersion => 2, // special
+                        _ => 4, // default version in int
+                    },
+                    _ => 1,
+                },
                 _ => 0,
             };
 
@@ -43,7 +53,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             data[0] = (byte)message.Property;
             data[1] = (byte)message.Operation;
 
-            if (message.Operation == HubPropertyOperation.Set)
+            if (message.Operation == HubPropertyOperation.Set || message.Operation == HubPropertyOperation.Update)
             {
                 switch (message)
                 {
@@ -57,6 +67,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         throw new NotImplementedException();
                     case HubPropertyMessage<sbyte> msg:
                         throw new NotImplementedException(); //data[2] = (byte)msg.Payload;
+                    case HubPropertyMessage<SystemType> msg:
+                        data[2] = (byte)msg.Payload;
+                        break;
                     case HubPropertyMessage<byte> msg:
                         data[2] = msg.Payload;
                         break;

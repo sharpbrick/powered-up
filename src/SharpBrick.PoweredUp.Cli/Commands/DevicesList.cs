@@ -41,7 +41,11 @@ namespace SharpBrick.PoweredUp.Cli
             PrettyPrintKnowledge(System.Console.Out, protocol.Knowledge, false);
         }
 
+<<<<<<< HEAD
         public static void PrettyPrintKnowledge(TextWriter writer, ProtocolKnowledge portKnowledge, bool showConfiguration = true)
+=======
+        public static void PrettyPrintKnowledge(TextWriter writer, ProtocolKnowledge portKnowledge)
+>>>>>>> master
         {
             string Intent(int depth) => "                        ".Substring(0, depth * 2);
 

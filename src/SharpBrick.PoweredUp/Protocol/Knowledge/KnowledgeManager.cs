@@ -148,6 +148,8 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, hub, port, knowledge, deviceFactory);
 
                     port.IsVirtual = true;
+                    port.PortAId = msg.PortAId;
+                    port.PortBId = msg.PortBId;
                     break;
 
                 case PortInputFormatSingleMessage msg:
