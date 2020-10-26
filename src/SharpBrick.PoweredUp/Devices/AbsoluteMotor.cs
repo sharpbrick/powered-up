@@ -127,7 +127,7 @@ namespace SharpBrick.PoweredUp
 
             var currentPosition = await GetPositionAsync();
 
-            sbyte speed = 5;
+            sbyte speed = 10;
 
             uint degrees;
 
