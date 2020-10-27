@@ -268,7 +268,7 @@ DI Container Elements
     - [X] Technic Large Motor (88013)
     - [X] Technic XLarge Motor (88014)
     - [ ] Technic Medium Angular Motor (Spike)
-    - [ ] Technic Medium Angular Motor (Grey)
+    - [X] Technic Medium Angular Motor (Grey)
     - [ ] Technic Large Angular Motor (Spike)
     - [X] Technic Large Angular Motor (Grey)
     - .. other devices depend on availability of hardware / contributions
