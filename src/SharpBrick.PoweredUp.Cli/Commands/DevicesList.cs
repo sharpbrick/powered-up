@@ -68,8 +68,7 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     writer.WriteLine($"{Intent(1)}- Port: 0x{port.PortId:X2} / {port.PortId}");
 
-                    writer.WriteLine($"{Intent(2)}- Port Information");
-                    writer.WriteLine($"{Intent(3)}IOTypeId: {port.IOTypeId} / 0x{(ushort)port.IOTypeId:X4} / {(ushort)port.IOTypeId}");
+                    writer.WriteLine($"{Intent(2)}- IOTypeId: {port.IOTypeId} / 0x{(ushort)port.IOTypeId:X4} / {(ushort)port.IOTypeId}");
                     writer.WriteLine($"{Intent(3)}Revision: SW: {port.SoftwareRevision}, HW: {port.HardwareRevision}");
                     writer.Write($"{Intent(3)}Capabilities:");
                     if (port.OutputCapability)
@@ -107,8 +106,7 @@ namespace SharpBrick.PoweredUp.Cli
                         writer.Write(mode.IsInput ? " Input" : string.Empty);
                         writer.WriteLine(mode.IsOutput ? " Output" : string.Empty);
 
-                        writer.WriteLine($"{Intent(3)}- Port Mode Information");
-                        writer.WriteLine($"{Intent(4)}DataSet: {mode.NumberOfDatasets}x {mode.DatasetType}, TotalFigures: {mode.TotalFigures}, Decimals: {mode.Decimals}");
+                        writer.WriteLine($"{Intent(3)}- DataSet: {mode.NumberOfDatasets}x {mode.DatasetType}, TotalFigures: {mode.TotalFigures}, Decimals: {mode.Decimals}");
 
                         if (mode.IsInput || (!mode.IsInput && (mode.InputSupportsNull || mode.InputSupportFunctionalMapping20 || mode.InputAbsolute || mode.InputDiscrete || mode.InputRelative)))
                         {
