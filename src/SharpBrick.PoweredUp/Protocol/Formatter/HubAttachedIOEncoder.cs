@@ -44,7 +44,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => throw new NotImplementedException();
 
         public void Encode(HubAttachedIOForAttachedVirtualDeviceMessage message, in Span<byte> data)
-            => throw new NotImplementedException();
+        {
+            data[0] = message.PortId;
+            data[1] = (byte)message.Event;
+            BitConverter.TryWriteBytes(data.Slice(2, 2), (ushort)message.IOTypeId);
+            data[4] = message.PortAId;
+            data[5] = message.PortBId;
+        }
 
         public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
         {

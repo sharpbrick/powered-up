@@ -48,6 +48,34 @@
             "stopAtEntry": false
         },
         {
+            "name": "poweredup device pretty-print --t 128 --h 0 --p 100 --io 0036 --hw 1.0.0.2 --sw 1.0.0.3 --file test.txt",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Cli.dll",
+            "args": [
+                "device",
+                "pretty-print",
+                "--t",
+                "128",
+                "--h",
+                "0",
+                "--io",
+                "0036",
+                "--p",
+                "100",
+                "--hw",
+                "1.0.0.2",
+                "--sw",
+                "1.0.0.3",
+                "--file",
+                "test.txt"
+            ],
+            "cwd": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

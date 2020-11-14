@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,10 +63,12 @@ namespace SharpBrick.PoweredUp.Cli
                     var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
                     var portOption = deviceDumpStaticPortApp.Option("-p", "Port to Dump", CommandOptionType.SingleValue);
+                    var headerOption = deviceDumpStaticPortApp.Option("-f", "Add Hub and IOType Header", CommandOptionType.NoValue);
 
                     deviceDumpStaticPortApp.OnExecuteAsync(async cts =>
                     {
                         var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+                        var headerEnabled = headerOption.Values.Count > 0;
 
                         var serviceProvider = CreateServiceProvider(enableTrace);
                         (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
@@ -85,16 +89,62 @@ namespace SharpBrick.PoweredUp.Cli
 
                             var port = byte.Parse(portOption.Value());
 
-                            await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port);
+                            await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port, headerEnabled);
                         }
                     });
                 });
+
+                deviceApp.Command("pretty-print", prettyPrintApp =>
+                {
+                    prettyPrintApp.HelpOption();
+                    var traceOption = prettyPrintApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
+                    var systemTypeOption = prettyPrintApp.Option("--t", "System Type (parsable number)", CommandOptionType.SingleValue);
+                    var hubOption = prettyPrintApp.Option("--h", "Hub Id (decimal number)", CommandOptionType.SingleValue);
+                    var portOption = prettyPrintApp.Option("--p", "Port Id (decimal number)", CommandOptionType.SingleValue);
+                    var ioTypeOption = prettyPrintApp.Option("--io", "IO Type (hex number, e.g. 003C)", CommandOptionType.SingleValue);
+                    var hwVersionOption = prettyPrintApp.Option("--hw", "Hardware Version", CommandOptionType.SingleValue);
+                    var swVersionOption = prettyPrintApp.Option("--sw", "Software Version", CommandOptionType.SingleValue);
+                    var fileOption = prettyPrintApp.Option("--file", "File to read from (otherwise stdin", CommandOptionType.SingleValue);
+
+                    prettyPrintApp.OnExecuteAsync(async cts =>
+                    {
+                        var enableTrace = bool.TryParse(traceOption.Value(), out var x0) ? x0 : false;
+                        var systemType = byte.TryParse(systemTypeOption.Value(), out var x1) ? x1 : (byte)0;
+                        var hubId = byte.TryParse(hubOption.Value(), out var x2) ? x2 : (byte)0;
+                        var portId = byte.TryParse(portOption.Value(), out var x3) ? x3 : (byte)0;
+                        var ioType = ushort.TryParse(ioTypeOption.Value(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var x4) ? x4 : (ushort)0;
+                        var hwVersion = Version.TryParse(hwVersionOption.Value(), out var x5) ? x5 : new Version("0.0.0.0");
+                        var swVersion = Version.TryParse(swVersionOption.Value(), out var x6) ? x6 : new Version("0.0.0.0");
+                        var file = fileOption.Value();
+
+                        var serviceProvider = CreateServiceProviderWithMock(enableTrace);
+
+                        using (var scope = serviceProvider.CreateScope())
+                        {
+                            var scopedServiceProvider = scope.ServiceProvider;
+
+                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+
+                            var prettyPrintCommand = scopedServiceProvider.GetService<PrettyPrint>(); // ServiceLocator ok: transient factory
+
+                            TextReader reader = Console.In;
+
+                            if (!string.IsNullOrWhiteSpace(file))
+                            {
+                                reader = new StringReader(File.ReadAllText(file));
+                            }
+
+                            await prettyPrintCommand.ExecuteAsync(reader, systemType, ioType, hubId, portId, hwVersion, swVersion);
+                        }
+                    });
+                });
+
             });
 
             await app.ExecuteAsync(args);
         }
 
-        private static IServiceProvider CreateServiceProvider(bool enableTrace)
+        private static IServiceCollection CreateServiceProviderInternal(bool enableTrace)
             => new ServiceCollection()
                 .AddLogging(builder =>
                 {
@@ -107,12 +157,19 @@ namespace SharpBrick.PoweredUp.Cli
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
                 })
-                .AddWinRTBluetooth()
                 .AddPoweredUp()
 
                 // Add CLI Commands
                 .AddTransient<DumpStaticPortInfo>()
                 .AddTransient<DevicesList>()
+                .AddTransient<PrettyPrint>();
+        private static IServiceProvider CreateServiceProviderWithMock(bool enableTrace)
+            => CreateServiceProviderInternal(enableTrace)
+                .AddMockBluetooth()
+                .BuildServiceProvider();
+        private static IServiceProvider CreateServiceProvider(bool enableTrace)
+            => CreateServiceProviderInternal(enableTrace)
+                .AddWinRTBluetooth()
                 .BuildServiceProvider();
 
         public static async Task AddTraceWriterAsync(IServiceProvider serviceProvider, bool enableTrace)
