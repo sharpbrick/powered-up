@@ -246,6 +246,7 @@ DI Container Elements
     - [X] Actions
     - [X] Create Virtual Ports
     - [X] Two Port Hub (88009)
+    - [X] Two Port Handset (88010)
     - [X] Technic Medium Hub (88012)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
@@ -261,11 +262,13 @@ DI Container Elements
     - [X] Hub (88009) - Current
     - [X] Hub (88009) - Voltage
     - [X] Medium Linear Motor (88008)
+    - [X] Remote Control Button (88010)
+    - [X] Remote Control RSSI (88010)
     - [X] Train Motor (88011)
     - [X] Technic Large Motor (88013)
     - [X] Technic XLarge Motor (88014)
     - [ ] Technic Medium Angular Motor (Spike)
-    - [ ] Technic Medium Angular Motor (Grey)
+    - [X] Technic Medium Angular Motor (Grey)
     - [ ] Technic Large Angular Motor (Spike)
     - [X] Technic Large Angular Motor (Grey)
     - .. other devices depend on availability of hardware / contributions
