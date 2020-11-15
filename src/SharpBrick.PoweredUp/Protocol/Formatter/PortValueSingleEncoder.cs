@@ -79,7 +79,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var rawValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray();
 
             var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToSByte(f)).ToArray();
-            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToSByte(f)).ToArray();
+            var pctValues = modeInfo.DisablePercentage switch
+            {
+                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToSByte(f)).ToArray(),
+                true => new sbyte[rawValues.Length],
+            };
 
             return new PortValueData<sbyte>()
             {
@@ -94,7 +98,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var rawValues = MemoryMarshal.Cast<byte, short>(dataSlice).ToArray();
 
             var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToInt16(f)).ToArray();
-            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt16(f)).ToArray();
+            var pctValues = modeInfo.DisablePercentage switch
+            {
+                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt16(f)).ToArray(),
+                true => new short[rawValues.Length],
+            };
 
             return new PortValueData<short>()
             {
@@ -109,7 +117,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var rawValues = MemoryMarshal.Cast<byte, int>(dataSlice).ToArray();
 
             var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToInt32(f)).ToArray();
-            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt32(f)).ToArray();
+            var pctValues = modeInfo.DisablePercentage switch
+            {
+                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt32(f)).ToArray(),
+                true => new int[rawValues.Length],
+            };
 
             return new PortValueData<int>()
             {
@@ -124,7 +136,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var rawValues = MemoryMarshal.Cast<byte, float>(dataSlice).ToArray();
 
             var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).ToArray();
-            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).ToArray();
+            var pctValues = modeInfo.DisablePercentage switch
+            {
+                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).ToArray(),
+                true => new float[rawValues.Length],
+            };
 
             return new PortValueData<float>()
             {

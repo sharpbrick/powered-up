@@ -36,8 +36,10 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleTechnicMediumHubGestSensor();
             //example = new Example.ExampleRemoteControlButton();
             //example = new Example.ExampleRemoteControlRssi();
-
-            example = new Example.ExampleTechnicMediumAngularMotorGrey();
+            //example = new Example.ExampleTechnicMediumAngularMotorGrey();
+            //example = new Example.ExampleMarioBarcode();
+            //example = new Example.ExampleMarioPants();
+            example = new Example.ExampleMarioAccelerometer();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             await example.InitHostAndDiscoverAsync(enableTrace);

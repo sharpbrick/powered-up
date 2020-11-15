@@ -45,6 +45,10 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.TechnicMediumHubGyroSensor => typeof(TechnicMediumHubGyroSensor),
                 DeviceType.TechnicMediumHubTiltSensor => typeof(TechnicMediumHubTiltSensor),
                 DeviceType.TechnicMediumHubTemperatureSensor => typeof(TechnicMediumHubTemperatureSensor),
+                DeviceType.MarioHubAccelerometer => typeof(MarioHubAccelerometer),
+                DeviceType.MarioHubTagSensor => typeof(MarioHubTagSensor),
+                DeviceType.MarioHubPants => typeof(MarioHubPants),
+                DeviceType.MarioHubDebug => typeof(MarioHubDebug),
                 DeviceType.MediumLinearMotor => typeof(MediumLinearMotor),
                 _ => null,
             };
@@ -67,6 +71,10 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(TechnicMediumHubGyroSensor) => DeviceType.TechnicMediumHubGyroSensor,
                 nameof(TechnicMediumHubTiltSensor) => DeviceType.TechnicMediumHubTiltSensor,
                 nameof(TechnicMediumHubTemperatureSensor) => DeviceType.TechnicMediumHubTemperatureSensor,
+                nameof(MarioHubAccelerometer) => DeviceType.MarioHubAccelerometer,
+                nameof(MarioHubTagSensor) => DeviceType.MarioHubTagSensor,
+                nameof(MarioHubPants) => DeviceType.MarioHubPants,
+                nameof(MarioHubDebug) => DeviceType.MarioHubDebug,
                 nameof(MediumLinearMotor) => DeviceType.MediumLinearMotor,
                 _ => DeviceType.Unknown,
             };
