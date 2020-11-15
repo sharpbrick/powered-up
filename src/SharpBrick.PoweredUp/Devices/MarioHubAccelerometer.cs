@@ -16,7 +16,9 @@ namespace SharpBrick.PoweredUp
         public byte ModeIndexGesture { get; protected set; } = 1;
 
         public IObservable<sbyte[]> RawObservable => _rawMode.Observable.Select(x => x.SI);
-        public IObservable<short[]> GestureObservable => _gestMode.Observable.Select(x => x.SI);
+        public IObservable<MarioGestures[]> GestureObservable => _gestMode.Observable
+            .Where(x => x.SI[0] != 0 && x.SI[1] != 0) // filter out none values
+            .Select(x => x.SI.Cast<MarioGestures>().ToArray());
 
         public MarioHubAccelerometer()
         { }
@@ -29,6 +31,13 @@ namespace SharpBrick.PoweredUp
 
             //ObserveForPropertyChanged(_rawMode.Observable, nameof(Coins));
         }
+
+        protected override uint GetDefaultDeltaInterval(byte modeIndex)
+            => modeIndex switch
+            {
+                1 => 1,
+                _ => 5,
+            };
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
