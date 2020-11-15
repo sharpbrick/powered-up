@@ -15,6 +15,7 @@ namespace Example
                     .AddHub<MarioHub>(hubBuilder => { })
                 );
 
+                // for a normal scenario, a combined mode would not be needed. The tag sensor is able to detect brick colors AND the barcode on its own. The RGB scanner is neither very accurate and is scaled strangely.
                 var tagSensor = mario.TagSensor;
                 await tagSensor.TryLockDeviceForCombinedModeNotificationSetupAsync(tagSensor.ModeIndexTag, tagSensor.ModeIndexRgb);
                 await tagSensor.SetupNotificationAsync(tagSensor.ModeIndexTag, true);

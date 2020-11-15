@@ -19,6 +19,8 @@ namespace Example
 
                 var d1 = pants.PantsObservable.Subscribe(x => Log.LogWarning($"Pants: {x}"));
 
+                await pants.SetupNotificationAsync(pants.ModeIndexPants, true);
+
                 await Task.Delay(20_000);
 
                 d1.Dispose();
