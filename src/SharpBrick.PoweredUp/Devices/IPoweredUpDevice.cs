@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 
 namespace SharpBrick.PoweredUp
 {
@@ -7,5 +8,7 @@ namespace SharpBrick.PoweredUp
     {
         bool IsConnected { get; }
         IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType);
+        void ExtendPortMode(PortModeInfo portModeInfo)
+        { }
     }
 }

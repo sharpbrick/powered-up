@@ -201,6 +201,11 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     }
 
                     ApplyStaticProtocolKnowledge(message, knowledge);
+
+                    if (message is PortModeInformationMessage pmim2 && pmim2.InformationType == PortModeInformationType.Name)
+                    {
+                        device.ExtendPortMode(knowledge.PortMode(pmim2.HubId, pmim2.PortId, pmim2.Mode));
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
@@ -45,6 +46,11 @@ namespace SharpBrick.PoweredUp
                 0x01 => 5,
                 _ => 5,
             };
+
+        public void ExtendPortMode(PortModeInfo modeInfo)
+        {
+            modeInfo.DisablePercentage = true;
+        }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
