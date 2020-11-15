@@ -16,10 +16,9 @@ namespace Example
                 );
 
                 var tagSensor = mario.TagSensor;
-
                 await tagSensor.TryLockDeviceForCombinedModeNotificationSetupAsync(tagSensor.ModeIndexTag, tagSensor.ModeIndexRgb);
-                await tagSensor.SetupNotificationAsync(tagSensor.ModeIndexTag, true, deltaInterval: 100); // reduce if needed
-                await tagSensor.SetupNotificationAsync(tagSensor.ModeIndexRgb, true, deltaInterval: 100); // reduce if needed
+                await tagSensor.SetupNotificationAsync(tagSensor.ModeIndexTag, true);
+                await tagSensor.SetupNotificationAsync(tagSensor.ModeIndexRgb, true);
                 await tagSensor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
                 var d1 = tagSensor.BarcodeObservable.Subscribe(x => Log.LogWarning($"Barcode: {x}"));

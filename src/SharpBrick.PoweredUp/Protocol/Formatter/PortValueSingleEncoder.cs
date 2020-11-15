@@ -79,7 +79,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var rawValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray();
 
             var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToSByte(f)).ToArray();
-            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToSByte(f)).ToArray();
+            var pctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => (sbyte)((f > 128 || f < -127) ? 128 : Convert.ToSByte(f))).ToArray();
 
             return new PortValueData<sbyte>()
             {

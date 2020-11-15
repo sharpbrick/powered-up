@@ -18,8 +18,8 @@ namespace SharpBrick.PoweredUp
 
         public MarioBarcode Barcode => (MarioBarcode)_tagMode.SI[0];
         public MarioColor ColorNo => (MarioColor)_tagMode.SI[1];
-        public IObservable<MarioBarcode> BarcodeObservable => _tagMode.Observable.Select(x => (MarioBarcode)x.SI[0]);
-        public IObservable<MarioColor> ColorNoObservable => _tagMode.Observable.Select(x => (MarioColor)x.SI[1]);
+        public IObservable<MarioBarcode> BarcodeObservable => _tagMode.Observable.Where(x => x.SI[0] != 0).Select(x => (MarioBarcode)x.SI[0]);
+        public IObservable<MarioColor> ColorNoObservable => _tagMode.Observable.Where(x => x.SI[1] != 0).Select(x => (MarioColor)x.SI[1]);
 
         public (byte red, byte green, byte blue) RgbColor => ((byte)_rgbMode.SI[0], (byte)_rgbMode.SI[1], (byte)_rgbMode.SI[2]);
         public IObservable<(byte red, byte green, byte blue)> RgbColorObservable => _rgbMode.Observable.Select(x => ((byte)x.SI[0], (byte)x.SI[1], (byte)x.SI[2]));
