@@ -26,8 +26,8 @@ namespace SharpBrick.PoweredUp
                 HubProperty.ManufacturerName,
                 HubProperty.RadioFirmwareVersion,
                 HubProperty.LegoWirelessProtocolVersion,
-                HubProperty.SystemTypeId,
-                // HubProperty.HardwareNetworkId, // Throws command not recognized error for MarioHub
+                //HubProperty.SystemTypeId, // reports "2" which does not match 0x43
+                //HubProperty.HardwareNetworkId, // Throws command not recognized error for MarioHub
                 HubProperty.PrimaryMacAddress,
                 HubProperty.SecondaryMacAddress,
                 //HubProperty.HardwareNetworkFamily, // may throw command not recognized error for MarioHub
