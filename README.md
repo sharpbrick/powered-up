@@ -248,6 +248,7 @@ DI Container Elements
     - [X] Two Port Hub (88009)
     - [X] Two Port Handset (88010)
     - [X] Technic Medium Hub (88012)
+    - [X] MarioHub (71360)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
     - [X] Technic Medium Hub (88012) - Rgb Light
@@ -261,6 +262,10 @@ DI Container Elements
     - [X] Hub (88009) - Rgb Light
     - [X] Hub (88009) - Current
     - [X] Hub (88009) - Voltage
+    - [X] Mario Hub (71360) - Accelerometer (Raw & Gesture) (⚠ Usable but Gesture mapping is a rough draft)
+    - [X] Mario Hub (71360) - TagSensor (Barcode & RGB)
+    - [X] Mario Hub (71360) - Pants
+    - [ ] Mario Hub (71360) - Debug
     - [X] Medium Linear Motor (88008)
     - [X] Remote Control Button (88010)
     - [X] Remote Control RSSI (88010)
