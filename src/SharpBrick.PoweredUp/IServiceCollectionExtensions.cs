@@ -25,6 +25,7 @@ namespace SharpBrick.PoweredUp
                 .AddTransient<TwoPortHandset>()
                 .AddTransient<TechnicMediumHub>()
                 .AddTransient<MarioHub>()
+                .AddTransient<DuploTrainBaseHub>()
 
                 // functions
                 .AddTransient<DiscoverPorts>()

@@ -50,6 +50,8 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.MarioHubPants => typeof(MarioHubPants),
                 DeviceType.MarioHubDebug => typeof(MarioHubDebug),
                 DeviceType.MediumLinearMotor => typeof(MediumLinearMotor),
+                DeviceType.DuploTrainBaseMotor => typeof(DuploTrainBaseMotor),
+                DeviceType.DuploTrainBaseSpeaker => typeof(DuploTrainBaseSpeaker),
                 _ => null,
             };
 
@@ -76,6 +78,8 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(MarioHubPants) => DeviceType.MarioHubPants,
                 nameof(MarioHubDebug) => DeviceType.MarioHubDebug,
                 nameof(MediumLinearMotor) => DeviceType.MediumLinearMotor,
+                nameof(DuploTrainBaseMotor) => DeviceType.DuploTrainBaseMotor,
+                nameof(DuploTrainBaseSpeaker) => DeviceType.DuploTrainBaseSpeaker,
                 _ => DeviceType.Unknown,
             };
     }
