@@ -69,9 +69,14 @@ namespace SharpBrick.PoweredUp
             }
         }
 
-        public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = 5)
+        public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = uint.MaxValue)
         {
             AssertIsConnected();
+
+            if (deltaInterval == uint.MaxValue)
+            {
+                deltaInterval = GetDefaultDeltaInterval(modeIndex);
+            }
 
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
@@ -82,6 +87,9 @@ namespace SharpBrick.PoweredUp
                 NotificationEnabled = enabled,
             });
         }
+
+        protected virtual uint GetDefaultDeltaInterval(byte modeIndex)
+            => 5;
 
         private byte IndexOfSupportedCombinedMode(byte[] modeIndices)
         {

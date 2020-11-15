@@ -38,6 +38,14 @@ namespace SharpBrick.PoweredUp
             ObserveForPropertyChanged(_rgbMode.Observable, nameof(RgbColor));
         }
 
+        protected override uint GetDefaultDeltaInterval(byte modeIndex)
+            => modeIndex switch
+            {
+                0x00 => 3,
+                0x01 => 5,
+                _ => 5,
+            };
+
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-01-01-06-02-03-00-00-00
