@@ -9,12 +9,25 @@ namespace SharpBrick.PoweredUp
 {
     public class MarioHubAccelerometer : Device, IPoweredUpDevice
     {
+        protected MultiValueMode<sbyte> _rawMode;
+        protected MultiValueMode<short> _gestMode;
+
+        public byte ModeIndexRaw { get; protected set; } = 0;
+        public byte ModeIndexGesture { get; protected set; } = 1;
+
+        public IObservable<sbyte[]> RawObservable => _rawMode.Observable.Select(x => x.SI);
+        public IObservable<short[]> GestureObservable => _gestMode.Observable.Select(x => x.SI);
+
         public MarioHubAccelerometer()
         { }
 
         public MarioHubAccelerometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
+            _rawMode = MultiValueMode<sbyte>(ModeIndexRaw);
+            _gestMode = MultiValueMode<short>(ModeIndexGesture);
+
+            //ObserveForPropertyChanged(_rawMode.Observable, nameof(Coins));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
