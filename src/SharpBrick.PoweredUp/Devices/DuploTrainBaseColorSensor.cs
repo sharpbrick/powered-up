@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
-
     public class DuploTrainBaseColorSensor : Device, IPoweredUpDevice
     {
         protected SingleValueMode<sbyte> _colorMode;
@@ -22,13 +20,13 @@ namespace SharpBrick.PoweredUp
         public byte ModeIndexRgb { get; protected set; } = 3;
 
         public sbyte Color => _colorMode.SI;
-        public sbyte ColorTag => _colorTagMode.SI;
+        public DuploColorTag ColorTag => (DuploColorTag)_colorTagMode.SI;
         public sbyte Reflection => _reflectionMode.SI;
         public (short red, short green, short blue) Rgb => (_rgbMode.SI[0], _rgbMode.SI[1], _rgbMode.SI[2]);
         public (short red, short green, short blue) RgbPct => (_rgbMode.Pct[0], _rgbMode.Pct[1], _rgbMode.Pct[2]);
 
         public IObservable<sbyte> ColorObservable => _colorMode.Observable.Select(v => v.SI);
-        public IObservable<sbyte> ColorTagObservable => _colorTagMode.Observable.Select(v => v.SI);
+        public IObservable<DuploColorTag> ColorTagObservable => _colorTagMode.Observable.Select(v => (DuploColorTag)v.SI);
         public IObservable<sbyte> ReflectionObservable => _reflectionMode.Observable.Select(v => v.SI);
         public IObservable<(short red, short green, short blue)> RgbObservable => _rgbMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
         public IObservable<(short red, short green, short blue)> RgbPctObservable => _rgbMode.Observable.Select(v => (v.Pct[0], v.Pct[1], v.Pct[2]));

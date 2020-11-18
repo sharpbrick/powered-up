@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
-
     public class DuploTrainBaseSpeedometer : Device, IPoweredUpDevice
     {
         protected SingleValueMode<short> _speedMode;
@@ -35,6 +34,15 @@ namespace SharpBrick.PoweredUp
 
             ObserveForPropertyChanged(_speedMode.Observable, nameof(Speed), nameof(SpeedPct));
             ObserveForPropertyChanged(_countMode.Observable, nameof(Count));
+        }
+
+        public void ExtendPortMode(PortModeInfo portModeInfo)
+        {
+            if (portModeInfo.ModeIndex == ModeIndexCount)
+            {
+                portModeInfo.DisableScaling = true;
+                portModeInfo.DisablePercentage = true;
+            }
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
