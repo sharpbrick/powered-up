@@ -19,16 +19,27 @@ namespace Example
                 using var d2 = train.Motor.OnSecondsObservable.Subscribe(x => Log.LogWarning($"Seconds: {x}"));
                 using var d3 = train.Speedometer.SpeedObservable.Subscribe(x => Log.LogWarning($"Speed: {x.SI}% / {x.SI}"));
                 using var d4 = train.Speedometer.CountObservable.Subscribe(x => Log.LogWarning($"Count: {x}%"));
+                using var d5 = train.ColorSensor.ColorObservable.Subscribe(x => Log.LogWarning($"Color: {x}"));
+                using var d6 = train.ColorSensor.ColorTagObservable.Subscribe(x => Log.LogWarning($"Color Tag: {x}"));
+                using var d7 = train.ColorSensor.ReflectionObservable.Subscribe(x => Log.LogWarning($"Reflection: {x}"));
+                using var d8 = train.ColorSensor.RgbObservable.Subscribe(x => Log.LogWarning($"RGB {x.red}/{x.green}/{x.blue}"));
 
                 await train.Voltage.SetupNotificationAsync(train.Voltage.ModeIndexVoltageS, true);
 
-                // works exclusive vs. motor
+                // motor can either be queried for seconds active OR be instructed to run
                 //await train.Motor.SetupNotificationAsync(train.Motor.ModeIndexOnSec, false);
 
                 await train.Speedometer.TryLockDeviceForCombinedModeNotificationSetupAsync(train.Speedometer.ModeIndexSpeed, train.Speedometer.ModeIndexCount);
                 await train.Speedometer.SetupNotificationAsync(train.Speedometer.ModeIndexSpeed, true, deltaInterval: 1);
                 await train.Speedometer.SetupNotificationAsync(train.Speedometer.ModeIndexCount, true, deltaInterval: 1);
                 await train.Speedometer.UnlockFromCombinedModeNotificationSetupAsync(true);
+
+                await train.ColorSensor.TryLockDeviceForCombinedModeNotificationSetupAsync(train.ColorSensor.ModeIndexColor, train.ColorSensor.ModeIndexColorTag, train.ColorSensor.ModeIndexReflection, train.ColorSensor.ModeIndexRgb);
+                await train.ColorSensor.SetupNotificationAsync(train.ColorSensor.ModeIndexColor, true, deltaInterval: 5);
+                await train.ColorSensor.SetupNotificationAsync(train.ColorSensor.ModeIndexColorTag, true, deltaInterval: 5);
+                await train.ColorSensor.SetupNotificationAsync(train.ColorSensor.ModeIndexReflection, true, deltaInterval: 5);
+                await train.ColorSensor.SetupNotificationAsync(train.ColorSensor.ModeIndexRgb, true, deltaInterval: 5);
+                await train.ColorSensor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
                 await train.Speaker.PlaySoundAsync(DuploTrainBaseSound.Horn);
                 await train.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);

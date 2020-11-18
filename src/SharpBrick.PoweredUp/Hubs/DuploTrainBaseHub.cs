@@ -38,6 +38,7 @@ namespace SharpBrick.PoweredUp
         public DuploTrainBaseMotor Motor => Port(0).GetDevice<DuploTrainBaseMotor>();
         public DuploTrainBaseSpeaker Speaker => Port(1).GetDevice<DuploTrainBaseSpeaker>();
         public RgbLight RgbLight => Port(17).GetDevice<RgbLight>();
+        public DuploTrainBaseColorSensor ColorSensor => Port(18).GetDevice<DuploTrainBaseColorSensor>();
         public DuploTrainBaseSpeedometer Speedometer => Port(19).GetDevice<DuploTrainBaseSpeedometer>();
         public Voltage Voltage => Port(20).GetDevice<Voltage>();
     }

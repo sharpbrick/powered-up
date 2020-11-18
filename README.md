@@ -270,8 +270,8 @@ DI Container Elements
     - [X] Duplo Train Base (set 10874) - Motor
     - [X] Duplo Train Base (set 10874) - Speaker
     - [X] Duplo Train Base (set 10874) - Rgb Light
-    - [ ] Duplo Train Base (set 10874) - ColorSensor
-    - [ ] Duplo Train Base (set 10874) - Speedometer
+    - [X] Duplo Train Base (set 10874) - ColorSensor
+    - [X] Duplo Train Base (set 10874) - Speedometer
     - [X] Medium Linear Motor (88008)
     - [X] Remote Control Button (88010)
     - [X] Remote Control RSSI (88010)
