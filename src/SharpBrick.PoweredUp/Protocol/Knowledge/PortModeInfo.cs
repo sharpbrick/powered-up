@@ -56,5 +56,6 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 
         // Additional Settings
         public bool DisablePercentage { get; set; } = false;
+        public bool DisableScaling { get; set; } = false;
     }
 }

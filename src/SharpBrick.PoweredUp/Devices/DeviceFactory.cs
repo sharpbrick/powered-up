@@ -50,6 +50,10 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.MarioHubPants => typeof(MarioHubPants),
                 DeviceType.MarioHubDebug => typeof(MarioHubDebug),
                 DeviceType.MediumLinearMotor => typeof(MediumLinearMotor),
+                DeviceType.DuploTrainBaseMotor => typeof(DuploTrainBaseMotor),
+                DeviceType.DuploTrainBaseSpeaker => typeof(DuploTrainBaseSpeaker),
+                DeviceType.DuploTrainBaseColorSensor => typeof(DuploTrainBaseColorSensor),
+                DeviceType.DuploTrainBaseSpeedometer => typeof(DuploTrainBaseSpeedometer),
                 _ => null,
             };
 
@@ -76,6 +80,10 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(MarioHubPants) => DeviceType.MarioHubPants,
                 nameof(MarioHubDebug) => DeviceType.MarioHubDebug,
                 nameof(MediumLinearMotor) => DeviceType.MediumLinearMotor,
+                nameof(DuploTrainBaseMotor) => DeviceType.DuploTrainBaseMotor,
+                nameof(DuploTrainBaseSpeaker) => DeviceType.DuploTrainBaseSpeaker,
+                nameof(DuploTrainBaseColorSensor) => DeviceType.DuploTrainBaseColorSensor,
+                nameof(DuploTrainBaseSpeedometer) => DeviceType.DuploTrainBaseSpeedometer,
                 _ => DeviceType.Unknown,
             };
     }
