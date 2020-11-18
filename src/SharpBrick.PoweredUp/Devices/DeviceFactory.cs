@@ -52,6 +52,7 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.MediumLinearMotor => typeof(MediumLinearMotor),
                 DeviceType.DuploTrainBaseMotor => typeof(DuploTrainBaseMotor),
                 DeviceType.DuploTrainBaseSpeaker => typeof(DuploTrainBaseSpeaker),
+                DeviceType.DuploTrainBaseSpeedometer => typeof(DuploTrainBaseSpeedometer),
                 _ => null,
             };
 
@@ -80,6 +81,7 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(MediumLinearMotor) => DeviceType.MediumLinearMotor,
                 nameof(DuploTrainBaseMotor) => DeviceType.DuploTrainBaseMotor,
                 nameof(DuploTrainBaseSpeaker) => DeviceType.DuploTrainBaseSpeaker,
+                nameof(DuploTrainBaseSpeedometer) => DeviceType.DuploTrainBaseSpeedometer,
                 _ => DeviceType.Unknown,
             };
     }
