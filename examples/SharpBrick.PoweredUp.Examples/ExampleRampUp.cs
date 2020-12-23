@@ -23,7 +23,7 @@ namespace Example
                 await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);
 
                 stopWatch.Start();
-                await rampUp.ExecuteAsync(motor, 20, 100, 40, 5_000);
+                await rampUp.ExecuteAsync(motor, 20, 100, 40, 10_000);
                 var redPhase = stopWatch.ElapsedMilliseconds;
 
                 await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Green);
@@ -36,7 +36,7 @@ namespace Example
                 var rampDown = ServiceProvider.GetService<LinearSpeedChange>();
 
                 var beforeOrangePhase = stopWatch.ElapsedMilliseconds;
-                await rampDown.ExecuteAsync(motor, 100, 0, 100, 10_000);
+                await rampDown.ExecuteAsync(motor, 100, 0, 100, 20_000);
                 var orangePhase = stopWatch.ElapsedMilliseconds - beforeOrangePhase;
                 stopWatch.Stop();
 
