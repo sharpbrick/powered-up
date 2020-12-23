@@ -15,50 +15,81 @@ namespace SharpBrick.PoweredUp.Cli
 {
     class Program
     {
-        static async Task Main(string[] args)
+        public const int SuccessExitCode = 0;
+        public const int UnknownOperationExitCode = 1;
+        public const int BluetoothNoSelectedDeviceExitCode = 2;
+        public const int ExceptionExitCode = 3;
+
+        static async Task<int> Main(string[] args)
         {
             var app = new CommandLineApplication();
 
+            app.Name = "poweredup";
+            app.Description = "A command line interface to investigate LEGO Powered UP hubs and devices.";
             app.HelpOption();
             app.UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue;
+            app.OnExecute(() =>
+            {
+                Console.WriteLine($"See {app.Name} --help for Options");
+                return Program.UnknownOperationExitCode;
+            });
 
             app.Command("device", deviceApp =>
             {
+                deviceApp.Description = "Options to enumerate devices on a hub";
                 deviceApp.HelpOption();
+
+                deviceApp.OnExecute(() =>
+                {
+                    Console.WriteLine($"See {app.Name} {deviceApp.Name} --help for Options");
+                    return Program.UnknownOperationExitCode;
+                });
 
                 deviceApp.Command("list", deviceListApp =>
                 {
+                    deviceListApp.Description = "Inspect all devices declared on the Hub by using information gathered using the LEGO Wireless Protocol";
                     deviceListApp.HelpOption();
                     var traceOption = deviceListApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
                     deviceListApp.OnExecuteAsync(async cts =>
                     {
-                        var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
-
-                        var serviceProvider = CreateServiceProvider(enableTrace);
-                        (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
-
-                        if (bluetoothAddress == 0)
-                            return;
-
-                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
-                        using (var scope = serviceProvider.CreateScope())
+                        try
                         {
-                            var scopedServiceProvider = scope.ServiceProvider;
+                            var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
 
-                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+                            var serviceProvider = CreateServiceProvider(enableTrace);
+                            (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
-                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+                            if (bluetoothAddress == 0)
+                                return Program.BluetoothNoSelectedDeviceExitCode;
 
-                            var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
+                            // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                            using (var scope = serviceProvider.CreateScope())
+                            {
+                                var scopedServiceProvider = scope.ServiceProvider;
 
-                            await deviceListCli.ExecuteAsync(systemType);
+                                await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+
+                                scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+                                var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
+
+                                await deviceListCli.ExecuteAsync(systemType);
+                            }
+
+                            return Program.SuccessExitCode;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                            return Program.ExceptionExitCode;
                         }
                     });
                 });
 
                 deviceApp.Command("dump-static-port", deviceDumpStaticPortApp =>
                 {
+                    deviceDumpStaticPortApp.Description = "Inspect a specific device on a Hub Port by using (non-dynamic) information gathered using the LEGO Wireless Protocol. Emits a binary dump (use list for human readable output).";
                     deviceDumpStaticPortApp.HelpOption();
                     var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
@@ -67,35 +98,47 @@ namespace SharpBrick.PoweredUp.Cli
 
                     deviceDumpStaticPortApp.OnExecuteAsync(async cts =>
                     {
-                        var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
-                        var headerEnabled = headerOption.Values.Count > 0;
-
-                        var serviceProvider = CreateServiceProvider(enableTrace);
-                        (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
-
-                        if (bluetoothAddress == 0)
-                            return;
-
-                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
-                        using (var scope = serviceProvider.CreateScope())
+                        try
                         {
-                            var scopedServiceProvider = scope.ServiceProvider;
+                            var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+                            var headerEnabled = headerOption.Values.Count > 0;
 
-                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+                            var serviceProvider = CreateServiceProvider(enableTrace);
+                            (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
-                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+                            if (bluetoothAddress == 0)
+                                return Program.BluetoothNoSelectedDeviceExitCode;
 
-                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
+                            // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                            using (var scope = serviceProvider.CreateScope())
+                            {
+                                var scopedServiceProvider = scope.ServiceProvider;
 
-                            var port = byte.Parse(portOption.Value());
+                                await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                            await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port, headerEnabled);
+                                scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+
+                                var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
+
+                                var port = byte.Parse(portOption.Value());
+
+                                await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port, headerEnabled);
+                            }
+
+                            return Program.SuccessExitCode;
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                            return Program.ExceptionExitCode;
                         }
                     });
                 });
 
                 deviceApp.Command("pretty-print", prettyPrintApp =>
                 {
+                    prettyPrintApp.Description = "Pretty prints a previously recorded binary dump collected using dump-static-ports";
                     prettyPrintApp.HelpOption();
                     var traceOption = prettyPrintApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
                     var systemTypeOption = prettyPrintApp.Option("--t", "System Type (parsable number)", CommandOptionType.SingleValue);
@@ -108,40 +151,51 @@ namespace SharpBrick.PoweredUp.Cli
 
                     prettyPrintApp.OnExecuteAsync(async cts =>
                     {
-                        var enableTrace = bool.TryParse(traceOption.Value(), out var x0) ? x0 : false;
-                        var systemType = byte.TryParse(systemTypeOption.Value(), out var x1) ? x1 : (byte)0;
-                        var hubId = byte.TryParse(hubOption.Value(), out var x2) ? x2 : (byte)0;
-                        var portId = byte.TryParse(portOption.Value(), out var x3) ? x3 : (byte)0;
-                        var ioType = ushort.TryParse(ioTypeOption.Value(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var x4) ? x4 : (ushort)0;
-                        var hwVersion = Version.TryParse(hwVersionOption.Value(), out var x5) ? x5 : new Version("0.0.0.0");
-                        var swVersion = Version.TryParse(swVersionOption.Value(), out var x6) ? x6 : new Version("0.0.0.0");
-                        var file = fileOption.Value();
-
-                        var serviceProvider = CreateServiceProviderWithMock(enableTrace);
-
-                        using (var scope = serviceProvider.CreateScope())
+                        try
                         {
-                            var scopedServiceProvider = scope.ServiceProvider;
+                            var enableTrace = bool.TryParse(traceOption.Value(), out var x0) ? x0 : false;
+                            var systemType = byte.TryParse(systemTypeOption.Value(), out var x1) ? x1 : (byte)0;
+                            var hubId = byte.TryParse(hubOption.Value(), out var x2) ? x2 : (byte)0;
+                            var portId = byte.TryParse(portOption.Value(), out var x3) ? x3 : (byte)0;
+                            var ioType = ushort.TryParse(ioTypeOption.Value(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var x4) ? x4 : (ushort)0;
+                            var hwVersion = Version.TryParse(hwVersionOption.Value(), out var x5) ? x5 : new Version("0.0.0.0");
+                            var swVersion = Version.TryParse(swVersionOption.Value(), out var x6) ? x6 : new Version("0.0.0.0");
+                            var file = fileOption.Value();
 
-                            await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+                            var serviceProvider = CreateServiceProviderWithMock(enableTrace);
 
-                            var prettyPrintCommand = scopedServiceProvider.GetService<PrettyPrint>(); // ServiceLocator ok: transient factory
-
-                            TextReader reader = Console.In;
-
-                            if (!string.IsNullOrWhiteSpace(file))
+                            using (var scope = serviceProvider.CreateScope())
                             {
-                                reader = new StringReader(File.ReadAllText(file));
+                                var scopedServiceProvider = scope.ServiceProvider;
+
+                                await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
+
+                                var prettyPrintCommand = scopedServiceProvider.GetService<PrettyPrint>(); // ServiceLocator ok: transient factory
+
+                                TextReader reader = Console.In;
+
+                                if (!string.IsNullOrWhiteSpace(file))
+                                {
+                                    reader = new StringReader(File.ReadAllText(file));
+                                }
+
+                                await prettyPrintCommand.ExecuteAsync(reader, systemType, ioType, hubId, portId, hwVersion, swVersion);
                             }
 
-                            await prettyPrintCommand.ExecuteAsync(reader, systemType, ioType, hubId, portId, hwVersion, swVersion);
+                            return Program.SuccessExitCode;
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                            return Program.ExceptionExitCode;
                         }
                     });
                 });
 
             });
 
-            await app.ExecuteAsync(args);
+            return await app.ExecuteAsync(args);
         }
 
         private static IServiceCollection CreateServiceProviderInternal(bool enableTrace)

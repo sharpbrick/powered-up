@@ -28,7 +28,6 @@ Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp
 
 ````csharp
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 ````
 
 ## Discovering Hubs
@@ -37,7 +36,7 @@ using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
     .BuildServiceProvider();
     
 var host = serviceProvider.GetService<PoweredUpHost>();
@@ -70,7 +69,7 @@ See source code in `examples/SharpBrick.PoweredUp.Examples` for more examples.
 
 using (var technicMediumHub = hub as TechnicMediumHub)
 {
-    // optionally verify if everything is wired up correctly (v2.0 onwards)
+    // optionally verify if everything is wired up correctly
     await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
         .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
             .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
@@ -154,7 +153,7 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
     .BuildServiceProvider();
 
 using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
@@ -192,6 +191,34 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
     await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 }
 ````
+
+# Command Line Experience
+
+The `poweredup` command line utility intends to allow the inspection of LEGO Wireless Protocol / Powered UP hubs and devices for their properties. It has utilities for ...
+
+- **Enumerating all connected Devices** including hub internal devices and emit their static self-description as they expose using the LEGO Wireless Protocol.
+   ````
+   poweredup device list
+   ````
+- **Binary dumping the self-description** helps protocol implementors with a lack of devices to understand and try to implement the devices without having the physical device. Also the output is needed when programming the library to enable a fast bootup of the SDK.
+  ````
+  poweredup device dump-static-port -p 0
+  ````
+- **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
+
+***Note**: Currently only Windows based WinRT Bluetooth drivers are available. Work is on the way to support bluez to run the utility also on Linux.*
+
+## Installation Instruction
+
+1. Install the [latest .NET (Core)](https://dotnet.microsoft.com/download) on your machine (e.g. .NET Core 3.1).
+2. Install the `poweredup` dotnet utility using the following instruction
+   ````
+   dotnet tools install -g SharpBrick.PoweredUp.Cli
+   ````
+3. Start using the tool
+   ````
+   poweredup device list
+   ````
 
 # SDK Status, Hardware Support, Contributions, ..
 
@@ -282,6 +309,8 @@ DI Container Elements
     - [X] Technic Medium Angular Motor (Grey)
     - [ ] Technic Large Angular Motor (Spike)
     - [X] Technic Large Angular Motor (Grey)
+    - [ ] Technic Color Sensor
+    - [ ] Technic Distance Sensor
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
