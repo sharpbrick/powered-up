@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp
         {
             _pantsMode = SingleValueMode<sbyte>(ModeIndexPants);
 
-            ObserveForPropertyChanged(_pantsMode.Observable, nameof(PantsObservable));
+            ObserveForPropertyChanged(_pantsMode.Observable, nameof(Pants));
         }
 
         public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
