@@ -19,15 +19,24 @@ namespace SharpBrick.PoweredUp.Cli
         {
             var app = new CommandLineApplication();
 
+            app.Name = "poweredup";
+            app.Description = "A command line interface to investigate LEGO Powered UP hubs and devices.";
             app.HelpOption();
             app.UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue;
+            app.OnExecute(() =>
+            {
+                Console.WriteLine("See --help for Options");
+                return 1;
+            });
 
             app.Command("device", deviceApp =>
             {
+                deviceApp.Description = "Options to enumerate devices on a hub";
                 deviceApp.HelpOption();
 
                 deviceApp.Command("list", deviceListApp =>
                 {
+                    deviceListApp.Description = "Inspect all devices declared on the Hub by using information gathered using the LEGO Wireless Protocol";
                     deviceListApp.HelpOption();
                     var traceOption = deviceListApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
@@ -59,6 +68,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                 deviceApp.Command("dump-static-port", deviceDumpStaticPortApp =>
                 {
+                    deviceDumpStaticPortApp.Description = "Inspect a specific device on a Hub Port by using (non-dynamic) information gathered using the LEGO Wireless Protocol. Emits a binary dump (use list for human readable output).";
                     deviceDumpStaticPortApp.HelpOption();
                     var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
 
@@ -96,6 +106,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                 deviceApp.Command("pretty-print", prettyPrintApp =>
                 {
+                    prettyPrintApp.Description = "Pretty prints a previously recorded binary dump collected using dump-static-ports";
                     prettyPrintApp.HelpOption();
                     var traceOption = prettyPrintApp.Option("--trace", "Enable Tracing", CommandOptionType.SingleValue);
                     var systemTypeOption = prettyPrintApp.Option("--t", "System Type (parsable number)", CommandOptionType.SingleValue);
