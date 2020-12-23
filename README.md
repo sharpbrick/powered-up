@@ -309,8 +309,8 @@ DI Container Elements
     - [X] Technic Medium Angular Motor (Grey)
     - [ ] Technic Large Angular Motor (Spike)
     - [X] Technic Large Angular Motor (Grey)
-    - [ ] Technic Color Sensor
-    - [ ] Technic Distance Sensor
+    - [X] Technic Color Sensor
+    - [X] Technic Distance Sensor
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
