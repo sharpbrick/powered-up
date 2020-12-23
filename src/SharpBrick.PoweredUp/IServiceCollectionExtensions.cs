@@ -30,6 +30,8 @@ namespace SharpBrick.PoweredUp
                 // functions
                 .AddTransient<DiscoverPorts>()
                 .AddTransient<TraceMessages>()
-                .AddTransient<LinearMidCalibration>();
+                .AddTransient<LinearMidCalibration>()
+                .AddTransient<LinearSpeedChange>()
+                ;
     }
 }
