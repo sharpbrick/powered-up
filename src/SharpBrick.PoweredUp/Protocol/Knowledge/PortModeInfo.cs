@@ -52,5 +52,10 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         // PortInputFormatSingleMessage
         public uint DeltaInterval { get; set; }
         public bool NotificationEnabled { get; set; }
+
+
+        // Additional Settings
+        public bool DisablePercentage { get; set; } = false;
+        public bool DisableScaling { get; set; } = false;
     }
 }

@@ -25,7 +25,7 @@ namespace SharpBrick.PoweredUp
             BuildModes();
         }
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => Array.Empty<byte[]>();
     }
 }

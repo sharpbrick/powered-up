@@ -15,7 +15,7 @@
         ExternalTiltSensor = 0x0022, // TILT_SENSOR
         MotionSensor = 0x0023, // MOTION_SENSOR
         VisionSensor = 0x0025, // COLOR_DISTANCE_SENSOR
-        ExternalMotorWithTacho = 0x0026, // MEDIUM_LINEAR_MOTOR
+        MediumLinearMotor = 0x0026, // MEDIUM_LINEAR_MOTOR
         InternalMotorWithTacho = 0x0027, // MOVE_HUB_MEDIUM_LINEAR_MOTOR
         InternalTilt = 0x0028, // MOVE_HUB_TILT_SENSOR
 
@@ -27,7 +27,7 @@
         TechnicXLargeLinearMotor = 0x002F, // UNSPECED, TECHNIC_XLARGE_LINEAR_MOTOR
         TechnicMediumAngularMotor = 0x0030, // UNSPECED, TECHNIC_MEDIUM_ANGULAR_MOTOR (Spike Prime)
         TechnicLargeAngularMotor = 0x0031, // UNSPECED, TECHNIC_LARGE_ANGULAR_MOTOR (Spike Prime)
-        TechnicMediumHubGestSensor = 0x0036, // UNSPECED, TECHNIC_MEDIUM_HUB_GEST_SENSOR
+        TechnicMediumHubGestureSensor = 0x0036, // UNSPECED, TECHNIC_MEDIUM_HUB_GEST_SENSOR
         RemoteControlButton = 0x0037, // UNSPECED, REMOTE_CONTROL_BUTTON
         RemoteControlRssi = 0x0038, // UNSPECED, REMOTE_CONTROL_RSSI
         TechnicMediumHubAccelerometer = 0x0039, // UNSPECED, TECHNIC_MEDIUM_HUB_ACCELEROMETER
@@ -37,5 +37,11 @@
         TechnicColorSensor = 0x003D, // UNSPECED, TECHNIC_COLOR_SENSOR (Spike Prime)
         TechnicDistanceSensor = 0x003E, // UNSPECED, TECHNIC_DISTANCE_SENSOR (Spike Prime)
         TechnicForceSensor = 0x003F, // UNSPECED, TECHNIC_FORCE_SENSOR (Spike Prime)
+        MarioHubAccelerometer = 0x0047, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        MarioHubTagSensor = 0x049, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        MarioHubPants = 0x004A, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        MarioHubDebug = 0x0046, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        TechnicMediumAngularMotorGrey = 0x004B, // UNSPECED, TECHNIC_MEDIUM_ANGULAR_MOTOR_GREY (Control+)
+        TechnicLargeAngularMotorGrey = 0x004C, // UNSPECED, TECHNIC_LARGE_ANGULAR_MOTOR_GREY (Control+)
     }
 }

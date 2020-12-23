@@ -8,7 +8,7 @@ namespace SharpBrick.PoweredUp
     public class TechnicMediumHub : Hub
     {
         public TechnicMediumHub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<TechnicMediumHub> logger, IServiceProvider serviceProvider = default)
-            : base(protocol, deviceFactory, logger, serviceProvider, new Port[] {
+            : base(protocol, deviceFactory, logger, serviceProvider, SystemType.LegoTechnic_MediumHub, new Port[] {
                 new Port(0, nameof(A), true),
                 new Port(1, nameof(B), true),
                 new Port(2, nameof(C), true),
@@ -21,7 +21,24 @@ namespace SharpBrick.PoweredUp
                 new Port(97, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubAccelerometer),
                 new Port(98, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGyroSensor),
                 new Port(99, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubTiltSensor),
-                new Port(100, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGestSensor),
+                new Port(100, string.Empty, false, expectedDevice: DeviceType.TechnicMediumHubGestureSensor),
+            },
+            knownProperties: new HubProperty[] {
+                HubProperty.AdvertisingName,
+                HubProperty.Button,
+                HubProperty.FwVersion,
+                HubProperty.HwVersion,
+                HubProperty.Rssi,
+                HubProperty.BatteryVoltage,
+                HubProperty.BatteryType,
+                HubProperty.ManufacturerName,
+                HubProperty.RadioFirmwareVersion,
+                HubProperty.LegoWirelessProtocolVersion,
+                HubProperty.SystemTypeId,
+                HubProperty.HardwareNetworkId,
+                HubProperty.PrimaryMacAddress,
+                HubProperty.SecondaryMacAddress,
+                //HubProperty.HardwareNetworkFamily, //  Throws command not recognized error for TechnicMediumHub
             })
         { }
 
@@ -38,6 +55,6 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubAccelerometer Accelerometer => Port(97).GetDevice<TechnicMediumHubAccelerometer>();
         public TechnicMediumHubGyroSensor GyroSensor => Port(98).GetDevice<TechnicMediumHubGyroSensor>();
         public TechnicMediumHubTiltSensor TiltSensor => Port(99).GetDevice<TechnicMediumHubTiltSensor>();
-        public TechnicMediumHubGestSensor GestureSensor => Port(100).GetDevice<TechnicMediumHubGestSensor>();
+        public TechnicMediumHubGestureSensor GestureSensor => Port(100).GetDevice<TechnicMediumHubGestureSensor>();
     }
 }

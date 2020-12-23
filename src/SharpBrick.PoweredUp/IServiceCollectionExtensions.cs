@@ -21,7 +21,11 @@ namespace SharpBrick.PoweredUp
                 .AddScoped<ILegoWirelessProtocol, LegoWirelessProtocol>()
 
                 // hubs
+                .AddTransient<TwoPortHub>()
+                .AddTransient<TwoPortHandset>()
                 .AddTransient<TechnicMediumHub>()
+                .AddTransient<MarioHub>()
+                .AddTransient<DuploTrainBaseHub>()
 
                 // functions
                 .AddTransient<DiscoverPorts>()

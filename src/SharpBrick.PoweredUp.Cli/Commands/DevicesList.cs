@@ -20,11 +20,11 @@ namespace SharpBrick.PoweredUp.Cli
             this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             this.discoverPorts = discoverPorts ?? throw new ArgumentNullException(nameof(discoverPorts));
         }
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(SystemType knownSystemType)
         {
             Console.WriteLine("Discover Ports. Receiving Messages ...");
 
-            await protocol.ConnectAsync(); // registering to bluetooth notification
+            await protocol.ConnectAsync(knownSystemType); // registering to bluetooth notification
 
             await Task.Delay(2000); // await ports to be announced initially by device.
 
@@ -38,78 +38,138 @@ namespace SharpBrick.PoweredUp.Cli
 
             Console.WriteLine($"Discover Ports Function: {discoverPorts.ReceivedMessages} / {discoverPorts.SentMessages}");
 
-            PrettyPrintKnowledge(System.Console.Out, protocol.Knowledge);
+            PrettyPrintKnowledge(System.Console.Out, protocol.Knowledge, false);
         }
 
-        private static void PrettyPrintKnowledge(TextWriter writer, ProtocolKnowledge portKnowledge)
+        public static void PrettyPrintKnowledge(TextWriter writer, ProtocolKnowledge portKnowledge, bool showConfiguration = true)
         {
             string Intent(int depth) => "                        ".Substring(0, depth * 2);
 
+            string MinMaxDescription(float rawMin, float rawMax, float min, float max)
+            {
+                bool isPassThrough = (rawMax == max) && (rawMin == min);
+                bool isTranslation = (rawMax - rawMin) == (max - min);
+                bool isScaling = !((rawMax == max) && (rawMin == min));
+
+                return (isPassThrough, isTranslation, isScaling) switch
+                {
+                    (true, _, _) => " (pass-through)",
+                    (false, false, false) => string.Empty,
+                    (false, false, true) => " (scaling)",
+                    (false, true, false) => " (translation)",
+                    (false, true, true) => " (scaling, translation)",
+                };
+            }
+
             foreach (var hub in portKnowledge.Hubs.OrderBy(h => h.HubId))
             {
-                Console.WriteLine($"{Intent(0)}Hub: {hub.HubId}");
+                Console.WriteLine($"{Intent(0)}- Hub: 0x{hub.HubId:X2} / {hub.HubId}");
                 foreach (var port in hub.Ports.Values.OrderBy(p => p.PortId))
                 {
-                    writer.WriteLine($"{Intent(1)}Port: {port.PortId}");
-                    writer.WriteLine($"{Intent(2)}IOTypeId: {port.IOTypeId}");
-                    writer.WriteLine($"{Intent(2)}HardwareRevision: {port.HardwareRevision}");
-                    writer.WriteLine($"{Intent(2)}SoftwareRevision: {port.SoftwareRevision}");
+                    writer.WriteLine($"{Intent(1)}- Port: 0x{port.PortId:X2} / {port.PortId}");
 
-                    writer.WriteLine($"{Intent(2)}OutputCapability: {port.OutputCapability}");
-                    writer.WriteLine($"{Intent(2)}InputCapability: {port.InputCapability}");
-                    writer.WriteLine($"{Intent(2)}LogicalCombinableCapability: {port.LogicalCombinableCapability}");
-                    writer.WriteLine($"{Intent(2)}LogicalSynchronizableCapability: {port.LogicalSynchronizableCapability}");
+                    writer.WriteLine($"{Intent(2)}- IOTypeId: {port.IOTypeId} / 0x{(ushort)port.IOTypeId:X4} / {(ushort)port.IOTypeId}");
+                    writer.WriteLine($"{Intent(3)}Revision: SW: {port.SoftwareRevision}, HW: {port.HardwareRevision}");
+                    writer.Write($"{Intent(3)}Capabilities:");
+                    if (port.OutputCapability)
+                    {
+                        writer.Write(" Output");
+                    }
+                    if (port.InputCapability)
+                    {
+                        writer.Write(" Input");
+                    }
+                    if (port.LogicalCombinableCapability)
+                    {
+                        writer.Write(" LogicalCombinable");
+                    }
+                    if (port.LogicalSynchronizableCapability)
+                    {
+                        writer.Write(" LogicalSynchronizable");
+                    }
+                    writer.WriteLine(string.Empty);
 
                     // PortInformationForPossibleModeCombinationsMessage
-                    writer.WriteLine($"{Intent(2)}ModeCombinations: [{string.Join(", ", port.ModeCombinations.Select(x => BytesStringUtil.ToBitString(x)))}]");
+                    writer.WriteLine($"{Intent(3)}ModeCombinations: [{string.Join(", ", port.ModeCombinations.Select(x => BytesStringUtil.ToBitString(x)))}]");
 
-                    writer.WriteLine($"{Intent(2)}UsedCombinationIndex: {port.UsedCombinationIndex}");
-                    writer.WriteLine($"{Intent(2)}MultiUpdateEnabled: {port.MultiUpdateEnabled}");
-                    writer.WriteLine($"{Intent(2)}ConfiguredModeDataSetIndex: [{string.Join(",", port.ConfiguredModeDataSetIndex)}]");
+                    if (showConfiguration)
+                    {
+                        writer.WriteLine($"{Intent(2)}- Configuration");
+                        writer.WriteLine($"{Intent(3)}UsedCombinationIndex: {port.UsedCombinationIndex}");
+                        writer.WriteLine($"{Intent(3)}MultiUpdateEnabled: {port.MultiUpdateEnabled}");
+                        writer.WriteLine($"{Intent(3)}ConfiguredModeDataSetIndex: [{string.Join(",", port.ConfiguredModeDataSetIndex)}]");
+                    }
 
                     foreach (var mode in port.Modes.Values.OrderBy(m => m.ModeIndex))
                     {
-                        writer.WriteLine($"{Intent(2)}Mode: {mode.ModeIndex}");
-                        writer.WriteLine($"{Intent(3)}Name: {mode.Name}");
-                        writer.WriteLine($"{Intent(3)}IsInput: {mode.IsInput}");
-                        writer.WriteLine($"{Intent(3)}IsOutput: {mode.IsOutput}");
+                        writer.Write($"{Intent(2)}- Mode {mode.ModeIndex}: Name: {mode.Name}, Symbol: {mode.Symbol}, Capability:");
+                        writer.Write(mode.IsInput ? " Input" : string.Empty);
+                        writer.WriteLine(mode.IsOutput ? " Output" : string.Empty);
 
-                        writer.WriteLine($"{Intent(3)}RawMin: {mode.RawMin}");
-                        writer.WriteLine($"{Intent(3)}RawMax: {mode.RawMax}");
+                        writer.WriteLine($"{Intent(3)}- DataSet: {mode.NumberOfDatasets}x {mode.DatasetType}, TotalFigures: {mode.TotalFigures}, Decimals: {mode.Decimals}");
 
-                        // PortModeInformationForPctMessage
-                        writer.WriteLine($"{Intent(3)}PctMin: {mode.PctMin}");
-                        writer.WriteLine($"{Intent(3)}PctMax: {mode.PctMax}");
+                        if (mode.IsInput || (!mode.IsInput && (mode.InputSupportsNull || mode.InputSupportFunctionalMapping20 || mode.InputAbsolute || mode.InputDiscrete || mode.InputRelative)))
+                        {
+                            writer.Write($"{Intent(4)}Input Mapping:");
+                            if (mode.InputSupportsNull)
+                            {
+                                writer.Write(" SupportsNull");
+                            }
+                            if (mode.InputSupportFunctionalMapping20)
+                            {
+                                writer.Write(" SupportFunctionalMapping20");
+                            }
+                            if (mode.InputAbsolute)
+                            {
+                                writer.Write(" Absolute");
+                            }
+                            if (mode.InputRelative)
+                            {
+                                writer.Write(" Relative");
+                            }
+                            if (mode.InputDiscrete)
+                            {
+                                writer.Write(" Discrete");
+                            }
+                            writer.WriteLine();
+                        }
 
-                        // PortModeInformationForSIMessage
-                        writer.WriteLine($"{Intent(3)}SIMin: {mode.SIMin}");
-                        writer.WriteLine($"{Intent(3)}SIMax: {mode.SIMax}");
+                        if (mode.IsOutput || (!mode.IsOutput && (mode.OutputSupportsNull || mode.OutputSupportFunctionalMapping20 || mode.OutputAbsolute || mode.OutputDiscrete || mode.OutputRelative)))
+                        {
+                            writer.Write($"{Intent(4)}Output Mapping:");
+                            if (mode.OutputSupportsNull)
+                            {
+                                writer.Write(" SupportsNull");
+                            }
+                            if (mode.OutputSupportFunctionalMapping20)
+                            {
+                                writer.Write(" SupportFunctionalMapping20");
+                            }
+                            if (mode.OutputAbsolute)
+                            {
+                                writer.Write(" Absolute");
+                            }
+                            if (mode.OutputRelative)
+                            {
+                                writer.Write(" Relative");
+                            }
+                            if (mode.OutputDiscrete)
+                            {
+                                writer.Write(" Discrete");
+                            }
+                            writer.WriteLine();
+                        }
 
-                        // PortModeInformationForSymbolMessage
-                        writer.WriteLine($"{Intent(3)}Symbol: {mode.Symbol}");
+                        writer.WriteLine($"{Intent(4)}Raw Min: {mode.RawMin,7}, Max: {mode.RawMax,7}");
+                        writer.WriteLine($"{Intent(4)}Pct Min: {mode.PctMin,7}, Max: {mode.PctMax,7}{MinMaxDescription(mode.RawMin, mode.RawMax, mode.PctMin, mode.PctMax)}");
+                        writer.WriteLine($"{Intent(4)}SI  Min: {mode.SIMin,7}, Max: {mode.SIMax,7}{MinMaxDescription(mode.RawMin, mode.RawMax, mode.SIMin, mode.SIMax)}");
 
-                        // PortModeInformationForMappingMessage
-                        writer.WriteLine($"{Intent(3)}InputSupportsNull: {mode.InputSupportsNull}");
-                        writer.WriteLine($"{Intent(3)}InputSupportFunctionalMapping20: {mode.InputSupportFunctionalMapping20}");
-                        writer.WriteLine($"{Intent(3)}InputAbsolute: {mode.InputAbsolute}");
-                        writer.WriteLine($"{Intent(3)}InputRelative: {mode.InputRelative}");
-                        writer.WriteLine($"{Intent(3)}InputDiscrete: {mode.InputDiscrete}");
-
-                        writer.WriteLine($"{Intent(3)}OutputSupportsNull: {mode.OutputSupportsNull}");
-                        writer.WriteLine($"{Intent(3)}OutputSupportFunctionalMapping20: {mode.OutputSupportFunctionalMapping20}");
-                        writer.WriteLine($"{Intent(3)}OutputAbsolute: {mode.OutputAbsolute}");
-                        writer.WriteLine($"{Intent(3)}OutputRelative: {mode.OutputRelative}");
-                        writer.WriteLine($"{Intent(3)}OutputDiscrete: {mode.OutputDiscrete}");
-
-                        // PortModeInformationForValueFormatMessage
-                        writer.WriteLine($"{Intent(3)}NumberOfDatasets: {mode.NumberOfDatasets}");
-                        writer.WriteLine($"{Intent(3)}DatasetType: {mode.DatasetType}");
-                        writer.WriteLine($"{Intent(3)}TotalFigures: {mode.TotalFigures}");
-                        writer.WriteLine($"{Intent(3)}Decimals: {mode.Decimals}");
-
-                        // PortInputFormatSingleMessage
-                        writer.WriteLine($"{Intent(3)}DeltaInterval: {mode.DeltaInterval}");
-                        writer.WriteLine($"{Intent(3)}NotificationEnabled: {mode.NotificationEnabled}");
+                        if (showConfiguration)
+                        {
+                            writer.WriteLine($"{Intent(3)}- Configuration");
+                            writer.WriteLine($"{Intent(4)}NotificationEnabled: {mode.NotificationEnabled}");
+                            writer.WriteLine($"{Intent(4)}DeltaInterval: {mode.DeltaInterval}");
+                        }
                     }
                 }
             }

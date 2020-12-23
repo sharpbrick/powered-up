@@ -3,21 +3,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp
 {
-    public class TechnicMediumHubGestSensor : Device, IPoweredUpDevice
+    public class TechnicMediumHubGestureSensor : Device, IPoweredUpDevice
     {
-        public TechnicMediumHubGestSensor()
+        protected SingleValueMode<sbyte> _gestureMode;
+        public byte ModeIndexGesture { get; protected set; } = 0;
+
+        public Gesture Gesture => (Gesture)_gestureMode.SI;
+        public IObservable<Gesture> GestureObservable => _gestureMode.Observable.Select(x => (Gesture)x.SI);
+
+        public TechnicMediumHubGestureSensor()
         { }
 
-        public TechnicMediumHubGestSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        public TechnicMediumHubGestureSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
-        { }
+        {
+            _gestureMode = SingleValueMode<sbyte>(ModeIndexGesture);
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion)
+            ObserveForPropertyChanged(_gestureMode.Observable, nameof(Gesture));
+        }
+
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
             => @"
 0B-00-43-64-01-02-01-01-00-00-00
 05-00-43-64-02

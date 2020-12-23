@@ -1,6 +1,6 @@
 # SharpBrick.PoweredUp
 
-SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered Up products.
+SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protocol for Lego Powered UP products.
 
 [![Nuget](https://img.shields.io/nuget/v/SharpBrick.PoweredUp?style=flat-square)](https://www.nuget.org/packages/SharpBrick.PoweredUp/)
 ![license:MIT](https://img.shields.io/github/license/sharpbrick/powered-up?style=flat-square)
@@ -28,7 +28,6 @@ Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp
 
 ````csharp
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 ````
 
 ## Discovering Hubs
@@ -37,12 +36,12 @@ using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
     .BuildServiceProvider();
     
 var host = serviceProvider.GetService<PoweredUpHost>();
 
-var hub = await host.DiscoverAsync<TechnicMediumHub>(); // starting version 2.1
+var hub = await host.DiscoverAsync<TechnicMediumHub>();
 await hub.ConnectAsync();
 ````
 
@@ -70,7 +69,7 @@ See source code in `examples/SharpBrick.PoweredUp.Examples` for more examples.
 
 using (var technicMediumHub = hub as TechnicMediumHub)
 {
-    // optionally verify if everything is wired up correctly (v2.0 onwards)
+    // optionally verify if everything is wired up correctly
     await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
         .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
             .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
@@ -81,9 +80,9 @@ using (var technicMediumHub = hub as TechnicMediumHub)
 
     var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
-    await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
     await Task.Delay(2000);
-    await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 
     await technicMediumHub.SwitchOffAsync();
 }
@@ -105,18 +104,7 @@ disposable.Dispose();
 Console.WriteLine(motor.AbsolutePosition);
 ````
 
-## Little Helpers
-
-````csharp
-using SharpBrick.PoweredUp;
-using static SharpBrick.PoweredUp.Directions; // CW & CCW starting version 2.1 
-
-await motor.GotoAbsolutePositionAsync(CW * 45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-````
-
 ## Connecting to an unknown device
-
-***Note:** Starting version 2.0*
 
 ````csharp
 // deployment model verification with unknown devices
@@ -158,12 +146,14 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 
 ## Connect to Hub and Send a Message and retrieving answers (directly on protocol layer)
 
+***Note**: The `ILegoWirelessProtocol` class was renamed in 3.0. Previously it is known as `IPoweredUpProtocol`.*
+
 ````csharp
 
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddSingleton<IPoweredUpBluetoothAdapter, WinRTPoweredUpBluetoothAdapter>() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
     .BuildServiceProvider();
 
 using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
@@ -196,11 +186,39 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
 
     // fun with motor on hub 0 and port 0
     var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
-    await motor.GotoAbsolutePositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
     await Task.Delay(2000);
-    await motor.GotoAbsolutePositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake, PortOutputCommandSpeedProfile.None);
+    await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 }
 ````
+
+# Command Line Experience
+
+The `poweredup` command line utility intends to allow the inspection of LEGO Wireless Protocol / Powered UP hubs and devices for their properties. It has utilities for ...
+
+- **Enumerating all connected Devices** including hub internal devices and emit their static self-description as they expose using the LEGO Wireless Protocol.
+   ````
+   poweredup device list
+   ````
+- **Binary dumping the self-description** helps protocol implementors with a lack of devices to understand and try to implement the devices without having the physical device. Also the output is needed when programming the library to enable a fast bootup of the SDK.
+  ````
+  poweredup device dump-static-port -p 0
+  ````
+- **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
+
+***Note**: Currently only Windows based WinRT Bluetooth drivers are available. Work is on the way to support bluez to run the utility also on Linux.*
+
+## Installation Instruction
+
+1. Install the [latest .NET (Core)](https://dotnet.microsoft.com/download) on your machine (e.g. .NET Core 3.1).
+2. Install the `poweredup` dotnet utility using the following instruction
+   ````
+   dotnet tools install -g SharpBrick.PoweredUp.Cli
+   ````
+3. Start using the tool
+   ````
+   poweredup device list
+   ````
 
 # SDK Status, Hardware Support, Contributions, ..
 
@@ -245,7 +263,7 @@ DI Container Elements
   - [X] .NET Core 3.1 (on Windows 10 using WinRT)
     - Library uses `Span<T>` / C# 8.0 and is therefore not supported in .NET Framework 1.0 - 4.8 and UWP Apps until arrival of .NET 5 (WinForms and WPF work in .NET Core 3.1)
     - Library uses WinRT for communication therefore only Windows 10
-  - [ ] Xamarin (on iOS / Android using Xamarin.Essentials)
+  - [ ] Xamarin (on iOS / Android using ?)
   - [ ] Blazor (on Browser using WebBluetooth)
 - Hub Model
   - Hubs
@@ -254,24 +272,45 @@ DI Container Elements
     - [X] Alerts
     - [X] Actions
     - [X] Create Virtual Ports
-    - [X] Technic Medium Hub
-    - [ ] Hub (88009)
+    - [X] Two Port Hub (88009)
+    - [X] Two Port Handset (88010)
+    - [X] Technic Medium Hub (88012)
+    - [X] MarioHub (set 71360)
+    - [X] Duplo Train Base (set 10874)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
-    - [X] Technic Medium Hub - Rgb Light
-    - [X] Technic Medium Hub - Current
-    - [X] Technic Medium Hub - Voltage
-    - [X] Technic Medium Hub - Temperature Sensor 1 + 2
-    - [X] Technic Medium Hub - Accelerometer
-    - [X] Technic Medium Hub - Gyro Sensor
-    - [X] Technic Medium Hub - Tilt Sensor
-    - [ ] Technic Medium Hub - Gesture Sensor
-    - [X] Technic XLarge Motor
-    - [X] Technic Large Motor
-    - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
-    - [ ] Hub (88009) - Rgb Light
-    - [ ] Hub (88009) - Current
-    - [ ] Hub (88009) - Voltage
+    - [X] Technic Medium Hub (88012) - Rgb Light
+    - [X] Technic Medium Hub (88012) - Current
+    - [X] Technic Medium Hub (88012) - Voltage
+    - [X] Technic Medium Hub (88012) - Temperature Sensor 1 + 2
+    - [X] Technic Medium Hub (88012) - Accelerometer
+    - [X] Technic Medium Hub (88012) - Gyro Sensor
+    - [X] Technic Medium Hub (88012) - Tilt Sensor
+    - [X] Technic Medium Hub (88012) - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
+    - [X] Hub (88009) - Rgb Light
+    - [X] Hub (88009) - Current
+    - [X] Hub (88009) - Voltage
+    - [X] Mario Hub (set 71360) - Accelerometer (Raw & Gesture) (⚠ Usable but Gesture mapping is a rough draft)
+    - [X] Mario Hub (set 71360) - TagSensor (Barcode & RGB)
+    - [X] Mario Hub (set 71360) - Pants
+    - [ ] Mario Hub (set 71360) - Debug
+    - [X] Duplo Train Base (set 10874) - Motor
+    - [X] Duplo Train Base (set 10874) - Speaker
+    - [X] Duplo Train Base (set 10874) - Rgb Light
+    - [X] Duplo Train Base (set 10874) - ColorSensor
+    - [X] Duplo Train Base (set 10874) - Speedometer
+    - [X] Medium Linear Motor (88008)
+    - [X] Remote Control Button (88010)
+    - [X] Remote Control RSSI (88010)
+    - [X] Train Motor (88011)
+    - [X] Technic Large Motor (88013)
+    - [X] Technic XLarge Motor (88014)
+    - [ ] Technic Medium Angular Motor (Spike)
+    - [X] Technic Medium Angular Motor (Grey)
+    - [ ] Technic Large Angular Motor (Spike)
+    - [X] Technic Large Angular Motor (Grey)
+    - [ ] Technic Color Sensor
+    - [ ] Technic Distance Sensor
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
@@ -279,7 +318,7 @@ DI Container Elements
 - Features
   - [X] Dynamic Device
   - [X] Deployment Verifier
-- Command Line (`dotnet install -g SharpBrick.PoweredUp.Cli`)
+- Command Line (`dotnet tool install -g SharpBrick.PoweredUp.Cli`)
   - [X] `poweredup device list` (discover all connected devices and their port (mode) properties)
   - [X] `poweredup device dump-static-port -p <port number>` (see [adding new devices tutorial](docs/development/adding-new-device.md))
 
@@ -307,3 +346,7 @@ DI Container Elements
 SharpBrick is an organization intended to host volunteers willing to contribute to the SharpBrick.PoweredUp and related projects. Everyone is welcome (private and commercial entities). Please read our **[Code of Conduct](CODE_OF_CONDUCT.md)** before participating in our project.
 
 The product is licensed under **MIT License** to allow a easy and wide adoption into prviate and commercial products.
+
+## Thanks ...
+
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.

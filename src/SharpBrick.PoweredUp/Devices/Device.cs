@@ -69,9 +69,14 @@ namespace SharpBrick.PoweredUp
             }
         }
 
-        public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = 5)
+        public async Task SetupNotificationAsync(byte modeIndex, bool enabled, uint deltaInterval = uint.MaxValue)
         {
             AssertIsConnected();
+
+            if (deltaInterval == uint.MaxValue)
+            {
+                deltaInterval = GetDefaultDeltaInterval(modeIndex);
+            }
 
             await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
             {
@@ -82,6 +87,9 @@ namespace SharpBrick.PoweredUp
                 NotificationEnabled = enabled,
             });
         }
+
+        protected virtual uint GetDefaultDeltaInterval(byte modeIndex)
+            => 5;
 
         private byte IndexOfSupportedCombinedMode(byte[] modeIndices)
         {
@@ -130,7 +138,16 @@ namespace SharpBrick.PoweredUp
                     SubCommand = PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination,
 
                     CombinationIndex = combinationModeIndex,
-                    ModeDataSets = modeIndices.Select(mode => new PortInputFormatSetupCombinedModeModeDataSet() { Mode = mode, DataSet = 0, }).ToArray(), //TODO: manage DataSet for device which has (A) multiple modes and (B) returns for a mode more than one data set (e.g. R, G, B for color).
+                    ModeDataSets = modeIndices
+                                        .Select(m => _protocol.Knowledge.PortMode(_hubId, _portId, m))
+                                        .SelectMany(mode => Enumerable
+                                            .Range(0, mode.NumberOfDatasets)
+                                            .Select(dataSetPosition => new PortInputFormatSetupCombinedModeModeDataSet()
+                                            {
+                                                Mode = mode.ModeIndex,
+                                                DataSet = (byte)dataSetPosition,
+                                            }))
+                                        .ToArray(), // manage DataSet for device which has (A) multiple modes and (B) returns for a mode more than one data set (e.g. R, G, B for color).
                 });
 
                 result = true;

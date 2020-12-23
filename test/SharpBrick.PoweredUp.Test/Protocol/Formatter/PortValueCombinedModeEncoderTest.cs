@@ -63,5 +63,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             }).ToArray());
         }
+
+        // TODO: Mario Port 1 (Scanner), Mode 1 & 0
+        // 07-00-46-01-00-02-0B
+        // 08-00-46-01-00-06-04-02
+        // 0D-00-46-01-00-1F-09-07-06-00-00-00-00
     }
 }

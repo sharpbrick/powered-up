@@ -17,7 +17,8 @@ jobs:
       with:
         dotnet-version: 3.1.100
     - name: Build Version
-      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
+      # run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11}) // deprecated
+      run: echo "RELEASE_VERSION=${GITHUB_REF:11}" >> $GITHUB_ENV
     - name: Build Project
       run: dotnet build --configuration Release -p:Version=$RELEASE_VERSION
     - name: Test Project

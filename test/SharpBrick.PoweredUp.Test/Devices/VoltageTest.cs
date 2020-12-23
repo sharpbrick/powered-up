@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Bluetooth;
+using SharpBrick.PoweredUp.Bluetooth.Mock;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -15,7 +16,7 @@ namespace SharpBrick.PoweredUp
         public async Task Voltage_VoltageLObservable_Receive()
         {
             // arrange
-            var (protocol, mock) = CreateProtocolAndMock();
+            var (protocol, mock) = CreateProtocolAndMock(SystemType.LegoTechnic_MediumHub);
 
             // announce voltage device in protocol
             await mock.WriteUpstreamAsync(new HubAttachedIOForAttachedDeviceMessage()
@@ -69,22 +70,22 @@ namespace SharpBrick.PoweredUp
         }
 
 
-        internal (ILegoWirelessProtocol protocol, PoweredUpBluetoothCharacteristicMock mock) CreateProtocolAndMock()
+        internal (ILegoWirelessProtocol protocol, PoweredUpBluetoothCharacteristicMock mock) CreateProtocolAndMock(SystemType knownSystemType)
         {
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
-                .AddSingleton<IPoweredUpBluetoothAdapter, PoweredUpBluetoothAdapterMock>()
+                .AddMockBluetooth()
                 .AddSingleton<BluetoothKernel>()
                 .AddSingleton<ILegoWirelessProtocol, LegoWirelessProtocol>()
                 .AddSingleton<IDeviceFactory, DeviceFactory>() // for protocol knowledge init
 
                 .BuildServiceProvider();
 
-            var poweredUpBluetoothAdapterMock = serviceProvider.GetService<IPoweredUpBluetoothAdapter>() as PoweredUpBluetoothAdapterMock;
+            var poweredUpBluetoothAdapterMock = serviceProvider.GetMockBluetoothAdapter();
 
             var protocol = serviceProvider.GetService<ILegoWirelessProtocol>();
 
-            protocol.ConnectAsync().Wait();
+            protocol.ConnectAsync(knownSystemType).Wait();
 
             return (protocol, poweredUpBluetoothAdapterMock.MockCharacteristic);
         }
