@@ -33,6 +33,7 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleHubPropertyObserving();
             //example = new Example.ExampleDiscoverByType();
             //example = new Example.ExampleCalibrationSteering();
+            //example = new Example.ExampleRampUp();
             //example = new Example.ExampleTechnicMediumHubGestSensor();
             //example = new Example.ExampleRemoteControlButton();
             //example = new Example.ExampleRemoteControlRssi();
