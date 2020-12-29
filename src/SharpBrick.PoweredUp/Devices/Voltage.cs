@@ -126,8 +126,6 @@ namespace SharpBrick.PoweredUp
 08-00-44-14-01-05-10-00
 0A-00-44-14-01-80-01-01-04-00
 ",
-
-                _ => throw new NotSupportedException(),
                 (_, _, SystemType.LegoSystem_MoveHub) => @"
 0B-00-43-3C-01-02-02-03-00-00-00
 05-00-43-3C-02

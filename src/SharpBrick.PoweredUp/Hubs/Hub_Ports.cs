@@ -127,10 +127,8 @@ namespace SharpBrick.PoweredUp
                     }
 
                     break;
-                    // case HubAttachedIOForAttachedVirtualDeviceMessage attachedVirtualDeviceMessage:
-                    //     OnHubAttachedVirtualIOMessage(attachedVirtualDeviceMessage);
 
-                    //     break;
+                // Note - HubAttachedIOForAttachedVirtualDeviceMessage is handled directly in OnHubChange not here
             }
         }
 

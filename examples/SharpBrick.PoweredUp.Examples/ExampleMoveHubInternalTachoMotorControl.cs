@@ -9,27 +9,22 @@ namespace Example
         {
             using (var moveHub = Host.FindByType<MoveHub>())
             {
-                //await moveHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
-                //    .AddHub<MoveHub>(hubBuilder => hubBuilder
-                //        .AddDevice<MoveHubInternalMotor>(moveHub.A)
-                //    )
-                //);
+                var internalMotor = moveHub.InternalMotor;
+                await internalMotor.StartSpeedAsync(50, 100);
+                await internalMotor.StartSpeedForTimeAsync(2000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
 
-                var motorA = moveHub.A.GetDevice<MoveHubInternalMotor>();
-                //var motorB = moveHub.B.GetDevice<MoveHubInternalMotor>();
+                await Task.Delay(2000);
 
-                await motorA.StartSpeedAsync(50, 100);
-                //await motorA.StartSpeedForTimeAsync(6000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
+                // This is if you have a linear motor plugged into port D (ie. R2D2)
+                var externalMotor = moveHub.D.GetDevice<MediumLinearMotor>();
 
-                //await Task.Delay(10_000);
+                await externalMotor.SetAccelerationTimeAsync(3000);
+                await externalMotor.SetDecelerationTimeAsync(1000);
+                await externalMotor.StartSpeedForTimeAsync(2000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
 
-                //await motorB.SetAccelerationTimeAsync(3000);
-                //await motorB.SetDecelerationTimeAsync(1000);
-                //await motorB.StartSpeedForTimeAsync(6000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
+                await Task.Delay(10000);
 
-                await Task.Delay(10_000);
-
-                //await moveHub.SwitchOffAsync();
+                await moveHub.SwitchOffAsync();
             }
         }
     }
