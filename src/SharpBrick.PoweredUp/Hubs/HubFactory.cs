@@ -38,7 +38,10 @@ namespace SharpBrick.PoweredUp.Hubs
             => systemType switch
             {
                 SystemType.LegoSystem_TwoPortHub => typeof(TwoPortHub),
+                SystemType.LegoSystem_TwoPortHandset => typeof(TwoPortHandset),
                 SystemType.LegoTechnic_MediumHub => typeof(TechnicMediumHub),
+                SystemType.LegoSystem_Mario => typeof(MarioHub),
+                SystemType.LegoDuplo_DuploTrain => typeof(DuploTrainBaseHub),
                 SystemType.LegoSystem_MoveHub => typeof(MoveHub),
                 _ => throw new NotSupportedException(),
             };
@@ -47,7 +50,10 @@ namespace SharpBrick.PoweredUp.Hubs
             => type.Name switch
             {
                 nameof(TwoPortHub) => SystemType.LegoSystem_TwoPortHub,
+                nameof(TwoPortHandset) => SystemType.LegoSystem_TwoPortHandset,
                 nameof(TechnicMediumHub) => SystemType.LegoTechnic_MediumHub,
+                nameof(MarioHub) => SystemType.LegoSystem_Mario,
+                nameof(DuploTrainBaseHub) => SystemType.LegoDuplo_DuploTrain,
                 nameof(MoveHub) => SystemType.LegoSystem_MoveHub,
                 _ => throw new NotSupportedException(),
             };

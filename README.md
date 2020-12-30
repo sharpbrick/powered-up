@@ -28,7 +28,6 @@ Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp
 
 ````csharp
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 ````
 
 ## Discovering Hubs
@@ -37,7 +36,7 @@ using SharpBrick.PoweredUp.WinRT; // for WinRT Bluetooth NuGet
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
     .BuildServiceProvider();
     
 var host = serviceProvider.GetService<PoweredUpHost>();
@@ -70,7 +69,7 @@ See source code in `examples/SharpBrick.PoweredUp.Examples` for more examples.
 
 using (var technicMediumHub = hub as TechnicMediumHub)
 {
-    // optionally verify if everything is wired up correctly (v2.0 onwards)
+    // optionally verify if everything is wired up correctly
     await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
         .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
             .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
@@ -154,7 +153,7 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
     .BuildServiceProvider();
 
 using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
@@ -192,6 +191,34 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
     await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 }
 ````
+
+# Command Line Experience
+
+The `poweredup` command line utility intends to allow the inspection of LEGO Wireless Protocol / Powered UP hubs and devices for their properties. It has utilities for ...
+
+- **Enumerating all connected Devices** including hub internal devices and emit their static self-description as they expose using the LEGO Wireless Protocol.
+   ````
+   poweredup device list
+   ````
+- **Binary dumping the self-description** helps protocol implementors with a lack of devices to understand and try to implement the devices without having the physical device. Also the output is needed when programming the library to enable a fast bootup of the SDK.
+  ````
+  poweredup device dump-static-port -p 0
+  ````
+- **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
+
+***Note**: Currently only Windows based WinRT Bluetooth drivers are available. Work is on the way to support bluez to run the utility also on Linux.*
+
+## Installation Instruction
+
+1. Install the [latest .NET (Core)](https://dotnet.microsoft.com/download) on your machine (e.g. .NET Core 3.1).
+2. Install the `poweredup` dotnet utility using the following instruction
+   ````
+   dotnet tools install -g SharpBrick.PoweredUp.Cli
+   ````
+3. Start using the tool
+   ````
+   poweredup device list
+   ````
 
 # SDK Status, Hardware Support, Contributions, ..
 
@@ -245,24 +272,45 @@ DI Container Elements
     - [X] Alerts
     - [X] Actions
     - [X] Create Virtual Ports
-    - [X] Technic Medium Hub
     - [X] Two Port Hub (88009)
+    - [X] Two Port Handset (88010)
+    - [X] Technic Medium Hub (88012)
+    - [X] MarioHub (set 71360)
+    - [X] Duplo Train Base (set 10874)
     - .. other hubs depend on availability of hardware / contributions
   - Devices
-    - [X] Technic Medium Hub - Rgb Light
-    - [X] Technic Medium Hub - Current
-    - [X] Technic Medium Hub - Voltage
-    - [X] Technic Medium Hub - Temperature Sensor 1 + 2
-    - [X] Technic Medium Hub - Accelerometer
-    - [X] Technic Medium Hub - Gyro Sensor
-    - [X] Technic Medium Hub - Tilt Sensor
-    - [X] Technic Medium Hub - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
-    - [X] Technic XLarge Motor
-    - [X] Technic Large Motor
-    - [ ] Technic Angular Motor (depend on availability of hardware / contributions)
+    - [X] Technic Medium Hub (88012) - Rgb Light
+    - [X] Technic Medium Hub (88012) - Current
+    - [X] Technic Medium Hub (88012) - Voltage
+    - [X] Technic Medium Hub (88012) - Temperature Sensor 1 + 2
+    - [X] Technic Medium Hub (88012) - Accelerometer
+    - [X] Technic Medium Hub (88012) - Gyro Sensor
+    - [X] Technic Medium Hub (88012) - Tilt Sensor
+    - [X] Technic Medium Hub (88012) - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
     - [X] Hub (88009) - Rgb Light
     - [X] Hub (88009) - Current
     - [X] Hub (88009) - Voltage
+    - [X] Mario Hub (set 71360) - Accelerometer (Raw & Gesture) (⚠ Usable but Gesture mapping is a rough draft)
+    - [X] Mario Hub (set 71360) - TagSensor (Barcode & RGB)
+    - [X] Mario Hub (set 71360) - Pants
+    - [ ] Mario Hub (set 71360) - Debug
+    - [X] Duplo Train Base (set 10874) - Motor
+    - [X] Duplo Train Base (set 10874) - Speaker
+    - [X] Duplo Train Base (set 10874) - Rgb Light
+    - [X] Duplo Train Base (set 10874) - ColorSensor
+    - [X] Duplo Train Base (set 10874) - Speedometer
+    - [X] Medium Linear Motor (88008)
+    - [X] Remote Control Button (88010)
+    - [X] Remote Control RSSI (88010)
+    - [X] Train Motor (88011)
+    - [X] Technic Large Motor (88013)
+    - [X] Technic XLarge Motor (88014)
+    - [ ] Technic Medium Angular Motor (Spike)
+    - [X] Technic Medium Angular Motor (Grey)
+    - [ ] Technic Large Angular Motor (Spike)
+    - [X] Technic Large Angular Motor (Grey)
+    - [X] Technic Color Sensor
+    - [X] Technic Distance Sensor
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
@@ -301,4 +349,4 @@ The product is licensed under **MIT License** to allow a easy and wide adoption 
 
 ## Thanks ...
 
-Thanks to @nathankellenicki and @corneliusmunz for their code, answers, testing and other important contributions.
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.

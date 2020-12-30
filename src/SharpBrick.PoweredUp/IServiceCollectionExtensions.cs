@@ -22,12 +22,17 @@ namespace SharpBrick.PoweredUp
 
                 // hubs
                 .AddTransient<TwoPortHub>()
+                .AddTransient<TwoPortHandset>()
                 .AddTransient<TechnicMediumHub>()
+                .AddTransient<MarioHub>()
+                .AddTransient<DuploTrainBaseHub>()
                 .AddTransient<MoveHub>()
 
                 // functions
                 .AddTransient<DiscoverPorts>()
                 .AddTransient<TraceMessages>()
-                .AddTransient<LinearMidCalibration>();
+                .AddTransient<LinearMidCalibration>()
+                .AddTransient<LinearSpeedChange>()
+                ;
     }
 }

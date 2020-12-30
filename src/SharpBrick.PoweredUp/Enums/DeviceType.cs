@@ -37,5 +37,11 @@
         TechnicColorSensor = 0x003D, // UNSPECED, TECHNIC_COLOR_SENSOR (Spike Prime)
         TechnicDistanceSensor = 0x003E, // UNSPECED, TECHNIC_DISTANCE_SENSOR (Spike Prime)
         TechnicForceSensor = 0x003F, // UNSPECED, TECHNIC_FORCE_SENSOR (Spike Prime)
+        MarioHubAccelerometer = 0x0047, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        MarioHubTagSensor = 0x049, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        MarioHubPants = 0x004A, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        MarioHubDebug = 0x0046, // UNSPCED, https://github.com/bricklife/LEGO-Mario-Reveng (Lego Mario)
+        TechnicMediumAngularMotorGrey = 0x004B, // UNSPECED, TECHNIC_MEDIUM_ANGULAR_MOTOR_GREY (Control+)
+        TechnicLargeAngularMotorGrey = 0x004C, // UNSPECED, TECHNIC_LARGE_ANGULAR_MOTOR_GREY (Control+)
     }
 }

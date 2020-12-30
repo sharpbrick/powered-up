@@ -20,46 +20,62 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
         public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
         {
-            var result = new List<PortValueData>();
-
             var port = data[0];
             var modePointers = BitConverter.ToUInt16(new byte[] { data[2], data[1] });
 
-            var modeDataSetIndices = Enumerable.Range(0, 16).Select(pos => (modePointers & (0x01 << pos)) > 0 ? pos : -1).Where(x => x >= 0).ToArray();
+            var portInfo = _knowledge.Port(hubId, port);
 
-            var currentIndexIndex = 0;
+            // each combined value mode message specifies which mode/dataset is transferred (a data set is a part of a sensor input, e.g. green of RGB)
+            // the modePointers reference to the requested mode/dataset
+            var modeDataSetOfMessage = Enumerable.Range(0, 16) // iterate each position in ushort bitmask
+                                        .Select(pos => (modePointers & (0x01 << pos)) > 0 ? pos : -1) // detect which mode/dataset is pointed
+                                        .Where(x => x >= 0) // sort out unaffected ones
+                                        .Select(i => portInfo.RequestedCombinedModeDataSets[i]) // get modate/dataset defintions requested
+                                        .ToArray();
 
+            var influencedModes = modeDataSetOfMessage.Select(md => md.Mode).Distinct().Select(m => _knowledge.PortMode(hubId, port, m));
+
+            // create a buffer for each requested mode
+            var dataBuffers = influencedModes
+                    .ToDictionary(pmi => pmi.ModeIndex, pmi => new byte[pmi.NumberOfDatasets * PortValueSingleEncoder.GetLengthOfDataType(pmi)]);
+
+            var currentDataSetInMessageIndex = 0;
             var remainingSlice = data.Slice(3);
 
             while (remainingSlice.Length > 0)
             {
-                var portInfo = _knowledge.Port(hubId, port);
+                // retrieve which mode and data set is currently sliced
+                var modeDataSet = modeDataSetOfMessage[currentDataSetInMessageIndex];
+                currentDataSetInMessageIndex++;
 
-                var mode = portInfo.RequestedCombinedModeDataSets[modeDataSetIndices[currentIndexIndex]].Mode;
-
-                //var mode = (byte)modeDataSetIndices[currentIndexIndex];
-
-                var modeInfo = _knowledge.PortMode(hubId, port, mode);
-
+                // retrieve mode for data size length
+                var modeInfo = _knowledge.PortMode(hubId, port, modeDataSet.Mode);
                 int lengthOfDataType = PortValueSingleEncoder.GetLengthOfDataType(modeInfo);
 
-                var dataSlice = remainingSlice.Slice(0, modeInfo.NumberOfDatasets * lengthOfDataType);
+                // cut data based on data type
+                var dataSlice = remainingSlice.Slice(0, lengthOfDataType);
 
-                var value = PortValueSingleEncoder.CreatPortValueData(modeInfo, dataSlice);
+                // copy data into buffer position
+                dataSlice.CopyTo(dataBuffers[modeInfo.ModeIndex].AsSpan().Slice(modeDataSet.DataSet * lengthOfDataType));
 
-                value.PortId = port;
-                value.ModeIndex = mode;
-                value.DataType = modeInfo.DatasetType;
-
-                result.Add(value);
-                remainingSlice = remainingSlice.Slice(lengthOfDataType * modeInfo.NumberOfDatasets);
-                currentIndexIndex++;
+                remainingSlice = remainingSlice.Slice(lengthOfDataType);
             }
 
             return new PortValueCombinedModeMessage()
             {
                 PortId = port,
-                Data = result.ToArray(),
+                Data = influencedModes
+                    .Select(mode =>
+                    {
+                        var value = PortValueSingleEncoder.CreatPortValueData(mode, dataBuffers[mode.ModeIndex]);
+
+                        value.PortId = mode.PortId;
+                        value.ModeIndex = mode.ModeIndex;
+                        value.DataType = mode.DatasetType;
+
+                        return value;
+                    })
+                    .ToArray(),
             };
         }
 

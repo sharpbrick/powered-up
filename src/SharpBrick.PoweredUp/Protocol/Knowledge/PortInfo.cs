@@ -17,7 +17,9 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         public Version SoftwareRevision { get; set; }
 
         // HubAttachedIOForAttachedVirtualDeviceMessage
-        public bool IsVirtual { get; internal set; }
+        public bool IsVirtual { get; set; }
+        public byte PortAId { get; set; }
+        public byte PortBId { get; set; }
 
         // PortInformationForModeInfoMessage
         public bool OutputCapability { get; set; } // seen from hub

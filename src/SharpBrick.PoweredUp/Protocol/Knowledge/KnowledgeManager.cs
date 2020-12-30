@@ -148,6 +148,8 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, hub, port, knowledge, deviceFactory);
 
                     port.IsVirtual = true;
+                    port.PortAId = msg.PortAId;
+                    port.PortBId = msg.PortBId;
                     break;
 
                 case PortInputFormatSingleMessage msg:
@@ -199,6 +201,11 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
                     }
 
                     ApplyStaticProtocolKnowledge(message, knowledge);
+
+                    if (message is PortModeInformationMessage pmim2 && pmim2.InformationType == PortModeInformationType.Name)
+                    {
+                        device.ExtendPortMode(knowledge.PortMode(pmim2.HubId, pmim2.PortId, pmim2.Mode));
+                    }
                 }
             }
         }
