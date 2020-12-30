@@ -78,10 +78,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             var rawValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray();
 
-            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToSByte(f)).ToArray();
+            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => ConvertSByteValueFromFloat(f)).ToArray();
             var pctValues = modeInfo.DisablePercentage switch
             {
-                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToSByte(f)).ToArray(),
+                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => ConvertSByteValueFromFloat(f)).ToArray(),
                 true => new sbyte[rawValues.Length],
             };
 
@@ -91,6 +91,23 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 SIInputValues = siValues,
                 PctInputValues = pctValues,
             };
+        }
+
+        internal static sbyte ConvertSByteValueFromFloat(float value)
+        {
+            if (value >= sbyte.MinValue && value <= sbyte.MaxValue)
+            {
+                return Convert.ToSByte(value);
+            }
+
+            // If we get a value higher than the sbyte, clamp it at the maximum value (127) or minimum value (-127)
+            // This can occur sometimes when a value returned exceeds expected min/max and trying to convert to a percentage
+
+            if (value > sbyte.MaxValue)
+            {
+                return sbyte.MaxValue;
+            }
+            return sbyte.MinValue;
         }
 
         internal static PortValueData<short> CreatePortValueDataInt16(PortModeInfo modeInfo, in Span<byte> dataSlice)

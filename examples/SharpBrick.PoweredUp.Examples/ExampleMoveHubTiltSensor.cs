@@ -43,7 +43,7 @@ namespace Example
                 // This configures a minimum threshold for an impact to be registered (should be a light tap) and subscribes to the count of impacts
                 await device.TiltConfigImpactAsync(10, 1270);
                 await device.SetupNotificationAsync(device.ModeIndexImpacts, true, deltaInterval: 1);
-                using var impactSubscription = device.ImpactsObservable.Subscribe(x => Log.LogWarning($"Impact: {x.SI} / {x.Pct} / {x.Raw}"));
+                using var impactSubscription = device.ImpactsObservable.Subscribe(x => Log.LogWarning($"Impact Count: {x.SI}"));
 
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
