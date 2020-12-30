@@ -47,6 +47,7 @@ namespace SharpBrick.PoweredUp
         public Port D => Port(3);
 
         public RgbLight RgbLight => Port(50).GetDevice<RgbLight>();
+        public MoveHubTiltSensor TiltSensor => Port(58).GetDevice<MoveHubTiltSensor>();
         public Current Current => Port(59).GetDevice<Current>();
         public Voltage Voltage => Port(60).GetDevice<Voltage>();
 

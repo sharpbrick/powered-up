@@ -47,7 +47,8 @@ namespace SharpBrick.PoweredUp.Examples
             example = new Example.ExampleTechnicDistanceSensor();
             //example = new Example.ExampleTechnicMediumHubGestSensor();
             //example = new Example.ExampleMoveHubInternalTachoMotorControl();
-            example = new Example.ExampleMoveHubColors();
+            //example = new Example.ExampleMoveHubColors();
+            example = new Example.ExampleMoveHubTiltSensor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             await example.InitHostAndDiscoverAsync(enableTrace);
