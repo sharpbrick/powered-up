@@ -16,26 +16,26 @@ namespace Example
 
                 // Note that you can only have 1 notification running at a time
 
-                await device.SetupNotificationAsync(device.ModeIndexAngle, true, 1);
-                using var angleSubscription = device.AngleObservable.Subscribe(x => Log.LogWarning($"Angle: {x.x} / {x.y}"));
+                await device.SetupNotificationAsync(device.ModeIndexTwoAxisFull, true, 1);
+                using var twoAxisFullSubscription = device.TwoAxisFullObservable.Subscribe(x => Log.LogWarning($"Two Axis Values - Roll: {x.roll}, Pitch: {x.pitch}"));
 
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
 
-                await device.SetupNotificationAsync(device.ModeIndexTilt, true, 1);
-                using var tiltSubscription = device.TiltObservable.Subscribe(x => Log.LogWarning($"Tilt: {x.SI}"));
+                await device.SetupNotificationAsync(device.ModeIndexTwoAxisState, true, 1);
+                using var twoAxisStateSubscription = device.TwoAxisStateObservable.Subscribe(x => Log.LogWarning($"Two Axis State: {x}"));
 
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
 
-                await device.SetupNotificationAsync(device.ModeIndexOrientation, true, 1);
-                using var orientationSubscription = device.OrientationObservable.Subscribe(x => Log.LogWarning($"Orientation: {x}"));
+                await device.SetupNotificationAsync(device.ModeIndexThreeAxisState, true, 1);
+                using var threeAxisStateSubscription = device.ThreeAxisStateObservable.Subscribe(x => Log.LogWarning($"Three Axis State: {x}"));
 
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
 
-                await device.SetupNotificationAsync(device.ModeIndexAcceleration, true, 1);
-                using var accelerationSubscription = device.AccelerationObservable.Subscribe(x => Log.LogWarning($"Acceleration: {x.x} / {x.y} / {x.z}"));
+                await device.SetupNotificationAsync(device.ModeIndexThreeAxisFull, true, 1);
+                using var threeAxisFullSubscription = device.ThreeAxisFullObservable.Subscribe(x => Log.LogWarning($"Three Axis Values - Roll: {x.roll}, Pitch: {x.pitch}, Yaw: {x.yaw}"));
 
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();

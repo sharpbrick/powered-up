@@ -11,47 +11,47 @@ namespace SharpBrick.PoweredUp
 {
     public class MoveHubTiltSensor : Device, IPoweredUpDevice
     {
-        protected MultiValueMode<sbyte> _angleMode;
-        protected SingleValueMode<sbyte> _tiltMode;
-        protected SingleValueMode<sbyte> _orientationMode;
+        protected MultiValueMode<sbyte> _twoAxisFullMode;
+        protected SingleValueMode<sbyte> _twoAxisStateMode;
+        protected SingleValueMode<sbyte> _threeAxisStateMode;
         protected SingleValueMode<int> _impactsMode;
-        protected MultiValueMode<sbyte> _accelerationMode;
+        protected MultiValueMode<sbyte> _threeAxisFullMode;
 
         /// <summary>
-        /// Simple 2 axis (XY) precise angle of tilt
+        /// Two axis full values
         /// </summary>
-        public byte ModeIndexAngle { get; protected set; } = 0;
+        public byte ModeIndexTwoAxisFull { get; protected set; } = 0;
         /// <summary>
-        /// Tilt ?
+        /// Two Axis simple state
         /// </summary>
-        public byte ModeIndexTilt { get; protected set; } = 1;
+        public byte ModeIndexTwoAxisState { get; protected set; } = 1;
         /// <summary>
-        /// Orientation in the Z axis
+        /// Three Axis simple state
         /// </summary>
-        public byte ModeIndexOrientation { get; protected set; } = 2;
+        public byte ModeIndexThreeAxisState { get; protected set; } = 2;
         /// <summary>
         /// Count of impacts
         /// </summary>
         public byte ModeIndexImpacts { get; protected set; } = 3;
         /// <summary>
-        /// 3 axis acceleration
+        /// Three axis full values
         /// </summary>
-        public byte ModeIndexAcceleration { get; protected set; } = 4;
+        public byte ModeIndexThreeAxisFull { get; protected set; } = 4;
         public byte ModeIndexOrientationConfig { get; protected set; } = 5;
         public byte ModeIndexImpactsConfig { get; protected set; } = 6;
         public byte ModeIndexCalibration { get; protected set; } = 7;
 
-        public (sbyte x, sbyte y) Angle => (_angleMode.SI[0], _angleMode.SI[1]);
-        public sbyte Tilt => _tiltMode.SI;
-        public TiltOrientation Orientation => (TiltOrientation)_orientationMode.SI;
+        public (sbyte roll, sbyte pitch) TwoAxisFull => (_twoAxisFullMode.SI[0], _twoAxisFullMode.SI[1]);
+        public SimpleOrientation TwoAxisState => (SimpleOrientation)_twoAxisStateMode.SI;
+        public TiltOrientation ThreeAxisState => (TiltOrientation)_threeAxisStateMode.SI;
         public int Impacts => _impactsMode.SI;
-        public (sbyte x, sbyte y, sbyte z) Acceleration => (_accelerationMode.SI[0], _accelerationMode.SI[1], _accelerationMode.SI[2]);
+        public (sbyte roll, sbyte pitch, sbyte yaw) ThreeAxisFull => (_threeAxisFullMode.SI[0], _threeAxisFullMode.SI[1], _threeAxisFullMode.SI[2]);
 
-        public IObservable<(sbyte x, sbyte y)> AngleObservable => _angleMode.Observable.Select(v => (v.SI[0], v.SI[1]));
-        public IObservable<Value<sbyte>> TiltObservable => _tiltMode.Observable;
-        public IObservable<TiltOrientation> OrientationObservable => _orientationMode.Observable.Select(x => (TiltOrientation)x.SI);
+        public IObservable<(sbyte roll, sbyte pitch)> TwoAxisFullObservable => _twoAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1]));
+        public IObservable<SimpleOrientation> TwoAxisStateObservable => _twoAxisStateMode.Observable.Select(x => (SimpleOrientation)x.SI);
+        public IObservable<TiltOrientation> ThreeAxisStateObservable => _threeAxisStateMode.Observable.Select(x => (TiltOrientation)x.SI);
         public IObservable<Value<int>> ImpactsObservable => _impactsMode.Observable;
-        public IObservable<(sbyte x, sbyte y, sbyte z)> AccelerationObservable => _accelerationMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
+        public IObservable<(sbyte roll, sbyte pitch, sbyte yaw)> ThreeAxisFullObservable => _threeAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
 
         public MoveHubTiltSensor()
         { }
@@ -59,17 +59,17 @@ namespace SharpBrick.PoweredUp
         public MoveHubTiltSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _angleMode = MultiValueMode<sbyte>(ModeIndexAngle);
-            _tiltMode = SingleValueMode<sbyte>(ModeIndexTilt);
-            _orientationMode = SingleValueMode<sbyte>(ModeIndexOrientation);
+            _twoAxisFullMode = MultiValueMode<sbyte>(ModeIndexTwoAxisFull);
+            _twoAxisStateMode = SingleValueMode<sbyte>(ModeIndexTwoAxisState);
+            _threeAxisStateMode = SingleValueMode<sbyte>(ModeIndexThreeAxisState);
             _impactsMode = SingleValueMode<int>(ModeIndexImpacts);
-            _accelerationMode = MultiValueMode<sbyte>(ModeIndexAcceleration);
+            _threeAxisFullMode = MultiValueMode<sbyte>(ModeIndexThreeAxisFull);
 
-            ObserveForPropertyChanged(_angleMode.Observable, nameof(Angle));
-            ObserveForPropertyChanged(_tiltMode.Observable, nameof(Tilt));
-            ObserveForPropertyChanged(_orientationMode.Observable, nameof(Orientation));
+            ObserveForPropertyChanged(_twoAxisFullMode.Observable, nameof(TwoAxisFull));
+            ObserveForPropertyChanged(_twoAxisStateMode.Observable, nameof(TwoAxisState));
+            ObserveForPropertyChanged(_threeAxisStateMode.Observable, nameof(ThreeAxisState));
             ObserveForPropertyChanged(_impactsMode.Observable, nameof(Impacts));
-            ObserveForPropertyChanged(_accelerationMode.Observable, nameof(Acceleration));
+            ObserveForPropertyChanged(_threeAxisFullMode.Observable, nameof(ThreeAxisFull));
         }
 
         /// <summary>
