@@ -1,6 +1,6 @@
 ﻿namespace SharpBrick.PoweredUp
 {
-    public enum TiltFactoryOrientation : byte
+    public enum MoveHubTiltFactoryOrientation : byte
     {
         /// <summary>
         /// Laying flat XY

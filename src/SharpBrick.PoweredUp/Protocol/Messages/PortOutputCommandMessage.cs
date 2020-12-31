@@ -193,13 +193,6 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public sbyte BumpHoldoff { get; set; }
     }
 
-    // spec chapter: 3.27.18
-    public class PortOutputCommandTiltFactoryCalibrationMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandTiltFactoryCalibrationMessage() : base(0x07) { }
-        public TiltFactoryOrientation Orientation { get; set; }
-    }
-
     // spec chapter: 3.27.19
     public class PortOutputCommandGenericZeroSetHardwareMessage : PortOutputCommandWriteDirectMessage
     { }

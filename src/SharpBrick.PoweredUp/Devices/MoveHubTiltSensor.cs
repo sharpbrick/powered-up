@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
@@ -22,11 +23,11 @@ namespace SharpBrick.PoweredUp
         /// </summary>
         public byte ModeIndexTwoAxisFull { get; protected set; } = 0;
         /// <summary>
-        /// Two Axis simple state
+        /// Two Axis simple state of orientation
         /// </summary>
         public byte ModeIndexTwoAxisState { get; protected set; } = 1;
         /// <summary>
-        /// Three Axis simple state
+        /// Three Axis simple state of orientation which provides more states than <see cref="ModeIndexTwoAxisState"/>
         /// </summary>
         public byte ModeIndexThreeAxisState { get; protected set; } = 2;
         /// <summary>
@@ -42,14 +43,14 @@ namespace SharpBrick.PoweredUp
         public byte ModeIndexCalibration { get; protected set; } = 7;
 
         public (sbyte roll, sbyte pitch) TwoAxisFull => (_twoAxisFullMode.SI[0], _twoAxisFullMode.SI[1]);
-        public SimpleOrientation TwoAxisState => (SimpleOrientation)_twoAxisStateMode.SI;
-        public TiltOrientation ThreeAxisState => (TiltOrientation)_threeAxisStateMode.SI;
+        public MoveHubTiltSimpleOrientation TwoAxisState => (MoveHubTiltSimpleOrientation)_twoAxisStateMode.SI;
+        public MoveHubTiltOrientation ThreeAxisState => (MoveHubTiltOrientation)_threeAxisStateMode.SI;
         public int Impacts => _impactsMode.SI;
         public (sbyte roll, sbyte pitch, sbyte yaw) ThreeAxisFull => (_threeAxisFullMode.SI[0], _threeAxisFullMode.SI[1], _threeAxisFullMode.SI[2]);
 
         public IObservable<(sbyte roll, sbyte pitch)> TwoAxisFullObservable => _twoAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1]));
-        public IObservable<SimpleOrientation> TwoAxisStateObservable => _twoAxisStateMode.Observable.Select(x => (SimpleOrientation)x.SI);
-        public IObservable<TiltOrientation> ThreeAxisStateObservable => _threeAxisStateMode.Observable.Select(x => (TiltOrientation)x.SI);
+        public IObservable<MoveHubTiltSimpleOrientation> TwoAxisStateObservable => _twoAxisStateMode.Observable.Select(x => (MoveHubTiltSimpleOrientation)x.SI);
+        public IObservable<MoveHubTiltOrientation> ThreeAxisStateObservable => _threeAxisStateMode.Observable.Select(x => (MoveHubTiltOrientation)x.SI);
         public IObservable<Value<int>> ImpactsObservable => _impactsMode.Observable;
         public IObservable<(sbyte roll, sbyte pitch, sbyte yaw)> ThreeAxisFullObservable => _threeAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
 
@@ -70,6 +71,17 @@ namespace SharpBrick.PoweredUp
             ObserveForPropertyChanged(_threeAxisStateMode.Observable, nameof(ThreeAxisState));
             ObserveForPropertyChanged(_impactsMode.Observable, nameof(Impacts));
             ObserveForPropertyChanged(_threeAxisFullMode.Observable, nameof(ThreeAxisFull));
+        }
+
+        public void ExtendPortMode(PortModeInfo modeInfo)
+        {
+            // Percentage is disabled for three axis full (ACCEL) since in some cases the hub 
+            // can report a larger than expected value which makes the percentage go beyond an sbyte min/max values and generate an exception
+            // TODO: This can be removed when #126 is implemented
+            if (modeInfo.ModeIndex == ModeIndexThreeAxisFull)
+            {
+                modeInfo.DisablePercentage = true;
+            }
         }
 
         /// <summary>
@@ -147,27 +159,6 @@ namespace SharpBrick.PoweredUp
                 HubId = _hubId,
                 PortId = _portId,
                 ModeIndex = ModeIndexOrientationConfig,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Orientation = orientation
-            });
-
-            return response;
-        }
-
-        /// <summary>
-        /// Set the Tilt into calibration
-        /// </summary>
-        /// <returns></returns>
-        public async Task<PortFeedback> TiltCalibrate(TiltFactoryOrientation orientation)
-        {
-            AssertIsConnected();
-
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltFactoryCalibrationMessage()
-            {
-                HubId = _hubId,
-                PortId = _portId,
-                ModeIndex = ModeIndexCalibration,
                 StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
                 CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 Orientation = orientation

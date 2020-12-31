@@ -1,6 +1,9 @@
 ﻿namespace SharpBrick.PoweredUp
 {
-    public enum SimpleOrientation : sbyte
+    /// <summary>
+    /// Simple tilt orientation state based on 2-axis only
+    /// </summary>
+    public enum MoveHubTiltSimpleOrientation : sbyte
     {
         Horzontial = 0x00,
         Down = 0x03,
