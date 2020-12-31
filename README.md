@@ -272,6 +272,7 @@ DI Container Elements
     - [X] Alerts
     - [X] Actions
     - [X] Create Virtual Ports
+    - [X] Move Hub (88006)
     - [X] Two Port Hub (88009)
     - [X] Two Port Handset (88010)
     - [X] Technic Medium Hub (88012)
@@ -287,9 +288,14 @@ DI Container Elements
     - [X] Technic Medium Hub (88012) - Gyro Sensor
     - [X] Technic Medium Hub (88012) - Tilt Sensor
     - [X] Technic Medium Hub (88012) - Gesture Sensor (⚠ Usable but Gesture mapping is pending)
-    - [X] Hub (88009) - Rgb Light
-    - [X] Hub (88009) - Current
-    - [X] Hub (88009) - Voltage
+    - [X] Move Hub (88006) - Rgb Light
+    - [X] Move Hub (88006) - Current
+    - [X] Move Hub (88006) - Voltage
+    - [X] Move Hub (88006) - Tilt
+    - [X] Move Hub (88006) - Internal Motors (Single and Virtual Port)
+    - [X] Two Port Hub (88009) - Rgb Light
+    - [X] Two Port Hub (88009) - Current
+    - [X] Two Port Hub (88009) - Voltage
     - [X] Mario Hub (set 71360) - Accelerometer (Raw & Gesture) (⚠ Usable but Gesture mapping is a rough draft)
     - [X] Mario Hub (set 71360) - TagSensor (Barcode & RGB)
     - [X] Mario Hub (set 71360) - Pants
@@ -349,4 +355,4 @@ The product is licensed under **MIT License** to allow a easy and wide adoption 
 
 ## Thanks ...
 
-Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.
