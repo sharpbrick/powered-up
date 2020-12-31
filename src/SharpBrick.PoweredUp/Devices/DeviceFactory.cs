@@ -56,6 +56,8 @@ namespace SharpBrick.PoweredUp.Devices
                 DeviceType.DuploTrainBaseSpeaker => typeof(DuploTrainBaseSpeaker),
                 DeviceType.DuploTrainBaseColorSensor => typeof(DuploTrainBaseColorSensor),
                 DeviceType.DuploTrainBaseSpeedometer => typeof(DuploTrainBaseSpeedometer),
+                DeviceType.MoveHubInternalMotor => typeof(MoveHubInternalMotor),
+                DeviceType.MoveHubTiltSensor => typeof(MoveHubTiltSensor),
                 _ => null,
             };
 
@@ -88,6 +90,8 @@ namespace SharpBrick.PoweredUp.Devices
                 nameof(DuploTrainBaseSpeaker) => DeviceType.DuploTrainBaseSpeaker,
                 nameof(DuploTrainBaseColorSensor) => DeviceType.DuploTrainBaseColorSensor,
                 nameof(DuploTrainBaseSpeedometer) => DeviceType.DuploTrainBaseSpeedometer,
+                nameof(MoveHubInternalMotor) => DeviceType.MoveHubInternalMotor,
+                nameof(MoveHubTiltSensor) => DeviceType.MoveHubTiltSensor,
                 _ => DeviceType.Unknown,
             };
     }

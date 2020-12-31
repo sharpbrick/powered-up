@@ -16,8 +16,8 @@
         MotionSensor = 0x0023, // MOTION_SENSOR
         VisionSensor = 0x0025, // COLOR_DISTANCE_SENSOR
         MediumLinearMotor = 0x0026, // MEDIUM_LINEAR_MOTOR
-        InternalMotorWithTacho = 0x0027, // MOVE_HUB_MEDIUM_LINEAR_MOTOR
-        InternalTilt = 0x0028, // MOVE_HUB_TILT_SENSOR
+        MoveHubInternalMotor = 0x0027, // MOVE_HUB_MEDIUM_LINEAR_MOTOR
+        MoveHubTiltSensor = 0x0028, // MOVE_HUB_TILT_SENSOR
 
         DuploTrainBaseMotor = 0x0029, // UNSPECED, DUPLO_TRAIN_BASE_MOTOR
         DuploTrainBaseSpeaker = 0x002A, // UNSPECED, DUPLO_TRAIN_BASE_SPEAKER

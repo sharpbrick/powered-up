@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
+using Microsoft.Extensions.Logging;
 
 namespace SharpBrick.PoweredUp
 {
@@ -111,13 +112,22 @@ namespace SharpBrick.PoweredUp
             {
                 case HubAttachedIOForAttachedDeviceMessage attachedDeviceMessage:
                     port = Port(attachedDeviceMessage.PortId);
-
+                    if (port == null)
+                    {
+                        _logger?.LogInformation($"Hub sent notification of attached device with port id '{hubAttachedIO.PortId}' but hub type '{GetType().Name}' is not configured for this port");
+                        return;
+                    }
                     var device = _deviceFactory.CreateConnected(attachedDeviceMessage.IOTypeId, Protocol, attachedDeviceMessage.HubId, attachedDeviceMessage.PortId);
 
                     port.AttachDevice(device, attachedDeviceMessage.IOTypeId);
                     break;
                 case HubAttachedIOForDetachedDeviceMessage detachedDeviceMessage:
                     port = Port(detachedDeviceMessage.PortId);
+                    if (port == null)
+                    {
+                        _logger?.LogInformation($"Hub sent notification of detached device with port id '{hubAttachedIO.PortId}' but hub type '{GetType().Name}' is not configured for this port");
+                        return;
+                    }
 
                     port.DetachDevice();
 
@@ -127,10 +137,8 @@ namespace SharpBrick.PoweredUp
                     }
 
                     break;
-                    // case HubAttachedIOForAttachedVirtualDeviceMessage attachedVirtualDeviceMessage:
-                    //     OnHubAttachedVirtualIOMessage(attachedVirtualDeviceMessage);
 
-                    //     break;
+                // Note - HubAttachedIOForAttachedVirtualDeviceMessage is handled directly in OnHubChange not here
             }
         }
 

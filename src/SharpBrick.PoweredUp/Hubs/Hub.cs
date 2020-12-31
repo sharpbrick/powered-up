@@ -16,6 +16,7 @@ namespace SharpBrick.PoweredUp
         private readonly ILogger _logger;
         private readonly IDeviceFactory _deviceFactory;
         private readonly SystemType _knownSystemType;
+        private bool _connected = false;
 
         public ILegoWirelessProtocol Protocol { get; private set; }
         public byte HubId { get; private set; }
@@ -74,6 +75,7 @@ namespace SharpBrick.PoweredUp
             //TODO HubId = hubId;
 
             _logger?.LogDebug("Finished Querying Hub Properties");
+            _connected = true;
         }
 
         private void SetupOnHubChange()
@@ -98,6 +100,16 @@ namespace SharpBrick.PoweredUp
             if (message is HubPropertyMessage hubProperty && hubProperty.Operation == HubPropertyOperation.Update)
             {
                 OnHubPropertyMessage(hubProperty);
+            }
+            else if (message is HubAttachedIOForAttachedVirtualDeviceMessage attachedVirtualDeviceMessage)
+            {
+                if (!_connected)
+                {
+                    // Virtual IO messages are only handled from the hubs during connect phase
+                    // This is to allow notifications from hubs which have virtual ports built in (ie. MoveHub) when connecting
+                    // and ensure devices are only attached once when virtual ports are manually created after connection
+                    OnHubAttachedVirtualIOMessage(attachedVirtualDeviceMessage);
+                }
             }
             else if (message is HubAttachedIOMessage hubAttachedIO)
             {
