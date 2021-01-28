@@ -213,7 +213,7 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
 1. Install the [latest .NET (Core)](https://dotnet.microsoft.com/download) on your machine (e.g. .NET Core 3.1).
 2. Install the `poweredup` dotnet utility using the following instruction
    ````
-   dotnet tools install -g SharpBrick.PoweredUp.Cli
+   dotnet tool install -g SharpBrick.PoweredUp.Cli
    ````
 3. Start using the tool
    ````
