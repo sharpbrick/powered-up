@@ -19,21 +19,17 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             switch (informationType)
             {
                 case PortInformationType.ModeInfo:
-                    result = new PortInformationForModeInfoMessage()
-                    {
-                        PortId = portId,
-                        InformationType = informationType,
-
-                        // capabilities
-                        OutputCapability = (data[2] & 0x01) == 0x01, // seen from hub
-                        InputCapability = (data[2] & 0x02) == 0x02, // seen from hub
-                        LogicalCombinableCapability = (data[2] & 0x04) == 0x04,
-                        LogicalSynchronizableCapability = (data[2] & 0x08) == 0x08,
-
-                        TotalModeCount = data[3],
-                        InputModes = BitConverter.ToUInt16(data.Slice(4, 2)),
-                        OutputModes = BitConverter.ToUInt16(data.Slice(6, 2)),
-                    };
+                    result = new PortInformationForModeInfoMessage(
+                        portId,
+                        informationType,
+                        OutputCapability: (data[2] & 0x01) == 0x01, // seen from hub
+                        InputCapability: (data[2] & 0x02) == 0x02, // seen from hub
+                        LogicalCombinableCapability: (data[2] & 0x04) == 0x04,
+                        LogicalSynchronizableCapability: (data[2] & 0x08) == 0x08,
+                        TotalModeCount: data[3],
+                        InputModes: BitConverter.ToUInt16(data.Slice(4, 2)),
+                        OutputModes: BitConverter.ToUInt16(data.Slice(6, 2))
+                        );
                     break;
 
                 case PortInformationType.PossibleModeCombinations:
@@ -45,13 +41,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                         combinations[idx] = BitConverter.ToUInt16(data.Slice(2 + idx * 2, 2));
                     }
 
-                    result = new PortInformationForPossibleModeCombinationsMessage()
-                    {
-                        PortId = portId,
-                        InformationType = informationType,
-
-                        ModeCombinations = combinations,
-                    };
+                    result = new PortInformationForPossibleModeCombinationsMessage(
+                        portId,
+                        informationType,
+                        combinations
+                    );
                     break;
             }
 

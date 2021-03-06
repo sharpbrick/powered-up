@@ -68,12 +68,9 @@ namespace SharpBrick.PoweredUp
                 throw new InvalidOperationException("One of the devices does not support logical synchronization");
             }
 
-            var virtualPortAttachedMessage = await Protocol.SendMessageReceiveResultAsync<HubAttachedIOForAttachedVirtualDeviceMessage>(new VirtualPortSetupForConnectedMessage()
+            var virtualPortAttachedMessage = await Protocol.SendMessageReceiveResultAsync<HubAttachedIOForAttachedVirtualDeviceMessage>(new VirtualPortSetupForConnectedMessage(portId1, portId2)
             {
                 HubId = HubId,
-                SubCommand = VirtualPortSubCommand.Connected,
-                PortAId = portId1,
-                PortBId = portId2,
             }, msg => msg.PortAId == portId1 && msg.PortBId == portId2);
 
             var port = OnHubAttachedVirtualIOMessage(virtualPortAttachedMessage);
@@ -97,11 +94,10 @@ namespace SharpBrick.PoweredUp
                 throw new ArgumentException("Port not present or not virtual", nameof(virtualPortId));
             }
 
-            await Protocol.SendMessageAsync(new VirtualPortSetupForDisconnectedMessage()
+            await Protocol.SendMessageAsync(new VirtualPortSetupForDisconnectedMessage(virtualPortId)
             {
                 HubId = HubId,
-                SubCommand = VirtualPortSubCommand.Connected,
-                PortId = virtualPortId,
+                //SubCommand = VirtualPortSubCommand.Connected, // TODO: was Connected before C# 9 migration, but is now (correctly?) disconnected
             });
         }
 
@@ -138,7 +134,7 @@ namespace SharpBrick.PoweredUp
 
                     break;
 
-                // Note - HubAttachedIOForAttachedVirtualDeviceMessage is handled directly in OnHubChange not here
+                    // Note - HubAttachedIOForAttachedVirtualDeviceMessage is handled directly in OnHubChange not here
             }
         }
 

@@ -5,15 +5,9 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.5.2
 
-    public class HubPropertyMessage : LegoWirelessMessage
+    public record HubPropertyMessage(HubProperty Property, HubPropertyOperation Operation) : LegoWirelessMessage(MessageType.HubProperties);
+    public record HubPropertyMessage<TPayload>(HubProperty Property, HubPropertyOperation Operation, TPayload Payload) : HubPropertyMessage(Property, Operation)
     {
-        public HubProperty Property { get; set; }
-        public HubPropertyOperation Operation { get; set; }
-    }
-    public class HubPropertyMessage<TPayload> : HubPropertyMessage
-    {
-        public TPayload Payload { get; set; }
-
         public override string ToString()
             => this switch
             {

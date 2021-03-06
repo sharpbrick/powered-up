@@ -1,217 +1,227 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public abstract class PortOutputCommandMessage : LegoWirelessMessage
-    {
-        public PortOutputCommandMessage(PortOutputSubCommand subCommand)
-        {
-            SubCommand = subCommand;
-        }
-        public byte PortId { get; set; }
-        public PortOutputCommandStartupInformation StartupInformation { get; set; }
-        public PortOutputCommandCompletionInformation CompletionInformation { get; set; }
+    public abstract record PortOutputCommandMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            PortOutputSubCommand SubCommand
+        ) : LegoWirelessMessage(MessageType.PortOutputCommand);
 
-        public PortOutputSubCommand SubCommand { get; set; }
-    }
+    public record PortOutputCommandWriteDirectMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.WriteDirect);
 
-    public class PortOutputCommandWriteDirectMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandWriteDirectMessage()
-            : base(PortOutputSubCommand.WriteDirect)
-        { }
-    }
-    public class PortOutputCommandWriteDirectModeDataMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandWriteDirectModeDataMessage(byte modeIndex)
-            : base(PortOutputSubCommand.WriteDirectModeData)
-        {
-            ModeIndex = modeIndex;
-        }
+    public record PortOutputCommandWriteDirectModeDataMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            byte ModeIndex
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.WriteDirectModeData);
 
-        public byte ModeIndex { get; set; }
-    }
-    public class GenericWriteDirectModeDataMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public GenericWriteDirectModeDataMessage(byte modeIndex)
-            : base(modeIndex)
-        { }
-
-        public byte[] Data { get; set; }
-    }
+    public record GenericWriteDirectModeDataMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            byte ModeIndex,
+            byte[] Data
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, ModeIndex);
 
     // spec chapter: 3.27.1
-    public class PortOutputCommandStartPowerMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandStartPowerMessage() : base(0x00) { }
-        public sbyte Power { get; set; }
-    }
+    public record PortOutputCommandStartPowerMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            sbyte Power
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0x00);
 
     // spec chapter: 3.27.2
-    public class PortOutputCommandStartPower2Message : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartPower2Message() : base(PortOutputSubCommand.StartPower2) { }
-        public sbyte Power1 { get; set; }
-        public sbyte Power2 { get; set; }
-    }
+    public record PortOutputCommandStartPower2Message(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            sbyte Power1,
+            sbyte Power2
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartPower2);
 
     // spec chapter: 3.27.3
-    public class PortOutputCommandSetAccTimeMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandSetAccTimeMessage() : base(PortOutputSubCommand.SetAccTime) { }
-        public ushort Time { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandSetAccTimeMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            ushort Time,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.SetAccTime);
 
     // spec chapter: 3.27.4
-    public class PortOutputCommandSetDecTimeMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandSetDecTimeMessage() : base(PortOutputSubCommand.SetDecTime) { }
-        public ushort Time { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandSetDecTimeMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            ushort Time,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.SetDecTime);
 
     // spec chapter: 3.27.5
-    public class PortOutputCommandStartSpeedMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartSpeedMessage() : base(PortOutputSubCommand.StartSpeed) { }
-        public sbyte Speed { get; set; }
-        public byte MaxPower { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandStartSpeedMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            sbyte Speed,
+            byte MaxPower,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartSpeed);
 
     // spec chapter: 3.27.6
-    public class PortOutputCommandStartSpeed2Message : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartSpeed2Message() : base(PortOutputSubCommand.StartSpeed2) { }
-        public sbyte Speed1 { get; set; }
-        public sbyte Speed2 { get; set; }
-        public byte MaxPower { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandStartSpeed2Message(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            sbyte Speed1,
+            sbyte Speed2,
+            byte MaxPower,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartSpeed2);
 
     // spec chapter: 3.27.7
-    public class PortOutputCommandStartSpeedForTimeMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartSpeedForTimeMessage() : base(PortOutputSubCommand.StartSpeedForTime) { }
-        public ushort Time { get; set; }
-        public sbyte Speed { get; set; }
-        public byte MaxPower { get; set; }
-        public SpecialSpeed EndState { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandStartSpeedForTimeMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            ushort Time,
+            sbyte Speed,
+            byte MaxPower,
+            SpecialSpeed EndState,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartSpeedForTime);
 
     // spec chapter: 3.27.8
-    public class PortOutputCommandStartSpeedForTime2Message : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartSpeedForTime2Message() : base(PortOutputSubCommand.StartSpeedForTime2) { }
-        public ushort Time { get; set; }
-        public sbyte Speed1 { get; set; }
-        public sbyte Speed2 { get; set; }
-        public byte MaxPower { get; set; }
-        public SpecialSpeed EndState { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandStartSpeedForTime2Message(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            ushort Time,
+            sbyte Speed1,
+            sbyte Speed2,
+            byte MaxPower,
+            SpecialSpeed EndState,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartSpeedForTime2);
 
     // spec chapter: 3.27.9
-    public class PortOutputCommandStartSpeedForDegreesMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartSpeedForDegreesMessage() : base(PortOutputSubCommand.StartSpeedForDegrees) { }
-        public uint Degrees { get; set; }
-        public sbyte Speed { get; set; }
-        public byte MaxPower { get; set; }
-        public SpecialSpeed EndState { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandStartSpeedForDegreesMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            uint Degrees,
+            sbyte Speed,
+            byte MaxPower,
+            SpecialSpeed EndState,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartSpeedForDegrees);
 
     // spec chapter: 3.27.10
-    public class PortOutputCommandStartSpeedForDegrees2Message : PortOutputCommandMessage
-    {
-        public PortOutputCommandStartSpeedForDegrees2Message() : base(PortOutputSubCommand.StartSpeedForDegrees2) { }
-        public uint Degrees { get; set; }
-        public sbyte Speed1 { get; set; }
-        public sbyte Speed2 { get; set; }
-        public byte MaxPower { get; set; }
-        public SpecialSpeed EndState { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandStartSpeedForDegrees2Message(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            uint Degrees,
+            sbyte Speed1,
+            sbyte Speed2,
+            byte MaxPower,
+            SpecialSpeed EndState,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.StartSpeedForDegrees2);
 
     // spec chapter: 3.27.11
-    public class PortOutputCommandGotoAbsolutePositionMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandGotoAbsolutePositionMessage() : base(PortOutputSubCommand.GotoAbsolutePosition) { }
-        public int AbsolutePosition { get; set; } // UNSPECED: relative to what? (to the position of the motor start)
-        public sbyte Speed { get; set; }
-        public byte MaxPower { get; set; }
-        public SpecialSpeed EndState { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandGotoAbsolutePositionMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            int AbsolutePosition,
+            sbyte Speed,
+            byte MaxPower,
+            SpecialSpeed EndState,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.GotoAbsolutePosition);
     // spec chapter: 3.27.12
-    public class PortOutputCommandGotoAbsolutePosition2Message : PortOutputCommandMessage
-    {
-        public PortOutputCommandGotoAbsolutePosition2Message() : base(PortOutputSubCommand.GotoAbsolutePosition2) { }
-        public int AbsolutePosition1 { get; set; }
-        public int AbsolutePosition2 { get; set; }
-        public sbyte Speed { get; set; }
-        public byte MaxPower { get; set; }
-        public SpecialSpeed EndState { get; set; }
-        public SpeedProfiles Profile { get; set; }
-    }
+    public record PortOutputCommandGotoAbsolutePosition2Message(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            int AbsolutePosition1,
+            int AbsolutePosition2,
+            sbyte Speed,
+            byte MaxPower,
+            SpecialSpeed EndState,
+            SpeedProfiles Profile
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.GotoAbsolutePosition2);
 
     // spec chapter: 3.27.13
-    public class PortOutputCommandPresetEncoderMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandPresetEncoderMessage() : base(0xFF) { }//TODO find out mode
-        public int Position { get; set; }
-    }
+    public record PortOutputCommandPresetEncoderMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            int Position
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0xFF); //TODO find out mode
 
     // spec chapter: 3.27.14
-    public class PortOutputCommandPreset2EncoderMessage : PortOutputCommandMessage
-    {
-        public PortOutputCommandPreset2EncoderMessage() : base(PortOutputSubCommand.PresetEncoder2) { }
-        public int Position1 { get; set; }
-        public int Position2 { get; set; }
-    }
+    public record PortOutputCommandPreset2EncoderMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            int Position1,
+            int Position2
+        ) : PortOutputCommandMessage(PortId, StartupInformation, CompletionInformation, PortOutputSubCommand.PresetEncoder2);
 
     // spec chapter: 3.27.15
-    public class PortOutputCommandTiltImpactPresetMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandTiltImpactPresetMessage() : base(0x03) { }
-        public int PresetValue { get; set; }
-    }
+    public record PortOutputCommandTiltImpactPresetMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            int PresetValue
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0x03);
 
     // spec chapter: 3.27.16
-    public class PortOutputCommandTiltConfigOrientationMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandTiltConfigOrientationMessage() : base(0x05) { }
-        public TiltConfigOrientation Orientation { get; set; }
-    }
+    public record PortOutputCommandTiltConfigOrientationMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            TiltConfigOrientation Orientation
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0x05);
 
     // spec chapter: 3.27.17
-    public class PortOutputCommandTiltConfigImpactMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandTiltConfigImpactMessage() : base(0x06) { }
-        public sbyte ImpactThreshold { get; set; }
-        public sbyte BumpHoldoff { get; set; }
-    }
+    public record PortOutputCommandTiltConfigImpactMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            sbyte ImpactThreshold,
+            sbyte BumpHoldoff
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0x06);
 
     // spec chapter: 3.27.19
-    public class PortOutputCommandGenericZeroSetHardwareMessage : PortOutputCommandWriteDirectMessage
-    { }
+    public record PortOutputCommandGenericZeroSetHardwareMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation
+        ) : PortOutputCommandWriteDirectMessage(PortId, StartupInformation, CompletionInformation);
 
     // spec chapter: 3.27.20
-    public class PortOutputCommandSetRgbColorNoMessage : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandSetRgbColorNoMessage() : base(0x00) { }
-
-        public PoweredUpColor ColorNo { get; set; }
-    }
+    public record PortOutputCommandSetRgbColorNoMessage(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            PoweredUpColor ColorNo
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0x00);
 
     // spec chapter: 3.27.21
-    public class PortOutputCommandSetRgbColorNo2Message : PortOutputCommandWriteDirectModeDataMessage
-    {
-        public PortOutputCommandSetRgbColorNo2Message() : base(0x01) { }
-
-        public byte RedColor { get; set; }
-        public byte GreenColor { get; set; }
-        public byte BlueColor { get; set; }
-    }
+    public record PortOutputCommandSetRgbColorNo2Message(
+            byte PortId,
+            PortOutputCommandStartupInformation StartupInformation,
+            PortOutputCommandCompletionInformation CompletionInformation,
+            byte RedColor,
+            byte GreenColor,
+            byte BlueColor
+        ) : PortOutputCommandWriteDirectModeDataMessage(PortId, StartupInformation, CompletionInformation, 0x01);
 }

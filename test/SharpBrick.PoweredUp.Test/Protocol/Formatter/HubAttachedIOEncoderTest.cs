@@ -34,14 +34,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(new Version(expectedSwVersion), message.SoftwareRevision);
 
             // reverse test
-            var reverseMessage = new HubAttachedIOForAttachedDeviceMessage()
-            {
-                Event = HubAttachedIOEvent.AttachedIO,
-                IOTypeId = expectedType,
-                PortId = expectedPortId,
-                HardwareRevision = Version.Parse(expectedHwVersion),
-                SoftwareRevision = Version.Parse(expectedSwVersion),
-            };
+            var reverseMessage = new HubAttachedIOForAttachedDeviceMessage(expectedPortId, expectedType, Version.Parse(expectedHwVersion), Version.Parse(expectedSwVersion));
 
             // act
             var reverseData = MessageEncoder.Encode(reverseMessage, null);

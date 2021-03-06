@@ -11,7 +11,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             message.Length = length;
             message.HubId = hubId;
-            message.MessageType = (MessageType)messageType;
+
+            if (message.MessageType != (MessageType)messageType)
+            {
+                throw new InvalidOperationException("Message Type does not match between data and decoded message");
+            }
         }
 
         public static (ushort length, byte hubId, byte messageType, ushort headerLength) ParseCommonHeader(in Span<byte> data)

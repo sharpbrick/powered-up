@@ -65,13 +65,13 @@ namespace SharpBrick.PoweredUp
                 throw new InvalidOperationException("The protocol knowledge declares that this mode cannot be written to (IsOutput = false)");
             }
 
-            var response = await _protocol.SendPortOutputCommandAsync(new GenericWriteDirectModeDataMessage(_modeInfo.ModeIndex)
+            var response = await _protocol.SendPortOutputCommandAsync(new GenericWriteDirectModeDataMessage(
+                _modeInfo.PortId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                _modeInfo.ModeIndex,
+                data)
             {
                 HubId = _modeInfo.HubId,
-                PortId = _modeInfo.PortId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Data = data,
             });
 
             return response;
@@ -99,13 +99,9 @@ namespace SharpBrick.PoweredUp
                 throw new InvalidOperationException("The protocol knowledge declares that this mode cannot be read (IsInput = false)");
             }
 
-            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
+            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(_modeInfo.PortId, _modeInfo.ModeIndex, deltaInterval, enabled)
             {
                 HubId = _modeInfo.HubId,
-                PortId = _modeInfo.PortId,
-                Mode = _modeInfo.ModeIndex,
-                DeltaInterval = deltaInterval,
-                NotificationEnabled = enabled,
             });
         }
 

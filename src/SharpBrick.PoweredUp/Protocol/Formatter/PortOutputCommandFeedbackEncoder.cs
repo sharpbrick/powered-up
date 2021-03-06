@@ -27,10 +27,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 remainingSlice = remainingSlice.Slice(2);
             }
 
-            return new PortOutputCommandFeedbackMessage()
-            {
-                Feedbacks = result.ToArray(),
-            };
+            return new PortOutputCommandFeedbackMessage(result.ToArray());
         }
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)

@@ -36,12 +36,9 @@ namespace SharpBrick.PoweredUp.Protocol
         public async Task ConnectAsync(SystemType knownSystemType = default)
         {
             // sets initial system type to provided value. This alllows sensitive IPoweredUpDevice to provide the right GetStaticPortInfo (even on initial HubAttachedIO before a HubProperty<SystemType> can be queried).
-            await KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubPropertyMessage<SystemType>()
+            await KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubPropertyMessage<SystemType>(HubProperty.SystemTypeId, HubPropertyOperation.Update, knownSystemType)
             {
                 HubId = 0x00,
-                Operation = HubPropertyOperation.Update,
-                Property = HubProperty.SystemTypeId,
-                Payload = knownSystemType,
             }, Knowledge, _deviceFactory);
 
             await _kernel.ConnectAsync();

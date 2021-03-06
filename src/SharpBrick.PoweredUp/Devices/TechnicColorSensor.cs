@@ -61,13 +61,9 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
 
             await _lightMode.WriteDirectModeDataAsync(new byte[] { sector1, sector2, sector3 });
-            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
+            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(_portId, ModeIndexLight, 10000, false)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                Mode = ModeIndexLight,
-                DeltaInterval = 10000,
-                NotificationEnabled = false,
             });
         }
 

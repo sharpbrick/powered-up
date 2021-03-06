@@ -2,10 +2,8 @@ using System.Linq;
 
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortValueSingleMessage : LegoWirelessMessage
+    public record PortValueSingleMessage(PortValueData[] Data) : LegoWirelessMessage(MessageType.PortValueSingle)
     {
-        public PortValueData[] Data { get; set; }
-
         public static string FormatPortValueDataArray(byte hubId, in PortValueData[] data)
             => string.Join(";", data.Select(d => d switch
                 {

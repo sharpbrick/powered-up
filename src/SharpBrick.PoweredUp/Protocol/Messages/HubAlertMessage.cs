@@ -1,11 +1,5 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
     // spec chapter: 3.7.1
-    public class HubAlertMessage : LegoWirelessMessage
-    {
-        public HubAlert Alert { get; set; }
-        public HubAlertOperation Operation { get; set; }
-
-        public byte DownstreamPayload { get; set; }
-    }
+    public record HubAlertMessage(HubAlert Alert, HubAlertOperation Operation, byte DownstreamPayload = 0x00) : LegoWirelessMessage(MessageType.HubAlerts);
 }

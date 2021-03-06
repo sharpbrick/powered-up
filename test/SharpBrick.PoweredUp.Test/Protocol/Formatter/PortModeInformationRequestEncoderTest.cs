@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void PortModeInformationRequestEncoder_Encode(byte portId, byte mode, PortModeInformationType informationType, string expectedData)
         {
             // arrange
-            var message = new PortModeInformationRequestMessage() { PortId = portId, Mode = mode, InformationType = informationType };
+            var message = new PortModeInformationRequestMessage(portId, mode, informationType);
 
             // act
             var data = MessageEncoder.Encode(message, null);

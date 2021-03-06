@@ -31,7 +31,7 @@ namespace SharpBrick.PoweredUp.Cli
 
             await discoverPorts.ExecuteAsync(portId);
 
-            await protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage() { HubId = 0, Action = HubAction.SwitchOffHub }, result => result.Action == HubAction.HubWillSwitchOff);
+            await protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage(HubAction.SwitchOffHub) { HubId = 0 }, result => result.Action == HubAction.HubWillSwitchOff);
 
             Console.WriteLine(string.Empty);
 
@@ -63,32 +63,21 @@ namespace SharpBrick.PoweredUp.Cli
 
             return MessageEncoder.Encode(portInfo switch
             {
-                { IsVirtual: false } => new HubAttachedIOForAttachedDeviceMessage()
+                { IsVirtual: false } => new HubAttachedIOForAttachedDeviceMessage(portId, portInfo.IOTypeId, portInfo.HardwareRevision, portInfo.SoftwareRevision)
                 {
                     HubId = 0,
-                    PortId = portId,
-                    IOTypeId = portInfo.IOTypeId,
-                    HardwareRevision = portInfo.HardwareRevision,
-                    SoftwareRevision = portInfo.SoftwareRevision,
                 },
-                { IsVirtual: true } => new HubAttachedIOForAttachedVirtualDeviceMessage()
+                { IsVirtual: true } => new HubAttachedIOForAttachedVirtualDeviceMessage(portId, portInfo.IOTypeId, portInfo.PortAId, portInfo.PortBId)
                 {
                     HubId = 0,
-                    PortId = portId,
-                    IOTypeId = portInfo.IOTypeId,
-                    PortAId = portInfo.PortAId,
-                    PortBId = portInfo.PortBId,
                 }
             }, protocol.Knowledge);
         }
 
         private byte[] CreateSystemTypeHeader(SystemType knownSystemType)
-            => MessageEncoder.Encode(new HubPropertyMessage<SystemType>()
+            => MessageEncoder.Encode(new HubPropertyMessage<SystemType>(HubProperty.SystemTypeId, HubPropertyOperation.Update, knownSystemType)
             {
                 HubId = 0,
-                Property = HubProperty.SystemTypeId,
-                Operation = HubPropertyOperation.Update,
-                Payload = knownSystemType,
             }, protocol.Knowledge);
     }
 }

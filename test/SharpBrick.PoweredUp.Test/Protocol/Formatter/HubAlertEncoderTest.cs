@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAlertEncoder_Encode(HubAlert alert, HubAlertOperation operation, byte payload, string expectedData)
         {
             // arrange
-            var message = new HubAlertMessage() { Alert = alert, Operation = operation, DownstreamPayload = payload };
+            var message = new HubAlertMessage(alert, operation, payload);
 
             // act
             var data = MessageEncoder.Encode(message, null);

@@ -13,15 +13,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             ushort bitMask = BitConverter.ToUInt16(data.Slice(2, 2));
 
-            return new PortInputFormatCombinedModeMessage()
-            {
-                PortId = data[0],
-                UsedCombinationIndex = (byte)(data[1] & 0b0000_0111),
-                MultiUpdateEnabled = (byte)(data[1] & 0b1000_0000) > 0,
-                ConfiguredModeDataSetIndex = Enumerable.Range(0, 16).Select(pos =>
+            return new PortInputFormatCombinedModeMessage(
+                PortId: data[0],
+                UsedCombinationIndex: (byte)(data[1] & 0b0000_0111),
+                MultiUpdateEnabled: (byte)(data[1] & 0b1000_0000) > 0,
+                ConfiguredModeDataSetIndex: Enumerable.Range(0, 16).Select(pos =>
                     (bitMask & (0x01 << pos)) > 0 ? pos : -1
-                ).Where(mdi => mdi >= 0).ToArray(),
-            };
+                ).Where(mdi => mdi >= 0).ToArray()
+            );
         }
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)

@@ -14,87 +14,52 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var portId = data[0];
             var mode = data[1];
             var informationType = (PortModeInformationType)data[2];
-            var innerData = data.Slice(3);
+            var payload = data.Slice(3);
 
             var message = informationType switch
             {
-                PortModeInformationType.Name => DecodeName(innerData),
-                PortModeInformationType.Raw => DecodeRaw(innerData),
-                PortModeInformationType.Pct => DecodePct(innerData),
-                PortModeInformationType.SI => DecodeSI(innerData),
-                PortModeInformationType.Symbol => DecodeSymbol(innerData),
-                PortModeInformationType.Mapping => DecodeMapping(innerData),
+                PortModeInformationType.Name => new PortModeInformationForNameMessage(portId, mode, Encoding.ASCII.GetString(payload.Slice(0, payload.IndexOf<byte>(0x00)))),
+                PortModeInformationType.Raw => new PortModeInformationForRawMessage(portId, mode, RawMin: BitConverter.ToSingle(payload.Slice(0, 4)), RawMax: BitConverter.ToSingle(payload.Slice(4, 4))),
+                PortModeInformationType.Pct => new PortModeInformationForPctMessage(portId, mode, PctMin: BitConverter.ToSingle(payload.Slice(0, 4)), PctMax: BitConverter.ToSingle(payload.Slice(4, 4))),
+                PortModeInformationType.SI => new PortModeInformationForSIMessage(portId, mode, SIMin: BitConverter.ToSingle(payload.Slice(0, 4)), SIMax: BitConverter.ToSingle(payload.Slice(4, 4))),
+                PortModeInformationType.Symbol => new PortModeInformationForSymbolMessage(portId, mode, Symbol: Encoding.ASCII.GetString(payload.Slice(0, payload.IndexOf<byte>(0x00)))),
+                PortModeInformationType.Mapping => DecodeMapping(portId, mode, payload),
                 PortModeInformationType.InternalUse => throw new NotImplementedException(),
                 PortModeInformationType.MotorBias => throw new NotImplementedException(),
                 PortModeInformationType.CapabilityBits => throw new NotImplementedException(),
-                PortModeInformationType.ValueFormat => DecodeValueFormat(innerData),
+                PortModeInformationType.ValueFormat => DecodeValueFormat(portId, mode, payload),
                 _ => throw new NotImplementedException(),
             };
-
-            message.PortId = portId;
-            message.Mode = mode;
-            message.InformationType = informationType;
 
             return message;
         }
 
-        private PortModeInformationMessage DecodeName(in Span<byte> data)
-            => new PortModeInformationForNameMessage()
-            {
-                Name = Encoding.ASCII.GetString(data.Slice(0, data.IndexOf<byte>(0x00))),
-            };
+        private PortModeInformationMessage DecodeMapping(byte portId, byte mode, in Span<byte> data)
+            => new PortModeInformationForMappingMessage(
+                portId,
+                mode,
+                InputSupportsNull: (data[0] & 0b1000_0000) > 0,
+                InputSupportFunctionalMapping20: (data[0] & 0b0100_0000) > 0,
+                InputAbsolute: (data[0] & 0b0001_0000) > 0,
+                InputRelative: (data[0] & 0b0000_1000) > 0,
+                InputDiscrete: (data[0] & 0b0000_0100) > 0,
 
-        private PortModeInformationMessage DecodeRaw(in Span<byte> data)
-            => new PortModeInformationForRawMessage()
-            {
-                RawMin = BitConverter.ToSingle(data.Slice(0, 4)),
-                RawMax = BitConverter.ToSingle(data.Slice(4, 4)),
-            };
+                OutputSupportsNull: (data[1] & 0b1000_0000) > 0,
+                OutputSupportFunctionalMapping20: (data[1] & 0b0100_0000) > 0,
+                OutputAbsolute: (data[1] & 0b0001_0000) > 0,
+                OutputRelative: (data[1] & 0b0000_1000) > 0,
+                OutputDiscrete: (data[1] & 0b0000_0100) > 0
+            );
 
-        private PortModeInformationMessage DecodePct(in Span<byte> data)
-            => new PortModeInformationForPctMessage()
-            {
-                PctMin = BitConverter.ToSingle(data.Slice(0, 4)),
-                PctMax = BitConverter.ToSingle(data.Slice(4, 4)),
-            };
-
-        private PortModeInformationMessage DecodeSI(in Span<byte> data)
-            => new PortModeInformationForSIMessage()
-            {
-                SIMin = BitConverter.ToSingle(data.Slice(0, 4)),
-                SIMax = BitConverter.ToSingle(data.Slice(4, 4)),
-            };
-
-        private PortModeInformationMessage DecodeSymbol(in Span<byte> data)
-            => new PortModeInformationForSymbolMessage()
-            {
-                Symbol = Encoding.ASCII.GetString(data.Slice(0, data.IndexOf<byte>(0x00))),
-            };
-
-        private PortModeInformationMessage DecodeMapping(in Span<byte> data)
-            => new PortModeInformationForMappingMessage()
-            {
-                InputSupportsNull = (data[0] & 0b1000_0000) > 0,
-                InputSupportFunctionalMapping20 = (data[0] & 0b0100_0000) > 0,
-                InputAbsolute = (data[0] & 0b0001_0000) > 0,
-                InputRelative = (data[0] & 0b0000_1000) > 0,
-                InputDiscrete = (data[0] & 0b0000_0100) > 0,
-
-                OutputSupportsNull = (data[1] & 0b1000_0000) > 0,
-                OutputSupportFunctionalMapping20 = (data[1] & 0b0100_0000) > 0,
-                OutputAbsolute = (data[1] & 0b0001_0000) > 0,
-                OutputRelative = (data[1] & 0b0000_1000) > 0,
-                OutputDiscrete = (data[1] & 0b0000_0100) > 0,
-            };
-
-        private PortModeInformationMessage DecodeValueFormat(in Span<byte> data)
-            => new PortModeInformationForValueFormatMessage()
-            {
-                NumberOfDatasets = data[0],
-                DatasetType = (PortModeInformationDataType)data[1],
-                TotalFigures = data[2],
-                Decimals = data[3],
-            };
+        private PortModeInformationMessage DecodeValueFormat(byte portId, byte mode, in Span<byte> data)
+            => new PortModeInformationForValueFormatMessage(
+                portId,
+                mode,
+                NumberOfDatasets: data[0],
+                DatasetType: (PortModeInformationDataType)data[1],
+                TotalFigures: data[2],
+                Decimals: data[3]
+            );
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
             => throw new NotImplementedException();

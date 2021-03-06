@@ -1,18 +1,8 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class VirtualPortSetupMessage : LegoWirelessMessage
-    {
-        public VirtualPortSubCommand SubCommand { get; set; }
-    }
+    public record VirtualPortSetupMessage(VirtualPortSubCommand SubCommand) : LegoWirelessMessage(MessageType.VirtualPortSetup);
 
-    public class VirtualPortSetupForDisconnectedMessage : VirtualPortSetupMessage
-    {
-        public byte PortId { get; set; }
-    }
+    public record VirtualPortSetupForDisconnectedMessage(byte PortId) : VirtualPortSetupMessage(VirtualPortSubCommand.Disconnected);
 
-    public class VirtualPortSetupForConnectedMessage : VirtualPortSetupMessage
-    {
-        public byte PortAId { get; set; }
-        public byte PortBId { get; set; }
-    }
+    public record VirtualPortSetupForConnectedMessage(byte PortAId, byte PortBId) : VirtualPortSetupMessage(VirtualPortSubCommand.Connected);
 }

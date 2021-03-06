@@ -61,10 +61,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 remainingSlice = remainingSlice.Slice(lengthOfDataType);
             }
 
-            return new PortValueCombinedModeMessage()
-            {
-                PortId = port,
-                Data = influencedModes
+            return new PortValueCombinedModeMessage(
+                port,
+                influencedModes
                     .Select(mode =>
                     {
                         var value = PortValueSingleEncoder.CreatPortValueData(mode, dataBuffers[mode.ModeIndex]);
@@ -75,8 +74,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                         return value;
                     })
-                    .ToArray(),
-            };
+                    .ToArray()
+            );
         }
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)

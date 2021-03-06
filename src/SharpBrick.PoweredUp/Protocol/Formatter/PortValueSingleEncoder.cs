@@ -47,10 +47,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 remainingSlice = remainingSlice.Slice(1 + lengthOfDataType * modeInfo.NumberOfDatasets);
             }
 
-            return new PortValueSingleMessage()
-            {
-                Data = result.ToArray(),
-            };
+            return new PortValueSingleMessage(result.ToArray());
         }
 
         internal static int GetLengthOfDataType(PortModeInfo modeInfo)

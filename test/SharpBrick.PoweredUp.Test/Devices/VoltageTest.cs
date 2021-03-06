@@ -19,13 +19,9 @@ namespace SharpBrick.PoweredUp
             var (protocol, mock) = CreateProtocolAndMock(SystemType.LegoTechnic_MediumHub);
 
             // announce voltage device in protocol
-            await mock.WriteUpstreamAsync(new HubAttachedIOForAttachedDeviceMessage()
+            await mock.WriteUpstreamAsync(new HubAttachedIOForAttachedDeviceMessage(0x20, DeviceType.Voltage, Version.Parse("1.0.0.0"), Version.Parse("1.0.0.0"))
             {
                 HubId = 0,
-                PortId = 0x20,
-                IOTypeId = DeviceType.Voltage,
-                HardwareRevision = Version.Parse("1.0.0.0"),
-                SoftwareRevision = Version.Parse("1.0.0.0"),
             });
 
             //await mock.WriteUpstreamAsync("0F-00-04-20-01-14-00-00-00-00-10-00-00-00-10"); 
@@ -51,12 +47,9 @@ namespace SharpBrick.PoweredUp
             // switch to other mode
             await voltageDevice.SetupNotificationAsync(voltageDevice.ModeIndexVoltageS, true, 1);
             // .. and device confirms it
-            await mock.WriteUpstreamAsync(new PortInputFormatSingleMessage()
+            await mock.WriteUpstreamAsync(new PortInputFormatSingleMessage(0x20, 1, 0, true)
             {
                 HubId = 0,
-                PortId = 0x20,
-                ModeIndex = 1,
-                NotificationEnabled = true,
             });
 
             // act

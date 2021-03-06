@@ -20,12 +20,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         }
 
         public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
-            => new PortInputFormatSingleMessage()
-            {
-                PortId = data[0],
-                ModeIndex = data[1],
-                DeltaInterval = BitConverter.ToUInt32(data.Slice(2, 4)),
-                NotificationEnabled = (data[6] == 0x01),
-            };
+            => new PortInputFormatSingleMessage(
+                PortId: data[0],
+                ModeIndex: data[1],
+                DeltaInterval: BitConverter.ToUInt32(data.Slice(2, 4)),
+                NotificationEnabled: (data[6] == 0x01)
+            );
     }
 }

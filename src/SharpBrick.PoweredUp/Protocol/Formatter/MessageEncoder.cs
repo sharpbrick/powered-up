@@ -87,13 +87,17 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                 message.Length = length;
                 message.HubId = hubId;
-                message.MessageType = (MessageType)messageType;
+
+                if (message.MessageType != (MessageType)messageType)
+                {
+                    throw new InvalidOperationException("type in data does not match message type");
+                }
 
                 result = message;
             }
             else
             {
-                result = new UnknownMessage() { Data = data.ToArray() };
+                result = new UnknownMessage(messageType, data.ToArray());
             }
 
             return result;

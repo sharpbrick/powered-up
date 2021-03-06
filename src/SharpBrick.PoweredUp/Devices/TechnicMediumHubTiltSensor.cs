@@ -49,14 +49,14 @@ namespace SharpBrick.PoweredUp
                 throw new ArgumentOutOfRangeException("PresetValue has to be between 0 and int.MaxValue", nameof(presetValue));
             }
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltImpactPresetMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltImpactPresetMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                presetValue
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
                 ModeIndex = ModeIndexImpacts,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                PresetValue = presetValue,
             });
 
             return response;
@@ -82,15 +82,15 @@ namespace SharpBrick.PoweredUp
                 throw new ArgumentOutOfRangeException("Hold off has to be between 10 and 1270 ms (in steps of 10ms)", nameof(bumpHoldoffInMs));
             }
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigImpactMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigImpactMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                impactThreshold,
+                (sbyte)((float)bumpHoldoffInMs / 10)
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
                 ModeIndex = ModeIndexConfig,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                ImpactThreshold = impactThreshold,
-                BumpHoldoff = (sbyte)((float)bumpHoldoffInMs / 10),
             });
 
             return response;
@@ -107,14 +107,13 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigOrientationMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigOrientationMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                orientation)
             {
                 HubId = _hubId,
-                PortId = _portId,
                 ModeIndex = ModeIndexConfig, // TODO ???
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Orientation = orientation
             });
 
             return response;

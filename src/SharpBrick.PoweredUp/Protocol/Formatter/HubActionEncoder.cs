@@ -9,7 +9,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => 1;
 
         public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
-            => new HubActionMessage() { Action = (HubAction)data[0] };
+            => new HubActionMessage((HubAction)data[0]);
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
         {

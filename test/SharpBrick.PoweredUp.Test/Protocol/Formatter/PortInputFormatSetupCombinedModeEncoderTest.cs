@@ -15,11 +15,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void PortInputFormatSetupCombinedModeEncoder_Encode_SimpleCommands(string expectedDataAsString, byte portId, PortInputFormatSetupCombinedSubCommand subCommand)
         {
             // arrange
-            var message = new PortInputFormatSetupCombinedModeMessage()
-            {
-                PortId = portId,
-                SubCommand = subCommand
-            };
+            var message = new PortInputFormatSetupCombinedModeMessage(portId, subCommand);
 
             // act
             var data = MessageEncoder.Encode(message, null);
@@ -33,16 +29,13 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void PortInputFormatSetupCombinedModeEncoder_Encode_ModeDataSetCommands(string expectedDataAsString, byte portId, PortInputFormatSetupCombinedSubCommand subCommand, byte[] modeDataSets)
         {
             // arrange
-            var message = new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
-            {
-                PortId = portId,
-                SubCommand = subCommand,
-                ModeDataSets = modeDataSets.Select(b => new PortInputFormatSetupCombinedModeModeDataSet()
+            var message = new PortInputFormatSetupCombinedModeForSetModeDataSetMessage(portId, 0,
+                modeDataSets.Select(b => new PortInputFormatSetupCombinedModeModeDataSet()
                 {
                     Mode = (byte)((b & 0xF0) >> 4),
                     DataSet = (byte)(b & 0x0F),
-                }).ToArray(),
-            };
+                }).ToArray()
+            );
 
             // act
             var data = MessageEncoder.Encode(message, null);

@@ -188,21 +188,28 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
             {
                 foreach (var message in device.GetStaticPortInfoMessages(hardwareRevision, softwareRevision, hub.SystemType).Select(b => MessageEncoder.Decode(b, null)))
                 {
-                    switch (message)
+                    var messageToProcess = message;
+                    switch (messageToProcess)
                     {
                         case PortModeInformationMessage pmim:
-                            pmim.HubId = port.HubId;
-                            pmim.PortId = port.PortId;
+                            messageToProcess = pmim with
+                            {
+                                HubId = port.HubId,
+                                PortId = port.PortId,
+                            };
                             break;
                         case PortInformationMessage pim:
-                            pim.HubId = port.HubId;
-                            pim.PortId = port.PortId;
+                            messageToProcess = pim with
+                            {
+                                HubId = port.HubId,
+                                PortId = port.PortId,
+                            };
                             break;
                     }
 
-                    ApplyStaticProtocolKnowledge(message, knowledge);
+                    ApplyStaticProtocolKnowledge(messageToProcess, knowledge);
 
-                    if (message is PortModeInformationMessage pmim2 && pmim2.InformationType == PortModeInformationType.Name)
+                    if (messageToProcess is PortModeInformationMessage pmim2 && pmim2.InformationType == PortModeInformationType.Name)
                     {
                         device.ExtendPortMode(knowledge.PortMode(pmim2.HubId, pmim2.PortId, pmim2.Mode));
                     }
