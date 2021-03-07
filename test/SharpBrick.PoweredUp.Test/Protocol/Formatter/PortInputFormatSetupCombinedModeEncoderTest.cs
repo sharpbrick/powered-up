@@ -30,11 +30,10 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             // arrange
             var message = new PortInputFormatSetupCombinedModeForSetModeDataSetMessage(portId, 0,
-                modeDataSets.Select(b => new PortInputFormatSetupCombinedModeModeDataSet()
-                {
-                    Mode = (byte)((b & 0xF0) >> 4),
-                    DataSet = (byte)(b & 0x0F),
-                }).ToArray()
+                modeDataSets.Select(b => new PortInputFormatSetupCombinedModeModeDataSet(
+                    Mode: (byte)((b & 0xF0) >> 4),
+                    DataSet: (byte)(b & 0x0F)
+                )).ToArray()
             );
 
             // act

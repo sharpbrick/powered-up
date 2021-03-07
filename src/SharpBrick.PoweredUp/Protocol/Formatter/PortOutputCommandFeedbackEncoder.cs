@@ -17,11 +17,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             while (remainingSlice.Length >= 2)
             {
-                var feedback = new PortOutputCommandFeedback()
-                {
-                    PortId = remainingSlice[0],
-                    Feedback = (PortFeedback)remainingSlice[1],
-                };
+                var feedback = new PortOutputCommandFeedback(remainingSlice[0], (PortFeedback)remainingSlice[1]);
 
                 result.Add(feedback);
                 remainingSlice = remainingSlice.Slice(2);

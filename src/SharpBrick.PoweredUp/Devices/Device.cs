@@ -140,11 +140,7 @@ namespace SharpBrick.PoweredUp
                         .Select(m => _protocol.Knowledge.PortMode(_hubId, _portId, m))
                         .SelectMany(mode => Enumerable
                             .Range(0, mode.NumberOfDatasets)
-                            .Select(dataSetPosition => new PortInputFormatSetupCombinedModeModeDataSet()
-                            {
-                                Mode = mode.ModeIndex,
-                                DataSet = (byte)dataSetPosition,
-                            }))
+                            .Select(dataSetPosition => new PortInputFormatSetupCombinedModeModeDataSet(mode.ModeIndex, (byte)dataSetPosition)))
                         .ToArray() // manage DataSet for device which has (A) multiple modes and (B) returns for a mode more than one data set (e.g. R, G, B for color).
                 )
                 {

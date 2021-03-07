@@ -39,10 +39,6 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
                 var value = PortValueSingleEncoder.CreatPortValueData(modeInfo, dataSlice);
 
-                value.PortId = port;
-                value.DataType = modeInfo.DatasetType;
-                value.ModeIndex = mode;
-
                 result.Add(value);
                 remainingSlice = remainingSlice.Slice(1 + lengthOfDataType * modeInfo.NumberOfDatasets);
             }
@@ -82,12 +78,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 true => new sbyte[rawValues.Length],
             };
 
-            return new PortValueData<sbyte>()
-            {
-                InputValues = rawValues,
-                SIInputValues = siValues,
-                PctInputValues = pctValues,
-            };
+            return new PortValueData<sbyte>(
+                PortId: modeInfo.PortId,
+                ModeIndex: modeInfo.ModeIndex,
+                DataType: modeInfo.DatasetType,
+                InputValues: rawValues,
+                SIInputValues: siValues,
+                PctInputValues: pctValues
+            );
         }
 
         internal static PortValueData<short> CreatePortValueDataInt16(PortModeInfo modeInfo, in Span<byte> dataSlice)
@@ -101,12 +99,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 true => new short[rawValues.Length],
             };
 
-            return new PortValueData<short>()
-            {
-                InputValues = rawValues,
-                SIInputValues = siValues,
-                PctInputValues = pctValues,
-            };
+            return new PortValueData<short>(
+                PortId: modeInfo.PortId,
+                ModeIndex: modeInfo.ModeIndex,
+                DataType: modeInfo.DatasetType,
+                InputValues: rawValues,
+                SIInputValues: siValues,
+                PctInputValues: pctValues
+            );
         }
 
         internal static PortValueData<int> CreatePortValueDataInt32(PortModeInfo modeInfo, in Span<byte> dataSlice)
@@ -126,12 +126,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt32(f)).ToArray(),
             };
 
-            return new PortValueData<int>()
-            {
-                InputValues = rawValues,
-                SIInputValues = siValues,
-                PctInputValues = pctValues,
-            };
+            return new PortValueData<int>(
+                PortId: modeInfo.PortId,
+                ModeIndex: modeInfo.ModeIndex,
+                DataType: modeInfo.DatasetType,
+                InputValues: rawValues,
+                SIInputValues: siValues,
+                PctInputValues: pctValues
+            );
         }
 
         internal static PortValueData<float> CreatePortValueDataSingle(PortModeInfo modeInfo, in Span<byte> dataSlice)
@@ -145,12 +147,14 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 true => new float[rawValues.Length],
             };
 
-            return new PortValueData<float>()
-            {
-                InputValues = rawValues,
-                SIInputValues = siValues,
-                PctInputValues = pctValues,
-            };
+            return new PortValueData<float>(
+                PortId: modeInfo.PortId,
+                ModeIndex: modeInfo.ModeIndex,
+                DataType: modeInfo.DatasetType,
+                InputValues: rawValues,
+                SIInputValues: siValues,
+                PctInputValues: pctValues
+            );
         }
 
         internal static float Scale(float value, float rawMin, float rawMax, float min, float max)

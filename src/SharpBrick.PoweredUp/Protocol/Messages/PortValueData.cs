@@ -1,15 +1,6 @@
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortValueData
-    {
-        public byte PortId { get; set; }
-        public byte ModeIndex { get; set; }
-        public PortModeInformationDataType DataType { get; set; }
-    }
-    public class PortValueData<TPayload> : PortValueData
-    {
-        public TPayload[] InputValues { get; set; }
-        public TPayload[] SIInputValues { get; set; }
-        public TPayload[] PctInputValues { get; set; }
-    }
+    public record PortValueData(byte PortId, byte ModeIndex, PortModeInformationDataType DataType);
+    public record PortValueData<TPayload>(byte PortId, byte ModeIndex, PortModeInformationDataType DataType, TPayload[] InputValues, TPayload[] SIInputValues, TPayload[] PctInputValues)
+        : PortValueData(PortId, ModeIndex, DataType);
 }

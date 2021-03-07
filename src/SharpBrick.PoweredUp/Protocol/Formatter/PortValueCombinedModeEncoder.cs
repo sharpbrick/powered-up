@@ -64,16 +64,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             return new PortValueCombinedModeMessage(
                 port,
                 influencedModes
-                    .Select(mode =>
-                    {
-                        var value = PortValueSingleEncoder.CreatPortValueData(mode, dataBuffers[mode.ModeIndex]);
-
-                        value.PortId = mode.PortId;
-                        value.ModeIndex = mode.ModeIndex;
-                        value.DataType = mode.DatasetType;
-
-                        return value;
-                    })
+                    .Select(mode => PortValueSingleEncoder.CreatPortValueData(mode, dataBuffers[mode.ModeIndex]))
                     .ToArray()
             );
         }
