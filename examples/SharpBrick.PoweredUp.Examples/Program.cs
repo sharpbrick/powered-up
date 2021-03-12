@@ -49,10 +49,14 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleMoveHubInternalTachoMotorControl();
             //example = new Example.ExampleMoveHubExternalMediumLinearMotorControl();
             //example = new Example.ExampleMoveHubColors();
-            example = new Example.ExampleMoveHubTiltSensor();
+            //example = new Example.ExampleMoveHubTiltSensor();
+            example = new ExampleTwoHubsMotorControl();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
-            await example.InitHostAndDiscoverAsync(enableTrace);
+            // this uses the WinRT-bluetooth-implementation by default
+            //await example.InitHostAndDiscoverAsync(enableTrace);
+            //for using BlueGiga-Bluetoothadapter:
+            await example.InitHostAndDiscoverAsync(enableTrace, BluetoothImplementation.BlueGiga, new BlueGigaBLEOptions("COM4", true));
 
             if (example.SelectedHub != null)
             {

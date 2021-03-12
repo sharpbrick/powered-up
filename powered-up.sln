@@ -1,23 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{62C31C3D-8ACF-4ED3-A3D8-225536F3AC6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp", "src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj", "{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp", "src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj", "{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{39B30145-497F-4AEB-A014-BBF27DA0651A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.Test", "test\SharpBrick.PoweredUp.Test\SharpBrick.PoweredUp.Test.csproj", "{99DD765B-CEF4-49CA-B613-A44805C63D6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Test", "test\SharpBrick.PoweredUp.Test\SharpBrick.PoweredUp.Test.csproj", "{99DD765B-CEF4-49CA-B613-A44805C63D6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.WinRT", "src\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj", "{B43B306D-A1AE-40AD-B912-D15DBDB83BAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.WinRT", "src\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj", "{B43B306D-A1AE-40AD-B912-D15DBDB83BAA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{F4D84196-5E85-41FE-9C39-38BD8F78E84D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.Examples", "examples\SharpBrick.PoweredUp.Examples\SharpBrick.PoweredUp.Examples.csproj", "{D82C23F2-86B4-4847-B2BD-7F194279FD43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Examples", "examples\SharpBrick.PoweredUp.Examples\SharpBrick.PoweredUp.Examples.csproj", "{D82C23F2-86B4-4847-B2BD-7F194279FD43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.Cli", "src\SharpBrick.PoweredUp.Cli\SharpBrick.PoweredUp.Cli.csproj", "{E2D7D98D-9F20-4761-B507-D379A530E77D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Cli", "src\SharpBrick.PoweredUp.Cli\SharpBrick.PoweredUp.Cli.csproj", "{E2D7D98D-9F20-4761-B507-D379A530E77D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.BlueGigaBLE", "src\SharpBrick.PoweredUp.BlueGigaBLE\SharpBrick.PoweredUp.BlueGigaBLE.csproj", "{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -92,6 +91,21 @@ Global
 		{E2D7D98D-9F20-4761-B507-D379A530E77D}.Release|x64.Build.0 = Release|Any CPU
 		{E2D7D98D-9F20-4761-B507-D379A530E77D}.Release|x86.ActiveCfg = Release|Any CPU
 		{E2D7D98D-9F20-4761-B507-D379A530E77D}.Release|x86.Build.0 = Release|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Debug|x64.Build.0 = Debug|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Debug|x86.Build.0 = Debug|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Release|x64.Build.0 = Release|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5A2B0183-09CE-46BD-A9F4-7C8F1E809B67} = {62C31C3D-8ACF-4ED3-A3D8-225536F3AC6D}
@@ -99,5 +113,9 @@ Global
 		{B43B306D-A1AE-40AD-B912-D15DBDB83BAA} = {62C31C3D-8ACF-4ED3-A3D8-225536F3AC6D}
 		{D82C23F2-86B4-4847-B2BD-7F194279FD43} = {F4D84196-5E85-41FE-9C39-38BD8F78E84D}
 		{E2D7D98D-9F20-4761-B507-D379A530E77D} = {62C31C3D-8ACF-4ED3-A3D8-225536F3AC6D}
+		{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98} = {62C31C3D-8ACF-4ED3-A3D8-225536F3AC6D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA775AF7-CFE1-499E-96A9-A24A0A855E3F}
 	EndGlobalSection
 EndGlobal

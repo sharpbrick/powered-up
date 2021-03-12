@@ -222,8 +222,14 @@ namespace SharpBrick.PoweredUp.Cli
                 .AddMockBluetooth()
                 .BuildServiceProvider();
         private static IServiceProvider CreateServiceProvider(bool enableTrace)
-            => CreateServiceProviderInternal(enableTrace)
-                .AddWinRTBluetooth()
+            => CreateServiceProviderInternal(enableTrace) 
+                //.AddWinRTBluetooth()
+                .AddBlueGigaBLEBluetooth(options =>
+                {
+                    options.COMPortName = "COM4";
+                    //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
+                    options.TraceDebug = false;
+                })
                 .BuildServiceProvider();
 
         public static async Task AddTraceWriterAsync(IServiceProvider serviceProvider, bool enableTrace)

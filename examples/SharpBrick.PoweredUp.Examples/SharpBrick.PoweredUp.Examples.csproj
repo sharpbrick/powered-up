@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.BlueGigaBLE\SharpBrick.PoweredUp.BlueGigaBLE.csproj" />
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj" />
   </ItemGroup>
