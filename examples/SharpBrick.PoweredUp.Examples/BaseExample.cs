@@ -22,11 +22,14 @@ namespace Example
         {
             serviceCollection
                 .AddPoweredUp();
+                
+
+                
         }
 
-        public async Task InitHostAndDiscoverAsync(bool enableTrace)
+        public async Task InitHostAndDiscoverAsync(bool enableTrace , BluetoothImplementation bluetoothImplementation = BluetoothImplementation.WinRT , BlueGigaBLEOptions blueGigaBLEOptions = null)
         {
-            InitHost(enableTrace);
+            InitHost(enableTrace, bluetoothImplementation , blueGigaBLEOptions);
 
             Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
 
@@ -72,7 +75,7 @@ namespace Example
             return Task.CompletedTask;
         }
 
-        public void InitHost(bool enableTrace)
+        public void InitHost(bool enableTrace, BluetoothImplementation bluetoothImplementation = BluetoothImplementation.WinRT, BlueGigaBLEOptions blueGigaBLEOptions = null)
         {
             var serviceCollection = new ServiceCollection()
                 // configure your favourite level of logging.
@@ -83,11 +86,38 @@ namespace Example
 
                     if (enableTrace)
                     {
-                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug)
+                        //by this you can also disable the debug-output of the BlueGiga; all outputs of BlueGigaBLEPoweredUpBluetoothAdapater are made by LogDebug
+                        //so setting:
+                        //.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Information);
+                        //will also disable the output (but it is still send to the ILogger, which then filters)
+                        //you can also set the option TraceDebug to false in the AddBlueGigaBLEBluetooth below
+                        .AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
                     }
-                })
-                .AddWinRTBluetooth()
-                ;
+                });
+            if (bluetoothImplementation == BluetoothImplementation.WinRT)
+            {
+                serviceCollection.AddWinRTBluetooth();
+            };
+
+            if (bluetoothImplementation == BluetoothImplementation.BlueGiga)
+            {
+                if (blueGigaBLEOptions == null)
+                    throw new ArgumentNullException(nameof(blueGigaBLEOptions) , "If you use the BlueGiga-Implementation, you've got to give a non-empty BlueGigaBLEOptions-object also!");
+                //this adds the BlueGiga-implementation instead of the WinRT-implementation
+                serviceCollection.AddBlueGigaBLEBluetooth(options =>
+                {
+
+                   //enter the COMPort-Name here
+                   //on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
+                   options.COMPortName = blueGigaBLEOptions.COMPortName;
+                   //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
+                   options.TraceDebug = blueGigaBLEOptions.TraceDebug;
+                });
+            }
+            //can be easily extended here by taking another implementation (for example BlueZ for Raspberry) into the BluetoothImplementation-enum and then
+            //do the needed Addxxx and options here:
+            
 
             Configure(serviceCollection);
 
