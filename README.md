@@ -260,7 +260,7 @@ DI Container Elements
 ## Implementation Status
 
 - Bluetooth Adapter
-  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth)
+  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version 
   - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
   - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)
