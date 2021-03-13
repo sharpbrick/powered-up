@@ -7,7 +7,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     {
         public ushort CalculateContentLength(LegoWirelessMessage message)
         {
-            var hubAlertMessage = message as HubAlertMessage ?? throw new ArgumentException(nameof(message));
+            var hubAlertMessage = message as HubAlertMessage ?? throw new ArgumentException("message is null or not HubAlertMessage", nameof(message));
             return (ushort)(hubAlertMessage.Operation == HubAlertOperation.Update ? 3 : 2);
         }
 
@@ -16,7 +16,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
         {
-            var hubAlertMessage = message as HubAlertMessage ?? throw new ArgumentException(nameof(message));
+            var hubAlertMessage = message as HubAlertMessage ?? throw new ArgumentException("message is null or not HubAlertMessage", nameof(message));
 
             data[0] = (byte)hubAlertMessage.Alert;
             data[1] = (byte)hubAlertMessage.Operation;

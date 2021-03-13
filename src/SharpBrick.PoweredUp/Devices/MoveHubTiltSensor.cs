@@ -95,7 +95,7 @@ namespace SharpBrick.PoweredUp
 
             if (presetValue < 0)
             {
-                throw new ArgumentOutOfRangeException("PresetValue has to be between 0 and int.MaxValue", nameof(presetValue));
+                throw new ArgumentOutOfRangeException(nameof(presetValue), "PresetValue has to be between 0 and int.MaxValue");
             }
 
             var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltImpactPresetMessage(
@@ -123,12 +123,12 @@ namespace SharpBrick.PoweredUp
 
             if (impactThreshold < 0)
             {
-                throw new ArgumentOutOfRangeException("Impact Threshold has to be between 0 and 127", nameof(impactThreshold));
+                throw new ArgumentOutOfRangeException(nameof(impactThreshold), "Impact Threshold has to be between 0 and 127");
             }
 
             if (bumpHoldoffInMs < 10 || bumpHoldoffInMs > 1270)
             {
-                throw new ArgumentOutOfRangeException("Hold off has to be between 10 and 1270 ms (in steps of 10ms)", nameof(bumpHoldoffInMs));
+                throw new ArgumentOutOfRangeException(nameof(bumpHoldoffInMs), "Hold off has to be between 10 and 1270 ms (in steps of 10ms)");
             }
 
             var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigImpactMessage(

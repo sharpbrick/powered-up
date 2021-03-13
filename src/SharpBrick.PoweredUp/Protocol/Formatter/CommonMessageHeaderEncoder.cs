@@ -7,7 +7,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
     {
         public static void DecodeAndApply(in Span<byte> data, LegoWirelessMessage message)
         {
-            var (length, hubId, messageType, headerLength) = ParseCommonHeader(data);
+            var (length, hubId, messageType, _) = ParseCommonHeader(data);
 
             message.Length = length;
             message.HubId = hubId;

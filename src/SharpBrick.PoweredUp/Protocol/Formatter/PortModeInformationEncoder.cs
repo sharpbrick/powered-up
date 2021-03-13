@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             var portId = data[0];
             var mode = data[1];
             var informationType = (PortModeInformationType)data[2];
-            var payload = data.Slice(3);
+            var payload = data[3..];
 
             var message = informationType switch
             {

@@ -5,17 +5,18 @@ namespace SharpBrick.PoweredUp.Bluetooth.Mock
 {
     public class PoweredUpBluetoothServiceMock : IPoweredUpBluetoothService
     {
-        private PoweredUpBluetoothCharacteristicMock _mockCharacteristic;
+        private readonly PoweredUpBluetoothCharacteristicMock _mockCharacteristic;
 
         public PoweredUpBluetoothServiceMock(PoweredUpBluetoothCharacteristicMock mockCharacteristic)
         {
-            this._mockCharacteristic = mockCharacteristic;
+            _mockCharacteristic = mockCharacteristic;
         }
 
         public Guid Uuid => Guid.Empty;
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public Task<IPoweredUpBluetoothCharacteristic> GetCharacteristicAsync(Guid guid)

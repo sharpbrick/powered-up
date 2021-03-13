@@ -25,8 +25,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         }
 
         [Theory]
-        [InlineData("09-00-42-00-01-00-10-20-30", 0x00, PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination, new byte[] { 0x10, 0x20, 0x30 })]
-        public void PortInputFormatSetupCombinedModeEncoder_Encode_ModeDataSetCommands(string expectedDataAsString, byte portId, PortInputFormatSetupCombinedSubCommand subCommand, byte[] modeDataSets)
+        [InlineData("09-00-42-00-01-00-10-20-30", 0x00, new byte[] { 0x10, 0x20, 0x30 })]
+        public void PortInputFormatSetupCombinedModeEncoder_Encode_ModeDataSetCommands(string expectedDataAsString, byte portId, byte[] modeDataSets)
         {
             // arrange
             var message = new PortInputFormatSetupCombinedModeForSetModeDataSetMessage(portId, 0,

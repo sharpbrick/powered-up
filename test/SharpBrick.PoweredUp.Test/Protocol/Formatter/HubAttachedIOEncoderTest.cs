@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAttachedIOEncoder_Decode_Attached<T>(string messageAsString, DeviceType expectedType, byte expectedPortId, string expectedHwVersion, string expectedSwVersion)
         {
             // arrange
-            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
             // act
             var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedDeviceMessage;
@@ -49,7 +49,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAttachedIOEncoder_Decode_AttachedVirutalIO(string messageAsString, DeviceType expectedType, byte expectedPortId, byte portA, byte portB)
         {
             // arrange
-            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
             // act
             var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedVirtualDeviceMessage;

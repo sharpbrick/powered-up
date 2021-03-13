@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp
 {
     public abstract partial class Hub
     {
-        private ConcurrentDictionary<byte, Port> _ports = new ConcurrentDictionary<byte, Port>();
+        private readonly ConcurrentDictionary<byte, Port> _ports = new();
 
         public IObservable<Port> PortChangeObservable { get; private set; }
 
@@ -33,7 +33,7 @@ namespace SharpBrick.PoweredUp
 
         private async Task ExpectedDevicesCompletedAsync()
             => await PortChangeObservable
-                .Where(msg => Ports.All(p => p.ExpectedDevice == null || (p.ExpectedDevice != null && p.DeviceType == p.ExpectedDevice)))
+                .Where(msg => Ports.All(p => p.ExpectedDevice is null || (p.ExpectedDevice is not null && p.DeviceType == p.ExpectedDevice)))
                 .FirstAsync()
                 .GetAwaiter();
 
@@ -103,12 +103,12 @@ namespace SharpBrick.PoweredUp
 
         private void OnHubAttachedIOMessage(HubAttachedIOMessage hubAttachedIO)
         {
-            Port port = null;
+            Port port;
             switch (hubAttachedIO)
             {
                 case HubAttachedIOForAttachedDeviceMessage attachedDeviceMessage:
                     port = Port(attachedDeviceMessage.PortId);
-                    if (port == null)
+                    if (port is null)
                     {
                         _logger?.LogInformation($"Hub sent notification of attached device with port id '{hubAttachedIO.PortId}' but hub type '{GetType().Name}' is not configured for this port");
                         return;
@@ -119,7 +119,7 @@ namespace SharpBrick.PoweredUp
                     break;
                 case HubAttachedIOForDetachedDeviceMessage detachedDeviceMessage:
                     port = Port(detachedDeviceMessage.PortId);
-                    if (port == null)
+                    if (port is null)
                     {
                         _logger?.LogInformation($"Hub sent notification of detached device with port id '{hubAttachedIO.PortId}' but hub type '{GetType().Name}' is not configured for this port");
                         return;

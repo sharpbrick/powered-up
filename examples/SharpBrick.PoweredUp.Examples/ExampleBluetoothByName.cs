@@ -10,22 +10,21 @@ namespace Example
 
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByName<TechnicMediumHub>("Technic Hub"))
-            {
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0x00);
+            using var technicMediumHub = Host.FindByName<TechnicMediumHub>("Technic Hub");
 
-                await Task.Delay(2000);
+            await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0x00);
 
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
+            await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0xff, 0x00);
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
+            await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0xff, 0x00);
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(2000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

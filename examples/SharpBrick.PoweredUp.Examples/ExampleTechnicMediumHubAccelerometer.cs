@@ -11,20 +11,19 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                var device = technicMediumHub.Accelerometer;
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                await device.SetupNotificationAsync(device.ModeIndexGravity, true);
+            var device = technicMediumHub.Accelerometer;
 
-                var disposable = device.GravityObservable.Subscribe(x => Log.LogWarning($"Gravity: {x.x} / {x.y} / {x.z}"));
+            await device.SetupNotificationAsync(device.ModeIndexGravity, true);
 
-                await Task.Delay(10_000);
+            var disposable = device.GravityObservable.Subscribe(x => Log.LogWarning($"Gravity: {x.x} / {x.y} / {x.z}"));
 
-                disposable.Dispose();
+            await Task.Delay(10_000);
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            disposable.Dispose();
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

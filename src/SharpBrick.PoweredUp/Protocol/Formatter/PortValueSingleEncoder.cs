@@ -40,7 +40,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 var value = PortValueSingleEncoder.CreatPortValueData(modeInfo, dataSlice);
 
                 result.Add(value);
-                remainingSlice = remainingSlice.Slice(1 + lengthOfDataType * modeInfo.NumberOfDatasets);
+                remainingSlice = remainingSlice[(1 + lengthOfDataType * modeInfo.NumberOfDatasets)..];
             }
 
             return new PortValueSingleMessage(result.ToArray());

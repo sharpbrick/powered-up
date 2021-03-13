@@ -9,22 +9,21 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var mario = Host.FindByType<MarioHub>())
-            {
-                await mario.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
-                    .AddHub<MarioHub>(hubBuilder => { })
-                );
+            using var mario = Host.FindByType<MarioHub>();
 
-                var d1 = mario.Accelerometer.GestureObservable.Subscribe(x => Log.LogWarning($"Gesture: {x[0]}/{x[1]}"));
+            await mario.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
+                .AddHub<MarioHub>(hubBuilder => { })
+            );
 
-                await mario.Accelerometer.SetupNotificationAsync(mario.Accelerometer.ModeIndexGesture, true);
+            var d1 = mario.Accelerometer.GestureObservable.Subscribe(x => Log.LogWarning($"Gesture: {x[0]}/{x[1]}"));
 
-                await Task.Delay(20_000);
+            await mario.Accelerometer.SetupNotificationAsync(mario.Accelerometer.ModeIndexGesture, true);
 
-                d1.Dispose();
+            await Task.Delay(20_000);
 
-                await mario.SwitchOffAsync();
-            }
+            d1.Dispose();
+
+            await mario.SwitchOffAsync();
         }
     }
 }

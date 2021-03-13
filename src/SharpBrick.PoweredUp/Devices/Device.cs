@@ -13,8 +13,8 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class Device : IDisposable, INotifyPropertyChanged
     {
-        private CompositeDisposable _compositeDisposable = new CompositeDisposable();
-        private ConcurrentDictionary<byte, Mode> _modes = new ConcurrentDictionary<byte, Mode>();
+        private CompositeDisposable _compositeDisposable = new();
+        private readonly ConcurrentDictionary<byte, Mode> _modes = new();
 
         protected readonly ILegoWirelessProtocol _protocol;
         protected readonly byte _hubId;
@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp
         protected readonly IObservable<PortValueData> _portValueObservable;
 
         public IReadOnlyDictionary<byte, Mode> Modes => _modes;
-        public bool IsConnected => (_protocol != null);
+        public bool IsConnected => (_protocol is not null);
 
         public Device()
         { }

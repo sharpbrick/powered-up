@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 var feedback = new PortOutputCommandFeedback(remainingSlice[0], (PortFeedback)remainingSlice[1]);
 
                 result.Add(feedback);
-                remainingSlice = remainingSlice.Slice(2);
+                remainingSlice = remainingSlice[2..];
             }
 
             return new PortOutputCommandFeedbackMessage(result.ToArray());

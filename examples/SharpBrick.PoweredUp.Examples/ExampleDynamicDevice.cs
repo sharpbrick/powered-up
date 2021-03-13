@@ -30,47 +30,46 @@ namespace Example
 
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                // deployment model verification with unknown devices
-                await technicMediumHub.VerifyDeploymentModelAsync(mb => mb
-                    .AddAnyHub(hubBuilder => hubBuilder
-                        .AddAnyDevice(0))
-                    );
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                var dynamicDeviceWhichIsAMotor = technicMediumHub.Port(0).GetDevice<DynamicDevice>();
+            // deployment model verification with unknown devices
+            await technicMediumHub.VerifyDeploymentModelAsync(mb => mb
+                .AddAnyHub(hubBuilder => hubBuilder
+                    .AddAnyDevice(0))
+                );
 
-                // or also direct from a protocol
-                //var dynamicDeviceWhichIsAMotor = new DynamicDevice(technicMediumHub.Protocol, technicMediumHub.HubId, 0);
+            var dynamicDeviceWhichIsAMotor = technicMediumHub.Port(0).GetDevice<DynamicDevice>();
 
-                // discover the unknown device using the LWP
-                await dynamicDeviceWhichIsAMotor.DiscoverAsync();
-                Log.LogInformation("Discovery completed");
+            // or also direct from a protocol
+            //var dynamicDeviceWhichIsAMotor = new DynamicDevice(technicMediumHub.Protocol, technicMediumHub.HubId, 0);
 
-                // use combined mode values from the device
-                await dynamicDeviceWhichIsAMotor.TryLockDeviceForCombinedModeNotificationSetupAsync(2, 3);
-                await dynamicDeviceWhichIsAMotor.SetupNotificationAsync(2, true);
-                await dynamicDeviceWhichIsAMotor.SetupNotificationAsync(3, true);
-                await dynamicDeviceWhichIsAMotor.UnlockFromCombinedModeNotificationSetupAsync(true);
+            // discover the unknown device using the LWP
+            await dynamicDeviceWhichIsAMotor.DiscoverAsync();
+            Log.LogInformation("Discovery completed");
 
-                // get the individual modes for input and output
-                var powerMode = dynamicDeviceWhichIsAMotor.SingleValueMode<sbyte>(0);
-                var posMode = dynamicDeviceWhichIsAMotor.SingleValueMode<int>(2);
-                var aposMode = dynamicDeviceWhichIsAMotor.SingleValueMode<short>(3);
+            // use combined mode values from the device
+            await dynamicDeviceWhichIsAMotor.TryLockDeviceForCombinedModeNotificationSetupAsync(2, 3);
+            await dynamicDeviceWhichIsAMotor.SetupNotificationAsync(2, true);
+            await dynamicDeviceWhichIsAMotor.SetupNotificationAsync(3, true);
+            await dynamicDeviceWhichIsAMotor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
-                // use their observables to report values
-                using var disposable = posMode.Observable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
-                using var disposable2 = aposMode.Observable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
+            // get the individual modes for input and output
+            var powerMode = dynamicDeviceWhichIsAMotor.SingleValueMode<sbyte>(0);
+            var posMode = dynamicDeviceWhichIsAMotor.SingleValueMode<int>(2);
+            var aposMode = dynamicDeviceWhichIsAMotor.SingleValueMode<short>(3);
 
-                // or even write to them
-                await powerMode.WriteDirectModeDataAsync(0x64); // That is StartPower on a motor
-                await Task.Delay(2_000);
-                await powerMode.WriteDirectModeDataAsync(0x00); // That is Stop on a motor
+            // use their observables to report values
+            using var disposable = posMode.Observable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
+            using var disposable2 = aposMode.Observable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
 
-                await Task.Delay(10_000);
+            // or even write to them
+            await powerMode.WriteDirectModeDataAsync(0x64); // That is StartPower on a motor
+            await Task.Delay(2_000);
+            await powerMode.WriteDirectModeDataAsync(0x00); // That is Stop on a motor
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(10_000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

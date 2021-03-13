@@ -13,12 +13,12 @@ namespace SharpBrick.PoweredUp
     [DebuggerDisplay("Mode {_modeInfo.HubId}-{_modeInfo.PortId}-{_modeInfo.ModeIndex} {Name}")]
     public class Mode : IDisposable, INotifyPropertyChanged
     {
-        private CompositeDisposable _compositeDisposable = new CompositeDisposable();
-        private ILegoWirelessProtocol _protocol;
-        private PortModeInfo _modeInfo;
+        private readonly CompositeDisposable _compositeDisposable = new();
+        private readonly ILegoWirelessProtocol _protocol;
+        private readonly PortModeInfo _modeInfo;
         protected IObservable<PortValueData> _modeValueObservable;
 
-        public bool IsConnected => (_protocol != null);
+        public bool IsConnected => (_protocol is not null);
 
         public string Name => _modeInfo.Name;
         public string Symbol => _modeInfo.Symbol;
@@ -27,9 +27,7 @@ namespace SharpBrick.PoweredUp
         {
             var modeInfo = protocol.Knowledge.PortMode(hubId, portId, modeIndex);
 
-            Mode result = null;
-
-            result = (modeInfo.DatasetType, modeInfo.NumberOfDatasets) switch
+            Mode result = (modeInfo.DatasetType, modeInfo.NumberOfDatasets) switch
             {
                 (PortModeInformationDataType.SByte, 1) => new SingleValueMode<sbyte>(protocol, modeInfo, modeValueObservable),
                 (PortModeInformationDataType.SByte, _) => new MultiValueMode<sbyte>(protocol, modeInfo, modeValueObservable),

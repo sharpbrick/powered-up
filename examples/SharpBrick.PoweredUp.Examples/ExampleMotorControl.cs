@@ -8,40 +8,39 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
-                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
-                        .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
-                    )
-                );
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
+            await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
+                .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                    .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
+                )
+            );
 
-                await motor.SetAccelerationTimeAsync(3000);
-                await motor.SetDecelerationTimeAsync(1000);
-                await motor.StartSpeedForTimeAsync(6000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
+            var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
-                await Task.Delay(10_000);
+            await motor.SetAccelerationTimeAsync(3000);
+            await motor.SetDecelerationTimeAsync(1000);
+            await motor.StartSpeedForTimeAsync(6000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
 
-                await motor.StartSpeedForDegreesAsync(180, -10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(10_000);
 
-                await Task.Delay(10_000);
+            await motor.StartSpeedForDegreesAsync(180, -10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
 
-                await motor.StartSpeedAsync(100, 90, SpeedProfiles.None);
-                await Task.Delay(2000);
-                await motor.StartSpeedAsync(-100, 90, SpeedProfiles.None);
-                await Task.Delay(2000);
-                await motor.StartSpeedAsync(0, 90, SpeedProfiles.None);
+            await Task.Delay(10_000);
 
-                await Task.Delay(10_000);
+            await motor.StartSpeedAsync(100, 90, SpeedProfiles.None);
+            await Task.Delay(2000);
+            await motor.StartSpeedAsync(-100, 90, SpeedProfiles.None);
+            await Task.Delay(2000);
+            await motor.StartSpeedAsync(0, 90, SpeedProfiles.None);
 
-                await motor.GotoPositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(2000);
-                await motor.GotoPositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(10_000);
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await motor.GotoPositionAsync(45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(2000);
+            await motor.GotoPositionAsync(-45, 10, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

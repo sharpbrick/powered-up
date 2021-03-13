@@ -13,7 +13,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
         {
-            var hubActionMessage = message as HubActionMessage ?? throw new ArgumentException(nameof(message));
+            var hubActionMessage = message as HubActionMessage ?? throw new ArgumentException("message is null or not HubActionMessage", nameof(message));
 
             data[0] = (byte)hubActionMessage.Action;
         }

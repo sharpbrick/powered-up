@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => throw new NotImplementedException();
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
-            => Encode(message as PortInformationRequestMessage ?? throw new ArgumentException(nameof(message)), data);
+            => Encode(message as PortInformationRequestMessage ?? throw new ArgumentException("No message provided", nameof(message)), data);
 
         public void Encode(PortInformationRequestMessage message, in Span<byte> data)
         {

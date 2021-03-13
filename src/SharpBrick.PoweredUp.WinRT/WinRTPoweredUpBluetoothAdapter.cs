@@ -12,8 +12,11 @@ namespace SharpBrick.PoweredUp.WinRT
     {
         public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
-            BluetoothLEAdvertisementWatcher watcher = new BluetoothLEAdvertisementWatcher();
-            watcher.ScanningMode = BluetoothLEScanningMode.Active;
+            var watcher = new BluetoothLEAdvertisementWatcher
+            {
+                ScanningMode = BluetoothLEScanningMode.Active
+            };
+
             watcher.AdvertisementFilter.Advertisement.ServiceUuids.Add(new Guid(PoweredUpBluetoothConstants.LegoHubService));
 
             watcher.Received += ReceivedHandler;
@@ -38,11 +41,9 @@ namespace SharpBrick.PoweredUp.WinRT
 
                     info.ManufacturerData = data;
 
-                    using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
-                    {
-                        info.Name = device.Name;
-                    }
+                    using var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result;
 
+                    info.Name = device.Name;
                 }
 
                 info.BluetoothAddress = eventArgs.BluetoothAddress;

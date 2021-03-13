@@ -9,7 +9,7 @@ namespace SharpBrick.PoweredUp.WinRT
 
     public class WinRTPoweredUpBluetoothCharacteristic : IPoweredUpBluetoothCharacteristic
     {
-        private GattCharacteristic _characteristic;
+        private readonly GattCharacteristic _characteristic;
         public Guid Uuid => _characteristic.Uuid;
 
         public WinRTPoweredUpBluetoothCharacteristic(GattCharacteristic characteristic)

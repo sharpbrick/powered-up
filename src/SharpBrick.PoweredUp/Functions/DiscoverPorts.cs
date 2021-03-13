@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp.Functions
 {
     public class DiscoverPorts
     {
-        private object lockObject = new object();
+        private readonly object lockObject = new();
 
         private readonly ILegoWirelessProtocol _protocol;
         private readonly byte _hubId;

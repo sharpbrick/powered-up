@@ -10,26 +10,25 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                using var d1 = technicMediumHub.ButtonObservable.Subscribe(x => Log.LogInformation($"Buttom: {x}"));
-                technicMediumHub.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                // optionally: trigger explicit request (like done during initialization)
-                await technicMediumHub.RequestHubPropertySingleUpdate(HubProperty.Button);
+            using var d1 = technicMediumHub.ButtonObservable.Subscribe(x => Log.LogInformation($"Buttom: {x}"));
+            technicMediumHub.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
 
-                // and then observe it
-                await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, true);
+            // optionally: trigger explicit request (like done during initialization)
+            await technicMediumHub.RequestHubPropertySingleUpdate(HubProperty.Button);
 
-                await Task.Delay(5_000);
+            // and then observe it
+            await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, true);
 
-                await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, false);
-                Log.LogInformation("Button no longer observed");
+            await Task.Delay(5_000);
 
-                await Task.Delay(5_000);
+            await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, false);
+            Log.LogInformation("Button no longer observed");
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(5_000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

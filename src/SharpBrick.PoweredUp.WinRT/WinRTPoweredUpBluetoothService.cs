@@ -28,7 +28,7 @@ namespace SharpBrick.PoweredUp.WinRT
         {
             var characteristics = await _service.GetCharacteristicsForUuidAsync(guid);
 
-            if (characteristics.Status == GattCommunicationStatus.Success && characteristics.Characteristics.Count() > 0)
+            if (characteristics.Status == GattCommunicationStatus.Success && characteristics.Characteristics.Count > 0)
             {
                 var characteristic = characteristics.Characteristics.FirstOrDefault();
 

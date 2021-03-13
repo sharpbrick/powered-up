@@ -11,18 +11,17 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                var device = technicMediumHub.GestureSensor;
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                await device.SetupNotificationAsync(0, true, deltaInterval: 0);
+            var device = technicMediumHub.GestureSensor;
 
-                using var _ = device.GestureObservable.Subscribe(x => Log.LogInformation($"Gesture {x}"));
+            await device.SetupNotificationAsync(0, true, deltaInterval: 0);
 
-                await Task.Delay(30_000);
+            using var _ = device.GestureObservable.Subscribe(x => Log.LogInformation($"Gesture {x}"));
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(30_000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

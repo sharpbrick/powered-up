@@ -40,7 +40,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     .ToDictionary(pmi => pmi.ModeIndex, pmi => new byte[pmi.NumberOfDatasets * PortValueSingleEncoder.GetLengthOfDataType(pmi)]);
 
             var currentDataSetInMessageIndex = 0;
-            var remainingSlice = data.Slice(3);
+            var remainingSlice = data[3..];
 
             while (remainingSlice.Length > 0)
             {
@@ -56,9 +56,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 var dataSlice = remainingSlice.Slice(0, lengthOfDataType);
 
                 // copy data into buffer position
-                dataSlice.CopyTo(dataBuffers[modeInfo.ModeIndex].AsSpan().Slice(modeDataSet.DataSet * lengthOfDataType));
+                dataSlice.CopyTo(dataBuffers[modeInfo.ModeIndex].AsSpan()[(modeDataSet.DataSet * lengthOfDataType)..]);
 
-                remainingSlice = remainingSlice.Slice(lengthOfDataType);
+                remainingSlice = remainingSlice[lengthOfDataType..];
             }
 
             return new PortValueCombinedModeMessage(

@@ -184,7 +184,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         {
             var device = deviceFactory.Create(type);
 
-            if (device != null)
+            if (device is not null)
             {
                 foreach (var message in device.GetStaticPortInfoMessages(hardwareRevision, softwareRevision, hub.SystemType).Select(b => MessageEncoder.Decode(b, null)))
                 {

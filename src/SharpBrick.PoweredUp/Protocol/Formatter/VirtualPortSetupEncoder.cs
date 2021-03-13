@@ -8,8 +8,8 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public ushort CalculateContentLength(LegoWirelessMessage message)
             => message switch
             {
-                VirtualPortSetupForConnectedMessage msg => 3,
-                VirtualPortSetupForDisconnectedMessage msg => 2,
+                VirtualPortSetupForConnectedMessage => 3,
+                VirtualPortSetupForDisconnectedMessage => 2,
                 _ => throw new NotSupportedException(),
             };
 

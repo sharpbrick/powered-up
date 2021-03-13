@@ -11,6 +11,6 @@ namespace SharpBrick.PoweredUp.Utils
             => messageAsString.Split("-").Select(s => byte.Parse(s, NumberStyles.HexNumber)).ToArray();
 
         public static string ToBitString(ushort data)
-            => new string(Enumerable.Range(0, 16).Reverse().Select(idx => (((1 << idx) & data) > 0) ? '1' : '0').ToArray());
+            => new(Enumerable.Range(0, 16).Reverse().Select(idx => (((1 << idx) & data) > 0) ? '1' : '0').ToArray());
     }
 }

@@ -40,7 +40,7 @@ namespace SharpBrick.PoweredUp.Cli
             var foundAttachedIO = false;
 
             var line = await reader.ReadLineAsync();
-            while (line != null)
+            while (line is not null)
             {
                 if (line.Substring(6, 8) == "01-0B-06") // property msg - systemtype - update
                 {

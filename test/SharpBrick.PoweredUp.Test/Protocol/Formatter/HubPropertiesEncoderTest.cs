@@ -24,7 +24,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubPropertiesEncoder_Decode_UpdateUpstream<T>(string messageAsString, HubProperty expectedProperty, HubPropertyOperation expectedPropertyOperation, T payload)
         {
             // arrange
-            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
             // act
             var message = new HubPropertiesEncoder().Decode(0x00, data) as HubPropertyMessage<T>;
