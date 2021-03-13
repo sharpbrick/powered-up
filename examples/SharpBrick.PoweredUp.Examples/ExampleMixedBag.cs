@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 using static SharpBrick.PoweredUp.Directions;
 

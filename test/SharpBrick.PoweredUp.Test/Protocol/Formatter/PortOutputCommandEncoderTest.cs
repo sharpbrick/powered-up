@@ -1,5 +1,3 @@
-using System;
-using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using Xunit;

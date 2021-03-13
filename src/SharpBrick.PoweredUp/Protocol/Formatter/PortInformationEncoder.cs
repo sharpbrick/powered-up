@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter

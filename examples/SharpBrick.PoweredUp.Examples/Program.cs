@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Example;
+﻿using System.Threading.Tasks;
 
 namespace SharpBrick.PoweredUp.Examples
 {

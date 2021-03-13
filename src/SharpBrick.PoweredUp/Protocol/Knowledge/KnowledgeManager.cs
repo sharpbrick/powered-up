@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.Protocol.Messages;

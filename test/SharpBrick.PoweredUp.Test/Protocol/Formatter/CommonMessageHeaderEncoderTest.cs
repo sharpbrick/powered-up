@@ -1,6 +1,4 @@
-﻿using System;
-using SharpBrick.PoweredUp.Protocol.Formatter;
-using Xunit;
+﻿using Xunit;
 
 namespace SharpBrick.PoweredUp.Protocol.Formatter
 {

@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using Xunit;

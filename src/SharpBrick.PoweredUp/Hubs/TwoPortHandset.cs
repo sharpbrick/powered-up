@@ -32,7 +32,7 @@ namespace SharpBrick.PoweredUp
                 HubProperty.HardwareNetworkId,
                 HubProperty.PrimaryMacAddress,
                 //HubProperty.SecondaryMacAddress, // unsupported on the two port handset
-                HubProperty.HardwareNetworkFamily, 
+                HubProperty.HardwareNetworkFamily,
             })
         { }
 
