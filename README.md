@@ -260,11 +260,12 @@ DI Container Elements
 ## Implementation Status
 
 - Bluetooth Adapter
-  - [X] .NET Core 3.1 (on Windows 10 using WinRT)
-    - Library uses `Span<T>` / C# 8.0 and is therefore not supported in .NET Framework 1.0 - 4.8 and UWP Apps until arrival of .NET 5 (WinForms and WPF work in .NET Core 3.1)
-    - Library uses WinRT for communication therefore only Windows 10
+  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth)
+  - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)
+  - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
+  - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)
   - [ ] Xamarin (on iOS / Android using ?)
-  - [ ] Blazor (on Browser using WebBluetooth)
+  - [ ] Blazor/WebAssembly (on Browser using WebBluetooth; currently blocked by less than ideal GATT support on browsers, see [1](https://stackoverflow.com/questions/63757642/webbluetooth-gatt-characteric-notification-setup-too-slow-how-to-improve-setup), [2](https://github.com/WebBluetoothCG/web-bluetooth/issues/514) and [3](https://github.com/LEGO/lego-ble-wireless-protocol-docs/issues/29) )
 - Hub Model
   - Hubs
     - [X] Ports

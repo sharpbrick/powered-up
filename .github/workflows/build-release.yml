@@ -8,14 +8,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 5.0.100
     - name: Build Version
       # run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11}) // deprecated
       run: echo "RELEASE_VERSION=${GITHUB_REF:11}" >> $GITHUB_ENV
@@ -41,7 +41,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 5.0.100
         source-url: https://api.nuget.org/v3/index.json
     - uses: actions/download-artifact@v1
       with:
