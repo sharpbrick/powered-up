@@ -17,12 +17,15 @@ namespace Example
         // device needs to be switched on!
         public override async Task DiscoverAsync(bool enableTrace)
         {
-            var Hub1 = Host.Create<TechnicMediumHub>(BluetoothAddressHub1);
-            var Hub2 = Host.Create<TechnicMediumHub>(BluetoothAddressHub2);
-            await Hub1.ConnectAsync();
-            await Hub2.ConnectAsync();
-            SelectedHub = DirectlyConnectedHub1 = Hub1;
-            DirectlyConnectedHub2 = Hub2;
+            var hub1 = Host.Create<TechnicMediumHub>(BluetoothAddressHub1);
+            var hub2 = Host.Create<TechnicMediumHub>(BluetoothAddressHub2);
+            await hub1.ConnectAsync();
+            hub1.Configure(0x00);
+            await hub2.ConnectAsync();
+            hub2.Configure(0x01);
+            SelectedHub = DirectlyConnectedHub1 = hub1;
+            DirectlyConnectedHub2 = hub2;
+
         }
 
         public override async Task ExecuteAsync()
