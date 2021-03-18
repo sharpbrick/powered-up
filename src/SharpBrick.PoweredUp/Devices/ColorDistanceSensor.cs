@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpBrick.PoweredUp.Devices
+namespace SharpBrick.PoweredUp
 {
 	public class ColorDistanceSensor : Device, IPoweredUpDevice
 	{
@@ -52,9 +52,6 @@ namespace SharpBrick.PoweredUp.Devices
 			_lightMode = SingleValueMode<sbyte>(ModeIndexLight);
 			_rgbMode = MultiValueMode<short>(ModeIndexRgb);
 		}
-
-		public Task<PortFeedback> SetLightAsync(TechnicColor color)
-		   => _lightMode.WriteDirectModeDataAsync(new byte[] { (byte)color });
 
 		public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
 			=> ((softwareVersion, hardwareVersion, systemType) switch
