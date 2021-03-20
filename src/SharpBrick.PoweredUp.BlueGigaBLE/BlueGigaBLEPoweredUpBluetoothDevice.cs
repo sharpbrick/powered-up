@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Bluegiga.BLE.Events.ATTClient;
-using Bluegiga.BLE.Events.Connection;
+
 using Microsoft.Extensions.Logging;
+
 using SharpBrick.PoweredUp.Bluetooth;
 
 namespace SharpBrick.PoweredUp.BlueGigaBLE
@@ -18,54 +15,55 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// <summary>
         /// The instance of the blueGiga-library which is responible for the communication
         /// </summary>
-        public Bluegiga.BGLib Bglib { get { return this.myBluetoothAdapter.Bglib; } }
+        public Bluegiga.BGLib Bglib => BluetoothAdapter.Bglib;
         /// <summary>
         /// The adapter this device is attached to
         /// </summary>
-        public BlueGigaBLEPoweredUpBluetoothAdapater myBluetoothAdapter { get; set; }
+        public BlueGigaBLEPoweredUpBluetoothAdapater BluetoothAdapter { get; init; }
         /// <summary>
         /// The device's adress in form of a ulong (computed from the adress-bytes/BLE-MAC-adress
         /// </summary>
-        public ulong DeviceAdress { get; set; }
+        public ulong DeviceAdress { get; init; }
         /// <summary>
         /// The MAC-adress of the BLE-device in reversed order
         /// </summary>
-        public Byte[] DeviceAdressBytes { get; set; }
+        public byte[] DeviceAdressBytes { get; init; }
         /// <summary>
         /// The connection-handle this device has when it has been connected from the bluetooth-adapter;
         /// has to be set during the Connect() in the bluetooth-adapter
         /// </summary>
-        public Byte ConnectionHandle { get; set; }
+        public byte ConnectionHandle { get; init; }
         /// <summary>
         /// Is the device actually connected?
         /// </summary>
-        public bool IsConnected = false;
+        public bool IsConnected { get; set; } = false;
         /// <summary>
         /// The Logger for this object
         /// </summary>
-        public readonly ILogger _logger;
+        private ILogger Logger { get; init; }
         /// <summary>
         /// The Services this device is currently aware of
         /// </summary>
-        public ConcurrentDictionary<Guid, BlueGigaBLEPoweredUpBluetoothService> myServices;
+        public ConcurrentDictionary<Guid, BlueGigaBLEPoweredUpBluetoothService> GATTServices { get; }
         #endregion
         #region Constructors
-        public BlueGigaBLEPoweredUpBluetoothDevice(ulong deviceAdress, byte[] deviceAdressBytes, String name, BlueGigaBLEPoweredUpBluetoothAdapater blueGigaBLEPoweredUpBluetoothAdapater, ILogger logger, bool traceDebug)
+        public BlueGigaBLEPoweredUpBluetoothDevice(ulong deviceAdress, byte[] deviceAdressBytes, string name, BlueGigaBLEPoweredUpBluetoothAdapater blueGigaBLEPoweredUpBluetoothAdapater, ILogger logger, bool traceDebug, byte connectionHandle)
         {
-            _logger = logger;
+            Logger = logger;
             TraceDebug = traceDebug;
             DeviceAdress = deviceAdress;
             DeviceAdressBytes = deviceAdressBytes ?? throw new ArgumentNullException(nameof(deviceAdressBytes));
-            myBluetoothAdapter = blueGigaBLEPoweredUpBluetoothAdapater;
+            BluetoothAdapter = blueGigaBLEPoweredUpBluetoothAdapater;
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            myServices = new ConcurrentDictionary<Guid, BlueGigaBLEPoweredUpBluetoothService>();
+            GATTServices = new ConcurrentDictionary<Guid, BlueGigaBLEPoweredUpBluetoothService>();
+            ConnectionHandle = connectionHandle;
         }
         #endregion
         #region IPoweredUpBluetoothDevice
-        public string Name { get; set; }
+        public string Name { get; init; }
         public async Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
         {
-            return await Task.FromResult(myServices[serviceId]);
+            return await Task.FromResult(GATTServices[serviceId]);
         }
         #endregion
         #region IDisposable
@@ -76,7 +74,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             {
                 if (disposing)
                 {
-                    foreach (KeyValuePair<Guid, BlueGigaBLEPoweredUpBluetoothService> service in this.myServices)
+                    foreach (var service in GATTServices)
                     {
                         service.Value.Dispose();
                     }
@@ -98,42 +96,59 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         }
         #endregion
         #region IBlueGigaLogger
-        public bool TraceDebug { get; set; }
-        public void LogMyInfos(int indent = 0, String header = "", String footer="")
+        public bool TraceDebug { get; init; }
+        public async Task LogInfosAsync(int indent = 0, string header = "", string footer = "")
         {
             if (TraceDebug)
             {
-                StringBuilder sb = new StringBuilder();
-                if (!String.IsNullOrEmpty(header)) sb.Append(header.ToUpper());
-                sb.Append(GetMyLogInfos(indent));
-                if (!String.IsNullOrEmpty(footer)) sb.Append(footer.ToUpper());
-                _logger?.LogDebug(sb.ToString());
+                await Task.Run(async () =>
+                {
+                    var sb = new StringBuilder();
+                    if (!string.IsNullOrEmpty(header))
+                    {
+                        _ = sb.Append(header.ToUpper());
+                    }
+                    _ = sb.Append(await GetLogInfosAsync(indent));
+                    if (!string.IsNullOrEmpty(footer))
+                    {
+                        _ = sb.Append(footer.ToUpper());
+                    }
+                    Logger?.LogDebug(sb.ToString());
+                });
             }
         }
 
-        public string GetMyLogInfos(int indent)
+        public async Task<string> GetLogInfosAsync(int indent)
         {
-            StringBuilder sb = new StringBuilder();
-            String indentStr = new String('\t', indent < 0 ? 0 : indent);
-            sb.Append(
-                $"{indentStr}*** Device-Info ***:" + Environment.NewLine +
-                $"{indentStr}Device-Adress (ulong): {this.DeviceAdress}" + Environment.NewLine +
-                $"{indentStr}Device-Adress (Byte[] little endian): { BlueGigaBLEHelper.ByteArrayToHexString(this.DeviceAdressBytes)}" + Environment.NewLine +
-                (this.IsConnected ?
-                    $"{indentStr}Connection-Handle on my Bluetooth-Adapter: { this.ConnectionHandle }" :
-                    $"{indentStr}Actually I'm not connected to any Bluetooth-Adapter") + Environment.NewLine);
-            if (this.myServices?.Count > 0)
+            var sb = new StringBuilder();
+            _ = await Task.Run(async () =>
             {
-                sb.Append($"{indentStr}I know about the following {this.myServices.Count} services:");
-                foreach (KeyValuePair<Guid, BlueGigaBLEPoweredUpBluetoothService> service in this.myServices)
-                    sb.Append(service.Value.GetMyLogInfos(indent + 1));
-                sb.Append($"{indentStr}End of my known services");
-            }
-            else
-                sb.Append($"{indentStr}I DON'T know about any services I should have!");
+                var indentStr = new string('\t', indent < 0 ? 0 : indent);
+                _ = sb.Append(
+                    $"{indentStr}*** Device-Info ***:" + Environment.NewLine +
+                    $"{indentStr}Device-Adress (ulong): {DeviceAdress}" + Environment.NewLine +
+                    $"{indentStr}Device-Adress (Byte[] little endian): { BlueGigaBLEHelper.ByteArrayToHexString(DeviceAdressBytes)}" + Environment.NewLine +
+                    (IsConnected ?
+                        $"{indentStr}Connection-Handle on my Bluetooth-Adapter: { ConnectionHandle }" :
+                        $"{indentStr}Actually I'm not connected to any Bluetooth-Adapter") + Environment.NewLine);
+                if (GATTServices?.Count > 0)
+                {
+                    _ = sb.Append($"{indentStr}I know about the following {GATTServices.Count} services:");
+                    foreach (var service in GATTServices)
+                    {
+                        _ = sb.Append(await service.Value.GetLogInfosAsync(indent + 1));
+                    }
+
+                    _ = sb.Append($"{indentStr}End of my known services");
+                }
+                else
+                {
+                    _ = sb.Append($"{indentStr}I DON'T know about any services I should have!");
+                }
+                return sb;
+            });
             return sb.ToString();
         }
         #endregion
-
     }
 }

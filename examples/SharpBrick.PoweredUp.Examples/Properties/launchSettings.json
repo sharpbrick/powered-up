@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "SharpBrick.PoweredUp.Examples": {
-      "commandName": "Project",
-      "commandLineArgs": "--trace"
-    }
-  }
-}

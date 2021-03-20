@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -19,14 +18,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// <returns></returns>
         public static byte[] ConvertUUIDToByteArray(Guid guid)
         {
-            byte[] result = new byte[16];
-            NumberStyles style = NumberStyles.HexNumber;
-            String myguidstr = guid.ToString();
+            var result = new byte[16];
+            var style = NumberStyles.HexNumber;
+            var myguidstr = guid.ToString();
             myguidstr = myguidstr.Replace("-", "");
-            for (int i = 0; i < 16; i++)
+            for (var i = 0; i < 16; i++)
             {
-                result[i] = Byte.Parse(myguidstr.Substring(i * 2, 2), style);
-
+                result[i] = byte.Parse(myguidstr.Substring(i * 2, 2), style);
             }
             return result;
         }
@@ -36,12 +34,11 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="inbytes">the Byte[] holding the received UUID (little endian, no scrumble; direct from the line</param>
         /// <returns></returns>
-        public static Guid ConvertByteArrayToGuid(Byte[] inbytes)
+        public static Guid ConvertByteArrayToGuid(byte[] inbytes)
         {
             Guid result;
-            Byte[] reorderdBytes = null;
             inbytes = inbytes.Reverse().ToArray();
-            reorderdBytes = new Byte[16];
+            var reorderdBytes = new byte[16];
             //full UUIDs (128bit)
             if (inbytes.Length == 16)
             {
@@ -53,13 +50,15 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 reorderdBytes[5] = inbytes[4];
                 reorderdBytes[6] = inbytes[7];
                 reorderdBytes[7] = inbytes[6];
-                for (int i = 8; i < 16; i++)
+                for (var i = 8; i < 16; i++)
+                {
                     reorderdBytes[i] = inbytes[i];
+                }
             }
             //16-bit UUIDS
-            //Or, to put it more simply, the 16 - bit Attribute UUID replaces the x’s in the follow-ing:
+            //Or, to put it more simply, the 16 - bit Attribute UUID replaces the x’s in the following:
             //      0000xxxx - 0000 - 1000 - 8000 - 00805F9B34FB
-            if (inbytes.Length ==2)
+            if (inbytes.Length == 2)
             {
                 reorderdBytes = new byte[] { 0x00, 0x00, inbytes[1], inbytes[0], 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB };
             }
@@ -79,11 +78,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="ba">the byte[] to show as Hex</param>
         /// <returns></returns>
-        public static string ByteArrayToHexString(Byte[] ba)
+        public static string ByteArrayToHexString(byte[] ba)
         {
-            StringBuilder hex = new StringBuilder(ba.Length * 2);
-            foreach (byte b in ba)
-                hex.AppendFormat("{0:x2} ", b);
+            var hex = new StringBuilder(ba.Length * 2);
+            foreach (var b in ba)
+            {
+                _ = hex.AppendFormat("{0:x2} ", b);
+            }
             return hex.ToString();
         }
 
@@ -92,13 +93,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="myulong">the ulong to be converted</param>
         /// <returns></returns>
-        public static Byte[] UlongTo6ByteArray(ulong myulong)
+        public static byte[] UlongTo6ByteArray(ulong myulong)
         {
-            Byte[] result = new byte[6];
-            for (int i=0;i<6;i++)
+            var result = new byte[6];
+            for (var i = 0; i < 6; i++)
             {
                 result[i] = (byte)(myulong % 256);
-                myulong = myulong / 256;
+                myulong /= 256;
             }
             return result;
         }
@@ -108,13 +109,19 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="myulong">the ulong to be converted</param>
         /// <returns></returns>
-        public static ulong ByteArrayToUlong(Byte[] mybytes)
+        public static ulong ByteArrayToUlong(byte[] mybytes)
         {
             ulong result = 0;
             if (mybytes.Length != 6)
+            {
                 throw new Exception("ByteArray for function ByteArrayToUlong must be excatly 6 bytes long!");
-            for (int i = 0; i < 6; i++)
-                result += (ulong)mybytes[i] * (ulong)Math.Pow(256, i);
+            }
+
+            for (var i = 0; i < 6; i++)
+            {
+                result += mybytes[i] * (ulong)Math.Pow(256, i);
+            }
+
             return result;
         }
 
@@ -123,11 +130,14 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="ba">the Byte[] to be converted</param>
         /// <returns></returns>
-        public static string ByteArrayToNumberString(Byte[] ba)
+        public static string ByteArrayToNumberString(byte[] ba)
         {
-            StringBuilder number = new StringBuilder();
-            foreach (byte b in ba)
-                number.AppendFormat("{0:D} ", b);
+            var number = new StringBuilder();
+            foreach (var b in ba)
+            {
+                _ = number.AppendFormat("{0:D} ", b);
+            }
+
             return number.ToString();
         }
     }

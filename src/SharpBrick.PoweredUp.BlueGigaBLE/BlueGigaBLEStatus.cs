@@ -1,54 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace SharpBrick.PoweredUp.BlueGigaBLE
 {
     public class BlueGigaBLEStatus
     {
-        public const UInt16 STATE_STANDBY = 0;
-        public const UInt16 STATE_SCANNING = 1;
-        public const UInt16 STATE_CONNECTING = 2;
-        public const UInt16 STATE_FINDING_SERVICES = 3;
-        public const UInt16 STATE_FINDING_ATTRIBUTES = 4;
-        //public const UInt16 STATE_LISTENING_MEASUREMENTS = 5;
-        public const UInt16 STATE_RESETING = 6;
+        public const ushort StateStandby = 0;
+        public const ushort StateScanning = 1;
+        public const ushort StateConnecting = 2;
+        public const ushort StateFindingServices = 3;
+        public const ushort StateFindingattributes = 4;
+        public const ushort StateReseting = 5;
 
-        private UInt16 actualStatus;
-        private ILogger _logger;
-        private bool _traceDebug;
+        private ushort actualStatus;
+        private readonly ILogger logger;
+        private readonly bool _traceDebug;
 
         public BlueGigaBLEStatus(ushort actualStatus, ILogger logger, bool traceDebug)
         {
             ActualStatus = actualStatus;
-            _logger = logger;
+            this.logger = logger;
             _traceDebug = traceDebug;
-            if (_traceDebug) _logger?.LogDebug($"BlueGigaBLEStatus inititalized with status {actualStatus} {GetStatusText(actualStatus)}");
+            if (_traceDebug)
+            {
+                this.logger?.LogDebug($"BlueGigaBLEStatus inititalized with status {actualStatus} {GetStatusText(actualStatus)}");
+            }
         }
 
-        private String GetStatusText(UInt16 status)
+        private string GetStatusText(ushort status)
         {
             return status switch
             {
-                STATE_STANDBY => "[STAND BY]",
-                STATE_SCANNING => "[SCANNING FOR DEVICES]",
-                STATE_CONNECTING => "[CONNECTING TO A DEVICE ]",
-                STATE_FINDING_SERVICES => "[SEARCHING FOR SERVICES/GROUPS]",
-                STATE_FINDING_ATTRIBUTES => "[SEARCHING FOR ATTRIBUTE/CHARACTERISTICS]",
-                STATE_RESETING => "[RESETING BLUETOOTH-ADAPTER]",
+                StateStandby => "[STAND BY]",
+                StateScanning => "[SCANNING FOR DEVICES]",
+                StateConnecting => "[CONNECTING TO A DEVICE ]",
+                StateFindingServices => "[SEARCHING FOR SERVICES/GROUPS]",
+                StateFindingattributes => "[SEARCHING FOR ATTRIBUTE/CHARACTERISTICS]",
+                StateReseting => "[RESETING BLUETOOTH-ADAPTER]",
                 _ => "[UNKNOWN STATE]"
 
             };
         }
 
-        public UInt16 ActualStatus
+        public ushort ActualStatus
         {
-            get { return actualStatus; }
+            get => actualStatus;
             set
             {
                 if (_traceDebug)
-                    _logger?.LogDebug($"BlueGigaBLEStatus changes status from {actualStatus} {GetStatusText(actualStatus)} to {value} {GetStatusText(value)}");
+                {
+                    logger?.LogDebug($"BlueGigaBLEStatus changes status from {actualStatus} {GetStatusText(actualStatus)} to {value} {GetStatusText(value)}");
+                }
                 actualStatus = value;
             }
         }

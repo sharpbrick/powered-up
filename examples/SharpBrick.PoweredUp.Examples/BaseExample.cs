@@ -22,9 +22,6 @@ namespace Example
         {
             serviceCollection
                 .AddPoweredUp();
-                
-
-                
         }
 
         public async Task InitHostAndDiscoverAsync(bool enableTrace , BluetoothImplementation bluetoothImplementation = BluetoothImplementation.WinRT , BlueGigaBLEOptions blueGigaBLEOptions = null)
@@ -48,7 +45,6 @@ namespace Example
                 if (enableTrace)
                 {
                     var tracer = hub.ServiceProvider.GetService<TraceMessages>();
-
                     await tracer.ExecuteAsync();
                 }
 
@@ -103,17 +99,18 @@ namespace Example
             if (bluetoothImplementation == BluetoothImplementation.BlueGiga)
             {
                 if (blueGigaBLEOptions == null)
-                    throw new ArgumentNullException(nameof(blueGigaBLEOptions) , "If you use the BlueGiga-Implementation, you've got to give a non-empty BlueGigaBLEOptions-object also!");
-                //this adds the BlueGiga-implementation instead of the WinRT-implementation
-                serviceCollection.AddBlueGigaBLEBluetooth(options =>
                 {
-
-                   //enter the COMPort-Name here
-                   //on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
-                   options.COMPortName = blueGigaBLEOptions.COMPortName;
-                   //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
-                   options.TraceDebug = blueGigaBLEOptions.TraceDebug;
-                });
+                    throw new ArgumentNullException(nameof(blueGigaBLEOptions), "If you use the BlueGiga-Implementation, you've got to give a non-empty BlueGigaBLEOptions-object also!");
+                }
+                //this adds the BlueGiga-implementation instead of the WinRT-implementation
+                _ = serviceCollection.AddBlueGigaBLEBluetooth(options =>
+                  {
+                      //enter the COMPort-Name here
+                      //on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
+                      options.COMPortName = blueGigaBLEOptions.COMPortName;
+                      //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
+                      options.TraceDebug = blueGigaBLEOptions.TraceDebug;
+                  });
             }
             //can be easily extended here by taking another implementation (for example BlueZ for Raspberry) into the BluetoothImplementation-enum and then
             //do the needed Addxxx and options here:

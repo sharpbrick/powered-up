@@ -1,12 +1,11 @@
 ﻿namespace SharpBrick.PoweredUp
 {
-    //TODO: Use these Options
     public class BlueGigaBLEOptions
     {
         public BlueGigaBLEOptions()
         {
-
         }
+
         public BlueGigaBLEOptions(string comPortName, bool traceDebug)
         {
             COMPortName = comPortName;
