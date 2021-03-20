@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Bluegiga.BLE.Events.ATTClient;
@@ -85,12 +87,22 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 {
                     // dispose managed state (managed objects)
                 }
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~BlueGigaBLEPoweredUpBluetoothCharacteristic()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
         public void Dispose()
         {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
@@ -122,11 +134,11 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         {
             var sb = new StringBuilder();
             _ = await Task.Run(() =>
-            {
+        {
                 var indentStr = new string('\t', indent < 0 ? 0 : indent);
 
                 _ = sb.Append(
-                    $"{indentStr}*** Characteristic-Info ***:" + Environment.NewLine +
+                $"{indentStr}*** Characteristic-Info ***:" + Environment.NewLine +
                     $"{indentStr}Characteristic-UUID: {Uuid}" + Environment.NewLine +
                     $"{indentStr}CharacteristicHandle: { CharacteristicHandle}" + Environment.NewLine +
                     $"{indentStr}I'm belonging to Service {Service.Uuid} which is connected on handle {Service.Device.ConnectionHandle} on Device [{BlueGigaBLEHelper.ByteArrayToHexString(Service.Device.DeviceAdressBytes)}] [{Service.Device.DeviceAdress}]" + Environment.NewLine);

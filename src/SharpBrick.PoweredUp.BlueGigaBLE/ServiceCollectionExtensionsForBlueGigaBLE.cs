@@ -17,14 +17,25 @@ namespace SharpBrick.PoweredUp
         /// <param name="services">The service-collection the service shall be added to</param>
         /// <param name="setupAction"
         /// <returns></returns>
+        //public static IServiceCollection AddBlueGigaBLEBluetooth(
+        //    this IServiceCollection services,
+        //    BlueGigaBLEOptions bleoptions)
+        //{
+        //    ILogger logger = services.Ge
+        //    services.AddSingleton<IPoweredUpBluetoothAdapter, BlueGigaBLEPoweredUpBluetoothAdapater>(
+        //    (adapter) => new BlueGigaBLEPoweredUpBluetoothAdapater(comPortName:bleoptions.COMPortName, traceDebug:bleoptions.TraceDebug ));
+        //    return services;
+        //}
+
+
         public static IServiceCollection AddBlueGigaBLEBluetooth(this IServiceCollection services, Action<BlueGigaBLEOptions> setupAction)
         {
             _ = services.Configure(setupAction);
             _ = services.AddSingleton<IPoweredUpBluetoothAdapter, BlueGigaBLEPoweredUpBluetoothAdapater>(provider =>
-              {
-                  var options = provider.GetRequiredService<IOptions<BlueGigaBLEOptions>>();
+            {
+                var options = provider.GetRequiredService<IOptions<BlueGigaBLEOptions>>();
                   return new BlueGigaBLEPoweredUpBluetoothAdapater(comPortName: options.Value.COMPortName, traceDebug: options.Value.TraceDebug, logger: provider.GetRequiredService<ILogger<BlueGigaBLEPoweredUpBluetoothAdapater>>());
-              }
+            }
             );
             return new BlueGigaBluetoothBuilder(services).Services;
         }
@@ -36,10 +47,10 @@ namespace SharpBrick.PoweredUp
                 throw new ArgumentException(nameof(builder));
             }
             _ = builder.Services.Configure<BlueGigaBLEOptions>(o =>
-              {
-                  o.COMPortName = options.COMPortName;
-                  o.TraceDebug = options.TraceDebug;
-              });
+            {
+                o.COMPortName = options.COMPortName;
+                o.TraceDebug = options.TraceDebug;
+            });
             return builder;
         }
 
@@ -56,5 +67,19 @@ namespace SharpBrick.PoweredUp
                 Services = services;
             }
         }
+
+        //((ctx) => {
+        //    ILogger logger = ctx.GetRequiredService<ILogger>();
+        //    return new BlueGigaBLEPoweredUpBluetoothAdapater(logger);
+        //});
+        //TODO: Make COM-Port and  other values for serial communication (baudrae) configurabel
+        //TODO: .NET 5 Adding Action<TOptions> way for configuring COM-Port or alike
+        //see https://docs.microsoft.com/en-us/dotnet/core/extensions/options-library-authors#actiontoptions-parameter
+
+        //TODO: .NET 5 Options instance parameter
+        //https://docs.microsoft.com/en-us/dotnet/core/extensions/options-library-authors#options-instance-parameter
+
+        //TODO: .NET 5 IConfiguration parameter
+        //https://docs.microsoft.com/en-us/dotnet/core/extensions/options-library-authors#iconfiguration-parameter
     }
 }

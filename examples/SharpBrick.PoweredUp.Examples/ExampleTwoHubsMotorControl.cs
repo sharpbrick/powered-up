@@ -22,9 +22,12 @@ namespace Example
             var hub1 = Host.Create<TechnicMediumHub>(BluetoothAddressHub1);
             var hub2 = Host.Create<TechnicMediumHub>(BluetoothAddressHub2);
             await hub1.ConnectAsync();
+            hub1.Configure(0x00);
             await hub2.ConnectAsync();
+            hub2.Configure(0x01);
             SelectedHub = DirectlyConnectedHub1 = hub1;
             DirectlyConnectedHub2 = hub2;
+
         }
 
         public override async Task ExecuteAsync()

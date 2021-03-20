@@ -22,6 +22,9 @@ namespace Example
         {
             serviceCollection
                 .AddPoweredUp();
+                
+
+                
         }
 
         public async Task InitHostAndDiscoverAsync(bool enableTrace , BluetoothImplementation bluetoothImplementation = BluetoothImplementation.WinRT , BlueGigaBLEOptions blueGigaBLEOptions = null)
