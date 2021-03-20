@@ -17,8 +17,10 @@ namespace Example
 				var colorDistSensor = twoPortHub.B.GetDevice<ColorDistanceSensor>();
 
 				var observers = new[] {
+					colorDistSensor.ColorObservable
+						.Subscribe(color => Log.LogInformation("Color: {0}", color)),
 					colorDistSensor.RgbObservable
-						.Subscribe(rgb => Log.LogInformation("Color: R: {0}, G: {1}, B: {2}", rgb.red, rgb.green, rgb.blue)),
+						.Subscribe(rgb => Log.LogInformation("RGB: R: {0}, G: {1}, B: {2}", rgb.red, rgb.green, rgb.blue)),
 					colorDistSensor.ReflectionObservable
 						.Subscribe(refl => Log.LogInformation("Reflection: {0}", refl)),
 					colorDistSensor.AmbientLightObservable
@@ -29,6 +31,7 @@ namespace Example
 						.Subscribe(dst => Log.LogInformation("Proximity: {0}", dst)),
 				};
 
+				await TestMode(colorDistSensor, colorDistSensor.ModeIndexColor);
 				await TestMode(colorDistSensor, colorDistSensor.ModeIndexRgb);
 				await TestMode(colorDistSensor, colorDistSensor.ModeIndexReflection);
 				await TestMode(colorDistSensor, colorDistSensor.ModeIndexAmbientLight);
@@ -48,7 +51,7 @@ namespace Example
 				Log.LogInformation("Teseting mode {0} - START", mode);
 				await colorDistSensor.SetupNotificationAsync(mode, enabled: true);
 
-				await Task.Delay(TimeSpan.FromMinutes(2));
+				await Task.Delay(TimeSpan.FromMinutes(1));
 
 				await colorDistSensor.SetupNotificationAsync(mode, enabled: false);
 				Log.LogInformation("Teseting mode {0} - END", mode);
