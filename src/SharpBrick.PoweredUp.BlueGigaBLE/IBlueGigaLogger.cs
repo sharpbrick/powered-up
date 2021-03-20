@@ -22,6 +22,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// <summary>
         /// Shall the LogInfoAsync really log
         /// </summary>
-        public bool TraceDebug { get; init; }
+        public bool TraceDebug { get; }
     }
 }

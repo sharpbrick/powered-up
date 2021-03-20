@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using Bluegiga.BLE.Events.Connection;
 using Bluegiga.BLE.Events.ATTClient;
-using Bluegiga.BLE.Responses.ATTClient;
 using System.Text;
 
 namespace SharpBrick.PoweredUp.BlueGigaBLE
@@ -95,7 +94,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             if (TraceDebug)
             {
                 Logger?.LogDebug(log);
-        }
+            }
             _ = await Task.Run(() => BleStatus.ActualStatus = BlueGigaBLEStatus.StateStandby);
         }
 
@@ -147,11 +146,11 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 //stop discovery and detach the handler when cancel of the cts is called
                 Bglib.BLEEventGAPScanResponse -= myGAPScanResponseHandler;
                 cmd = Bglib.BLECommandGAPEndProcedure();
-                  _ = Bglib.SendCommand(SerialAPI, cmd);
-                  if (TraceDebug)
-                  {
-                      Logger?.LogDebug("Discovery-mode stopped on BlueGiga-Bluetoothadpater because Discover() has been canceled...");
-                  }
+                _ = Bglib.SendCommand(SerialAPI, cmd);
+                if (TraceDebug)
+                {
+                    Logger?.LogDebug("Discovery-mode stopped on BlueGiga-Bluetoothadpater because Discover() has been canceled...");
+                }
             });
             // begin scanning for BLE peripherals
             cmd = Bglib.BLECommandGAPDiscover(1); // generic discovery mode
@@ -314,7 +313,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             BlueGigaBLEPoweredUpBluetoothDevice device;
             device = Devices.GetOrAdd(bluetoothAddress, new BlueGigaBLEPoweredUpBluetoothDevice(bluetoothAddress, bluetoothAdressBytes, name, this, Logger, TraceDebug, lastConnectionHandle));
             device.IsConnected = wasLastConnectSuccesfull;
-            device.ConnectionHandle = lastConnectionHandle;
             wasLastConnectSuccesfull = false;
             lastConnectionHandle = 0xff;
             //now discover services and characteristics
@@ -360,17 +358,17 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             if (TraceDebug)
             {
                 await Task.Run(() =>
-        {
+                {
                     var log = "ConnectionStatusHandler:" + Environment.NewLine
-                + $"\tConnection-Handle: {e.connection}," + Environment.NewLine
-                + $"\tFlags: {Convert.ToString(e.flags, 2).PadLeft(8, '0')}," + Environment.NewLine
-                + $"\tAdressBytes (little endian): {e.address}," + Environment.NewLine
-                + $"\tAdress (Hex): {BlueGigaBLEHelper.ByteArrayToHexString(e.address)}," + Environment.NewLine
-                + $"\tAdressType: {e.address_type}," + Environment.NewLine
-                + $"\tConnection-Interval: {e.conn_interval} (= {e.conn_interval * 1.25}ms)," + Environment.NewLine
-                + $"\tTimeout: {e.timeout} (={e.timeout * 10}ms)," + Environment.NewLine
-                + $"\tLatency: {e.latency}" + Environment.NewLine
-                + $"\tBonding: {e.bonding}";
+                        + $"\tConnection-Handle: {e.connection}," + Environment.NewLine
+                        + $"\tFlags: {Convert.ToString(e.flags, 2).PadLeft(8, '0')}," + Environment.NewLine
+                        + $"\tAdressBytes (little endian): {e.address}," + Environment.NewLine
+                        + $"\tAdress (Hex): {BlueGigaBLEHelper.ByteArrayToHexString(e.address)}," + Environment.NewLine
+                        + $"\tAdressType: {e.address_type}," + Environment.NewLine
+                        + $"\tConnection-Interval: {e.conn_interval} (= {e.conn_interval * 1.25}ms)," + Environment.NewLine
+                        + $"\tTimeout: {e.timeout} (={e.timeout * 10}ms)," + Environment.NewLine
+                        + $"\tLatency: {e.latency}" + Environment.NewLine
+                        + $"\tBonding: {e.bonding}";
                     Logger?.LogDebug(log);
                 });
             }
@@ -403,7 +401,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 await Task.Run(() =>
                 {
                     var mydevice = Devices.First(d => d.Value.ConnectionHandle == e.connection).Value;
-                BlueGigaBLEPoweredUpBluetoothService myservice;
+                    BlueGigaBLEPoweredUpBluetoothService myservice;
                     myservice = new BlueGigaBLEPoweredUpBluetoothService(mydevice, serviceUuid, e.start, e.end, Logger, TraceDebug);
                     _ = mydevice.GATTServices.AddOrUpdate(serviceUuid, myservice, (guid, service) => service = myservice);
                 });
@@ -419,9 +417,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             {
                 Logger?.LogDebug($"Service found (ServiceFoundHandler) with uuid-Byte-Array: [{BlueGigaBLEHelper.ByteArrayToHexString(e.uuid)}]");
             }
-            if (TraceDebug) _logger?.LogDebug($"Service found (ServiceFoundHandler) with uuid-Byte-Array: [{BlueGigaBLEHelper.ByteArrayToHexString(e.uuid)}]");
-            
-            
+            if (TraceDebug)
+            {
+                Logger?.LogDebug($"Service found (ServiceFoundHandler) with uuid-Byte-Array: [{BlueGigaBLEHelper.ByteArrayToHexString(e.uuid)}]");
+            }
         }
 
         /// <summary>
@@ -456,7 +455,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             {
                 Logger?.LogDebug($"Characteristic found (CharacteristicFoundHandler) with uuid-Byte-Array: [{BlueGigaBLEHelper.ByteArrayToHexString(e.uuid)}]");
             }
-            if (TraceDebug) _logger?.LogDebug($"Characteristic found (CharacteristicFoundHandler) with uuid-Byte-Array: [{BlueGigaBLEHelper.ByteArrayToHexString(e.uuid)}]");
+            if (TraceDebug)
+            {
+                Logger?.LogDebug($"Characteristic found (CharacteristicFoundHandler) with uuid-Byte-Array: [{BlueGigaBLEHelper.ByteArrayToHexString(e.uuid)}]");
+            }
         }
 
         /// <summary>
@@ -467,13 +469,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         private async void ServiceOrCharacteristicSearchCompletedHandler(object sender, ProcedureCompletedEventArgs e)
         {
             await Task.Run(() =>
-        {
-            //signal end of dicovery when all services for a device have been discovered
+            {
+                //signal end of dicovery when all services for a device have been discovered
                 if (BleStatus.ActualStatus == BlueGigaBLEStatus.StateFindingServices)
                 {
                     _ = AllServicesForDeviceDiscovered.Release();
                 }
-            //signal end of dicovery when all characteristics for a device have been discovered
+                //signal end of dicovery when all characteristics for a device have been discovered
                 if (BleStatus.ActualStatus == BlueGigaBLEStatus.StateFindingattributes)
                 {
                     _ = AllCharacteristicsForServiceDiscovered.Release();
@@ -481,7 +483,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             });
         }
         #endregion
-        
+
         #region IDisposable
         private bool disposedValue = false;
         protected virtual void Dispose(bool disposing)
@@ -533,37 +535,37 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         {
             var stringToLog = new StringBuilder();
             _ = await Task.Run(() =>
-        {
+            {
                 var indentStr = new string('\t', indent < 0 ? 0 : indent);
 
                 _ = stringToLog.Append($"{indentStr}*** Bluegiga-Adapter-Info ***:" + Environment.NewLine + $"{indentStr}Serial Port Name: {SerialAPI.PortName}" + Environment.NewLine + $"{indentStr}Serial Port Speed: {SerialAPI.BaudRate} baud" + Environment.NewLine + $"{indentStr}Actual Status (BlueGigaBLEStatus): {BleStatus}" + Environment.NewLine);
-            
+
                 if (Devices.Count > 0)
                 {
                     _ = stringToLog.Append($"{indentStr}I know about the following {Devices.Count} devices connected to me:");
                     foreach (var device in Devices)
-            {
+                    {
                         _ = stringToLog.Append(device.Value.GetLogInfosAsync(indent + 1));
                     }
 
                     _ = stringToLog.Append($"{indentStr}End of my known devices");
-            }
-            else
+                }
+                else
                 {
                     _ = stringToLog.Append($"{indentStr}I DON'T know about any devices connected to me!");
                 }
 
                 if (DevicesInfo.Count > 0)
-            {
+                {
                     _ = stringToLog.Append($"{indentStr}I know about the following {Devices.Count} devices which have been found by Discovery (not neccessarily connected):");
                     var innerindentStr = indentStr + "\t";
                     foreach (var device in DevicesInfo)
-                {
+                    {
                         _ = stringToLog.Append($"{innerindentStr}Bluetooth-Adress (ulong): {device.Value.BluetoothAddress}" + Environment.NewLine + $"{innerindentStr}Bluetooth-Name: {device.Value.Name}" + Environment.NewLine + $"{innerindentStr}Bluetooth-ManufacturerData (decimal): {BlueGigaBLEHelper.ByteArrayToNumberString(device.Value.ManufacturerData)}" + Environment.NewLine + $"{innerindentStr}Bluetooth-ManufacturerData (hex): {BlueGigaBLEHelper.ByteArrayToHexString(device.Value.ManufacturerData)}" + Environment.NewLine);
-                }
+                    }
                     _ = stringToLog.Append($"{indentStr}End of devices which have been found by Discovery (not neccessarily connected)");
-            }
-            else
+                }
+                else
                 {
                     _ = stringToLog.Append($"{indentStr}I actually DON'T know about any devices found by Discovery!");
                 }

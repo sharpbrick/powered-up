@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -85,15 +82,9 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 disposedValue = true;
             }
         }
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~BlueGigaBLEPoweredUpBluetoothDevice()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
+
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -115,10 +106,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     if (!string.IsNullOrEmpty(footer))
                     {
                         _ = sb.Append(footer.ToUpper());
-            }
+                    }
                     Logger?.LogDebug(sb.ToString());
                 });
-        }
+            }
         }
 
         public async Task<string> GetLogInfosAsync(int indent)
@@ -138,13 +129,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 {
                     _ = sb.Append($"{indentStr}I know about the following {GATTServices.Count} services:");
                     foreach (var service in GATTServices)
-            {
+                    {
                         _ = sb.Append(await service.Value.GetLogInfosAsync(indent + 1));
                     }
 
                     _ = sb.Append($"{indentStr}End of my known services");
-            }
-            else
+                }
+                else
                 {
                     _ = sb.Append($"{indentStr}I DON'T know about any services I should have!");
                 }

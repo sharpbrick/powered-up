@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -112,10 +111,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     if (!string.IsNullOrEmpty(footer))
                     {
                         _ = sb.Append(footer.ToUpper());
-            }
+                    }
                     Logger?.LogDebug(sb.ToString());
                 });
-        }
+            }
         }
         public async Task<string> GetLogInfosAsync(int indent)
         {
@@ -132,13 +131,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 {
                     _ = sb.Append($"{indentStr}I know about the following {GATTCharacteristics.Count} characteristics:");
                     foreach (var characteristic in GATTCharacteristics)
-            {
+                    {
                         _ = sb.Append(await characteristic.Value.GetLogInfosAsync(indent + 1));
                     }
 
                     _ = sb.Append($"{indentStr}End of my known characteristics");
-            }
-            else
+                }
+                else
                 {
                     _ = sb.Append($"{indentStr}I DON'T know about any characteristics I should have!");
                 }

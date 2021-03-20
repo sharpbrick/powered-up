@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -38,7 +37,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         public static Guid ConvertByteArrayToGuid(byte[] inbytes)
         {
             Guid result;
-            Byte[] reorderdBytes = null;
             inbytes = inbytes.Reverse().ToArray();
             var reorderdBytes = new byte[16];
             //full UUIDs (128bit)
@@ -55,7 +53,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 for (var i = 8; i < 16; i++)
                 {
                     reorderdBytes[i] = inbytes[i];
-            }
+                }
             }
             //16-bit UUIDS
             //Or, to put it more simply, the 16 - bit Attribute UUID replaces the x’s in the following:
@@ -118,12 +116,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             {
                 throw new Exception("ByteArray for function ByteArrayToUlong must be excatly 6 bytes long!");
             }
-
             for (var i = 0; i < 6; i++)
             {
                 result += mybytes[i] * (ulong)Math.Pow(256, i);
             }
-
             return result;
         }
 
@@ -136,10 +132,9 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         {
             var number = new StringBuilder();
             foreach (var b in ba)
-        {
+            {
                 _ = number.AppendFormat("{0:D} ", b);
             }
-
             return number.ToString();
         }
     }
