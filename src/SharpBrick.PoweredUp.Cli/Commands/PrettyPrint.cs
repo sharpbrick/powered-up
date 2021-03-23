@@ -1,10 +1,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Bluetooth.Mock;
-using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 
 namespace SharpBrick.PoweredUp.Cli
@@ -40,7 +38,7 @@ namespace SharpBrick.PoweredUp.Cli
             var foundAttachedIO = false;
 
             var line = await reader.ReadLineAsync();
-            while (line != null)
+            while (line is not null)
             {
                 if (line.Substring(6, 8) == "01-0B-06") // property msg - systemtype - update
                 {

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol.Formatter;
 using SharpBrick.PoweredUp.Protocol.Messages;
@@ -184,25 +183,32 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         {
             var device = deviceFactory.Create(type);
 
-            if (device != null)
+            if (device is not null)
             {
                 foreach (var message in device.GetStaticPortInfoMessages(hardwareRevision, softwareRevision, hub.SystemType).Select(b => MessageEncoder.Decode(b, null)))
                 {
-                    switch (message)
+                    var messageToProcess = message;
+                    switch (messageToProcess)
                     {
                         case PortModeInformationMessage pmim:
-                            pmim.HubId = port.HubId;
-                            pmim.PortId = port.PortId;
+                            messageToProcess = pmim with
+                            {
+                                HubId = port.HubId,
+                                PortId = port.PortId,
+                            };
                             break;
                         case PortInformationMessage pim:
-                            pim.HubId = port.HubId;
-                            pim.PortId = port.PortId;
+                            messageToProcess = pim with
+                            {
+                                HubId = port.HubId,
+                                PortId = port.PortId,
+                            };
                             break;
                     }
 
-                    ApplyStaticProtocolKnowledge(message, knowledge);
+                    ApplyStaticProtocolKnowledge(messageToProcess, knowledge);
 
-                    if (message is PortModeInformationMessage pmim2 && pmim2.InformationType == PortModeInformationType.Name)
+                    if (messageToProcess is PortModeInformationMessage pmim2 && pmim2.InformationType == PortModeInformationType.Name)
                     {
                         device.ExtendPortMode(knowledge.PortMode(pmim2.HubId, pmim2.PortId, pmim2.Mode));
                     }

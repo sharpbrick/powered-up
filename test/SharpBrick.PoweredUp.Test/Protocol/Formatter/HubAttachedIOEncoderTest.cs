@@ -1,6 +1,4 @@
 using System;
-using System.Globalization;
-using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using Xunit;
@@ -22,7 +20,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAttachedIOEncoder_Decode_Attached<T>(string messageAsString, DeviceType expectedType, byte expectedPortId, string expectedHwVersion, string expectedSwVersion)
         {
             // arrange
-            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
             // act
             var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedDeviceMessage;
@@ -34,14 +32,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(new Version(expectedSwVersion), message.SoftwareRevision);
 
             // reverse test
-            var reverseMessage = new HubAttachedIOForAttachedDeviceMessage()
-            {
-                Event = HubAttachedIOEvent.AttachedIO,
-                IOTypeId = expectedType,
-                PortId = expectedPortId,
-                HardwareRevision = Version.Parse(expectedHwVersion),
-                SoftwareRevision = Version.Parse(expectedSwVersion),
-            };
+            var reverseMessage = new HubAttachedIOForAttachedDeviceMessage(expectedPortId, expectedType, Version.Parse(expectedHwVersion), Version.Parse(expectedSwVersion));
 
             // act
             var reverseData = MessageEncoder.Encode(reverseMessage, null);
@@ -56,7 +47,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubAttachedIOEncoder_Decode_AttachedVirutalIO(string messageAsString, DeviceType expectedType, byte expectedPortId, byte portA, byte portB)
         {
             // arrange
-            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
             // act
             var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedVirtualDeviceMessage;

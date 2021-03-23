@@ -47,17 +47,16 @@ namespace SharpBrick.PoweredUp
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePositionMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePositionMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                absolutePosition,
+                speed,
+                maxPower,
+                endState,
+                profile)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                AbsolutePosition = absolutePosition,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
             });
 
             return response;
@@ -85,18 +84,17 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePosition2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePosition2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                absolutePosition1, absolutePosition2,
+                speed,
+                maxPower,
+                endState,
+                profile
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                AbsolutePosition1 = absolutePosition1,
-                AbsolutePosition2 = absolutePosition2,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
             });
 
             return response;

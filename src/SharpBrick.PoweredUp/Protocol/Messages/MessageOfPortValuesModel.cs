@@ -2,10 +2,9 @@ using System.Linq;
 
 namespace SharpBrick.PoweredUp.Protocol.Messages
 {
-    public class PortValueSingleMessage : LegoWirelessMessage
+    public record PortValueSingleMessage(PortValueData[] Data)
+        : LegoWirelessMessage(MessageType.PortValueSingle)
     {
-        public PortValueData[] Data { get; set; }
-
         public static string FormatPortValueDataArray(byte hubId, in PortValueData[] data)
             => string.Join(";", data.Select(d => d switch
                 {
@@ -18,5 +17,11 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
 
         public override string ToString()
             => "Port Values - " + FormatPortValueDataArray(HubId, Data);
+    }
+    public record PortValueCombinedModeMessage(byte PortId, PortValueData[] Data)
+        : LegoWirelessMessage(MessageType.PortValueCombinedMode)
+    {
+        public override string ToString()
+            => $"Port Values (Combined Mode) - " + PortValueSingleMessage.FormatPortValueDataArray(HubId, Data);
     }
 }

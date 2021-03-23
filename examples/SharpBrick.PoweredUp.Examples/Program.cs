@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Example;
+﻿using System.Threading.Tasks;
 
 namespace SharpBrick.PoweredUp.Examples
 {
@@ -54,7 +52,7 @@ namespace SharpBrick.PoweredUp.Examples
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             await example.InitHostAndDiscoverAsync(enableTrace);
 
-            if (example.SelectedHub != null)
+            if (example.SelectedHub is not null)
             {
                 await example.ExecuteAsync();
             }

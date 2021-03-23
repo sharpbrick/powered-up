@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
             _logger = logger;
         }
 
-        public bool IsConnected => _characteristic != null;
+        public bool IsConnected => _characteristic is not null;
 
         public async Task ConnectAsync()
         {
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
 
         public async Task SendBytesAsync(byte[] data)
         {
-            if (_characteristic == null)
+            if (_characteristic is null)
             {
                 throw new InvalidOperationException($"Cannot invoke {nameof(SendBytesAsync)} when device is not connected ({nameof(_characteristic)} is null)");
             }
@@ -60,7 +60,7 @@ namespace SharpBrick.PoweredUp.Bluetooth
 
         public async Task ReceiveBytesAsync(Func<byte[], Task> handler)
         {
-            if (_characteristic == null)
+            if (_characteristic is null)
             {
                 throw new InvalidOperationException($"Cannot invoke {nameof(SendBytesAsync)} when device is not connected ({nameof(_characteristic)} is null)");
             }

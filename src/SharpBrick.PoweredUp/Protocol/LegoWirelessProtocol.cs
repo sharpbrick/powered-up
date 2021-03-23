@@ -16,7 +16,7 @@ namespace SharpBrick.PoweredUp.Protocol
         private readonly BluetoothKernel _kernel;
         private readonly ILogger<LegoWirelessProtocol> _logger;
         private readonly IDeviceFactory _deviceFactory;
-        private Subject<(byte[] data, LegoWirelessMessage message)> _upstreamSubject = null;
+        private readonly Subject<(byte[] data, LegoWirelessMessage message)> _upstreamSubject;
 
         public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
 
@@ -29,19 +29,16 @@ namespace SharpBrick.PoweredUp.Protocol
             ServiceProvider = serviceProvider;
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
             _logger = logger;
-            _deviceFactory = deviceFactory ?? throw new ArgumentNullException(nameof(_deviceFactory));
+            _deviceFactory = deviceFactory ?? throw new ArgumentNullException("DeviceFactory is null", nameof(_deviceFactory));
             _upstreamSubject = new Subject<(byte[] data, LegoWirelessMessage message)>();
         }
 
         public async Task ConnectAsync(SystemType knownSystemType = default)
         {
             // sets initial system type to provided value. This alllows sensitive IPoweredUpDevice to provide the right GetStaticPortInfo (even on initial HubAttachedIO before a HubProperty<SystemType> can be queried).
-            await KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubPropertyMessage<SystemType>()
+            await KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubPropertyMessage<SystemType>(HubProperty.SystemTypeId, HubPropertyOperation.Update, knownSystemType)
             {
                 HubId = 0x00,
-                Operation = HubPropertyOperation.Update,
-                Property = HubProperty.SystemTypeId,
-                Payload = knownSystemType,
             }, Knowledge, _deviceFactory);
 
             await _kernel.ConnectAsync();

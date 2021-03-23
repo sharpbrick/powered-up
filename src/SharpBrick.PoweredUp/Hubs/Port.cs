@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp
         public DeviceType? ExpectedDevice { get; }
         public bool IsVirtual { get; }
 
-        public bool IsDeviceAttached => (_device != null);
+        public bool IsDeviceAttached => (_device is not null);
         public DeviceType? DeviceType { get; private set; }
 
         public Port(byte portId, string friendlyName, bool externalPort, DeviceType? expectedDevice = null, bool isVirtual = false)

@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 
 namespace Example
@@ -11,71 +10,70 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
-                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
-                        .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
-                    )
-                );
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
+            await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
+                .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                    .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub.A)
+                )
+            );
 
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);
+            var motor = technicMediumHub.A.GetDevice<TechnicXLargeLinearMotor>();
 
-                // align physical and reset position to it.
-                await motor.GotoRealZeroAsync();
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);
 
-                await Task.Delay(2000);
+            // align physical and reset position to it.
+            await motor.GotoRealZeroAsync();
 
-                await motor.SetZeroAsync();
+            await Task.Delay(2000);
 
-                await motor.TryLockDeviceForCombinedModeNotificationSetupAsync(motor.ModeIndexAbsolutePosition, motor.ModeIndexPosition);
-                await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
-                await motor.SetupNotificationAsync(motor.ModeIndexPosition, true);
-                await motor.UnlockFromCombinedModeNotificationSetupAsync(true);
+            await motor.SetZeroAsync();
 
-                using var disposable = motor.AbsolutePositionObservable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
-                using var disposable2 = motor.PositionObservable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
-                motor.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
+            await motor.TryLockDeviceForCombinedModeNotificationSetupAsync(motor.ModeIndexAbsolutePosition, motor.ModeIndexPosition);
+            await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
+            await motor.SetupNotificationAsync(motor.ModeIndexPosition, true);
+            await motor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
-                // relative movement from current positions
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Pink);
+            using var disposable = motor.AbsolutePositionObservable.Subscribe(x => Log.LogWarning($"Absolute Position: {x.SI} / {x.Pct}"));
+            using var disposable2 = motor.PositionObservable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));
+            motor.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
 
-                await motor.StartSpeedForDegreesAsync(30, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
-                await motor.StartSpeedForDegreesAsync(30, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
-                await motor.StartSpeedForDegreesAsync(30, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
+            // relative movement from current positions
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Pink);
 
-                // absolute movement to relative to zero point (SetZeroAsync or initial boot position)
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Orange);
+            await motor.StartSpeedForDegreesAsync(30, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
+            await motor.StartSpeedForDegreesAsync(30, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
+            await motor.StartSpeedForDegreesAsync(30, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
 
-                await motor.GotoPositionAsync(0, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
-                await motor.GotoPositionAsync(90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
-                await motor.GotoPositionAsync(180, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
-                await motor.GotoPositionAsync(-90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
-                await Task.Delay(1000);
+            // absolute movement to relative to zero point (SetZeroAsync or initial boot position)
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Orange);
 
-                await motor.GotoRealZeroAsync();
-                await Task.Delay(2000);
+            await motor.GotoPositionAsync(0, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
+            await motor.GotoPositionAsync(90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
+            await motor.GotoPositionAsync(180, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
+            await motor.GotoPositionAsync(-90, 20, 100, SpecialSpeed.Brake, SpeedProfiles.None);
+            await Task.Delay(1000);
 
-                // time to turn the axis by hand to see notification feedback. Reformat input as GotoRealZero destroys them.
-                await motor.TryLockDeviceForCombinedModeNotificationSetupAsync(motor.ModeIndexAbsolutePosition, motor.ModeIndexPosition);
-                await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
-                await motor.SetupNotificationAsync(motor.ModeIndexPosition, true);
-                await motor.UnlockFromCombinedModeNotificationSetupAsync(true);
+            await motor.GotoRealZeroAsync();
+            await Task.Delay(2000);
 
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Green);
-                await motor.StopByFloatAsync();
-                await Task.Delay(10_000);
+            // time to turn the axis by hand to see notification feedback. Reformat input as GotoRealZero destroys them.
+            await motor.TryLockDeviceForCombinedModeNotificationSetupAsync(motor.ModeIndexAbsolutePosition, motor.ModeIndexPosition);
+            await motor.SetupNotificationAsync(motor.ModeIndexAbsolutePosition, true);
+            await motor.SetupNotificationAsync(motor.ModeIndexPosition, true);
+            await motor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Green);
+            await motor.StopByFloatAsync();
+            await Task.Delay(10_000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

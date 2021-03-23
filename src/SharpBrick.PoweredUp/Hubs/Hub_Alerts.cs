@@ -19,21 +19,17 @@ namespace SharpBrick.PoweredUp
 
         public async Task EnableAlertNotificationAsync(HubAlert alert)
         {
-            await Protocol.SendMessageAsync(new HubAlertMessage()
+            await Protocol.SendMessageAsync(new HubAlertMessage(alert, HubAlertOperation.EnableUpdates)
             {
                 HubId = HubId,
-                Operation = HubAlertOperation.EnableUpdates,
-                Alert = alert,
             });
         }
 
         public async Task DisableAlertNotification(HubAlert alert)
         {
-            await Protocol.SendMessageAsync(new HubAlertMessage()
+            await Protocol.SendMessageAsync(new HubAlertMessage(alert, HubAlertOperation.DisableUpdates)
             {
                 HubId = HubId,
-                Operation = HubAlertOperation.DisableUpdates,
-                Alert = alert,
             });
         }
     }

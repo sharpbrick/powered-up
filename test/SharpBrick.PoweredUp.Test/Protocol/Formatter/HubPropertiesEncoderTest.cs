@@ -1,6 +1,4 @@
 using System;
-using System.Globalization;
-using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using Xunit;
@@ -24,7 +22,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubPropertiesEncoder_Decode_UpdateUpstream<T>(string messageAsString, HubProperty expectedProperty, HubPropertyOperation expectedPropertyOperation, T payload)
         {
             // arrange
-            var data = BytesStringUtil.StringToData(messageAsString).AsSpan().Slice(3);
+            var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
             // act
             var message = new HubPropertiesEncoder().Decode(0x00, data) as HubPropertyMessage<T>;
@@ -57,7 +55,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubPropertiesEncoder_Encode_Downstream(HubProperty property, HubPropertyOperation operation, string expectedData)
         {
             // act
-            var data = MessageEncoder.Encode(new HubPropertyMessage() { Property = property, Operation = operation }, null);
+            var data = MessageEncoder.Encode(new HubPropertyMessage(property, operation), null);
 
             // assert
             Assert.Equal(expectedData, BytesStringUtil.DataToString(data));

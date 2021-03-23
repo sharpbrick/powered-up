@@ -8,18 +8,17 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                technicMediumHub.AlertObservable.Subscribe(x => Console.WriteLine($"Alert: {x}"));
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                await technicMediumHub.EnableAlertNotificationAsync(HubAlert.LowSignalStrength);
+            technicMediumHub.AlertObservable.Subscribe(x => Console.WriteLine($"Alert: {x}"));
 
-                await Task.Delay(60_000); // run
+            await technicMediumHub.EnableAlertNotificationAsync(HubAlert.LowSignalStrength);
 
-                await technicMediumHub.DisableAlertNotification(HubAlert.LowSignalStrength);
+            await Task.Delay(60_000); // run
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await technicMediumHub.DisableAlertNotification(HubAlert.LowSignalStrength);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

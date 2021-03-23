@@ -9,11 +9,11 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => 1;
 
         public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
-            => new HubActionMessage() { Action = (HubAction)data[0] };
+            => new HubActionMessage((HubAction)data[0]);
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
         {
-            var hubActionMessage = message as HubActionMessage ?? throw new ArgumentException(nameof(message));
+            var hubActionMessage = message as HubActionMessage ?? throw new ArgumentException("message is null or not HubActionMessage", nameof(message));
 
             data[0] = (byte)hubActionMessage.Action;
         }

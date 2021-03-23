@@ -15,10 +15,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage
+            await Protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage(HubAction.SwitchOffHub)
             {
                 HubId = HubId,
-                Action = HubAction.SwitchOffHub
             }, action => action.Action == HubAction.HubWillSwitchOff);
 
             await Protocol.DisconnectAsync();
@@ -32,10 +31,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage
+            await Protocol.SendMessageReceiveResultAsync<HubActionMessage>(new HubActionMessage(HubAction.Disconnect)
             {
                 HubId = HubId,
-                Action = HubAction.Disconnect
             }, action => action.Action == HubAction.HubWillDisconnect);
 
             await Protocol.DisconnectAsync();
@@ -49,10 +47,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage(HubAction.VccPortControlOn)
             {
                 HubId = HubId,
-                Action = HubAction.VccPortControlOn,
             });
         }
 
@@ -64,10 +61,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage(HubAction.VccPortControlOff)
             {
                 HubId = HubId,
-                Action = HubAction.VccPortControlOff,
             });
         }
 
@@ -79,10 +75,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage(HubAction.ActivateBusyIndication)
             {
                 HubId = HubId,
-                Action = HubAction.ActivateBusyIndication,
             });
         }
 
@@ -94,10 +89,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubActionMessage
+            await Protocol.SendMessageAsync(new HubActionMessage(HubAction.ResetBusyIndication)
             {
                 HubId = HubId,
-                Action = HubAction.ResetBusyIndication,
             });
         }
 

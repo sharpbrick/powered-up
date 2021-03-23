@@ -210,7 +210,7 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
 
 ## Installation Instruction
 
-1. Install the [latest .NET (Core)](https://dotnet.microsoft.com/download) on your machine (e.g. .NET Core 3.1).
+1. Install the [latest .NET](https://dotnet.microsoft.com/download) on your machine (e.g. .NET 5).
 2. Install the `poweredup` dotnet utility using the following instruction
    ````
    dotnet tool install -g SharpBrick.PoweredUp.Cli
@@ -260,7 +260,7 @@ DI Container Elements
 ## Implementation Status
 
 - Bluetooth Adapter
-  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth)
+  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version v3.4.0 and consider upgrading to .NET 5
   - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
   - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)

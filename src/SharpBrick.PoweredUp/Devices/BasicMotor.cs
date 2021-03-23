@@ -39,13 +39,13 @@ namespace SharpBrick.PoweredUp
             AssertValidPower(power, nameof(power));
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPowerMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPowerMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                power
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Power = power,
             });
 
             return response;
@@ -86,14 +86,13 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPower2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPower2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                powerOnMotor1, powerOnMotor2
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Power1 = powerOnMotor1,
-                Power2 = powerOnMotor2,
             });
 
             return response;

@@ -17,7 +17,7 @@ namespace SharpBrick.PoweredUp
         private readonly IPoweredUpBluetoothAdapter _bluetoothAdapter;
         public IServiceProvider ServiceProvider { get; }
         private readonly ILogger<PoweredUpHost> _logger;
-        private ConcurrentBag<(PoweredUpBluetoothDeviceInfo Info, Hub Hub)> _hubs = new ConcurrentBag<(PoweredUpBluetoothDeviceInfo, Hub)>();
+        private readonly ConcurrentBag<(PoweredUpBluetoothDeviceInfo Info, Hub Hub)> _hubs = new();
 
         public IEnumerable<Hub> Hubs => _hubs.Select(i => i.Hub);
 
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp
             {
                 try
                 {
-                    if (!_hubs.Any(i => i.Item1.BluetoothAddress == deviceInfo.BluetoothAddress))
+                    if (!_hubs.Any(i => i.Info.BluetoothAddress == deviceInfo.BluetoothAddress))
                     {
                         var hub = CreateHubInBluetoothScope(deviceInfo.BluetoothAddress, hubFactory => hubFactory.CreateByBluetoothManufacturerData(deviceInfo.ManufacturerData));
 

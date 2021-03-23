@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SharpBrick.PoweredUp.Protocol.Knowledge
 {
     public class ProtocolKnowledge
     {
-        private ConcurrentDictionary<byte, HubInfo> _hubs = new ConcurrentDictionary<byte, HubInfo>();
+        private readonly ConcurrentDictionary<byte, HubInfo> _hubs = new();
         public IEnumerable<HubInfo> Hubs => _hubs.Values;
 
         public HubInfo Hub(byte hubId)
         {
-            HubInfo result;
-
-            if (!_hubs.TryGetValue(hubId, out result))
+            if (!_hubs.TryGetValue(hubId, out HubInfo result))
             {
                 result = new HubInfo()
                 {
@@ -32,8 +29,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
         {
             var hub = Hub(hubId);
 
-            PortInfo result;
-            if (!hub.Ports.TryGetValue(portId, out result))
+            if (!hub.Ports.TryGetValue(portId, out PortInfo result))
             {
                 result = new PortInfo()
                 {
@@ -53,7 +49,7 @@ namespace SharpBrick.PoweredUp.Protocol.Knowledge
 
             if (!(port.Modes.TryGetValue(modeIndex, out var result)))
             {
-                throw new ArgumentException(nameof(modeIndex));
+                throw new ArgumentException("modeIndex is null", nameof(modeIndex));
             }
 
             return result;

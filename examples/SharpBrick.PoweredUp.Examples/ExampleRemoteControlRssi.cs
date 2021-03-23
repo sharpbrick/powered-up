@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 
 namespace Example
@@ -11,24 +10,23 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var twoPortHandset = Host.FindByType<TwoPortHandset>())
-            {
-                var device = twoPortHandset.RemoteControlRssi;
+            using var twoPortHandset = Host.FindByType<TwoPortHandset>();
 
-                await device.SetupNotificationAsync(device.ModeIndexRssi, true, deltaInterval: 1);
+            var device = twoPortHandset.RemoteControlRssi;
 
-                var disposable = device.RssiObservable.Subscribe(x => Log.LogWarning($"RSSI: {x}"));
+            await device.SetupNotificationAsync(device.ModeIndexRssi, true, deltaInterval: 1);
 
-                await twoPortHandset.RgbLight.SetRgbColorsAsync(0x00, 0xFF, 0x00);
+            var disposable = device.RssiObservable.Subscribe(x => Log.LogWarning($"RSSI: {x}"));
 
-                Log.LogInformation("Watching RSSI changes for the next 20 seconds");
+            await twoPortHandset.RgbLight.SetRgbColorsAsync(0x00, 0xFF, 0x00);
 
-                await Task.Delay(20_000);
+            Log.LogInformation("Watching RSSI changes for the next 20 seconds");
 
-                disposable.Dispose();
+            await Task.Delay(20_000);
 
-                await twoPortHandset.SwitchOffAsync();
-            }
+            disposable.Dispose();
+
+            await twoPortHandset.SwitchOffAsync();
         }
     }
 }

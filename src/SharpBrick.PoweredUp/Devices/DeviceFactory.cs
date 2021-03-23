@@ -17,14 +17,14 @@ namespace SharpBrick.PoweredUp.Devices
         {
             var type = GetTypeFromDeviceType(deviceType);
 
-            return (type == null) ? null : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type);
+            return (type is null) ? null : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type);
         }
 
         public IPoweredUpDevice CreateConnected(DeviceType deviceType, ILegoWirelessProtocol protocol, byte hubId, byte portId)
         {
             var type = GetTypeFromDeviceType(deviceType);
 
-            return (type == null) ? new DynamicDevice(protocol, hubId, portId) : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type, protocol, hubId, portId);
+            return (type is null) ? new DynamicDevice(protocol, hubId, portId) : (IPoweredUpDevice)ActivatorUtilities.CreateInstance(_serviceProvider, type, protocol, hubId, portId);
         }
 
         public Type GetTypeFromDeviceType(DeviceType deviceType)

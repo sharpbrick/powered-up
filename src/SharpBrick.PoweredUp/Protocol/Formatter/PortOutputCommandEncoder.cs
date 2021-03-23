@@ -10,27 +10,27 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             {
                 PortOutputCommandMessage portOutputMessage => 3 + portOutputMessage switch
                 {
-                    PortOutputCommandStartPower2Message msg => 2,
-                    PortOutputCommandSetAccTimeMessage msg => 3,
-                    PortOutputCommandSetDecTimeMessage msg => 3,
-                    PortOutputCommandStartSpeedMessage msg => 3,
-                    PortOutputCommandStartSpeed2Message msg => 4,
-                    PortOutputCommandStartSpeedForTimeMessage msg => 6,
-                    PortOutputCommandStartSpeedForTime2Message msg => 7,
-                    PortOutputCommandStartSpeedForDegreesMessage msg => 8,
-                    PortOutputCommandStartSpeedForDegrees2Message msg => 9,
-                    PortOutputCommandGotoAbsolutePositionMessage msg => 8,
-                    PortOutputCommandGotoAbsolutePosition2Message msg => 12,
+                    PortOutputCommandStartPower2Message => 2,
+                    PortOutputCommandSetAccTimeMessage => 3,
+                    PortOutputCommandSetDecTimeMessage => 3,
+                    PortOutputCommandStartSpeedMessage => 3,
+                    PortOutputCommandStartSpeed2Message => 4,
+                    PortOutputCommandStartSpeedForTimeMessage => 6,
+                    PortOutputCommandStartSpeedForTime2Message => 7,
+                    PortOutputCommandStartSpeedForDegreesMessage => 8,
+                    PortOutputCommandStartSpeedForDegrees2Message => 9,
+                    PortOutputCommandGotoAbsolutePositionMessage => 8,
+                    PortOutputCommandGotoAbsolutePosition2Message => 12,
                     PortOutputCommandWriteDirectModeDataMessage directWriteModeDataMessage => 1 + directWriteModeDataMessage switch
                     {
                         GenericWriteDirectModeDataMessage msg => msg.Data.Length,
-                        PortOutputCommandStartPowerMessage msg => 1,
-                        PortOutputCommandSetRgbColorNoMessage msg => 1,
-                        PortOutputCommandSetRgbColorNo2Message msg => 3,
-                        PortOutputCommandPresetEncoderMessage msg => 4,
-                        PortOutputCommandTiltImpactPresetMessage msg => 4,
-                        PortOutputCommandTiltConfigImpactMessage msg => 2,
-                        PortOutputCommandTiltConfigOrientationMessage msg => 1,
+                        PortOutputCommandStartPowerMessage => 1,
+                        PortOutputCommandSetRgbColorNoMessage => 1,
+                        PortOutputCommandSetRgbColorNo2Message => 3,
+                        PortOutputCommandPresetEncoderMessage => 4,
+                        PortOutputCommandTiltImpactPresetMessage => 4,
+                        PortOutputCommandTiltConfigImpactMessage => 2,
+                        PortOutputCommandTiltConfigOrientationMessage => 1,
 
                         _ => throw new NotSupportedException(),
                     },
@@ -136,7 +136,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                     switch (directWriteModeDataMessage)
                     {
                         case GenericWriteDirectModeDataMessage msg:
-                            msg.Data.CopyTo(data.Slice(4, data.Length - 4));
+                            msg.Data.CopyTo(data[4..]);
                             break;
                         case PortOutputCommandStartPowerMessage msg:
                             data[4] = (byte)msg.Power;

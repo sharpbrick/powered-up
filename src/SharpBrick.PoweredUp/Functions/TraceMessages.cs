@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
-using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Functions
 {
     public class TraceMessages
     {
-        private ILegoWirelessProtocol _protocol;
+        private readonly ILegoWirelessProtocol _protocol;
         private readonly ILogger<TraceMessages> _logger;
 
         public TraceMessages(ILegoWirelessProtocol protocol, ILogger<TraceMessages> logger = default)

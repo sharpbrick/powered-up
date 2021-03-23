@@ -26,13 +26,13 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage()
+            await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                color
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                ColorNo = color,
             });
         }
 
@@ -47,24 +47,18 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
+            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(_portId, 0x01, 10000, false)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                Mode = 0x01,
-                DeltaInterval = 10000,
-                NotificationEnabled = false,
             });
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetRgbColorNo2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetRgbColorNo2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                red, green, blue
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                RedColor = red,
-                GreenColor = green,
-                BlueColor = blue,
             });
 
             return response;

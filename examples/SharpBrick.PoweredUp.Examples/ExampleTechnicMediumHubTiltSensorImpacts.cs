@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 
 namespace Example
@@ -11,20 +10,19 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                var device = technicMediumHub.TiltSensor;
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                await device.TiltConfigImpactAsync(2, 1270);
+            var device = technicMediumHub.TiltSensor;
 
-                await device.SetupNotificationAsync(device.ModeIndexImpacts, true, deltaInterval: 1);
+            await device.TiltConfigImpactAsync(2, 1270);
 
-                using var disposable = device.ImpactsObservable.Subscribe(x => Log.LogWarning($"Impact: {x.SI} / {x.Pct} / {x.Raw}"));
+            await device.SetupNotificationAsync(device.ModeIndexImpacts, true, deltaInterval: 1);
 
-                await Task.Delay(10_000);
+            using var disposable = device.ImpactsObservable.Subscribe(x => Log.LogWarning($"Impact: {x.SI} / {x.Pct} / {x.Raw}"));
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(10_000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

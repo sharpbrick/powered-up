@@ -22,12 +22,14 @@ namespace SharpBrick.PoweredUp.Cli
 
         static async Task<int> Main(string[] args)
         {
-            var app = new CommandLineApplication();
+            var app = new CommandLineApplication
+            {
+                Name = "poweredup",
+                Description = "A command line interface to investigate LEGO Powered UP hubs and devices.",
+                UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+            };
 
-            app.Name = "poweredup";
-            app.Description = "A command line interface to investigate LEGO Powered UP hubs and devices.";
             app.HelpOption();
-            app.UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue;
             app.OnExecute(() =>
             {
                 Console.WriteLine($"See {app.Name} --help for Options");
@@ -55,7 +57,7 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         try
                         {
-                            var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+                            var enableTrace = bool.TryParse(traceOption.Value(), out var x) && x;
 
                             var serviceProvider = CreateServiceProvider(enableTrace);
                             (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
@@ -100,7 +102,7 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         try
                         {
-                            var enableTrace = bool.TryParse(traceOption.Value(), out var x) ? x : false;
+                            var enableTrace = bool.TryParse(traceOption.Value(), out var x) && x;
                             var headerEnabled = headerOption.Values.Count > 0;
 
                             var serviceProvider = CreateServiceProvider(enableTrace);
@@ -153,7 +155,7 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         try
                         {
-                            var enableTrace = bool.TryParse(traceOption.Value(), out var x0) ? x0 : false;
+                            var enableTrace = bool.TryParse(traceOption.Value(), out var x0) && x0;
                             var systemType = byte.TryParse(systemTypeOption.Value(), out var x1) ? x1 : (byte)0;
                             var hubId = byte.TryParse(hubOption.Value(), out var x2) ? x2 : (byte)0;
                             var portId = byte.TryParse(portOption.Value(), out var x3) ? x3 : (byte)0;
