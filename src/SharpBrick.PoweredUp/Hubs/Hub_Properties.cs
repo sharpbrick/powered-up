@@ -89,7 +89,10 @@ namespace SharpBrick.PoweredUp
 
         private async Task InitialHubPropertiesQueryAsync()
         {
-            await Task.WhenAll(_knownProperties.Select(property => RequestHubPropertySingleUpdate(property)));
+            foreach (var property in _knownProperties)
+            {
+                await RequestHubPropertySingleUpdate(property);
+            }
         }
 
         public Task RequestHubPropertySingleUpdate(HubProperty property)
