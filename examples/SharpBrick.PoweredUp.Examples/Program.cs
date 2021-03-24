@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Example;
 
@@ -9,6 +10,21 @@ namespace SharpBrick.PoweredUp.Examples
         static async Task Main(string[] args)
         {
             var enableTrace = (args.Length > 0 && args[0] == "--trace");
+            string bluetoothStackPort = "WINRT";
+            if (args.Any(x => x.Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase)))
+            {
+                for(int i=0; i<args.Length; i++)
+                {
+                    if (args[i].Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (args.Length > i)
+                        {
+                            bluetoothStackPort = args[i + 1];
+                        }
+                        break;
+                    }
+                }
+            }
 
             // NOTE: Examples are in their own root namespace to make namespace usage clear
             Example.BaseExample example;
@@ -51,12 +67,13 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleMoveHubColors();
             //example = new Example.ExampleMoveHubTiltSensor();
             example = new ExampleTwoHubsMotorControl();
+            //example = new ExampleTwoPortHubMediumLinearMotor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             // this uses the WinRT-bluetooth-implementation by default
             //await example.InitHostAndDiscoverAsync(enableTrace);
             //for using BlueGiga-Bluetoothadapter:
-            await example.InitHostAndDiscoverAsync(enableTrace, BluetoothImplementation.BlueGiga, new BlueGigaBLEOptions("COM4", true));
+            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort);
 
             if (example.SelectedHub != null)
             {

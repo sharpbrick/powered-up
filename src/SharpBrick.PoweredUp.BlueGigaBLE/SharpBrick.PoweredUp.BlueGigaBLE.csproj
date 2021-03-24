@@ -10,8 +10,12 @@
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="BGLib.cs" />
+  </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BGLibExt" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.13" />
     <PackageReference Include="System.IO.Ports" Version="5.0.0" />

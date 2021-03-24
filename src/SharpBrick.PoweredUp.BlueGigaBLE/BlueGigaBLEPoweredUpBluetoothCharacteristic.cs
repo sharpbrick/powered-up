@@ -2,8 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 
-using Bluegiga.BLE.Events.ATTClient;
-
 using Microsoft.Extensions.Logging;
 
 using SharpBrick.PoweredUp.Bluetooth;
@@ -17,10 +15,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// The Service this Characteristic belongs to; will be set in the calling/constructing Service
         /// </summary>
         public BlueGigaBLEPoweredUpBluetoothService Service { get; init; }
-        /// <summary>
-        /// The connectionof the device offering this characteristic
-        /// </summary>
-        public byte ConnectionHandle => Service.Device.ConnectionHandle;
         /// <summary>
         /// The characteristic-handle on the connection which has to be used by the bluegiga-adapter to adress this character
         /// </summary>
@@ -51,28 +45,35 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             {
                 throw new ArgumentNullException(nameof(notificationHandler));
             }
-            Service.Device.Bglib.BLEEventATTClientAttributeValue += new AttributeValueEventHandler(AttributeValueChangedEventHandler);
-            void AttributeValueChangedEventHandler(object sender, AttributeValueEventArgs e)
+            //attach the notification-handler
+            Service.Device.BleDevice.CharacteristicsByUuid[Uuid].ValueChanged += AttributeValueChangedEventHandler;
+            void AttributeValueChangedEventHandler(object sender, BGLibExt.BleCharacteristicValueChangedEventArgs e)
             {
-                if ((e.atthandle == CharacteristicHandle) && (e.connection == ConnectionHandle))
-                {
-                    _ = notificationHandler(e.value);
-                }
+                Logger?.LogDebug($"Data received in characteristic [{BlueGigaBLEHelper.ByteArrayToHexString(e.Value)}]");
+                _ = notificationHandler(e.Value);
             }
-            var cmd = Service.Device.Bglib.BLECommandATTClientWriteCommand(ConnectionHandle, 0x0F, new byte[] { 0x01, 0x00 });
-            var status = await Task.Run(() => Service.Device.Bglib.SendCommand(Service.Device.BluetoothAdapter.SerialAPI, cmd));
-            return status >= 0;
+            //write to the configuration-handler of the characteristic to enable notifications
+            await Service.Device.BleDevice.CharacteristicsByUuid[Uuid].WriteCccAsync(BGLibExt.BleCccValue.NotificationsEnabled);
+            return true;
         }
 
         public async Task<bool> WriteValueAsync(byte[] data)
         {
+            if (TraceDebug)
+            {
+                Logger?.LogDebug($"WriteValueAsync: data=[{BlueGigaBLEHelper.ByteArrayToHexString(data)}]");
+            }
             if (data is null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
-            var cmd = Service.Device.Bglib.BLECommandATTClientWriteCommand(Service.Connection, CharacteristicHandle, data);
-            var status = await Task.Run(() => Service.Device.Bglib.SendCommand(Service.Device.BluetoothAdapter.SerialAPI, cmd));
-            return status == 0;
+            //there is no WriteWithResult or alike in BgLibExt; so we assume it always goes right and retrun true!
+            await Service.Device.BleDevice.CharacteristicsByUuid[Uuid].WriteValueAsync(data);
+            if (TraceDebug)
+            {
+                Logger?.LogDebug($"WriteValueAsync: data=[{BlueGigaBLEHelper.ByteArrayToHexString(data)}] ENDED!");
+            }
+            return true;
         }
         #endregion
         #region IDisposable
@@ -105,12 +106,12 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     var sb = new StringBuilder();
                     if (!string.IsNullOrEmpty(header))
                     {
-                        _ = sb.Append(header.ToUpper());
+                        _ = sb.Append($"{header.ToUpper()}{Environment.NewLine}");
                     }
                     _ = sb.Append(await GetLogInfosAsync(indent));
                     if (!string.IsNullOrEmpty(footer))
                     {
-                        _ = sb.Append(footer.ToUpper());
+                        _ = sb.Append($"{footer.ToUpper()}{Environment.NewLine}");
                     }
                     Logger?.LogDebug(sb.ToString());
                 });
@@ -128,7 +129,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 $"{indentStr}*** Characteristic-Info ***:" + Environment.NewLine +
                     $"{indentStr}Characteristic-UUID: {Uuid}" + Environment.NewLine +
                     $"{indentStr}CharacteristicHandle: { CharacteristicHandle}" + Environment.NewLine +
-                    $"{indentStr}I'm belonging to Service {Service.Uuid} which is connected on handle {Service.Device.ConnectionHandle} on Device [{BlueGigaBLEHelper.ByteArrayToHexString(Service.Device.DeviceAdressBytes)}] [{Service.Device.DeviceAdress}]" + Environment.NewLine);
+                    $"{indentStr}I'm belonging to Service {Service.Uuid} which is connected on Device [{BlueGigaBLEHelper.ByteArrayToHexString(Service.Device.DeviceAdressBytes)}] [{Service.Device.DeviceAdress}]" + Environment.NewLine);
             return sb;
         });
             return sb.ToString();

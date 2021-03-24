@@ -27,9 +27,9 @@ namespace Example
                 
         }
 
-        public async Task InitHostAndDiscoverAsync(bool enableTrace , BluetoothImplementation bluetoothImplementation = BluetoothImplementation.WinRT , BlueGigaBLEOptions blueGigaBLEOptions = null)
+        public async Task InitHostAndDiscoverAsync(bool enableTrace , string bluetoothStackPort="WINRT")
         {
-            InitHost(enableTrace, bluetoothImplementation , blueGigaBLEOptions);
+            InitHost(enableTrace, bluetoothStackPort);
 
             Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
 
@@ -74,7 +74,7 @@ namespace Example
             return Task.CompletedTask;
         }
 
-        public void InitHost(bool enableTrace, BluetoothImplementation bluetoothImplementation = BluetoothImplementation.WinRT, BlueGigaBLEOptions blueGigaBLEOptions = null)
+        public void InitHost(bool enableTrace, string bluetoothStackPort="WINRT")
         {
             var serviceCollection = new ServiceCollection()
                 // configure your favourite level of logging.
@@ -94,25 +94,21 @@ namespace Example
                         .AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
                     }
                 });
-            if (bluetoothImplementation == BluetoothImplementation.WinRT)
+            if (bluetoothStackPort.Equals("WINRT" , StringComparison.OrdinalIgnoreCase))
             {
                 serviceCollection.AddWinRTBluetooth();
-            };
-
-            if (bluetoothImplementation == BluetoothImplementation.BlueGiga)
+            }
+            else
             {
-                if (blueGigaBLEOptions == null)
-                {
-                    throw new ArgumentNullException(nameof(blueGigaBLEOptions), "If you use the BlueGiga-Implementation, you've got to give a non-empty BlueGigaBLEOptions-object also!");
-                }
                 //this adds the BlueGiga-implementation instead of the WinRT-implementation
+                //the value of the parameter bluetoothStackPort is taken for the COM-Port on which the BlueGiga-adapter is connected
                 _ = serviceCollection.AddBlueGigaBLEBluetooth(options =>
                   {
                       //enter the COMPort-Name here
                       //on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
-                      options.COMPortName = blueGigaBLEOptions.COMPortName;
+                      options.COMPortName = bluetoothStackPort;
                       //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
-                      options.TraceDebug = blueGigaBLEOptions.TraceDebug;
+                      options.TraceDebug = enableTrace;
                   });
             }
             //can be easily extended here by taking another implementation (for example BlueZ for Raspberry) into the BluetoothImplementation-enum and then

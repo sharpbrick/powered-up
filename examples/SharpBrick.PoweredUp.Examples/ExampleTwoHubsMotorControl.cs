@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.BlueGigaBLE;
 
@@ -11,29 +12,28 @@ namespace Example
         //public ulong BluetoothAddressHub1 = BlueGigaBLEHelper.ByteArrayToUlong(new byte[] { 0xc6, 0x43, 0x4D, 0x2b, 0x84, 0x90 });
         public ulong BluetoothAddressHub1 = 158897336566726;
         //public ulong BluetoothAddressHub2 = BlueGigaBLEHelper.ByteArrayToUlong(new byte[] { 0xf0, 0xff, 0x4c, 0x2b, 0x84, 0x90 });
-        public ulong BluetoothAddressHub2 = 158897336549360;
+        public ulong BluetoothAddressHub2 = 158897333284471;
 
         public TechnicMediumHub DirectlyConnectedHub1 { get; private set; }
-        public TechnicMediumHub DirectlyConnectedHub2 { get; private set; }
+        public TwoPortHub DirectlyConnectedHub2 { get; private set; }
 
         // devices need to be switched on!
         public override async Task DiscoverAsync(bool enableTrace)
         {
             var hub1 = Host.Create<TechnicMediumHub>(BluetoothAddressHub1);
-            var hub2 = Host.Create<TechnicMediumHub>(BluetoothAddressHub2);
+            var hub2 = Host.Create<TwoPortHub>(BluetoothAddressHub2);
+            Log.LogInformation($"Press button on first Hub with address {BluetoothAddressHub1}");
             await hub1.ConnectAsync();
-            hub1.Configure(0x00);
+            Log.LogInformation($"Press button on second Hub with address {BluetoothAddressHub1}");
             await hub2.ConnectAsync();
-            hub2.Configure(0x01);
             SelectedHub = DirectlyConnectedHub1 = hub1;
             DirectlyConnectedHub2 = hub2;
-
         }
 
         public override async Task ExecuteAsync()
         {
-            using (TechnicMediumHub technicMediumHub1 = DirectlyConnectedHub1,
-                 technicMediumHub2 = DirectlyConnectedHub2)
+            using (TechnicMediumHub technicMediumHub1 = DirectlyConnectedHub1)
+            using (TwoPortHub technicMediumHub2 = DirectlyConnectedHub2)
             {
                 await technicMediumHub1.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
                     .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
@@ -41,7 +41,7 @@ namespace Example
                     )
                 );
                 await technicMediumHub2.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
-                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                    .AddHub<TwoPortHub>(hubBuilder => hubBuilder
                         .AddDevice<TechnicXLargeLinearMotor>(technicMediumHub2.A)
                     )
                 );

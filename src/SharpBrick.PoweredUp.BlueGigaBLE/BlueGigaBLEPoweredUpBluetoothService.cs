@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
 
+using BGLibExt;
+
 using Microsoft.Extensions.Logging;
 
 using SharpBrick.PoweredUp.Bluetooth;
@@ -16,10 +18,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// The device (LEGO-Hub) on which this service is available
         /// </summary>
         public BlueGigaBLEPoweredUpBluetoothDevice Device { get; }
-        /// <summary>
-        /// The connection (of the device) over which the service is reachable (redundant, but useful for information/log)
-        /// </summary>
-        public byte Connection => Device.ConnectionHandle;
         /// <summary>
         /// First handle of a character this service has
         /// </summary>
@@ -62,13 +60,23 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         public Guid Uuid { get; init; }
         /// <summary>
-        /// Get a Cahracteristic by its Characteristic-UUID
+        /// Get a Characteristic by its Characteristic-UUID
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
         public async Task<IPoweredUpBluetoothCharacteristic> GetCharacteristicAsync(Guid guid)
         {
-            return await Task.FromResult(GATTCharacteristics[guid]);
+            BleCharacteristic characteristic;
+            try
+            {
+                characteristic = Device.BleDevice.CharacteristicsByUuid[guid];
+            }
+            catch
+            {
+                throw new ArgumentException($"The service with GUID {Uuid} does not know a characteristic with GUID {guid} ");
+            }
+            var gattCharacteristic = new BlueGigaBLEPoweredUpBluetoothCharacteristic(this, characteristic.Handle, characteristic.Uuid, Logger, TraceDebug);
+            return await Task.FromResult(GATTCharacteristics.AddOrUpdate(guid, gattCharacteristic, (oldkey, oldvalue) => oldvalue = gattCharacteristic));
         }
         #endregion
         #region IDisposable
@@ -105,12 +113,12 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     var sb = new StringBuilder();
                     if (!string.IsNullOrEmpty(header))
                     {
-                        _ = sb.Append(header.ToUpper());
+                        _ = sb.Append($"{header.ToUpper()}{Environment.NewLine}");
                     }
                     _ = sb.Append(await GetLogInfosAsync(indent));
                     if (!string.IsNullOrEmpty(footer))
                     {
-                        _ = sb.Append(footer.ToUpper());
+                        _ = sb.Append($"{footer.ToUpper()}{Environment.NewLine}");
                     }
                     Logger?.LogDebug(sb.ToString());
                 });
@@ -126,20 +134,20 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                         $"{indentStr}Service-UUID: {Uuid}" + Environment.NewLine +
                         $"{indentStr}First Characteristic-Handle: { FirstCharacterHandle}" + Environment.NewLine +
                         $"{indentStr}Last Characteristic-Handle: { LastCharacterHandle}" + Environment.NewLine +
-                        $"{indentStr}I'm connected on handle {Device.ConnectionHandle} on Device [{BlueGigaBLEHelper.ByteArrayToHexString(Device.DeviceAdressBytes)}] [{Device.DeviceAdress}]" + Environment.NewLine);
+                        $"{indentStr}I'm connected on Device [{BlueGigaBLEHelper.ByteArrayToHexString(Device.DeviceAdressBytes)}] [{Device.DeviceAdress}]" + Environment.NewLine);
                 if (GATTCharacteristics?.Count > 0)
                 {
-                    _ = sb.Append($"{indentStr}I know about the following {GATTCharacteristics.Count} characteristics:");
+                    _ = sb.Append($"{indentStr}I know about the following {GATTCharacteristics.Count} characteristics from explicit use:{Environment.NewLine}");
                     foreach (var characteristic in GATTCharacteristics)
                     {
                         _ = sb.Append(await characteristic.Value.GetLogInfosAsync(indent + 1));
                     }
 
-                    _ = sb.Append($"{indentStr}End of my known characteristics");
+                    _ = sb.Append($"{indentStr}End of my known characteristics{Environment.NewLine}");
                 }
                 else
                 {
-                    _ = sb.Append($"{indentStr}I DON'T know about any characteristics I should have!");
+                    _ = sb.Append($"{indentStr}I DON'T know about any characteristics I had in use!{Environment.NewLine}");
                 }
                 return sb;
             });

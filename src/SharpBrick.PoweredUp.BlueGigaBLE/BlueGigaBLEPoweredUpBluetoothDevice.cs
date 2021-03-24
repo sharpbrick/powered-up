@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using BGLibExt;
 
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +18,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// <summary>
         /// The instance of the blueGiga-library which is responible for the communication
         /// </summary>
-        public Bluegiga.BGLib Bglib => BluetoothAdapter.Bglib;
+        public Bluegiga.BGLib BgLib => BluetoothAdapter.BgLib;
         /// <summary>
         /// The adapter this device is attached to
         /// </summary>
@@ -29,25 +32,24 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         public byte[] DeviceAdressBytes { get; init; }
         /// <summary>
-        /// The connection-handle this device has when it has been connected from the bluetooth-adapter;
-        /// has to be set during the Connect() in the bluetooth-adapter
-        /// </summary>
-        public byte ConnectionHandle { get; init; }
-        /// <summary>
         /// Is the device actually connected?
         /// </summary>
         public bool IsConnected { get; set; } = false;
         /// <summary>
         /// The Logger for this object
         /// </summary>
-        private ILogger Logger { get; init; }
+        public ILogger Logger { get; init; }
+        /// <summary>
+        /// The BleuGiga-Device-object of this device
+        /// </summary>
+        public BleDevice BleDevice { get; init; }
         /// <summary>
         /// The Services this device is currently aware of
         /// </summary>
         public ConcurrentDictionary<Guid, BlueGigaBLEPoweredUpBluetoothService> GATTServices { get; }
         #endregion
         #region Constructors
-        public BlueGigaBLEPoweredUpBluetoothDevice(ulong deviceAdress, byte[] deviceAdressBytes, string name, BlueGigaBLEPoweredUpBluetoothAdapater blueGigaBLEPoweredUpBluetoothAdapater, ILogger logger, bool traceDebug, byte connectionHandle)
+        public BlueGigaBLEPoweredUpBluetoothDevice(ulong deviceAdress, byte[] deviceAdressBytes, string name, BlueGigaBLEPoweredUpBluetoothAdapater blueGigaBLEPoweredUpBluetoothAdapater, ILogger logger, bool traceDebug, BleDevice bleDevice)
         {
             Logger = logger;
             TraceDebug = traceDebug;
@@ -56,14 +58,23 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             BluetoothAdapter = blueGigaBLEPoweredUpBluetoothAdapater;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             GATTServices = new ConcurrentDictionary<Guid, BlueGigaBLEPoweredUpBluetoothService>();
-            ConnectionHandle = connectionHandle;
+            BleDevice = bleDevice;
         }
         #endregion
         #region IPoweredUpBluetoothDevice
         public string Name { get; init; }
         public async Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
         {
-            return await Task.FromResult(GATTServices[serviceId]);
+            var service = BleDevice.Services.FirstOrDefault(s => s.Uuid == serviceId);
+            if (service != null)
+            {
+                var legoService = new BlueGigaBLEPoweredUpBluetoothService(this, serviceId, service.StartHandle, service.EndHandle, Logger, TraceDebug);
+                return await Task.FromResult(GATTServices.AddOrUpdate(serviceId, legoService, (oldkey, oldvalue) => oldvalue = legoService));
+            }
+            else
+            {
+                throw new ArgumentException($"The device with address {DeviceAdress} ({DeviceAdressBytes}) DOES NOT KNOW a service with GUID {serviceId}!");
+            }
         }
         #endregion
         #region IDisposable
@@ -77,6 +88,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     foreach (var service in GATTServices)
                     {
                         service.Value.Dispose();
+                    }
+                    if (BleDevice.IsConnected)
+                    {
+                        _ = BleDevice.DisconnectAsync();
                     }
                 }
                 disposedValue = true;
@@ -121,29 +136,48 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                 _ = sb.Append(
                 $"{indentStr}*** Device-Info ***:" + Environment.NewLine +
                     $"{indentStr}Device-Adress (ulong): {DeviceAdress}" + Environment.NewLine +
-                    $"{indentStr}Device-Adress (Byte[] little endian): { BlueGigaBLEHelper.ByteArrayToHexString(DeviceAdressBytes)}" + Environment.NewLine +
-                    (IsConnected ?
-                        $"{indentStr}Connection-Handle on my Bluetooth-Adapter: { ConnectionHandle }" :
-                    $"{indentStr}Actually I'm not connected to any Bluetooth-Adapter") + Environment.NewLine);
+                    $"{indentStr}Device-Adress (Byte[] little endian): { BlueGigaBLEHelper.ByteArrayToHexString(DeviceAdressBytes)}" + Environment.NewLine);
                 if (GATTServices?.Count > 0)
                 {
-                    _ = sb.Append($"{indentStr}I know about the following {GATTServices.Count} services:");
+                    _ = sb.Append($"{indentStr}I know about the following {GATTServices.Count} services found during explicit use:{Environment.NewLine}");
                     foreach (var service in GATTServices)
                     {
                         _ = sb.Append(await service.Value.GetLogInfosAsync(indent + 1));
                     }
 
-                    _ = sb.Append($"{indentStr}End of my known services");
+                    _ = sb.Append($"{indentStr}End of my known services which have been found during explicit use{Environment.NewLine}");
                 }
                 else
                 {
-                    _ = sb.Append($"{indentStr}I DON'T know about any services I should have!");
+                    _ = sb.Append($"{indentStr}I DON'T know about any services I should have!{Environment.NewLine}");
+                }
+                if (BleDevice.Services?.Count > 0)
+                {
+                    _ = sb.Append($"{indentStr}I know about the following {BleDevice.Services.Count} services found during connection to the device:{Environment.NewLine}");
+                    var innerIndent = indentStr + "\t";
+                    foreach (var service in BleDevice.Services)
+                    {
+                        _ = sb.Append($"{innerIndent}UUID: {service.Uuid}{Environment.NewLine}{innerIndent}Start-Handle: {service.StartHandle}{Environment.NewLine}{innerIndent}End-Handle: {service.EndHandle}{Environment.NewLine}");
+                        if (service.Characteristics?.Count > 0)
+                        {
+                            _ = sb.Append($"{innerIndent}I know about the following characteristics:{Environment.NewLine}");
+                            var innnerInnnerIndent = innerIndent + "\t";
+                            foreach (var characteristic in service.Characteristics)
+                            {
+                                _ = sb.Append($"{innnerInnnerIndent}Characteristic - UUID: {characteristic.Uuid}{Environment.NewLine}{innnerInnnerIndent}Handle: {characteristic.Handle}{Environment.NewLine}{innnerInnnerIndent}Configuration-Handle: {characteristic.HandleCcc}{Environment.NewLine}{innnerInnnerIndent}Has configuration-handle: {characteristic.HasCcc}{Environment.NewLine}");
+                            }
+                        }
+                    }
+                    _ = sb.Append($"{indentStr}End of my discovered services{Environment.NewLine}");
+                }
+                else
+                {
+                    _ = sb.Append($"{indentStr}I DON'T know about any services found during connection!{Environment.NewLine}");
                 }
                 return sb;
             });
             return sb.ToString();
         }
         #endregion
-
     }
 }
