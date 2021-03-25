@@ -318,6 +318,7 @@ DI Container Elements
     - [X] Technic Large Angular Motor (Grey)
     - [X] Technic Color Sensor
     - [X] Technic Distance Sensor
+    - [X] Color & Distance Sensor (88007)
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
