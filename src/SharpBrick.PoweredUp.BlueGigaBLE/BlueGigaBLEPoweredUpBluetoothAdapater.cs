@@ -108,7 +108,8 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     };
                     _ = DevicesInfo.AddOrUpdate(deviceInfo.BluetoothAddress, deviceInfo, (key, oldvalue) => oldvalue = deviceInfo);
                     //bleDeviceDiscovery.ScanResponse -= myGAPScanResponseHandler;
-                    bleDeviceDiscovery.StopDeviceDiscovery();
+                    //bleDeviceDiscovery.StopDeviceDiscovery();
+                    actualListAdvertisingData.Clear();
                     await discoveryHandler(deviceInfo);
                 }
             }

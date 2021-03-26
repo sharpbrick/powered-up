@@ -27,9 +27,9 @@ namespace Example
                 
         }
 
-        public async Task InitHostAndDiscoverAsync(bool enableTrace , string bluetoothStackPort="WINRT")
+        public async Task InitHostAndDiscoverAsync(bool enableTrace , string bluetoothStackPort="WINRT", bool enableTraceBlueGiga = false)
         {
-            InitHost(enableTrace, bluetoothStackPort);
+            InitHost(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
             Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
 
@@ -74,7 +74,7 @@ namespace Example
             return Task.CompletedTask;
         }
 
-        public void InitHost(bool enableTrace, string bluetoothStackPort="WINRT")
+        public void InitHost(bool enableTrace, string bluetoothStackPort="WINRT", bool enableTraceBlueGiga=false)
         {
             var serviceCollection = new ServiceCollection()
                 // configure your favourite level of logging.
@@ -85,13 +85,11 @@ namespace Example
 
                     if (enableTrace)
                     {
-                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug)
-                        //by this you can also disable the debug-output of the BlueGiga; all outputs of BlueGigaBLEPoweredUpBluetoothAdapater are made by LogDebug
-                        //so setting:
-                        //.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Information);
-                        //will also disable the output (but it is still send to the ILogger, which then filters)
-                        //you can also set the option TraceDebug to false in the AddBlueGigaBLEBluetooth below
-                        .AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
+                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                    }
+                    if (enableTraceBlueGiga)
+                    {
+                        builder.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
                     }
                 });
             if (bluetoothStackPort.Equals("WINRT" , StringComparison.OrdinalIgnoreCase))
@@ -108,7 +106,7 @@ namespace Example
                       //on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
                       options.COMPortName = bluetoothStackPort;
                       //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
-                      options.TraceDebug = enableTrace;
+                      options.TraceDebug = enableTraceBlueGiga;
                   });
             }
             //can be easily extended here by taking another implementation (for example BlueZ for Raspberry) into the BluetoothImplementation-enum and then

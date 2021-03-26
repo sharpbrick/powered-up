@@ -24,7 +24,7 @@ namespace Example
             var hub2 = Host.Create<TwoPortHub>(BluetoothAddressHub2);
             Log.LogInformation($"Press button on first Hub with address {BluetoothAddressHub1}");
             await hub1.ConnectAsync();
-            Log.LogInformation($"Press button on second Hub with address {BluetoothAddressHub1}");
+            Log.LogInformation($"Press button on second Hub with address {BluetoothAddressHub2}");
             await hub2.ConnectAsync();
             SelectedHub = DirectlyConnectedHub1 = hub1;
             DirectlyConnectedHub2 = hub2;

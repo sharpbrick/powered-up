@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BGLib.cs" />
+    <Compile Remove="BGLibExtExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

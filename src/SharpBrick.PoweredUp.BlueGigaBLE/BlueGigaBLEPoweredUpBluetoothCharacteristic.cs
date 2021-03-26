@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -49,7 +50,11 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             Service.Device.BleDevice.CharacteristicsByUuid[Uuid].ValueChanged += AttributeValueChangedEventHandler;
             void AttributeValueChangedEventHandler(object sender, BGLibExt.BleCharacteristicValueChangedEventArgs e)
             {
-                Logger?.LogDebug($"Data received in characteristic [{BlueGigaBLEHelper.ByteArrayToHexString(e.Value)}]");
+                if (TraceDebug)
+                {
+                    Logger?.LogDebug($"Data received in characteristic [{BlueGigaBLEHelper.ByteArrayToHexString(e.Value)}]");
+                }
+
                 _ = notificationHandler(e.Value);
             }
             //write to the configuration-handler of the characteristic to enable notifications
@@ -59,6 +64,8 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
 
         public async Task<bool> WriteValueAsync(byte[] data)
         {
+            //waitForEvent.Wait();
+
             if (TraceDebug)
             {
                 Logger?.LogDebug($"WriteValueAsync: data=[{BlueGigaBLEHelper.ByteArrayToHexString(data)}]");
@@ -69,6 +76,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             }
             //there is no WriteWithResult or alike in BgLibExt; so we assume it always goes right and retrun true!
             await Service.Device.BleDevice.CharacteristicsByUuid[Uuid].WriteValueAsync(data);
+            //wait here a little bit to give the Hub a chance to fire events before next Write
+            //await Task.Delay(waitTime);
+            //_ = waitForEvent.Release();
+            
             if (TraceDebug)
             {
                 Logger?.LogDebug($"WriteValueAsync: data=[{BlueGigaBLEHelper.ByteArrayToHexString(data)}] ENDED!");

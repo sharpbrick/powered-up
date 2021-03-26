@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Protocol;
@@ -19,6 +20,7 @@ namespace SharpBrick.PoweredUp.Functions
         private TaskCompletionSource<int> _taskCompletionSource;
         private int _stageTwoCount;
         private int _stageTwoExpected;
+        private SemaphoreSlim _semaphore;
 
         public int SentMessages { get; private set; }
         public int ReceivedMessages { get; private set; }
@@ -40,12 +42,17 @@ namespace SharpBrick.PoweredUp.Functions
 
             SentMessages = 0;
             ReceivedMessages = 0;
+            //on Non-WinRT-bluetooth-devices we will get a race-condition, because too many writes get
+            //to the Hub and some of them will not be answered at all;
+            //so it's best to make it here "sequential" by using a semaphore which is released on every UpdateKnowledge 
+            _semaphore = new SemaphoreSlim(0, 1);
 
             using var disposable = _protocol.UpstreamRawMessages.Subscribe(tuple => UpdateKnowledge(tuple.data, tuple.message));
 
             _stageTwoExpected = _protocol.Knowledge.Hub(_hubId).Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter).Count();
 
             _logger?.LogInformation($"Number of Ports: {_stageTwoExpected}");
+            _semaphore.Release(1);
 
             foreach (var port in _protocol.Knowledge.Hub(_hubId).Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter))
             {
@@ -54,7 +61,9 @@ namespace SharpBrick.PoweredUp.Functions
                     await RequestPortProperties(port);
                 }
             }
-
+            //in case no device is connected to the Hub, the previuos foreach will be skipped and the task _taskCompletionSource will not be returned
+            //so call here CheckEndOfDiscovery
+            CheckEndOfDiscovery();
             await _taskCompletionSource.Task;
 
             disposable.Dispose();
@@ -66,8 +75,10 @@ namespace SharpBrick.PoweredUp.Functions
             {
                 SentMessages += 2;
             }
-
+            //reallay important to use async form of wait here, because otherwise the UpdateKnowledge-calls will be blocked
+            await _semaphore.WaitAsync();
             await _protocol.SendMessageAsync(new PortInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, InformationType = PortInformationType.ModeInfo, });
+            await _semaphore.WaitAsync();
             await _protocol.SendMessageAsync(new PortInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, InformationType = PortInformationType.PossibleModeCombinations, });
         }
 
@@ -80,13 +91,19 @@ namespace SharpBrick.PoweredUp.Functions
                 {
                     SentMessages += 7;
                 }
-
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.Name, });
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.Raw, });
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.Pct, });
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.SI, });
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.Symbol, });
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.Mapping, });
+                await _semaphore.WaitAsync();
                 await _protocol.SendMessageAsync(new PortModeInformationRequestMessage() { HubId = _hubId, PortId = port.PortId, Mode = modeIndex, InformationType = PortModeInformationType.ValueFormat, });
             }
 
@@ -101,6 +118,7 @@ namespace SharpBrick.PoweredUp.Functions
 
         private void UpdateKnowledge(byte[] data, LegoWirelessMessage message)
         {
+            
             var knowledge = _protocol.Knowledge;
 
             var applicableMessage = KnowledgeManager.ApplyStaticProtocolKnowledge(message, knowledge);
@@ -119,12 +137,14 @@ namespace SharpBrick.PoweredUp.Functions
                 lock (lockObject)
                 {
                     ReceivedMessages++;
+                    _ = _semaphore.Release();
                 }
 
                 _logger?.LogInformation($"Stage: {_stageTwoCount}/{_stageTwoExpected}, Messages: {ReceivedMessages}/{SentMessages} ");
 
                 CheckEndOfDiscovery();
             }
+            
         }
 
         private void CheckEndOfDiscovery()
