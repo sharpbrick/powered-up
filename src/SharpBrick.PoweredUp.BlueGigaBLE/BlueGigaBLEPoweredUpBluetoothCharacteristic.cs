@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -40,6 +39,12 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// The UUID of the characteristic
         /// </summary>
         public Guid Uuid { get; }
+        /// <summary>
+        /// Enables the notification on this characteristic and attaches the notificationHandler to the fired notifications
+        /// </summary>
+        /// <param name="notificationHandler">The handler that shall be called when a notification from the characteristic is fired</param>
+        /// <returns>Always true, because we donÄt get back a result of the write-operation; assume it as successful</returns>
+        /// <exception cref="ArgumentNullException">Thrown when th handler is null</exception>
         public async Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler)
         {
             if (notificationHandler is null)
@@ -59,13 +64,17 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             }
             //write to the configuration-handler of the characteristic to enable notifications
             await Service.Device.BleDevice.CharacteristicsByUuid[Uuid].WriteCccAsync(BGLibExt.BleCccValue.NotificationsEnabled);
+            //BGLibExt does not have a WriteWithResult or alike; so we assume the write was successful
             return true;
         }
-
+        /// <summary>
+        /// Writes the data to the characteristic
+        /// </summary>
+        /// <param name="data">The data that shall be written to the characteristic</param>
+        /// <returns>Always true, because we donÄt get back a result of the write-operation; assume it as successful</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the data is null</exception>
         public async Task<bool> WriteValueAsync(byte[] data)
         {
-            //waitForEvent.Wait();
-
             if (TraceDebug)
             {
                 Logger?.LogDebug($"WriteValueAsync: data=[{BlueGigaBLEHelper.ByteArrayToHexString(data)}]");
@@ -74,16 +83,12 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             {
                 throw new ArgumentNullException(nameof(data));
             }
-            //there is no WriteWithResult or alike in BgLibExt; so we assume it always goes right and retrun true!
             await Service.Device.BleDevice.CharacteristicsByUuid[Uuid].WriteValueAsync(data);
-            //wait here a little bit to give the Hub a chance to fire events before next Write
-            //await Task.Delay(waitTime);
-            //_ = waitForEvent.Release();
-            
             if (TraceDebug)
             {
                 Logger?.LogDebug($"WriteValueAsync: data=[{BlueGigaBLEHelper.ByteArrayToHexString(data)}] ENDED!");
             }
+            //there is no WriteWithResult or alike in BgLibExt; so we assume it always goes right and retrun true!
             return true;
         }
         #endregion

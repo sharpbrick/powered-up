@@ -62,8 +62,9 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// <summary>
         /// Get a Characteristic by its Characteristic-UUID
         /// </summary>
-        /// <param name="guid"></param>
+        /// <param name="guid">The UUID of the wished characteristic</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown when the wished characteristic does not exist in the GATT-service</exception>
         public async Task<IPoweredUpBluetoothCharacteristic> GetCharacteristicAsync(Guid guid)
         {
             BleCharacteristic characteristic;

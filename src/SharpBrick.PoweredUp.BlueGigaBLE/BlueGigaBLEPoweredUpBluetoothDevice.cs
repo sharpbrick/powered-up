@@ -62,7 +62,16 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         }
         #endregion
         #region IPoweredUpBluetoothDevice
+        /// <summary>
+        /// The name of the device / Hub
+        /// </summary>
         public string Name { get; init; }
+        /// <summary>
+        /// Gets the GATT-service with the UUID serviceId.
+        /// </summary>
+        /// <param name="serviceId">The wished GATT-service UUID</param>
+        /// <returns>a GATT-service instance</returns>
+        /// <exception cref="ArgumentException">Thrown when the device / hub does not have the wished GATT-service</exception>
         public async Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
         {
             var service = BleDevice.Services.FirstOrDefault(s => s.Uuid == serviceId);

@@ -51,11 +51,12 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         }
         #endregion
 
-
         #region Interface IPoweredUpBluetoothAdapter
         /// <summary>
         /// Start scanning for BLE-advertis-packages and, when found FIRST COMPLETE advertisment from a lego-device, await the discoveryHandler.
         /// The found device DOES NOT get connected here!
+        /// This may fire the discoveryHandler multiple times for THE SAME Hub; so it is the responsibility of the caller to filter double Hubs until the caller
+        /// cancels the cancellationToken, which is the ONLY WAY to end the discovery-mode of the adapter
         /// </summary>
         /// <param name="discoveryHandler">The handler form the SharpBrick.PoweredUp-core which shall be called when a device has been discovered</param>
         /// <param name="cancellationToken">Cancelation-token to handle a cancel of the discovery</param>
@@ -93,9 +94,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     actualListAdvertisingData.Add(advData);
                 }
                 actualListAdvertisingData = bleParsedData.AddOrUpdate(addressNumber, actualListAdvertisingData, (oldkey, oldvalue) => oldvalue = actualListAdvertisingData);
-                //if (e.ParsedData.Any(x => x.Type == BleAdvertisingDataType.CompleteListof128BitServiceClassUUIDs && x.ToGuid() == new Guid(PoweredUpBluetoothConstants.LegoHubService))
-                //    && e.ParsedData.Any(y => y.Type == BleAdvertisingDataType.ManufacturerSpecificData)
-                //    && e.ParsedData.Any(z => z.Type == BleAdvertisingDataType.CompleteLocalName))
                 if (actualListAdvertisingData.Any(x => x.Type == BleAdvertisingDataType.CompleteListof128BitServiceClassUUIDs && x.ToGuid() == new Guid(PoweredUpBluetoothConstants.LegoHubService))
                     && actualListAdvertisingData.Any(y => y.Type == BleAdvertisingDataType.ManufacturerSpecificData)
                     && actualListAdvertisingData.Any(z => z.Type == BleAdvertisingDataType.CompleteLocalName))
@@ -107,8 +105,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                         Name = actualListAdvertisingData.First(z => z.Type == BleAdvertisingDataType.CompleteLocalName).ToAsciiString()
                     };
                     _ = DevicesInfo.AddOrUpdate(deviceInfo.BluetoothAddress, deviceInfo, (key, oldvalue) => oldvalue = deviceInfo);
-                    //bleDeviceDiscovery.ScanResponse -= myGAPScanResponseHandler;
-                    //bleDeviceDiscovery.StopDeviceDiscovery();
                     actualListAdvertisingData.Clear();
                     await discoveryHandler(deviceInfo);
                 }
@@ -117,13 +113,12 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             bleDeviceDiscovery.StopDeviceDiscovery();
             if (TraceDebug)
             {
-                Logger?.LogDebug("Discovery-mode stopped explicitly on BlueGiga-Bluetoothadpater...");
+                Logger?.LogDebug("Discovery-mode stopped explicitly on BlueGiga-Bluetoothadpater before starting new discovery...");
             }
             bleDeviceDiscovery.ScanResponse += myGAPScanResponseHandler;
             //make sure the discovery is stopped when Discover() is canceled
             _ = cancellationToken.Register(() =>
             {
-                //stop discovery and detach the handler when cancel of the cts is called
                 bleDeviceDiscovery.ScanResponse -= myGAPScanResponseHandler;
                 bleDeviceDiscovery.StopDeviceDiscovery();
                 if (TraceDebug)
@@ -131,8 +126,6 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     Logger?.LogDebug("Discovery-mode stopped on BlueGiga-Bluetoothadpater because Discover() has been canceled...");
                 }
             });
-
-
             // begin scanning for BLE peripherals
             bleDeviceDiscovery.StartDeviceDiscovery();
         }
