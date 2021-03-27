@@ -57,6 +57,7 @@ namespace SharpBrick.PoweredUp
 		   => modeIndex switch
 		   {
 			   0 => 1,
+			   2 => 1,
 			   _ => base.GetDefaultDeltaInterval(modeIndex),
 		   };
 
