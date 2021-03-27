@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp.Xamarin
 {
     public class XamarinPoweredUpBluetoothAdapter : IPoweredUpBluetoothAdapter
     {
-        private IAdapter bluetoothAdapter;
+        private readonly IAdapter bluetoothAdapter;
 
         public XamarinPoweredUpBluetoothAdapter(IBluetoothLE bluetooth)
         {
