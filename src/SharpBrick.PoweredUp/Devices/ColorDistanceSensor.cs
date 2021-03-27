@@ -53,6 +53,13 @@ namespace SharpBrick.PoweredUp
 			_rgbMode = MultiValueMode<short>(ModeIndexRgb);
 		}
 
+		protected override uint GetDefaultDeltaInterval(byte modeIndex)
+		   => modeIndex switch
+		   {
+			   0 => 1,
+			   _ => base.GetDefaultDeltaInterval(modeIndex),
+		   };
+
 		public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
 			=> ((softwareVersion, hardwareVersion, systemType) switch
 				{
