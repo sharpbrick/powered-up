@@ -7,30 +7,32 @@ using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using SharpBrick.PoweredUp.Bluetooth;
 
-namespace SharpBrick.PoweredUp.Xamarin
+namespace SharpBrick.PoweredUp.Mobile
 {
     public class XamarinPoweredUpBluetoothAdapter : IPoweredUpBluetoothAdapter
     {
-        private readonly IAdapter bluetoothAdapter;
+        private readonly IAdapter _bluetoothAdapter;
+        private readonly INativeDeviceInfo _deviceInfo;
 
-        public XamarinPoweredUpBluetoothAdapter(IBluetoothLE bluetooth)
+        public XamarinPoweredUpBluetoothAdapter(IBluetoothLE bluetooth, INativeDeviceInfo deviceInfo)
         {
-            bluetoothAdapter = bluetooth.Adapter;
+            _bluetoothAdapter = bluetooth.Adapter;
+            _deviceInfo = deviceInfo;
         }
 
         public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
-            bluetoothAdapter.ScanMode = ScanMode.Balanced;
+            _bluetoothAdapter.ScanMode = ScanMode.Balanced;
 
-            bluetoothAdapter.DeviceDiscovered += ReceivedHandler;
+            _bluetoothAdapter.DeviceDiscovered += ReceivedHandler;
 
             cancellationToken.Register(async () =>
             {
-                await bluetoothAdapter.StopScanningForDevicesAsync().ConfigureAwait(false);
-                bluetoothAdapter.DeviceDiscovered -= ReceivedHandler;
+                await _bluetoothAdapter.StopScanningForDevicesAsync().ConfigureAwait(false);
+                _bluetoothAdapter.DeviceDiscovered -= ReceivedHandler;
             });
 
-            bluetoothAdapter.StartScanningForDevicesAsync(new Guid[] { new Guid(PoweredUpBluetoothConstants.LegoHubService) }, DeviceFilter, false).ConfigureAwait(false);
+            _bluetoothAdapter.StartScanningForDevicesAsync(new Guid[] { new Guid(PoweredUpBluetoothConstants.LegoHubService) }, DeviceFilter, false).ConfigureAwait(false);
 
             async void ReceivedHandler(object sender, DeviceEventArgs args)
             {
@@ -40,14 +42,14 @@ namespace SharpBrick.PoweredUp.Xamarin
 
                 if (advertisementRecord?.Data?.Length > 0)
                 {
-                    info.ManufacturerData = advertisementRecord.Data;
+                    var data = advertisementRecord.Data.ToList();
+                    data.RemoveRange(0, 2);
+                    info.ManufacturerData = data.ToArray();
                     info.Name = args.Device.Name;
-                    // info.BluetoothAddress = eventArgs.BluetoothAddress;
+                    info.BluetoothAddress = _deviceInfo.GetNativeDevice(args.Device.NativeDevice).MacAddressNumeric;
 
                     await discoveryHandler(info).ConfigureAwait(false);
                 }
-
-
             }
         }
 
@@ -95,10 +97,10 @@ namespace SharpBrick.PoweredUp.Xamarin
 
         public Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
         {
-            // var device = await BluetoothLEDevice.FromBluetoothAddressAsync(bluetoothAddress);
-            // return new WinRTPoweredUpBluetoothDevice(device);
+            var deviceInfo = _deviceInfo.GetNativeDevice(bluetoothAddress);
+            IPoweredUpBluetoothDevice device = new XamarinPoweredUpBluetoothDevice(deviceInfo);
 
-            throw new NotImplementedException();
+            return Task.FromResult(device);
         }
     }
 

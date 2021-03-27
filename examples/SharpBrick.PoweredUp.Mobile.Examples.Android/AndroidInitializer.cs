@@ -10,6 +10,7 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Droid
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterInstance<IPermissions>(CrossPermissions.Current);
+            containerRegistry.RegisterInstance<INativeDeviceInfo>(NativeDeviceInfo.Current);
         }
     }
 }

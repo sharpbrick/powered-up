@@ -1,20 +1,23 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
+using Example;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Prism.Commands;
+using SharpBrick.PoweredUp.Mobile.Examples.Examples;
 
 namespace SharpBrick.PoweredUp.Mobile.Examples
 {
     public class MainPageViewModel
     {
         private IPermissions _permissions;
-        
+        private ExampleMoveHubColors _example;
         public ICommand ConnectCommand { get; }
 
-        public MainPageViewModel(IPermissions permissions)
+        public MainPageViewModel(IPermissions permissions, ExampleMoveHubColors example)
         {
             _permissions = permissions;
+            _example = example;
 
             ConnectCommand = new DelegateCommand(Connect);
         }
@@ -22,8 +25,8 @@ namespace SharpBrick.PoweredUp.Mobile.Examples
         private async void Connect()
         {
             if (! await HasLocationPermissionAsync()) return;
-            
 
+            await _example.InitHostAndDiscoverAsync(false);
         }
 
         private async Task<bool> HasLocationPermissionAsync()

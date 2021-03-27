@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using Acr.UserDialogs;
+using Example;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Prism;
 using Prism.Ioc;
 using Prism.Unity;
 using SharpBrick.PoweredUp.Bluetooth;
-using SharpBrick.PoweredUp.Xamarin;
 
 namespace SharpBrick.PoweredUp.Mobile.Examples
 {
@@ -38,6 +38,8 @@ namespace SharpBrick.PoweredUp.Mobile.Examples
             containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
 
             containerRegistry.RegisterSingleton<IPoweredUpBluetoothAdapter, XamarinPoweredUpBluetoothAdapter>();
+
+            containerRegistry.RegisterSingleton<ExampleMoveHubColors>();
 
             // base navigation
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Plugin.BLE" Version="2.1.1" />
+    <PackageReference Include="Prism.Core" Version="8.0.0.1909" />
   </ItemGroup>
 
   <ItemGroup>

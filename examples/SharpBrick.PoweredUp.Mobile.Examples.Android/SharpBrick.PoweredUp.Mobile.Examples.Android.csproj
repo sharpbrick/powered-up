@@ -64,6 +64,8 @@
     <Compile Include="AndroidInitializer.cs" />
     <Compile Include="ApplicationWrapper.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="NativeDevice.cs" />
+    <Compile Include="NativeDeviceInfo.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -92,6 +94,10 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.Mobile\SharpBrick.PoweredUp.Mobile.csproj">
+      <Project>{08769C72-B3E0-499E-A4B2-A97CB56B9650}</Project>
+      <Name>SharpBrick.PoweredUp.Mobile</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpBrick.PoweredUp.Mobile.Examples\SharpBrick.PoweredUp.Mobile.Examples.csproj">
       <Project>{1C815EEA-17F1-4882-8272-C9A329D9D41D}</Project>
       <Name>SharpBrick.PoweredUp.Mobile.Examples</Name>
