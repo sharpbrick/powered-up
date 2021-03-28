@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Mobile
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.Mobile.Examples.Android", "examples\SharpBrick.PoweredUp.Mobile.Examples.Android\SharpBrick.PoweredUp.Mobile.Examples.Android.csproj", "{90C51F20-29A9-472E-9D18-300B5A1AA392}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBrick.PoweredUp.Mobile.Examples", "examples\SharpBrick.PoweredUp.Mobile.Examples\SharpBrick.PoweredUp.Mobile.Examples.csproj", "{76BE1FEB-AA18-4A55-9F48-BB6D9E8B1ACF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Mobile.Examples", "examples\SharpBrick.PoweredUp.Mobile.Examples\SharpBrick.PoweredUp.Mobile.Examples.csproj", "{76BE1FEB-AA18-4A55-9F48-BB6D9E8B1ACF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

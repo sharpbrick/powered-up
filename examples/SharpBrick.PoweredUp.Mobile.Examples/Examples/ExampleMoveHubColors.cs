@@ -22,9 +22,5 @@ namespace Example
                 await moveHub.SwitchOffAsync();
             }
         }
-
-        public ExampleMoveHubColors(INativeDeviceInfo nativeDeviceInfo) : base(nativeDeviceInfo)
-        {
-        }
     }
 }

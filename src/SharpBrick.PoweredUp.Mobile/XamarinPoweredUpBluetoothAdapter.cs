@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace SharpBrick.PoweredUp.Mobile
     {
         private readonly IAdapter _bluetoothAdapter;
         private readonly INativeDeviceInfo _deviceInfo;
+        private readonly Dictionary<ulong, IDevice> _discoveredDevices = new Dictionary<ulong, IDevice>();
 
         public XamarinPoweredUpBluetoothAdapter(IBluetoothLE bluetooth, INativeDeviceInfo deviceInfo)
         {
@@ -48,8 +50,21 @@ namespace SharpBrick.PoweredUp.Mobile
                     info.Name = args.Device.Name;
                     info.BluetoothAddress = _deviceInfo.GetNativeDevice(args.Device.NativeDevice).MacAddressNumeric;
 
+                    AddInternalDevice(args.Device, info);
                     await discoveryHandler(info).ConfigureAwait(false);
                 }
+            }
+        }
+
+        private void AddInternalDevice(IDevice device, PoweredUpBluetoothDeviceInfo info)
+        {
+            if (!_discoveredDevices.ContainsKey(info.BluetoothAddress))
+            {
+                _discoveredDevices.Add(info.BluetoothAddress, device);
+            }
+            else
+            {
+                _discoveredDevices[info.BluetoothAddress] = device;
             }
         }
 
@@ -97,8 +112,9 @@ namespace SharpBrick.PoweredUp.Mobile
 
         public Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
         {
-            var deviceInfo = _deviceInfo.GetNativeDevice(bluetoothAddress);
-            IPoweredUpBluetoothDevice device = new XamarinPoweredUpBluetoothDevice(deviceInfo);
+            if (!_discoveredDevices.ContainsKey(bluetoothAddress)) throw new NotSupportedException("Given bt address does not belong to a discovered device");
+
+            IPoweredUpBluetoothDevice device = new XamarinPoweredUpBluetoothDevice(_discoveredDevices[bluetoothAddress], _bluetoothAdapter);
 
             return Task.FromResult(device);
         }

@@ -5,10 +5,10 @@
 
     <StackLayout>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="SharpBrick.PoweredUp Example" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
+            <Label Text="Example of SharpBrick PoweredUp Library" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
         </Frame>
 
-        <Button Text="Connect" Command="{Binding ConnectCommand}"></Button>
+        <Button Text="Connect and Execute Example" Command="{Binding ConnectCommand}"></Button>
     </StackLayout>
 
 </ContentPage>

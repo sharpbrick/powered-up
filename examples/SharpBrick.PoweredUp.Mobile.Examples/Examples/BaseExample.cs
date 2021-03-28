@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -6,12 +7,14 @@ using SharpBrick.PoweredUp.Functions;
 
 namespace SharpBrick.PoweredUp.Mobile.Examples.Examples
 {
-    public abstract class BaseExample : IExample
+    public abstract class BaseExample
     {
         private INativeDeviceInfo _nativeDeviceInfo;
-        public BaseExample(INativeDeviceInfo nativeDeviceInfo)
+        
+        public BaseExample()
         {
-            _nativeDeviceInfo = nativeDeviceInfo;
+            // should be given by DI but to not change all example ctors I used it on the dirty way :)
+            _nativeDeviceInfo = App.NativeDeviceInfo;
         }
 
         protected PoweredUpHost Host { get; set; }
@@ -19,6 +22,8 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Examples
         protected ServiceProvider ServiceProvider { get; set; }
 
         public Hub SelectedHub { get; set; }
+
+        public ILogger Log { get; private set; }
 
         public abstract Task ExecuteAsync();
         
@@ -53,7 +58,7 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Examples
         {
             Hub result = null;
 
-            // Log.LogInformation("Finding Service");
+            Log.LogInformation("Finding Service");
             var cts = new CancellationTokenSource();
             Host.Discover(async hub =>
             {
@@ -65,22 +70,24 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Examples
                     await tracer.ExecuteAsync();
                 }
 
-                // Log.LogInformation("Connecting to Hub");
+                Log.LogInformation("Connecting to Hub");
                 await hub.ConnectAsync();
 
                 result = hub;
 
-                // Log.LogInformation(hub.AdvertisingName);
-                // Log.LogInformation(hub.SystemType.ToString());
+                Log.LogInformation(hub.AdvertisingName);
+                Log.LogInformation(hub.SystemType.ToString());
 
                 cts.Cancel();
 
-                // Log.LogInformation("Press RETURN to continue to the action");
+                Log.LogInformation("Press RETURN to continue to the action");
             }, cts.Token);
 
-            await Task.Delay(15000, cts.Token);
-
-            cts.Cancel();
+            try
+            {
+                await Task.Delay(60000, cts.Token);
+            }
+            catch (Exception) { /* ignore TaskCanceled */ }
 
             SelectedHub = result;
         }
@@ -89,7 +96,7 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Examples
         {
             InitHost(enableTrace);
 
-            // Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
+            Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
 
             await DiscoverAsync(enableTrace);
         }

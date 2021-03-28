@@ -1,28 +1,49 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Plugin.BLE.Abstractions;
+using Plugin.BLE.Abstractions.Contracts;
 using SharpBrick.PoweredUp.Bluetooth;
 
 namespace SharpBrick.PoweredUp.Mobile
 {
     public class XamarinPoweredUpBluetoothDevice : IPoweredUpBluetoothDevice
     {
-        private INativeDevice _deviceInfo;
+        private IDevice _device;
+        private IAdapter _adapter;
 
-        public XamarinPoweredUpBluetoothDevice(INativeDevice deviceInfo)
+        public string Name => this._device.Name;
+
+        public XamarinPoweredUpBluetoothDevice(IDevice device, IAdapter bluetoothAdapter)
         {
-            this._deviceInfo = deviceInfo;
+            this._device = device;
+            this._adapter = bluetoothAdapter;
         }
 
-        public string Name { get; }
+        #region IDisposible
 
-        public void Dispose()
+        ~XamarinPoweredUpBluetoothDevice() => Dispose(false);
+
+        public void Dispose() { Dispose(true); GC.SuppressFinalize(this); }
+
+        protected virtual void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            _device?.Dispose();
+            _device = null;
+            _adapter = null;
         }
 
-        public Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
+        #endregion
+
+        public async Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
         {
-            throw new NotImplementedException();
+            await _adapter.ConnectToDeviceAsync(_device, new ConnectParameters(true, true)).ConfigureAwait(false);
+
+            if (!_adapter.ConnectedDevices.Contains(_device)) return null;
+
+            var service = await _device.GetServiceAsync(serviceId).ConfigureAwait(false);
+
+            return new XamarinPoweredUpBluetoothService(service);
         }
     }
 }
