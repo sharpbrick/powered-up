@@ -39,8 +39,11 @@ namespace SharpBrick.PoweredUp.Mobile.Examples
 
                 if (_example.SelectedHub != null)
                 {
+                    _userDialogs.HideLoading();
                     _userDialogs.Toast($"Connected to {_example.SelectedHub.AdvertisingName }", TimeSpan.FromSeconds(3));
+                    _userDialogs.ShowLoading($"Connected to {_example.SelectedHub.AdvertisingName } - Executing action");
                     await _example.ExecuteAsync();
+                    _userDialogs.Toast($"Executed action successfully", TimeSpan.FromSeconds(3));
                 }
                 else
                 {

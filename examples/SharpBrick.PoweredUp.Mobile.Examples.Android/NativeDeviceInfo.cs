@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Droid
             get { return _instance ??= new NativeDeviceInfo(); }
         }
 
-        public INativeDevice GetNativeDevice(object deviceInfoObject)
+        public NativeDevice GetNativeDeviceInfo(object deviceInfoObject)
         {
             if (deviceInfoObject is Android.Bluetooth.BluetoothDevice btDevice && btDevice.Address != null)
             {

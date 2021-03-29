@@ -2,6 +2,6 @@
 {
     public interface INativeDeviceInfo
     {
-        INativeDevice GetNativeDevice(object device);
+        NativeDevice GetNativeDeviceInfo(object device);
     }
 }

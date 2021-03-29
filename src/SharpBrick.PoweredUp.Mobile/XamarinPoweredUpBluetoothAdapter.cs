@@ -48,7 +48,7 @@ namespace SharpBrick.PoweredUp.Mobile
                     data.RemoveRange(0, 2);
                     info.ManufacturerData = data.ToArray();
                     info.Name = args.Device.Name;
-                    info.BluetoothAddress = _deviceInfo.GetNativeDevice(args.Device.NativeDevice).MacAddressNumeric;
+                    info.BluetoothAddress = _deviceInfo.GetNativeDeviceInfo(args.Device.NativeDevice).MacAddressNumeric;
 
                     AddInternalDevice(args.Device, info);
                         await discoveryHandler(info).ConfigureAwait(false);
