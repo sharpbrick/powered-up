@@ -52,9 +52,9 @@ namespace SharpBrick.PoweredUp.Mobile
 
                     AddInternalDevice(args.Device, info);
                         await discoveryHandler(info).ConfigureAwait(false);
-                    }
                 }
             }
+        }
 
         private void AddInternalDevice(IDevice device, PoweredUpBluetoothDeviceInfo info)
         {
@@ -126,12 +126,8 @@ namespace SharpBrick.PoweredUp.Mobile
                     
                 }, cts.Token);
 
-                try
-                {
-                    // 60 seconds will be ignored here, because the cancelation will happen after 10 seconds
-                    await Task.Delay(60000, cts.Token);
-                }
-                catch (Exception) { /* ignore TaskCanceled */ }
+                // 60 seconds will be ignored here, because the cancelation will happen after 10 seconds
+                await Task.Delay(60000, cts.Token).ContinueWith(task => { });
 
                 if (!_discoveredDevices.ContainsKey(bluetoothAddress))
                 {

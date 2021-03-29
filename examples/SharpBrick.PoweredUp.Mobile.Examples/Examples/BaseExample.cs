@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -83,11 +82,8 @@ namespace SharpBrick.PoweredUp.Mobile.Examples.Examples
                 Log.LogInformation("Press RETURN to continue to the action");
             }, cts.Token);
 
-            try
-            {
-                await Task.Delay(60000, cts.Token);
-            }
-            catch (Exception) { /* ignore TaskCanceled */ }
+            // 60 seconds will be ignored here, because the cancelation will happen after 10 seconds
+            await Task.Delay(60000, cts.Token).ContinueWith(task => { });
 
             SelectedHub = result;
         }

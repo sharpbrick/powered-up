@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.Mobile;
 using SharpBrick.PoweredUp.Mobile.Examples.Examples;
 
 namespace Example
