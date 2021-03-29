@@ -31,7 +31,7 @@ namespace Example
 
                 await Task.Delay(2000);
 
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0xff, 0x00);
+                await technicMediumHub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0xff);
 
                 await Task.Delay(2000);
 

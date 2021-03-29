@@ -42,7 +42,7 @@ namespace SharpBrick.PoweredUp.Mobile.Examples
 
             containerRegistry.RegisterSingleton<IPoweredUpBluetoothAdapter, XamarinPoweredUpBluetoothAdapter>();
 
-            // containerRegistry.RegisterSingleton<BaseExample, ExampleBluetoothByKnownAddress>(); // doesn't work atm
+            // containerRegistry.RegisterSingleton<BaseExample, ExampleBluetoothByKnownAddress>();
             containerRegistry.RegisterSingleton<BaseExample, ExampleMoveHubColors>();
             // containerRegistry.RegisterSingleton<BaseExample, ExampleMoveHubInternalTachoMotorControl>();
 

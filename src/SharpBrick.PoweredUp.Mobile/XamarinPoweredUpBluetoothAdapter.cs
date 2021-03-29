@@ -51,10 +51,10 @@ namespace SharpBrick.PoweredUp.Mobile
                     info.BluetoothAddress = _deviceInfo.GetNativeDevice(args.Device.NativeDevice).MacAddressNumeric;
 
                     AddInternalDevice(args.Device, info);
-                    await discoveryHandler(info).ConfigureAwait(false);
+                        await discoveryHandler(info).ConfigureAwait(false);
+                    }
                 }
             }
-        }
 
         private void AddInternalDevice(IDevice device, PoweredUpBluetoothDeviceInfo info)
         {
@@ -110,13 +110,36 @@ namespace SharpBrick.PoweredUp.Mobile
             return manufacturerData.Data[0] == 0x97 || manufacturerData.Data[1] == 0x03;
         }
 
-        public Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
+        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
         {
-            if (!_discoveredDevices.ContainsKey(bluetoothAddress)) throw new NotSupportedException("Given bt address does not belong to a discovered device");
+            if (!_discoveredDevices.ContainsKey(bluetoothAddress))
+            {
+                CancellationTokenSource cts = new CancellationTokenSource(10000);
+                
+                // trigger scan for 10 seconds
+                Discover((deviceInfo) =>
+                {
+                    return Task.Run(() =>
+                    {
+                        cts.Cancel(false);
+                    });
+                    
+                }, cts.Token);
 
-            IPoweredUpBluetoothDevice device = new XamarinPoweredUpBluetoothDevice(_discoveredDevices[bluetoothAddress], _bluetoothAdapter);
+                try
+                {
+                    // 60 seconds will be ignored here, because the cancelation will happen after 10 seconds
+                    await Task.Delay(60000, cts.Token);
+                }
+                catch (Exception) { /* ignore TaskCanceled */ }
 
-            return Task.FromResult(device);
+                if (!_discoveredDevices.ContainsKey(bluetoothAddress))
+                {
+                    throw new NotSupportedException("Given bt address does not belong to a discovered device");
+                }
+            }
+
+            return new XamarinPoweredUpBluetoothDevice(_discoveredDevices[bluetoothAddress], _bluetoothAdapter);
         }
     }
 
