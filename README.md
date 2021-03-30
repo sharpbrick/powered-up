@@ -306,6 +306,7 @@ DI Container Elements
     - [X] Duplo Train Base (set 10874) - Rgb Light
     - [X] Duplo Train Base (set 10874) - ColorSensor
     - [X] Duplo Train Base (set 10874) - Speedometer
+    - [X] Color Distance Sensor (88007)
     - [X] Medium Linear Motor (88008)
     - [X] Remote Control Button (88010)
     - [X] Remote Control RSSI (88010)
@@ -318,7 +319,6 @@ DI Container Elements
     - [X] Technic Large Angular Motor (Grey)
     - [X] Technic Color Sensor
     - [X] Technic Distance Sensor
-    - [X] Color & Distance Sensor (88007)
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
@@ -357,4 +357,4 @@ The product is licensed under **MIT License** to allow a easy and wide adoption 
 
 ## Thanks ...
 
-Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@dlech](https://github.com/dlech), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder), [@highstreeto](https://github.com/highstreeto) and [@vuurbeving](https://github.com/vuurbeving) for their code, answers, testing and other important contributions.
