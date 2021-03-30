@@ -6,7 +6,7 @@ namespace SharpBrick.PoweredUp.Deployment
 {
     public class DeploymentModelBuilder
     {
-        private List<DeploymentHubModel> _hubs = new List<DeploymentHubModel>();
+        private readonly List<DeploymentHubModel> _hubs = new();
 
         /// <summary>
         /// Add a hub with the given hub type to the model

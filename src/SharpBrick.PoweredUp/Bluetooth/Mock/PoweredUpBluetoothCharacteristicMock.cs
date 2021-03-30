@@ -39,13 +39,9 @@ namespace SharpBrick.PoweredUp.Bluetooth.Mock
         public List<byte[]> DownstreamMessages { get; } = new List<byte[]>();
 
         public Task AttachIO(DeviceType deviceType, byte hubId, byte portId, Version hw, Version sw)
-            => WriteUpstreamAsync(MessageEncoder.Encode(new HubAttachedIOForAttachedDeviceMessage()
+            => WriteUpstreamAsync(MessageEncoder.Encode(new HubAttachedIOForAttachedDeviceMessage(portId, deviceType, hw, sw)
             {
                 HubId = hubId,
-                PortId = portId,
-                IOTypeId = deviceType,
-                HardwareRevision = hw,
-                SoftwareRevision = sw,
             }, null));
     }
 }

@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Linq;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 using Xunit;
@@ -22,7 +20,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void HubActionsEncoder_Encode(HubAction action, string expectedData)
         {
             // arrange
-            var message = new HubActionMessage() { Action = action };
+            var message = new HubActionMessage(action);
 
             // act
             var data = MessageEncoder.Encode(message, null);

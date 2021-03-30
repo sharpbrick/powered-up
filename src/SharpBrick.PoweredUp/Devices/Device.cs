@@ -13,8 +13,8 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class Device : IDisposable, INotifyPropertyChanged
     {
-        private CompositeDisposable _compositeDisposable = new CompositeDisposable();
-        private ConcurrentDictionary<byte, Mode> _modes = new ConcurrentDictionary<byte, Mode>();
+        private CompositeDisposable _compositeDisposable = new();
+        private readonly ConcurrentDictionary<byte, Mode> _modes = new();
 
         protected readonly ILegoWirelessProtocol _protocol;
         protected readonly byte _hubId;
@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp
         protected readonly IObservable<PortValueData> _portValueObservable;
 
         public IReadOnlyDictionary<byte, Mode> Modes => _modes;
-        public bool IsConnected => (_protocol != null);
+        public bool IsConnected => (_protocol is not null);
 
         public Device()
         { }
@@ -78,13 +78,14 @@ namespace SharpBrick.PoweredUp
                 deltaInterval = GetDefaultDeltaInterval(modeIndex);
             }
 
-            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage()
+            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(
+                _portId,
+                modeIndex,
+                deltaInterval,
+                enabled
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                Mode = modeIndex,
-                DeltaInterval = deltaInterval,
-                NotificationEnabled = enabled,
             });
         }
 
@@ -123,31 +124,27 @@ namespace SharpBrick.PoweredUp
 
             if (combinationModeIndex <= 7) // spec chapter 3.18.1 max combination mode index 
             {
-                await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage()
+                await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage(
+                    _portId,
+                    PortInputFormatSetupCombinedSubCommand.LockDeviceForSetup
+                )
                 {
                     HubId = _hubId,
-                    PortId = _portId,
-                    SubCommand = PortInputFormatSetupCombinedSubCommand.LockDeviceForSetup,
                 });
 
                 // if this needs to be performed after the port formats, cache it for the unlock function
-                await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
+                await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage(
+                    _portId,
+                    combinationModeIndex,
+                    modeIndices
+                        .Select(m => _protocol.Knowledge.PortMode(_hubId, _portId, m))
+                        .SelectMany(mode => Enumerable
+                            .Range(0, mode.NumberOfDatasets)
+                            .Select(dataSetPosition => new PortInputFormatSetupCombinedModeModeDataSet(mode.ModeIndex, (byte)dataSetPosition)))
+                        .ToArray() // manage DataSet for device which has (A) multiple modes and (B) returns for a mode more than one data set (e.g. R, G, B for color).
+                )
                 {
                     HubId = _hubId,
-                    PortId = _portId,
-                    SubCommand = PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination,
-
-                    CombinationIndex = combinationModeIndex,
-                    ModeDataSets = modeIndices
-                                        .Select(m => _protocol.Knowledge.PortMode(_hubId, _portId, m))
-                                        .SelectMany(mode => Enumerable
-                                            .Range(0, mode.NumberOfDatasets)
-                                            .Select(dataSetPosition => new PortInputFormatSetupCombinedModeModeDataSet()
-                                            {
-                                                Mode = mode.ModeIndex,
-                                                DataSet = (byte)dataSetPosition,
-                                            }))
-                                        .ToArray(), // manage DataSet for device which has (A) multiple modes and (B) returns for a mode more than one data set (e.g. R, G, B for color).
                 });
 
                 result = true;
@@ -160,13 +157,14 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage()
+            await _protocol.SendMessageAsync(new PortInputFormatSetupCombinedModeMessage(
+                _portId,
+                enableUpdates
+                    ? PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateEnabled
+                    : PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateDisabled
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                SubCommand = enableUpdates
-                    ? PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateEnabled
-                    : PortInputFormatSetupCombinedSubCommand.UnlockAndStartWithMultiUpdateDisabled,
             });
         }
 

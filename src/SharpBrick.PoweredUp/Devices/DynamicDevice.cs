@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Protocol;
-using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
 {

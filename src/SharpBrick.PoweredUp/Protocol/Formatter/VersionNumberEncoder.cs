@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             if (version.Major > 7 || version.Minor > 15 || version.Build > 99 || version.Revision > 9999)
             {
-                throw new ArgumentException(nameof(version));
+                throw new ArgumentException("version is not valid", nameof(version));
             }
 
             return (version.Major << 28) +

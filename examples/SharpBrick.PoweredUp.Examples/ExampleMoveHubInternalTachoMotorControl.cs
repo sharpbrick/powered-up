@@ -7,29 +7,28 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var moveHub = Host.FindByType<MoveHub>())
-            {
-                var internalMotor = moveHub.MotorAtAB;
-                await internalMotor.StartSpeedAsync(50, 100);
-                await internalMotor.StartSpeedForTimeAsync(2000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
+            using var moveHub = Host.FindByType<MoveHub>();
 
-                await Task.Delay(3000);
-                await internalMotor.StopByBrakeAsync();
+            var internalMotor = moveHub.MotorAtAB;
+            await internalMotor.StartSpeedAsync(50, 100);
+            await internalMotor.StartSpeedForTimeAsync(2000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
 
-                var leftMotor = moveHub.LeftMotorAtB;
-                var rightMotor = moveHub.RightMotorAtA;
-                await leftMotor.StartSpeedAsync(10, 100);
-                await leftMotor.StartSpeedForTimeAsync(1000, 10, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
-                await rightMotor.StartSpeedAsync(90, 100);
-                await rightMotor.StartSpeedForTimeAsync(1000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
+            await Task.Delay(3000);
+            await internalMotor.StopByBrakeAsync();
 
-                await Task.Delay(2000);
+            var leftMotor = moveHub.LeftMotorAtB;
+            var rightMotor = moveHub.RightMotorAtA;
+            await leftMotor.StartSpeedAsync(10, 100);
+            await leftMotor.StartSpeedForTimeAsync(1000, 10, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
+            await rightMotor.StartSpeedAsync(90, 100);
+            await rightMotor.StartSpeedForTimeAsync(1000, 90, 100, SpecialSpeed.Hold, SpeedProfiles.AccelerationProfile | SpeedProfiles.DecelerationProfile);
 
-                await leftMotor.StopByBrakeAsync();
-                await rightMotor.StopByBrakeAsync();
+            await Task.Delay(2000);
 
-                await moveHub.SwitchOffAsync();
-            }
+            await leftMotor.StopByBrakeAsync();
+            await rightMotor.StopByBrakeAsync();
+
+            await moveHub.SwitchOffAsync();
         }
     }
 }

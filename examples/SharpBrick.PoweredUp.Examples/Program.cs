@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Example;
+
 
 namespace SharpBrick.PoweredUp.Examples
 {
@@ -73,6 +73,7 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleMoveHubTiltSensor();
             //example = new ExampleTwoHubsMotorControl();
             //example = new ExampleTwoPortHubMediumLinearMotor();
+            example = new Example.ExampleColorDistanceSensor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             // this uses the WinRT-bluetooth-implementation by default
@@ -80,7 +81,7 @@ namespace SharpBrick.PoweredUp.Examples
             //for using BlueGiga-Bluetoothadapter:
             await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
-            if (example.SelectedHub != null)
+            if (example.SelectedHub is not null)
             {
                 await example.ExecuteAsync();
             }

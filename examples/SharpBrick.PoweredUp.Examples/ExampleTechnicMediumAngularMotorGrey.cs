@@ -1,10 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Reactive.Linq;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace Example
 {
@@ -12,40 +7,39 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
-                    .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
-                        .AddDevice<TechnicMediumAngularMotorGrey>(technicMediumHub.A)
-                    )
-                );
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                var motor = technicMediumHub.A.GetDevice<TechnicMediumAngularMotorGrey>();
+            await technicMediumHub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder
+                .AddHub<TechnicMediumHub>(hubBuilder => hubBuilder
+                    .AddDevice<TechnicMediumAngularMotorGrey>(technicMediumHub.A)
+                )
+            );
 
-                await motor.GotoPositionAsync(45, 50, 100);
+            var motor = technicMediumHub.A.GetDevice<TechnicMediumAngularMotorGrey>();
 
-                await Task.Delay(2000);
+            await motor.GotoPositionAsync(45, 50, 100);
 
-                await motor.SetZeroAsync();
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
+            await motor.SetZeroAsync();
 
-                await motor.StartSpeedForDegreesAsync(90, 50, 100);
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
+            await motor.StartSpeedForDegreesAsync(90, 50, 100);
 
-                // align physical and reset position to it.
-                await motor.GotoPositionAsync(0, 50, 100);
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
+            // align physical and reset position to it.
+            await motor.GotoPositionAsync(0, 50, 100);
 
-                // does not reset back to marked position on device
-                await motor.GotoRealZeroAsync();
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
+            // does not reset back to marked position on device
+            await motor.GotoRealZeroAsync();
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(2000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

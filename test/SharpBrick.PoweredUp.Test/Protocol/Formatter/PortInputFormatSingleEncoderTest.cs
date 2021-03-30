@@ -23,13 +23,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             Assert.Equal(expectedNotificationEnabled, message.NotificationEnabled);
 
             // reverse
-            var reverseMessage = new PortInputFormatSingleMessage()
+            var reverseMessage = new PortInputFormatSingleMessage(expectedPortId, expectedMode, expectedDeltaInterval, expectedNotificationEnabled)
             {
                 HubId = 0,
-                PortId = expectedPortId,
-                ModeIndex = expectedMode,
-                DeltaInterval = expectedDeltaInterval,
-                NotificationEnabled = expectedNotificationEnabled,
             };
 
             var reverseData = MessageEncoder.Encode(reverseMessage, null);

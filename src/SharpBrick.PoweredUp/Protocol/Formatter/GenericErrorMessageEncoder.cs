@@ -9,13 +9,9 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             => throw new NotImplementedException();
 
         public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
-            => new GenericErrorMessage()
-            {
-                CommandType = data[0],
-                ErrorCode = (ErrorCode)data[1],
-            };
+            => new GenericErrorMessage(data[0], (ErrorCode)data[1]);
 
         public void Encode(LegoWirelessMessage message, in Span<byte> data)
-        => throw new NotImplementedException();
+            => throw new NotImplementedException();
     }
 }

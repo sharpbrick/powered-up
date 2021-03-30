@@ -5,7 +5,7 @@ namespace SharpBrick.PoweredUp.Bluetooth.Mock
 {
     public class PoweredUpBluetoothDeviceMock : IPoweredUpBluetoothDevice
     {
-        private PoweredUpBluetoothServiceMock _mockService;
+        private readonly PoweredUpBluetoothServiceMock _mockService;
 
         public PoweredUpBluetoothDeviceMock(PoweredUpBluetoothServiceMock mockService)
         {
@@ -15,7 +15,9 @@ namespace SharpBrick.PoweredUp.Bluetooth.Mock
         public string Name => "Mock Device";
 
         public void Dispose()
-        { }
+        {
+            GC.SuppressFinalize(this);
+        }
 
         public Task<IPoweredUpBluetoothService> GetServiceAsync(Guid serviceId)
             => Task.FromResult<IPoweredUpBluetoothService>(_mockService);

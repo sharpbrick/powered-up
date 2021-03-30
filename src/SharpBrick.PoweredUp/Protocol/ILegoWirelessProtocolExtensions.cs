@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp.Protocol
         {
             var awaitable = self.UpstreamMessages
                 .OfType<TResultMessage>()
-                .Where(resultMessage => filter == null || filter(resultMessage))
+                .Where(resultMessage => filter is null || filter(resultMessage))
                 .FirstAsync()
                 .GetAwaiter(); // make sure the subscription is present at the moment the message is sent.
 

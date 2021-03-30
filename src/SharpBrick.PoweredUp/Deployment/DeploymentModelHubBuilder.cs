@@ -6,7 +6,7 @@ namespace SharpBrick.PoweredUp.Deployment
 {
     public class DeploymentModelHubBuilder
     {
-        private List<DeploymentDeviceModel> _devices = new List<DeploymentDeviceModel>();
+        private readonly List<DeploymentDeviceModel> _devices = new();
 
         private SystemType? _hubType = null;
 
@@ -32,6 +32,6 @@ namespace SharpBrick.PoweredUp.Deployment
         }
 
         public DeploymentHubModel Build()
-            => new DeploymentHubModel(_hubType, _devices.ToArray());
+            => new(_hubType, _devices.ToArray());
     }
 }

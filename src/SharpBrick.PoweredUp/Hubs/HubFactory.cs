@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Hubs
 
         public Hub CreateByBluetoothManufacturerData(byte[] manufacturerData)
         {
-            var hub = (manufacturerData == null || manufacturerData.Length < 3) ? null : Create(GetTypeFromSystemType(GetSystemTypeFromManufacturerData((PoweredUpHubManufacturerData)manufacturerData[1])));
+            var hub = (manufacturerData is null || manufacturerData.Length < 3) ? null : Create(GetTypeFromSystemType(GetSystemTypeFromManufacturerData((PoweredUpHubManufacturerData)manufacturerData[1])));
             hub.Configure(0x00);
 
             return hub;

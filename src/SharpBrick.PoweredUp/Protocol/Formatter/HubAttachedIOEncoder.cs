@@ -58,24 +58,21 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             HubAttachedIOEvent ev = (HubAttachedIOEvent)data[1];
             HubAttachedIOMessage message = ev switch
             {
-                HubAttachedIOEvent.AttachedIO => new HubAttachedIOForAttachedDeviceMessage()
-                {
-                    IOTypeId = (DeviceType)BitConverter.ToUInt16(data.Slice(2, 2)),
-                    HardwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(4, 4))),
-                    SoftwareRevision = VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(8, 4))),
-                },
-                HubAttachedIOEvent.AttachedVirtualIO => new HubAttachedIOForAttachedVirtualDeviceMessage()
-                {
-                    IOTypeId = (DeviceType)BitConverter.ToUInt16(data.Slice(2, 2)),
-                    PortAId = data[4],
-                    PortBId = data[5],
-                },
-                HubAttachedIOEvent.DetachedIO => new HubAttachedIOForDetachedDeviceMessage(),
+                HubAttachedIOEvent.AttachedIO => new HubAttachedIOForAttachedDeviceMessage(
+                    portId,
+                    (DeviceType)BitConverter.ToUInt16(data.Slice(2, 2)),
+                    VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(4, 4))),
+                    VersionNumberEncoder.Decode(BitConverter.ToInt32(data.Slice(8, 4)))
+                ),
+                HubAttachedIOEvent.AttachedVirtualIO => new HubAttachedIOForAttachedVirtualDeviceMessage(
+                    portId,
+                    (DeviceType)BitConverter.ToUInt16(data.Slice(2, 2)),
+                    data[4],
+                    data[5]
+                ),
+                HubAttachedIOEvent.DetachedIO => new HubAttachedIOForDetachedDeviceMessage(portId),
                 _ => throw new NotImplementedException(),
             };
-
-            message.PortId = portId;
-            message.Event = ev;
 
             return message;
         }

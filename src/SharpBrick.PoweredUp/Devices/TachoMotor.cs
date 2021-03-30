@@ -53,14 +53,14 @@ namespace SharpBrick.PoweredUp
             }
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetAccTimeMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetAccTimeMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                timeInMs,
+                profileNumber
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Profile = profileNumber,
             });
 
             return response;
@@ -85,14 +85,14 @@ namespace SharpBrick.PoweredUp
             }
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetDecTimeMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetDecTimeMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                timeInMs,
+                profileNumber
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Profile = profileNumber,
             });
 
             return response;
@@ -114,15 +114,15 @@ namespace SharpBrick.PoweredUp
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                speed,
+                maxPower,
+                profile
+            )
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Speed = speed,
-                MaxPower = maxPower,
-                Profile = profile,
             });
 
             return response;
@@ -150,16 +150,14 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeed2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeed2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                speedOnMotor1, speedOnMotor2,
+                maxPower,
+                profile)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Speed1 = speedOnMotor1,
-                Speed2 = speedOnMotor2,
-                MaxPower = maxPower,
-                Profile = profile,
             });
 
             return response;
@@ -183,17 +181,16 @@ namespace SharpBrick.PoweredUp
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForTimeMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForTimeMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                timeInMs,
+                speed,
+                maxPower,
+                endState,
+                profile)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
             });
 
             return response;
@@ -223,18 +220,16 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForTime2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForTime2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                timeInMs,
+                speedOnMotor1, speedOnMotor2,
+                maxPower,
+                endState,
+                profile)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Time = timeInMs,
-                Speed1 = speedOnMotor1,
-                Speed2 = speedOnMotor2,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
             });
 
             return response;
@@ -261,17 +256,16 @@ namespace SharpBrick.PoweredUp
             AssertValidMaxPower(maxPower, nameof(maxPower));
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForDegreesMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForDegreesMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                degrees,
+                speed,
+                maxPower,
+                endState,
+                profile)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Degrees = degrees,
-                Speed = speed,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
             });
 
             return response;
@@ -301,18 +295,90 @@ namespace SharpBrick.PoweredUp
             AssertIsConnected();
             AssertIsVirtualPort();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForDegrees2Message()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartSpeedForDegrees2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                degrees,
+                speedOnMotor1, speedOnMotor2,
+                maxPower,
+                endState,
+                profile)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
-                Degrees = degrees,
-                Speed1 = speedOnMotor1,
-                Speed2 = speedOnMotor2,
-                MaxPower = maxPower,
-                EndState = endState,
-                Profile = profile,
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Start the motor with a speed of Speed using a maximum power of MaxPower and GOTO the Absolute position AbsPos. After position is reached the motor is stopped using the EndState mode of operation.
+        /// 
+        /// TachoMotor.StartSpeedForDegreesAsync support moving the motor by degrees. It operates relative of its current position.
+        /// AbsoluteMotor.GotoAbsolutePositionAsync allows moving the motor to an absolute position. It operates relative to a changeable zero position.
+        /// The Position(Observable) (POS) is reflecting the position relative to a changeable zero position (firmware in-memory encoded)
+        /// The AbsolutePosition(Observable) (APOS) is reflecting the position relative to marked zero position (physically encoded).
+        /// Position is resetable with SetZeroAsync, AbsolutePosition not.
+        /// </summary>
+        /// <param name="absolutePosition">Absolute Position (0 is the position at the start of the motor)</param>
+        /// <param name="speed">The speed used to move to the absolute position.</param>
+        /// <param name="maxPower">Maximum Power level used.</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake.. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
+        /// <returns></returns>
+        public async Task<PortFeedback> GotoPositionAsync(int absolutePosition, sbyte speed, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
+        {
+            AssertValidSpeed(speed, nameof(speed));
+            AssertValidMaxPower(maxPower, nameof(maxPower));
+            AssertIsConnected();
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePositionMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                absolutePosition,
+                speed,
+                maxPower,
+                endState,
+                profile)
+            {
+                HubId = _hubId,
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Start the motors with individual speeds calculated from the common given Speed using a powerlevel limited to the MaxPower value. And the GOTO the Absolute positions: AbsPos1 and AbsPos2.
+        /// 
+        /// TachoMotor.StartSpeedForDegreesAsync support moving the motor by degrees. It operates relative of its current position.
+        /// AbsoluteMotor.GotoAbsolutePositionAsync allows moving the motor to an absolute position. It operates relative to a changeable zero position.
+        /// The Position(Observable) (POS) is reflecting the position relative to a changeable zero position (firmware in-memory encoded)
+        /// The AbsolutePosition(Observable) (APOS) is reflecting the position relative to marked zero position (physically encoded).
+        /// </summary>
+        /// <param name="absolutePosition1">Absolute Position of motor 1 (0 is the position at the start of the motor)</param>
+        /// <param name="absolutePosition2">Absolute Position of motor 2 (0 is the position at the start of the motor)</param>
+        /// <param name="speed">The speed used to move to the absolute position.</param>
+        /// <param name="maxPower">Maximum Power level used.</param>
+        /// <param name="endState">After time has expired, either Float, Hold or Brake. Defaults to Brake.</param>
+        /// <param name="profile">The speed profiles used (as flags) for acceleration and deceleration. Defaults to None.</param>
+        /// <returns></returns>
+        public async Task<PortFeedback> GotoPositionAsync(int absolutePosition1, int absolutePosition2, sbyte speed, byte maxPower, SpecialSpeed endState = SpecialSpeed.Brake, SpeedProfiles profile = SpeedProfiles.None)
+        {
+            AssertValidSpeed(speed, nameof(speed));
+            AssertValidMaxPower(maxPower, nameof(maxPower));
+            AssertIsConnected();
+            AssertIsVirtualPort();
+
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandGotoAbsolutePosition2Message(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                absolutePosition1, absolutePosition2,
+                speed,
+                maxPower,
+                endState,
+                profile
+            )
+            {
+                HubId = _hubId,
             });
 
             return response;
@@ -327,14 +393,13 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandPresetEncoderMessage()
+            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandPresetEncoderMessage(
+                _portId,
+                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+                position)
             {
                 HubId = _hubId,
-                PortId = _portId,
-                StartupInformation = PortOutputCommandStartupInformation.ExecuteImmediately,
-                CompletionInformation = PortOutputCommandCompletionInformation.CommandFeedback,
                 ModeIndex = ModeIndexPosition, // GotoAbsolutePosition and input POS is aligned with this adjustment
-                Position = position,
             });
 
             return response;

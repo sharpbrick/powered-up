@@ -11,40 +11,39 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                var stopWatch = new Stopwatch();
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                var motor = technicMediumHub.A.GetDevice<TechnicLargeLinearMotor>();
+            var stopWatch = new Stopwatch();
 
-                // ramp up with linear speed
-                var rampUp = ServiceProvider.GetService<LinearSpeedChange>();
+            var motor = technicMediumHub.A.GetDevice<TechnicLargeLinearMotor>();
 
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);
+            // ramp up with linear speed
+            var rampUp = ServiceProvider.GetService<LinearSpeedChange>();
 
-                stopWatch.Start();
-                await rampUp.ExecuteAsync(motor, 20, 100, 40, 10_000);
-                var redPhase = stopWatch.ElapsedMilliseconds;
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);
 
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Green);
+            stopWatch.Start();
+            await rampUp.ExecuteAsync(motor, 20, 100, 40, 10_000);
+            var redPhase = stopWatch.ElapsedMilliseconds;
 
-                await Task.Delay(2_000);
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Green);
 
-                await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Orange);
+            await Task.Delay(2_000);
 
-                // ramp down with linear speed
-                var rampDown = ServiceProvider.GetService<LinearSpeedChange>();
+            await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Orange);
 
-                var beforeOrangePhase = stopWatch.ElapsedMilliseconds;
-                await rampDown.ExecuteAsync(motor, 100, 0, 100, 20_000);
-                var orangePhase = stopWatch.ElapsedMilliseconds - beforeOrangePhase;
-                stopWatch.Stop();
+            // ramp down with linear speed
+            var rampDown = ServiceProvider.GetService<LinearSpeedChange>();
 
-                await technicMediumHub.SwitchOffAsync();
+            var beforeOrangePhase = stopWatch.ElapsedMilliseconds;
+            await rampDown.ExecuteAsync(motor, 100, 0, 100, 20_000);
+            var orangePhase = stopWatch.ElapsedMilliseconds - beforeOrangePhase;
+            stopWatch.Stop();
 
-                // time delays (parameter) + 100s of BLE messages async/await ops
-                Log.LogInformation($"Red Phase: {redPhase}ms; Orange Phase: {orangePhase}ms");
-            }
+            await technicMediumHub.SwitchOffAsync();
+
+            // time delays (parameter) + 100s of BLE messages async/await ops
+            Log.LogInformation($"Red Phase: {redPhase}ms; Orange Phase: {orangePhase}ms");
         }
     }
 }

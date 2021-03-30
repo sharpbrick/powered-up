@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using SharpBrick.PoweredUp;
 
 namespace Example
@@ -11,27 +10,26 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                var device1 = technicMediumHub.Temperature1;
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                await device1.SetupNotificationAsync(device1.ModeIndexTemperature, true);
+            var device1 = technicMediumHub.Temperature1;
 
-                var disposable1 = device1.TemperatureObservable.Subscribe(x => Log.LogWarning($"Temperature 1: {x.SI}° ({x.Pct}%)"));
+            await device1.SetupNotificationAsync(device1.ModeIndexTemperature, true);
 
-                var device2 = technicMediumHub.Temperature1;
+            var disposable1 = device1.TemperatureObservable.Subscribe(x => Log.LogWarning($"Temperature 1: {x.SI}° ({x.Pct}%)"));
 
-                await device2.SetupNotificationAsync(device2.ModeIndexTemperature, true);
+            var device2 = technicMediumHub.Temperature1;
 
-                var disposable2 = device2.TemperatureObservable.Subscribe(x => Log.LogWarning($"Temperature 2: {x.SI}° ({x.Pct}%)"));
+            await device2.SetupNotificationAsync(device2.ModeIndexTemperature, true);
 
-                await Task.Delay(10_000);
+            var disposable2 = device2.TemperatureObservable.Subscribe(x => Log.LogWarning($"Temperature 2: {x.SI}° ({x.Pct}%)"));
 
-                disposable1.Dispose();
-                disposable2.Dispose();
+            await Task.Delay(10_000);
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            disposable1.Dispose();
+            disposable2.Dispose();
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

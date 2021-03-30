@@ -21,18 +21,16 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 .AddPoweredUp()
                 .BuildServiceProvider();
 
-            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage() { HubId = 0, IOTypeId = DeviceType.TechnicLargeLinearMotor, MessageType = MessageType.HubAttachedIO, Event = HubAttachedIOEvent.AttachedIO, PortId = 0x00, HardwareRevision = new Version("0.0.0.1"), SoftwareRevision = new Version("0.0.0.1") }, knowledge, serviceProvider.GetService<IDeviceFactory>());
-            KnowledgeManager.ApplyDynamicProtocolKnowledge(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage()
-            {
-                PortId = 0,
-                SubCommand = PortInputFormatSetupCombinedSubCommand.SetModeAndDataSetCombination,
-                CombinationIndex = 0, // should refer 0b0000_0000_0000_1110 => SPEED POS APOS
-                ModeDataSets = new PortInputFormatSetupCombinedModeModeDataSet[] {
-                        new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x01, DataSet = 0, },
-                        new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x02, DataSet = 0, },
-                        new PortInputFormatSetupCombinedModeModeDataSet() { Mode = 0x03, DataSet = 0, },
+            KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubAttachedIOForAttachedDeviceMessage(0x00, DeviceType.TechnicLargeLinearMotor, new Version("0.0.0.1"), new Version("0.0.0.1")) { HubId = 0 }, knowledge, serviceProvider.GetService<IDeviceFactory>());
+            KnowledgeManager.ApplyDynamicProtocolKnowledge(new PortInputFormatSetupCombinedModeForSetModeDataSetMessage(
+                PortId: 0x00,
+                CombinationIndex: 0, // should refer 0b0000_0000_0000_1110 => SPEED POS APOS
+                ModeDataSets: new PortInputFormatSetupCombinedModeModeDataSet[] {
+                        new PortInputFormatSetupCombinedModeModeDataSet(0x01, 0),
+                        new PortInputFormatSetupCombinedModeModeDataSet(0x02, 0),
+                        new PortInputFormatSetupCombinedModeModeDataSet(0x03, 0),
                     }
-            }, knowledge, serviceProvider.GetService<IDeviceFactory>());
+            ), knowledge, serviceProvider.GetService<IDeviceFactory>());
 
             // arrange
             var data = BytesStringUtil.StringToData(dataAsString);

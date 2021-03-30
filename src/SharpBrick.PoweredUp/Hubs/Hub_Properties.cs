@@ -90,7 +90,7 @@ namespace SharpBrick.PoweredUp
         
         private async Task InitialHubPropertiesQueryAsync()
         {
-            foreach (HubProperty property in _knownProperties)
+            foreach (var property in _knownProperties)
             {
                 await RequestHubPropertySingleUpdate(property);
             }
@@ -100,11 +100,9 @@ namespace SharpBrick.PoweredUp
         {
             AssertIsConnected();
 
-            return Protocol.SendMessageReceiveResultAsync<HubPropertyMessage>(new HubPropertyMessage()
+            return Protocol.SendMessageReceiveResultAsync<HubPropertyMessage>(new HubPropertyMessage(property, HubPropertyOperation.RequestUpdate)
             {
                 HubId = HubId,
-                Property = property,
-                Operation = HubPropertyOperation.RequestUpdate
             }, msg => msg.Operation == HubPropertyOperation.Update && msg.Property == property);
         }
 
@@ -121,11 +119,9 @@ namespace SharpBrick.PoweredUp
 
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubPropertyMessage()
+            await Protocol.SendMessageAsync(new HubPropertyMessage(property, enabled ? HubPropertyOperation.EnableUpdates : HubPropertyOperation.DisableUpdates)
             {
                 HubId = HubId,
-                Operation = enabled ? HubPropertyOperation.EnableUpdates : HubPropertyOperation.DisableUpdates,
-                Property = property,
             });
         }
 
@@ -141,12 +137,9 @@ namespace SharpBrick.PoweredUp
 
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubPropertyMessage<T>()
+            await Protocol.SendMessageAsync(new HubPropertyMessage<T>(property, HubPropertyOperation.Set, value)
             {
                 HubId = HubId,
-                Operation = HubPropertyOperation.Set,
-                Property = property,
-                Payload = value,
             });
 
             await RequestHubPropertySingleUpdate(property);
@@ -163,11 +156,9 @@ namespace SharpBrick.PoweredUp
 
             AssertIsConnected();
 
-            await Protocol.SendMessageAsync(new HubPropertyMessage()
+            await Protocol.SendMessageAsync(new HubPropertyMessage(property, HubPropertyOperation.Reset)
             {
                 HubId = HubId,
-                Operation = HubPropertyOperation.Reset,
-                Property = property,
             });
 
             await RequestHubPropertySingleUpdate(property);

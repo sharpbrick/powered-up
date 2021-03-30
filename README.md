@@ -245,7 +245,7 @@ Use the COM-port of your Windows-instance where the BlueGiga-adapter is attached
 ````--tracebluegiga````  emmits a lot of additional trace-information of the BleuGiga-implementation. 
 ## Installation Instruction
 
-1. Install the [latest .NET (Core)](https://dotnet.microsoft.com/download) on your machine (e.g. .NET Core 3.1).
+1. Install the [latest .NET](https://dotnet.microsoft.com/download) on your machine (e.g. .NET 5).
 2. Install the `poweredup` dotnet utility using the following instruction
    ````
    dotnet tool install -g SharpBrick.PoweredUp.Cli
@@ -296,7 +296,7 @@ DI Container Elements
 ## Implementation Status
 
 - Bluetooth Adapter
-  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth)
+  - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version v3.4.0 and consider upgrading to .NET 5
   - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)
   - [X] .NET 5 (on Windows 10 using BlueGiga-adapter)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
@@ -343,6 +343,7 @@ DI Container Elements
     - [X] Duplo Train Base (set 10874) - Rgb Light
     - [X] Duplo Train Base (set 10874) - ColorSensor
     - [X] Duplo Train Base (set 10874) - Speedometer
+    - [X] Color Distance Sensor (88007)
     - [X] Medium Linear Motor (88008)
     - [X] Remote Control Button (88010)
     - [X] Remote Control RSSI (88010)
@@ -395,3 +396,5 @@ The product is licensed under **MIT License** to allow a easy and wide adoption 
 ## Thanks ...
 
 Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder),  [@vuurbeving](https://github.com/vuurbeving) and [@dkurok](https://github.com/dkurok) for their code, answers, testing and other important contributions.
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@dlech](https://github.com/dlech), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder), [@highstreeto](https://github.com/highstreeto), [@vuurbeving](https://github.com/vuurbeving) and [@dkurok](https://github.com/dkurok) for their code, answers, testing and other important contributions.
+

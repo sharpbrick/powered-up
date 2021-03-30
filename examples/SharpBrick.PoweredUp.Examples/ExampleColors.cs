@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
 
@@ -8,14 +7,13 @@ namespace Example
     {
         public override async Task ExecuteAsync()
         {
-            using (var technicMediumHub = Host.FindByType<TechnicMediumHub>())
-            {
-                await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-                await Task.Delay(2000);
+            await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
-                await technicMediumHub.SwitchOffAsync();
-            }
+            await Task.Delay(2000);
+
+            await technicMediumHub.SwitchOffAsync();
         }
     }
 }

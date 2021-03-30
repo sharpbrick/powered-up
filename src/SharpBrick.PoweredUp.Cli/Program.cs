@@ -22,12 +22,14 @@ namespace SharpBrick.PoweredUp.Cli
 
         static async Task<int> Main(string[] args)
         {
-            var app = new CommandLineApplication();
+            var app = new CommandLineApplication
+            {
+                Name = "poweredup",
+                Description = "A command line interface to investigate LEGO Powered UP hubs and devices.",
+                UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
+            };
 
-            app.Name = "poweredup";
-            app.Description = "A command line interface to investigate LEGO Powered UP hubs and devices.";
             app.HelpOption();
-            app.UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue;
             app.OnExecute(() =>
             {
                 Console.WriteLine($"See {app.Name} --help for Options");
@@ -106,6 +108,7 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         try
                         {
+
                             var enableTrace = traceOption.HasValue();
                             var headerEnabled = headerOption.Values.Count > 0;
                             var bluetoothStackPort = blueGigaOption.HasValue() ? blueGigaOption.Value() : "WINRT";

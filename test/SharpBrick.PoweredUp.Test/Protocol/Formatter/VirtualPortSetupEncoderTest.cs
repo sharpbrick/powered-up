@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void PortModeInformationRequestEncoder_Encode_Connected(byte portA, byte portB, string expectedData)
         {
             // arrange
-            var message = new VirtualPortSetupForConnectedMessage() { PortAId = portA, PortBId = portB, };
+            var message = new VirtualPortSetupForConnectedMessage(portA, portB);
 
             // act
             var data = MessageEncoder.Encode(message, null);
@@ -26,7 +26,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void PortModeInformationRequestEncoder_Encode_Disconnected(byte port, string expectedData)
         {
             // arrange
-            var message = new VirtualPortSetupForDisconnectedMessage() { PortId = port, };
+            var message = new VirtualPortSetupForDisconnectedMessage(port);
 
             // act
             var data = MessageEncoder.Encode(message, null);

@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp
 {
     public abstract partial class Hub : IDisposable
     {
-        private CompositeDisposable _compositeDisposable = new CompositeDisposable();
+        private readonly CompositeDisposable _compositeDisposable = new();
         private readonly ILogger _logger;
         private readonly IDeviceFactory _deviceFactory;
         private readonly SystemType _knownSystemType;
@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp
         public ILegoWirelessProtocol Protocol { get; private set; }
         public byte HubId { get; private set; }
         public IServiceProvider ServiceProvider { get; }
-        public bool IsConnected => Protocol != null;
+        public bool IsConnected => Protocol is not null;
 
         public Hub(ILegoWirelessProtocol protocol, IDeviceFactory deviceFactory, ILogger<Hub> logger, IServiceProvider serviceProvider, SystemType knownSystemType, Port[] knownPorts, IEnumerable<HubProperty> knownProperties = default)
         {
@@ -47,7 +47,7 @@ namespace SharpBrick.PoweredUp
         #region Disposable Pattern
         ~Hub() => Dispose(false);
 
-        public void Dispose() => Dispose(true);
+        public void Dispose() { Dispose(true); GC.SuppressFinalize(this); }
         protected virtual void Dispose(bool disposing)
         {
             _compositeDisposable?.Dispose();

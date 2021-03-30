@@ -11,13 +11,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         public void PortInputFormatSetupSingleEncoder_Encode(string expectedDataAsString, byte portId, byte mode, uint deltaInterval, bool notificationEnabled)
         {
             // arrange
-            var message = new PortInputFormatSetupSingleMessage()
-            {
-                PortId = portId,
-                Mode = mode,
-                DeltaInterval = deltaInterval,
-                NotificationEnabled = notificationEnabled,
-            };
+            var message = new PortInputFormatSetupSingleMessage(portId, mode, deltaInterval, notificationEnabled);
 
             // act
             var data = MessageEncoder.Encode(message, null);

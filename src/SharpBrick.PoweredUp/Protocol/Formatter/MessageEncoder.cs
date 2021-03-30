@@ -10,25 +10,25 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
         {
             var messageType = message switch
             {
-                HubPropertyMessage msg => MessageType.HubProperties,
-                HubActionMessage msg => MessageType.HubActions,
-                HubAlertMessage msg => MessageType.HubAlerts,
-                HubAttachedIOMessage msg => MessageType.HubAttachedIO,
-                GenericErrorMessage msg => MessageType.GenericErrorMessages,
+                HubPropertyMessage => MessageType.HubProperties,
+                HubActionMessage => MessageType.HubActions,
+                HubAlertMessage => MessageType.HubAlerts,
+                HubAttachedIOMessage => MessageType.HubAttachedIO,
+                GenericErrorMessage => MessageType.GenericErrorMessages,
 
-                PortInformationRequestMessage msg => MessageType.PortInformationRequest,
-                PortModeInformationRequestMessage msg => MessageType.PortModeInformationRequest,
-                PortInputFormatSetupSingleMessage msg => MessageType.PortInputFormatSetupSingle,
-                PortInputFormatSetupCombinedModeMessage msg => MessageType.PortInputFormatSetupCombinedMode,
-                PortInformationMessage msg => MessageType.PortInformation,
-                PortModeInformationMessage msg => MessageType.PortModeInformation,
-                PortValueSingleMessage msg => MessageType.PortValueSingle,
-                PortValueCombinedModeMessage msg => MessageType.PortValueCombinedMode,
-                PortInputFormatSingleMessage msg => MessageType.PortInputFormatSingle,
-                PortInputFormatCombinedModeMessage msg => MessageType.PortInputFormatCombinedMode,
-                VirtualPortSetupMessage msg => MessageType.VirtualPortSetup,
-                PortOutputCommandMessage msg => MessageType.PortOutputCommand,
-                PortOutputCommandFeedbackMessage msg => MessageType.PortOutputCommandFeedback,
+                PortInformationRequestMessage => MessageType.PortInformationRequest,
+                PortModeInformationRequestMessage => MessageType.PortModeInformationRequest,
+                PortInputFormatSetupSingleMessage => MessageType.PortInputFormatSetupSingle,
+                PortInputFormatSetupCombinedModeMessage => MessageType.PortInputFormatSetupCombinedMode,
+                PortInformationMessage => MessageType.PortInformation,
+                PortModeInformationMessage => MessageType.PortModeInformation,
+                PortValueSingleMessage => MessageType.PortValueSingle,
+                PortValueCombinedModeMessage => MessageType.PortValueCombinedMode,
+                PortInputFormatSingleMessage => MessageType.PortInputFormatSingle,
+                PortInputFormatCombinedModeMessage => MessageType.PortInputFormatCombinedMode,
+                VirtualPortSetupMessage => MessageType.VirtualPortSetup,
+                PortOutputCommandMessage => MessageType.PortOutputCommand,
+                PortOutputCommandFeedbackMessage => MessageType.PortOutputCommandFeedback,
                 _ => throw new NotImplementedException(),
             };
 
@@ -41,7 +41,7 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
             byte[] data = new byte[commonHeaderLength + contentLength];
 
             CommonMessageHeaderEncoder.Encode(contentLength, message.HubId, messageType, data.AsSpan().Slice(0, commonHeaderLength));
-            encoder.Encode(message, data.AsSpan().Slice(commonHeaderLength));
+            encoder.Encode(message, data.AsSpan()[commonHeaderLength..]);
 
             return data;
         }
@@ -77,23 +77,27 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
 
             var encoder = CreateEncoder((MessageType)messageType, knowledge);
 
-            var content = data.Slice(headerLength);
+            var content = data[headerLength..];
 
             LegoWirelessMessage result;
 
-            if (encoder != null)
+            if (encoder is not null)
             {
                 var message = encoder?.Decode(hubId, content);
 
                 message.Length = length;
                 message.HubId = hubId;
-                message.MessageType = (MessageType)messageType;
+
+                if (message.MessageType != (MessageType)messageType)
+                {
+                    throw new InvalidOperationException("type in data does not match message type");
+                }
 
                 result = message;
             }
             else
             {
-                result = new UnknownMessage() { Data = data.ToArray() };
+                result = new UnknownMessage(messageType, data.ToArray());
             }
 
             return result;
