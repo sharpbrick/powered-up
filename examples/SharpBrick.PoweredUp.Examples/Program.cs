@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Examples
             bool enableTraceBlueGiga = false;
             if (args.Any(x => x.Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase)))
             {
-                for(int i=0; i<args.Length; i++)
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (args[i].Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase))
                     {
@@ -34,7 +34,7 @@ namespace SharpBrick.PoweredUp.Examples
             // NOTE: Examples are in their own root namespace to make namespace usage clear
             Example.BaseExample example;
 
-            example = new Example.ExampleColors();
+            //example = new Example.ExampleColors();
             //example = new Example.ExampleMotorControl();
             //example = new Example.ExampleMotorInputAbsolutePosition();
             //example = new Example.ExampleMotorVirtualPort();
@@ -77,9 +77,9 @@ namespace SharpBrick.PoweredUp.Examples
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
             // this uses the WinRT-bluetooth-implementation by default
-            //await example.InitHostAndDiscoverAsync(enableTrace);
+            await example.InitHostAndDiscoverAsync(enableTrace);
             //for using BlueGiga-Bluetoothadapter:
-            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
+            //await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
             if (example.SelectedHub is not null)
             {
