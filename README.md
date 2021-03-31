@@ -297,11 +297,11 @@ DI Container Elements
 
 - Bluetooth Adapter
   - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version v3.4.0 and consider upgrading to .NET 5
-  - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)
-  - [X] .NET 5 (on Windows 10 using BlueGiga-adapter)
+  - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)(⚠ v4.0 or later)
+  - [X] .NET 5 (on Windows 10 using BlueGiga-adapter)(⚠ v4.0 or later)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
   - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)
-  - [ ] Xamarin (on iOS / Android using ?)
+  - [X] Xamarin 5 (on Android using BLE.Plugin) (⚠ v4.0 or later)
   - [ ] Blazor/WebAssembly (on Browser using WebBluetooth; currently blocked by less than ideal GATT support on browsers, see [1](https://stackoverflow.com/questions/63757642/webbluetooth-gatt-characteric-notification-setup-too-slow-how-to-improve-setup), [2](https://github.com/WebBluetoothCG/web-bluetooth/issues/514) and [3](https://github.com/LEGO/lego-ble-wireless-protocol-docs/issues/29) )
 - Hub Model
   - Hubs
@@ -343,7 +343,7 @@ DI Container Elements
     - [X] Duplo Train Base (set 10874) - Rgb Light
     - [X] Duplo Train Base (set 10874) - ColorSensor
     - [X] Duplo Train Base (set 10874) - Speedometer
-    - [X] Color Distance Sensor (88007)
+    - [X] Color Distance Sensor (88007) (⚠ v4.0 or later)
     - [X] Medium Linear Motor (88008)
     - [X] Remote Control Button (88010)
     - [X] Remote Control RSSI (88010)
@@ -395,6 +395,4 @@ The product is licensed under **MIT License** to allow a easy and wide adoption 
 
 ## Thanks ...
 
-Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder),  [@vuurbeving](https://github.com/vuurbeving) and [@dkurok](https://github.com/dkurok) for their code, answers, testing and other important contributions.
-Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@dlech](https://github.com/dlech), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder), [@highstreeto](https://github.com/highstreeto), [@vuurbeving](https://github.com/vuurbeving) and [@dkurok](https://github.com/dkurok) for their code, answers, testing and other important contributions.
-
+Thanks to [@nathankellenicki](https://github.com/nathankellenicki), [@dlech](https://github.com/dlech), [@corneliusmunz](https://github.com/corneliusmunz), [@KeyDecoder](https://github.com/KeyDecoder), [@highstreeto](https://github.com/highstreeto), [@Berdsen ](https://github.com/Berdsen), [@vuurbeving](https://github.com/vuurbeving) and [@dkurok](https://github.com/dkurok) for their code, answers, testing and other important contributions.
