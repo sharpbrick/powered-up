@@ -255,7 +255,6 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
    poweredup device list
    ````
 
-
 # SDK Status, Hardware Support, Contributions, ..
 
 Basic Architecture within the SDK
