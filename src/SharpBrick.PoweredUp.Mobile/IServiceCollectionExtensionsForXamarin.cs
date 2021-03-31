@@ -7,10 +7,10 @@ namespace SharpBrick.PoweredUp.Mobile
 {
     public static class IServiceCollectionExtensionsForXamarin
     {
-        public static IServiceCollection AddXamarinBluetooth(this IServiceCollection self, INativeDeviceInfo deviceInfo)
+        public static IServiceCollection AddXamarinBluetooth(this IServiceCollection self, INativeDeviceInfoProvider deviceInfoProvider)
             => self
                .AddSingleton<IBluetoothLE>(CrossBluetoothLE.Current)
-               .AddSingleton<INativeDeviceInfo>(deviceInfo)
+               .AddSingleton<INativeDeviceInfoProvider>(deviceInfoProvider)
                .AddSingleton<IPoweredUpBluetoothAdapter, XamarinPoweredUpBluetoothAdapter>();
     }
 }
