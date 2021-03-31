@@ -21,7 +21,7 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 - **Virtual Port Creation**: Combine multiple devices of the same type into a virtual combined port. This allows synchronous access to multiple devices using the same message (e.g. using two motors for driving).
 - **Deployment Model Verification**: The SDK includes a model builder and a verification method to ensure that the wired devies are correctly reflecting the expectations in the program.
 - **Tools**: The `poweredup` CLI includes a device list feature, enumerating the metadata properties of the LEGO Wireless Protocol.
-- **BlueGiga Bluetooth-Adapter Support**: With the SharpBrick.PoweredUp.BlueGigaBLE-package you can use a Silicon's Lab BlueGiga-adapter (for example BLED112) to talk to your Lego-Hubs. By default the WinRT-implementation for build-in bluetooth-adapters is used.
+- **Support for multiple Bluetooth Stacks**: Use any of Microsoft WinRT, BlueGiga Bluetooth (Silicon's Lab BlueGiga-adapter (for example BLED112) and Xamarin using BLE.Plugin to talk to your Lego hubs.
 
 # Examples
 
@@ -237,12 +237,12 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
   ````
 - **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
 
-***Note**: Currently per default on Windows the WinRT Bluetooth drivers are used. Work is on the way to support bluez to run the utility also on Linux. If you've got a BlueGiga-Bluetooth-adapter, you can use the following additional options (not yet tested under Linux, but Windows).*
-````
+- **Use of other Bluetooth LE stack (default is WinRT on Windows)
+  ````
    poweredup device list --usebluegiga COM4 --tracebluegiga
-   ````
-Use the COM-port of your Windows-instance where the BlueGiga-adapter is attached to; so replace ````COM4```` with COMx whatever x is used on your system.
-````--tracebluegiga````  emmits a lot of additional trace-information of the BleuGiga-implementation. 
+  ````
+  Use the COM-port of your Windows-instance where the BlueGiga-adapter is attached to; so replace `COM4` with COMx whatever x is used on your system. `--tracebluegiga`  emits a lot of additional trace-information of the BleuGiga-implementation. 
+
 ## Installation Instruction
 
 1. Install the [latest .NET](https://dotnet.microsoft.com/download) on your machine (e.g. .NET 5).
@@ -297,8 +297,8 @@ DI Container Elements
 
 - Bluetooth Adapter
   - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version v3.4.0 and consider upgrading to .NET 5
-  - [X] .NET 5 (on Windows 10 using WinRT Bluetooth)(⚠ v4.0 or later)
-  - [X] .NET 5 (on Windows 10 using BlueGiga-adapter)(⚠ v4.0 or later)
+  - [X] .NET 5 (on Windows 10 using WinRT Bluetooth) (⚠ v4.0 or later)
+  - [X] .NET 5 (on Windows 10 using BlueGiga-adapter) (⚠ v4.0 or later)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
   - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)
   - [X] Xamarin 5 (on Android using BLE.Plugin) (⚠ v4.0 or later)
