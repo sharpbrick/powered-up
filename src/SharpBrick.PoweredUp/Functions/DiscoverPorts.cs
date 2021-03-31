@@ -19,7 +19,7 @@ namespace SharpBrick.PoweredUp.Functions
         public int SentMessages { get; private set; }
         public int ReceivedMessages { get; private set; }
 
-        public ConcurrentBag<byte[]> ReceivedMessagesData { get; private set; }
+        public ConcurrentBag<byte[]> ReceivedMessagesData { get; } = new();
 
         public DiscoverPorts(ILegoWirelessProtocol protocol, byte hubId = 0, ILogger<DiscoverPorts> logger = default)
         {
@@ -31,6 +31,8 @@ namespace SharpBrick.PoweredUp.Functions
         public async Task ExecuteAsync(byte portFilter = 0xFF)
         {
             _logger?.LogInformation($"Number of Ports announced: {_protocol.Knowledge.Hub(_hubId).Ports.Count}");
+
+            using var disposable = _protocol.UpstreamRawMessages.Subscribe(tuple => ReceivedMessagesData.Add(tuple.data));
 
             foreach (var port in _protocol.Knowledge.Hub(_hubId).Ports.Values.Where(p => portFilter == 0xFF || p.PortId == portFilter))
             {
