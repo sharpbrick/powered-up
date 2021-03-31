@@ -431,3 +431,6 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/src/SharpBrick.PoweredUp.BlueGigaBLE/.editorconfig
+/examples/SharpBrick.PoweredUp.Examples/Properties/launchSettings.json
+src/SharpBrick.PoweredUp.Cli/Properties/launchSettings.json

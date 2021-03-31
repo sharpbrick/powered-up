@@ -38,20 +38,28 @@ namespace SharpBrick.PoweredUp.Cli
             Console.WriteLine($"Discover Ports Function: {discoverPorts.ReceivedMessages} / {discoverPorts.SentMessages}");
 
             Console.WriteLine(knownSystemType);
-
-            var systemTypeMessage = CreateSystemTypeHeader(knownSystemType);
-            var attachedIOMessage = CreateAttachedIOHeader(portId);
             Console.WriteLine("##################################################");
-
-            if (headerEnabled)
+            //Exception was thrown if no device was attached to the port
+            if (discoverPorts.ReceivedMessages > 0)
             {
-                Console.WriteLine(BytesStringUtil.DataToString(systemTypeMessage));
-                Console.WriteLine(BytesStringUtil.DataToString(attachedIOMessage));
+                var systemTypeMessage = CreateSystemTypeHeader(knownSystemType);
+                var attachedIOMessage = CreateAttachedIOHeader(portId);
+
+
+                if (headerEnabled)
+                {
+                    Console.WriteLine(BytesStringUtil.DataToString(systemTypeMessage));
+                    Console.WriteLine(BytesStringUtil.DataToString(attachedIOMessage));
+                }
+
+                foreach (var data in discoverPorts.ReceivedMessagesData.OrderBy(x => x[2]).ThenBy(x => x[4]).ThenBy(x => (x.Length <= 5) ? -1 : x[5]))
+                {
+                    Console.WriteLine(BytesStringUtil.DataToString(data));
+                }
             }
-
-            foreach (var data in discoverPorts.ReceivedMessagesData.OrderBy(x => x[2]).ThenBy(x => x[4]).ThenBy(x => (x.Length <= 5) ? -1 : x[5]))
+            else
             {
-                Console.WriteLine(BytesStringUtil.DataToString(data));
+                Console.WriteLine($":-( It seems there is no device attached to port {portId} on this hub...");
             }
 
             Console.WriteLine("##################################################");

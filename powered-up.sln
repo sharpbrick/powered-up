@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
@@ -20,6 +19,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Cli", "src\SharpBrick.PoweredUp.Cli\SharpBrick.PoweredUp.Cli.csproj", "{E2D7D98D-9F20-4761-B507-D379A530E77D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.Mobile", "src\SharpBrick.PoweredUp.Mobile\SharpBrick.PoweredUp.Mobile.csproj", "{F66A2B09-84B6-477D-9B15-926E771C7D80}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpBrick.PoweredUp.BlueGigaBLE", "src\SharpBrick.PoweredUp.BlueGigaBLE\SharpBrick.PoweredUp.BlueGigaBLE.csproj", "{E0DC0096-D7F1-4995-833D-9A6C0C3F8F98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
 
 namespace SharpBrick.PoweredUp.Examples
 {
@@ -7,11 +10,31 @@ namespace SharpBrick.PoweredUp.Examples
         static async Task Main(string[] args)
         {
             var enableTrace = (args.Length > 0 && args[0] == "--trace");
+            string bluetoothStackPort = "WINRT";
+            bool enableTraceBlueGiga = false;
+            if (args.Any(x => x.Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase)))
+            {
+                for(int i=0; i<args.Length; i++)
+                {
+                    if (args[i].Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (args.Length > i)
+                        {
+                            bluetoothStackPort = args[i + 1];
+                        }
+                        break;
+                    }
+                }
+            }
+            if (args.Any(x => x.Equals("--tracebluegiga", StringComparison.OrdinalIgnoreCase)))
+            {
+                enableTraceBlueGiga = true;
+            }
 
             // NOTE: Examples are in their own root namespace to make namespace usage clear
             Example.BaseExample example;
 
-            //example = new Example.ExampleColors();
+            example = new Example.ExampleColors();
             //example = new Example.ExampleMotorControl();
             //example = new Example.ExampleMotorInputAbsolutePosition();
             //example = new Example.ExampleMotorVirtualPort();
@@ -48,10 +71,15 @@ namespace SharpBrick.PoweredUp.Examples
             //example = new Example.ExampleMoveHubExternalMediumLinearMotorControl();
             //example = new Example.ExampleMoveHubColors();
             //example = new Example.ExampleMoveHubTiltSensor();
+            //example = new ExampleTwoHubsMotorControl();
+            //example = new ExampleTwoPortHubMediumLinearMotor();
             example = new Example.ExampleColorDistanceSensor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
-            await example.InitHostAndDiscoverAsync(enableTrace);
+            // this uses the WinRT-bluetooth-implementation by default
+            //await example.InitHostAndDiscoverAsync(enableTrace);
+            //for using BlueGiga-Bluetoothadapter:
+            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
             if (example.SelectedHub is not null)
             {

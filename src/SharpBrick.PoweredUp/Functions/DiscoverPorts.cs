@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Protocol;
@@ -11,7 +12,6 @@ namespace SharpBrick.PoweredUp.Functions
 {
     public class DiscoverPorts
     {
-
         private readonly ILegoWirelessProtocol _protocol;
         private readonly byte _hubId;
         private readonly ILogger<DiscoverPorts> _logger;
@@ -61,6 +61,7 @@ namespace SharpBrick.PoweredUp.Functions
 
         private async Task RequestPortModePropertiesAsync(PortInfo port)
         {
+            
             var knowledge = _protocol.Knowledge;
 
             foreach (var modeIndex in port.Modes.Values.Select(m => m.ModeIndex))
