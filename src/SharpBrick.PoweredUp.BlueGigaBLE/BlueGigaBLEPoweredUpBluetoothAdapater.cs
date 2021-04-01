@@ -205,7 +205,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
 
                 _ = stringToLog.Append($"{indentStr}*** Bluegiga-Adapter-Info ***:" + Environment.NewLine + $"{indentStr}Serial Port Name: {SerialAPI.PortName}" + Environment.NewLine + $"{indentStr}Serial Port Speed: {SerialAPI.BaudRate} baud" + Environment.NewLine);
 
-                if (Devices.Count > 0)
+                if (!Devices.IsEmpty)
                 {
                     _ = stringToLog.Append($"{indentStr}I know about the following {Devices.Count} devices connected to me:{Environment.NewLine}");
                     foreach (var device in Devices)
@@ -220,7 +220,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     _ = stringToLog.Append($"{indentStr}I DON'T know about any devices connected to me!{Environment.NewLine}");
                 }
 
-                if (DevicesInfo.Count > 0)
+                if (!DevicesInfo.IsEmpty)
                 {
                     _ = stringToLog.Append($"{indentStr}I know about the following {Devices.Count} devices which have been found by Discovery (not neccessarily connected):{Environment.NewLine}");
                     var innerindentStr = indentStr + "\t";

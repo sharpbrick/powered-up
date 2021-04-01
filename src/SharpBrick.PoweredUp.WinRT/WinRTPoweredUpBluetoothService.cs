@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -30,7 +29,7 @@ namespace SharpBrick.PoweredUp.WinRT
 
             if (characteristics.Status == GattCommunicationStatus.Success && characteristics.Characteristics.Count > 0)
             {
-                var characteristic = characteristics.Characteristics.FirstOrDefault();
+                var characteristic = characteristics.Characteristics[0];
 
                 return new WinRTPoweredUpBluetoothCharacteristic(characteristic);
             }

@@ -10,13 +10,13 @@ namespace SharpBrick.PoweredUp.Mobile
 {
     public class XamarinPoweredUpBluetoothCharacteristic : IPoweredUpBluetoothCharacteristic
     {
-        private ICharacteristic _characteristic;
+        private readonly ICharacteristic _characteristic;
 
         public Guid Uuid => _characteristic.Id;
 
         public XamarinPoweredUpBluetoothCharacteristic(ICharacteristic characteristic)
         {
-            this._characteristic = characteristic;
+            _characteristic = characteristic;
         }
 
         public async Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler)
