@@ -33,7 +33,7 @@ namespace SharpBrick.PoweredUp
         {
             if (builder == null)
             {
-                throw new ArgumentException(nameof(builder));
+                throw new ArgumentNullException(nameof(builder));
             }
             _ = builder.Services.Configure<BlueGigaBLEOptions>(o =>
             {

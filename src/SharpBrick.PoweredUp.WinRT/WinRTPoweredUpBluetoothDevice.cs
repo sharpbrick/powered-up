@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Bluetooth;
 using Windows.Devices.Bluetooth;
@@ -30,9 +29,9 @@ namespace SharpBrick.PoweredUp.WinRT
         {
             var gatt = await _device.GetGattServicesForUuidAsync(serviceId);
 
-            if (gatt.Status == GattCommunicationStatus.Success)
+            if (gatt.Status == GattCommunicationStatus.Success && gatt.Services.Count > 0)
             {
-                var service = gatt.Services.FirstOrDefault();
+                var service = gatt.Services[0];
 
                 return new WinRTPoweredUpBluetoothService(service);
             }
