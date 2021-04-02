@@ -8,18 +8,18 @@ namespace SharpBrick.PoweredUp
 {
     public class Voltage : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<short> _voltageLMode;
-        protected SingleValueMode<short> _voltageSMode;
+        protected SingleValueMode<short, short> _voltageLMode;
+        protected SingleValueMode<short, short> _voltageSMode;
         public byte ModeIndexVoltageL { get; protected set; } = 0;
         public byte ModeIndexVoltageS { get; protected set; } = 1;
 
         public short VoltageL => _voltageLMode.SI;
         public short VoltageLPct => _voltageLMode.Pct;
-        public IObservable<Value<short>> VoltageLObservable => _voltageLMode.Observable;
+        public IObservable<Value<short, short>> VoltageLObservable => _voltageLMode.Observable;
 
         public short VoltageS => _voltageSMode.SI;
         public short VoltageSPct => _voltageSMode.Pct;
-        public IObservable<Value<short>> VoltageSObservable => _voltageSMode.Observable;
+        public IObservable<Value<short, short>> VoltageSObservable => _voltageSMode.Observable;
 
         public Voltage()
         { }
@@ -27,8 +27,8 @@ namespace SharpBrick.PoweredUp
         public Voltage(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _voltageLMode = SingleValueMode<short>(ModeIndexVoltageL);
-            _voltageSMode = SingleValueMode<short>(ModeIndexVoltageS);
+            _voltageLMode = SingleValueMode<short, short>(ModeIndexVoltageL);
+            _voltageSMode = SingleValueMode<short, short>(ModeIndexVoltageS);
 
             ObserveForPropertyChanged(_voltageLMode.Observable, nameof(VoltageL), nameof(VoltageLPct));
             ObserveForPropertyChanged(_voltageSMode.Observable, nameof(VoltageS), nameof(VoltageSPct));

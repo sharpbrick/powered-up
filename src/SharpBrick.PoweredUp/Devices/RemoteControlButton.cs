@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Devices
         protected sbyte RedBitMask = 0b0000_0010;
         protected sbyte MinusBitMask = 0b0000_0100;
 
-        protected SingleValueMode<sbyte> _keyBitFieldMode;
+        protected SingleValueMode<sbyte, sbyte> _keyBitFieldMode;
         public byte ModeIndexBitField { get; protected set; } = 3;
 
         public bool Plus => IsBitMaskSet(_keyBitFieldMode.SI, PlusBitMask);
@@ -32,7 +32,7 @@ namespace SharpBrick.PoweredUp.Devices
         public RemoteControlButton(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _keyBitFieldMode = SingleValueMode<sbyte>(ModeIndexBitField);
+            _keyBitFieldMode = SingleValueMode<sbyte, sbyte>(ModeIndexBitField);
 
             ObserveForPropertyChanged(PlusObservable, nameof(Plus));
             ObserveForPropertyChanged(RedObservable, nameof(Red));

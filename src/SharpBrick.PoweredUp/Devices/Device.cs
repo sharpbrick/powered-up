@@ -46,10 +46,10 @@ namespace SharpBrick.PoweredUp
             BuildModes();
         }
 
-        public SingleValueMode<TPayload> SingleValueMode<TPayload>(byte modeIndex)
-            => _modes.TryGetValue(modeIndex, out var mode) ? mode as SingleValueMode<TPayload> : default;
-        public MultiValueMode<TPayload> MultiValueMode<TPayload>(byte modeIndex)
-            => _modes.TryGetValue(modeIndex, out var mode) ? mode as MultiValueMode<TPayload> : default;
+        public SingleValueMode<TDatasetType, TOutputType> SingleValueMode<TDatasetType, TOutputType>(byte modeIndex)
+            => _modes.TryGetValue(modeIndex, out var mode) ? mode as SingleValueMode<TDatasetType, TOutputType> : default;
+        public MultiValueMode<TDatasetType, TOutputType> MultiValueMode<TDatasetType, TOutputType>(byte modeIndex)
+            => _modes.TryGetValue(modeIndex, out var mode) ? mode as MultiValueMode<TDatasetType, TOutputType> : default;
 
         protected void BuildModes()
         {

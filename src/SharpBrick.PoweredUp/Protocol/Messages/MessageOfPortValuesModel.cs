@@ -8,10 +8,14 @@ namespace SharpBrick.PoweredUp.Protocol.Messages
         public static string FormatPortValueDataArray(byte hubId, in PortValueData[] data)
             => string.Join(";", data.Select(d => d switch
                 {
-                    PortValueData<sbyte> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                    PortValueData<short> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                    PortValueData<int> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
-                    PortValueData<float> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<sbyte, sbyte> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<short, short> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<int, int> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<float, float> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<sbyte, double> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<short, double> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<int, double> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
+                    PortValueData<float, double> dd => $"Mode {hubId}/{dd.PortId}/{dd.ModeIndex}: {string.Join(",", dd.InputValues)} ({dd.DataType})",
                     _ => "Undefined Data Type",
                 }));
 

@@ -67,97 +67,67 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 _ => throw new NotSupportedException(),
             };
 
-        internal static PortValueData<sbyte> CreatePortValueDataSByte(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        internal static PortValueData CreatePortValueDataSByte(PortModeInfo modeInfo, in Span<byte> dataSlice)
         {
             var rawValues = MemoryMarshal.Cast<byte, sbyte>(dataSlice).ToArray();
 
-            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToSByte(f)).ToArray();
-            var pctValues = modeInfo.DisablePercentage switch
-            {
-                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToSByte(f)).ToArray(),
-                true => new sbyte[rawValues.Length],
-            };
+            var scaledSIValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax));
+            var scaledPctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax));
 
-            return new PortValueData<sbyte>(
-                PortId: modeInfo.PortId,
-                ModeIndex: modeInfo.ModeIndex,
-                DataType: modeInfo.DatasetType,
-                InputValues: rawValues,
-                SIInputValues: siValues,
-                PctInputValues: pctValues
-            );
+            return CreatePortValueData<sbyte>(modeInfo, rawValues, scaledSIValues, scaledPctValues, f => Convert.ToSByte(f));
         }
 
-        internal static PortValueData<short> CreatePortValueDataInt16(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        internal static PortValueData CreatePortValueDataInt16(PortModeInfo modeInfo, in Span<byte> dataSlice)
         {
             var rawValues = MemoryMarshal.Cast<byte, short>(dataSlice).ToArray();
 
-            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToInt16(f)).ToArray();
-            var pctValues = modeInfo.DisablePercentage switch
-            {
-                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt16(f)).ToArray(),
-                true => new short[rawValues.Length],
-            };
+            var scaledSIValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax));
+            var scaledPctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax));
 
-            return new PortValueData<short>(
-                PortId: modeInfo.PortId,
-                ModeIndex: modeInfo.ModeIndex,
-                DataType: modeInfo.DatasetType,
-                InputValues: rawValues,
-                SIInputValues: siValues,
-                PctInputValues: pctValues
-            );
+            return CreatePortValueData<short>(modeInfo, rawValues, scaledSIValues, scaledPctValues, f => Convert.ToInt16(f));
         }
 
-        internal static PortValueData<int> CreatePortValueDataInt32(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        internal static PortValueData CreatePortValueDataInt32(PortModeInfo modeInfo, in Span<byte> dataSlice)
         {
             var rawValues = MemoryMarshal.Cast<byte, int>(dataSlice).ToArray();
 
-            var siValues = modeInfo switch
-            {
-                { DisableScaling: true } => rawValues,
-                _ => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).Select(f => Convert.ToInt32(f)).ToArray(),
-            };
+            var scaledSIValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax));
+            var scaledPctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax));
 
-            var pctValues = modeInfo switch
-            {
-                { DisablePercentage: true } => new int[rawValues.Length],
-                { DisableScaling: true } => rawValues,
-                _ => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).Select(f => Convert.ToInt32(f)).ToArray(),
-            };
-
-            return new PortValueData<int>(
-                PortId: modeInfo.PortId,
-                ModeIndex: modeInfo.ModeIndex,
-                DataType: modeInfo.DatasetType,
-                InputValues: rawValues,
-                SIInputValues: siValues,
-                PctInputValues: pctValues
-            );
+            return CreatePortValueData<int>(modeInfo, rawValues, scaledSIValues, scaledPctValues, f => Convert.ToInt32(f));
         }
 
-        internal static PortValueData<float> CreatePortValueDataSingle(PortModeInfo modeInfo, in Span<byte> dataSlice)
+        internal static PortValueData CreatePortValueDataSingle(PortModeInfo modeInfo, in Span<byte> dataSlice)
         {
             var rawValues = MemoryMarshal.Cast<byte, float>(dataSlice).ToArray();
 
-            var siValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax)).ToArray();
-            var pctValues = modeInfo.DisablePercentage switch
-            {
-                false => rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax)).ToArray(),
-                true => new float[rawValues.Length],
-            };
+            var scaledSIValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.SIMin, modeInfo.SIMax));
+            var scaledPctValues = rawValues.Select(rv => Scale(rv, modeInfo.RawMin, modeInfo.RawMax, modeInfo.PctMin, modeInfo.PctMax));
 
-            return new PortValueData<float>(
-                PortId: modeInfo.PortId,
-                ModeIndex: modeInfo.ModeIndex,
-                DataType: modeInfo.DatasetType,
-                InputValues: rawValues,
-                SIInputValues: siValues,
-                PctInputValues: pctValues
-            );
+            return CreatePortValueData<float>(modeInfo, rawValues, scaledSIValues, scaledPctValues, f => Convert.ToSingle(f));
         }
 
-        internal static float Scale(float value, float rawMin, float rawMax, float min, float max)
+        internal static PortValueData CreatePortValueData<TDatasetType>(PortModeInfo modeInfo, TDatasetType[] rawValues, IEnumerable<double> scaledSIValues, IEnumerable<double> scaledPctValues, Func<double, TDatasetType> converter)
+            => modeInfo switch
+            {
+                { DisableScaling: true, OverrideDatasetTypeToDouble: _, DisablePercentage: _ } => new PortValueData<TDatasetType, TDatasetType>(modeInfo.PortId, modeInfo.ModeIndex, modeInfo.DatasetType, rawValues,
+                        rawValues.ToArray(),
+                        rawValues.ToArray()),
+                { DisableScaling: false, OverrideDatasetTypeToDouble: true, DisablePercentage: true } => new PortValueData<TDatasetType, double>(modeInfo.PortId, modeInfo.ModeIndex, modeInfo.DatasetType, rawValues,
+                        scaledSIValues.ToArray(),
+                        new double[scaledPctValues.Count()]),
+                { DisableScaling: false, OverrideDatasetTypeToDouble: true, DisablePercentage: false } => new PortValueData<TDatasetType, double>(modeInfo.PortId, modeInfo.ModeIndex, modeInfo.DatasetType, rawValues,
+                        scaledSIValues.ToArray(),
+                        scaledPctValues.ToArray()),
+                { DisableScaling: false, OverrideDatasetTypeToDouble: false, DisablePercentage: true } => new PortValueData<TDatasetType, TDatasetType>(modeInfo.PortId, modeInfo.ModeIndex, modeInfo.DatasetType, InputValues: rawValues,
+                        SIInputValues: scaledSIValues.Select(converter).ToArray(),
+                        PctInputValues: new TDatasetType[scaledPctValues.Count()]),
+                { DisableScaling: false, OverrideDatasetTypeToDouble: false, DisablePercentage: false } => new PortValueData<TDatasetType, TDatasetType>(modeInfo.PortId, modeInfo.ModeIndex, modeInfo.DatasetType, InputValues: rawValues,
+                        SIInputValues: scaledSIValues.Select(converter).ToArray(),
+                        PctInputValues: scaledPctValues.Select(converter).ToArray()),
+            };
+
+        internal static double Scale(double value, double rawMin, double rawMax, double min, double max)
         {
             var positionInRawRange = (value - rawMin) / (rawMax - rawMin);
 

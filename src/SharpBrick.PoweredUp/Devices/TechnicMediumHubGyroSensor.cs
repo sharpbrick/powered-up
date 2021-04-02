@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp
     // gyroscopes measure rotation
     public class TechnicMediumHubGyroSensor : Device, IPoweredUpDevice
     {
-        protected MultiValueMode<short> _rotationMode;
+        protected MultiValueMode<short, short> _rotationMode;
         public byte ModeIndexRotation { get; protected set; } = 0;
 
         public (short x, short y, short z) Rotation => (_rotationMode.SI[0], _rotationMode.SI[1], _rotationMode.SI[2]);
@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubGyroSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _rotationMode = MultiValueMode<short>(ModeIndexRotation);
+            _rotationMode = MultiValueMode<short, short>(ModeIndexRotation);
 
             ObserveForPropertyChanged(_rotationMode.Observable, nameof(Rotation));
         }

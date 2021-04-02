@@ -8,18 +8,18 @@ namespace SharpBrick.PoweredUp
 {
     public class Current : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<short> _currentLMode;
-        protected SingleValueMode<short> _currentSMode;
+        protected SingleValueMode<short, short> _currentLMode;
+        protected SingleValueMode<short, short> _currentSMode;
         public byte ModeIndexCurrentL { get; protected set; } = 0x00;
         public byte ModeIndexCurrentS { get; protected set; } = 0x01;
 
         public short CurrentL => _currentLMode.SI;
         public short CurrentLPct => _currentLMode.Pct;
-        public IObservable<Value<short>> CurrentLObservable => _currentLMode.Observable;
+        public IObservable<Value<short, short>> CurrentLObservable => _currentLMode.Observable;
 
         public short CurrentS => _currentSMode.SI;
         public short CurrentSPct => _currentSMode.Pct;
-        public IObservable<Value<short>> CurrentSObservable => _currentSMode.Observable;
+        public IObservable<Value<short, short>> CurrentSObservable => _currentSMode.Observable;
 
         public Current()
         { }
@@ -27,8 +27,8 @@ namespace SharpBrick.PoweredUp
         public Current(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _currentLMode = SingleValueMode<short>(ModeIndexCurrentL);
-            _currentSMode = SingleValueMode<short>(ModeIndexCurrentS);
+            _currentLMode = SingleValueMode<short, short>(ModeIndexCurrentL);
+            _currentSMode = SingleValueMode<short, short>(ModeIndexCurrentS);
 
             ObserveForPropertyChanged(_currentLMode.Observable, nameof(CurrentL), nameof(CurrentLPct));
             ObserveForPropertyChanged(_currentSMode.Observable, nameof(CurrentS), nameof(CurrentSPct));

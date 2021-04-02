@@ -10,10 +10,10 @@ namespace SharpBrick.PoweredUp
 {
     public class TechnicDistanceSensor : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<short> _distlMode;
-        protected SingleValueMode<short> _distsMode;
-        protected SingleValueMode<short> _singlMode;
-        protected MultiValueMode<sbyte> _lightMode;
+        protected SingleValueMode<short, short> _distlMode;
+        protected SingleValueMode<short, short> _distsMode;
+        protected SingleValueMode<short, short> _singlMode;
+        protected MultiValueMode<sbyte, sbyte> _lightMode;
 
         public byte ModeIndexDistance { get; protected set; } = 0;
         public byte ModeIndexShortOnlyDistance { get; protected set; } = 1;
@@ -32,10 +32,10 @@ namespace SharpBrick.PoweredUp
         public TechnicDistanceSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _distlMode = SingleValueMode<short>(ModeIndexDistance);
-            _distsMode = SingleValueMode<short>(ModeIndexShortOnlyDistance);
-            _singlMode = SingleValueMode<short>(ModeIndexSingleMeasurement);
-            _lightMode = MultiValueMode<sbyte>(ModeIndexLight);
+            _distlMode = SingleValueMode<short, short>(ModeIndexDistance);
+            _distsMode = SingleValueMode<short, short>(ModeIndexShortOnlyDistance);
+            _singlMode = SingleValueMode<short, short>(ModeIndexSingleMeasurement);
+            _lightMode = MultiValueMode<sbyte, sbyte>(ModeIndexLight);
 
             ObserveForPropertyChanged(_distlMode.Observable, nameof(Distance));
             ObserveForPropertyChanged(_distsMode.Observable, nameof(ShortOnlyDistance));

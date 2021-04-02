@@ -7,18 +7,18 @@ namespace SharpBrick.PoweredUp
 {
     public abstract class TachoMotor : BasicMotor
     {
-        protected SingleValueMode<sbyte> _speedMode;
-        protected SingleValueMode<int> _positionMode;
+        protected SingleValueMode<sbyte, sbyte> _speedMode;
+        protected SingleValueMode<int, int> _positionMode;
         public byte ModeIndexSpeed { get; protected set; } = 1;
         public byte ModeIndexPosition { get; protected set; } = 2;
 
         public sbyte Speed => _speedMode.SI;
         public sbyte SpeedPct => _speedMode.Pct;
-        public IObservable<Value<sbyte>> SpeedObservable => _speedMode.Observable;
+        public IObservable<Value<sbyte, sbyte>> SpeedObservable => _speedMode.Observable;
 
         public int Position => _positionMode.SI;
         public int PositionPct => _positionMode.Pct;
-        public IObservable<Value<int>> PositionObservable => _positionMode.Observable;
+        public IObservable<Value<int, int>> PositionObservable => _positionMode.Observable;
 
         public TachoMotor()
         { }
@@ -26,8 +26,8 @@ namespace SharpBrick.PoweredUp
         protected TachoMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _speedMode = SingleValueMode<sbyte>(ModeIndexSpeed);
-            _positionMode = SingleValueMode<int>(ModeIndexPosition);
+            _speedMode = SingleValueMode<sbyte, sbyte>(ModeIndexSpeed);
+            _positionMode = SingleValueMode<int, int>(ModeIndexPosition);
 
             ObserveForPropertyChanged(_speedMode.Observable, nameof(Speed), nameof(SpeedPct));
             ObserveForPropertyChanged(_positionMode.Observable, nameof(Position), nameof(PositionPct));

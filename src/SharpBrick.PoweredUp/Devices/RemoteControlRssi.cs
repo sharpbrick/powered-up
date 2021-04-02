@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp.Devices
 {
     public class RemoteControlRssi : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<sbyte> _rssiMode;
+        protected SingleValueMode<sbyte, sbyte> _rssiMode;
         public byte ModeIndexRssi { get; protected set; } = 0;
 
         public sbyte Rssi => _rssiMode.SI;
@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp.Devices
         public RemoteControlRssi(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _rssiMode = SingleValueMode<sbyte>(ModeIndexRssi);
+            _rssiMode = SingleValueMode<sbyte, sbyte>(ModeIndexRssi);
 
             ObserveForPropertyChanged(_rssiMode.Observable, nameof(Rssi));
         }

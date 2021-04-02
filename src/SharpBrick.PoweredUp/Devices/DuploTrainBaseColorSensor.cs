@@ -9,10 +9,10 @@ namespace SharpBrick.PoweredUp
 {
     public class DuploTrainBaseColorSensor : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<sbyte> _colorMode;
-        protected SingleValueMode<sbyte> _colorTagMode;
-        protected SingleValueMode<sbyte> _reflectionMode;
-        protected MultiValueMode<short> _rgbMode;
+        protected SingleValueMode<sbyte, sbyte> _colorMode;
+        protected SingleValueMode<sbyte, sbyte> _colorTagMode;
+        protected SingleValueMode<sbyte, sbyte> _reflectionMode;
+        protected MultiValueMode<short, short> _rgbMode;
 
         public byte ModeIndexColor { get; protected set; } = 0;
         public byte ModeIndexColorTag { get; protected set; } = 1;
@@ -37,10 +37,10 @@ namespace SharpBrick.PoweredUp
         public DuploTrainBaseColorSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _colorMode = SingleValueMode<sbyte>(ModeIndexColor);
-            _colorTagMode = SingleValueMode<sbyte>(ModeIndexColorTag);
-            _reflectionMode = SingleValueMode<sbyte>(ModeIndexReflection);
-            _rgbMode = MultiValueMode<short>(ModeIndexRgb);
+            _colorMode = SingleValueMode<sbyte, sbyte>(ModeIndexColor);
+            _colorTagMode = SingleValueMode<sbyte, sbyte>(ModeIndexColorTag);
+            _reflectionMode = SingleValueMode<sbyte, sbyte>(ModeIndexReflection);
+            _rgbMode = MultiValueMode<short, short>(ModeIndexRgb);
 
             ObserveForPropertyChanged(_colorMode.Observable, nameof(Color));
             ObserveForPropertyChanged(_colorTagMode.Observable, nameof(ColorTag));

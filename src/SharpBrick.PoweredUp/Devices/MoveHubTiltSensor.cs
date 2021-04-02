@@ -12,11 +12,11 @@ namespace SharpBrick.PoweredUp
 {
     public class MoveHubTiltSensor : Device, IPoweredUpDevice
     {
-        protected MultiValueMode<sbyte> _twoAxisFullMode;
-        protected SingleValueMode<sbyte> _twoAxisStateMode;
-        protected SingleValueMode<sbyte> _threeAxisStateMode;
-        protected SingleValueMode<int> _impactsMode;
-        protected MultiValueMode<sbyte> _threeAxisFullMode;
+        protected MultiValueMode<sbyte, sbyte> _twoAxisFullMode;
+        protected SingleValueMode<sbyte, sbyte> _twoAxisStateMode;
+        protected SingleValueMode<sbyte, sbyte> _threeAxisStateMode;
+        protected SingleValueMode<int, int> _impactsMode;
+        protected MultiValueMode<sbyte, sbyte> _threeAxisFullMode;
 
         /// <summary>
         /// Two axis full values
@@ -51,7 +51,7 @@ namespace SharpBrick.PoweredUp
         public IObservable<(sbyte roll, sbyte pitch)> TwoAxisFullObservable => _twoAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1]));
         public IObservable<MoveHubTiltSimpleOrientation> TwoAxisStateObservable => _twoAxisStateMode.Observable.Select(x => (MoveHubTiltSimpleOrientation)x.SI);
         public IObservable<MoveHubTiltOrientation> ThreeAxisStateObservable => _threeAxisStateMode.Observable.Select(x => (MoveHubTiltOrientation)x.SI);
-        public IObservable<Value<int>> ImpactsObservable => _impactsMode.Observable;
+        public IObservable<Value<int, int>> ImpactsObservable => _impactsMode.Observable;
         public IObservable<(sbyte roll, sbyte pitch, sbyte yaw)> ThreeAxisFullObservable => _threeAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
 
         public MoveHubTiltSensor()
@@ -60,11 +60,11 @@ namespace SharpBrick.PoweredUp
         public MoveHubTiltSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _twoAxisFullMode = MultiValueMode<sbyte>(ModeIndexTwoAxisFull);
-            _twoAxisStateMode = SingleValueMode<sbyte>(ModeIndexTwoAxisState);
-            _threeAxisStateMode = SingleValueMode<sbyte>(ModeIndexThreeAxisState);
-            _impactsMode = SingleValueMode<int>(ModeIndexImpacts);
-            _threeAxisFullMode = MultiValueMode<sbyte>(ModeIndexThreeAxisFull);
+            _twoAxisFullMode = MultiValueMode<sbyte, sbyte>(ModeIndexTwoAxisFull);
+            _twoAxisStateMode = SingleValueMode<sbyte, sbyte>(ModeIndexTwoAxisState);
+            _threeAxisStateMode = SingleValueMode<sbyte, sbyte>(ModeIndexThreeAxisState);
+            _impactsMode = SingleValueMode<int, int>(ModeIndexImpacts);
+            _threeAxisFullMode = MultiValueMode<sbyte, sbyte>(ModeIndexThreeAxisFull);
 
             ObserveForPropertyChanged(_twoAxisFullMode.Observable, nameof(TwoAxisFull));
             ObserveForPropertyChanged(_twoAxisStateMode.Observable, nameof(TwoAxisState));

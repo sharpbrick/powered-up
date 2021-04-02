@@ -27,19 +27,32 @@ namespace SharpBrick.PoweredUp
         {
             var modeInfo = protocol.Knowledge.PortMode(hubId, portId, modeIndex);
 
-            Mode result = (modeInfo.DatasetType, modeInfo.NumberOfDatasets) switch
+            Mode result = modeInfo switch
             {
-                (PortModeInformationDataType.SByte, 1) => new SingleValueMode<sbyte>(protocol, modeInfo, modeValueObservable),
-                (PortModeInformationDataType.SByte, _) => new MultiValueMode<sbyte>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.SByte, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: false } => new SingleValueMode<sbyte, sbyte>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.SByte, NumberOfDatasets: _, OverrideDatasetTypeToDouble: false } => new MultiValueMode<sbyte, sbyte>(protocol, modeInfo, modeValueObservable),
 
-                (PortModeInformationDataType.Int16, 1) => new SingleValueMode<short>(protocol, modeInfo, modeValueObservable),
-                (PortModeInformationDataType.Int16, _) => new MultiValueMode<short>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Int16, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: false } => new SingleValueMode<short, short>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Int16, NumberOfDatasets: _, OverrideDatasetTypeToDouble: false } => new MultiValueMode<short, short>(protocol, modeInfo, modeValueObservable),
 
-                (PortModeInformationDataType.Int32, 1) => new SingleValueMode<int>(protocol, modeInfo, modeValueObservable),
-                (PortModeInformationDataType.Int32, _) => new MultiValueMode<int>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Int32, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: false } => new SingleValueMode<int, int>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Int32, NumberOfDatasets: _, OverrideDatasetTypeToDouble: false } => new MultiValueMode<int, int>(protocol, modeInfo, modeValueObservable),
 
-                (PortModeInformationDataType.Single, 1) => new SingleValueMode<float>(protocol, modeInfo, modeValueObservable),
-                (PortModeInformationDataType.Single, _) => new MultiValueMode<float>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Single, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: false } => new SingleValueMode<float, float>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Single, NumberOfDatasets: _, OverrideDatasetTypeToDouble: false } => new MultiValueMode<float, float>(protocol, modeInfo, modeValueObservable),
+
+                // override to allow scaling crossing the boundary of the original data type
+                { DatasetType: PortModeInformationDataType.SByte, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: true } => new SingleValueMode<sbyte, double>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.SByte, NumberOfDatasets: _, OverrideDatasetTypeToDouble: true } => new MultiValueMode<sbyte, double>(protocol, modeInfo, modeValueObservable),
+
+                { DatasetType: PortModeInformationDataType.Int16, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: true } => new SingleValueMode<short, double>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Int16, NumberOfDatasets: _, OverrideDatasetTypeToDouble: true } => new MultiValueMode<short, double>(protocol, modeInfo, modeValueObservable),
+
+                { DatasetType: PortModeInformationDataType.Int32, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: true } => new SingleValueMode<int, double>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Int32, NumberOfDatasets: _, OverrideDatasetTypeToDouble: true } => new MultiValueMode<int, double>(protocol, modeInfo, modeValueObservable),
+
+                { DatasetType: PortModeInformationDataType.Single, NumberOfDatasets: 1, OverrideDatasetTypeToDouble: true } => new SingleValueMode<float, double>(protocol, modeInfo, modeValueObservable),
+                { DatasetType: PortModeInformationDataType.Single, NumberOfDatasets: _, OverrideDatasetTypeToDouble: true } => new MultiValueMode<float, double>(protocol, modeInfo, modeValueObservable),
 
                 _ => throw new NotSupportedException("Mode of unknown data type"),
             };
