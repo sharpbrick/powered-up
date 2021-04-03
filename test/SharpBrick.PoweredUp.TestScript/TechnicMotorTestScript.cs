@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Deployment;
@@ -40,6 +41,8 @@ namespace SharpBrick.PoweredUp.TestScript
             await TestCase5_TachoMotorAccelerationAsync(context, motor);
 
             await TestCase6_BasicMotorAsync(context, motor);
+
+            await TestCase7_InputAsync(context, motor);
         }
 
         private static async Task TestCase1_TachoMotorPositionByDegreesAsync(TestScriptExecutionContext context, TTechnicMotor motor)
@@ -146,6 +149,23 @@ namespace SharpBrick.PoweredUp.TestScript
             await context.ConfirmAsync("TachoMotor.StartPowerAsync: CW for 1s, brake, CCW for 1s, floating?");
 
             await ResetToZeroAsync(context, motor, 3000);
+        }
+
+        private async Task TestCase7_InputAsync(TestScriptExecutionContext context, TTechnicMotor motor)
+        {
+            context.Log.LogInformation("AbsoluteMotor: Input on Absolute and relative Position");
+
+            context.Log.LogInformation("Turn 90° clockwise");
+
+            await motor.AbsolutePositionObservable.Where(x => x.SI > 85 && x.SI < 95).FirstAsync().GetAwaiter();
+
+            context.Log.LogInformation("Turn 180° counter-clockwise");
+
+            await motor.AbsolutePositionObservable.Where(x => x.SI < -85 && x.SI > -95).FirstAsync().GetAwaiter();
+
+            context.Log.LogInformation("Turn 90° counter-clockwise");
+
+            await motor.PositionObservable.Where(x => x.SI < -175 && x.SI > -185).FirstAsync().GetAwaiter();
         }
 
         private static async Task ResetToZeroAsync(TestScriptExecutionContext context, TTechnicMotor motor, int expectedTime)
