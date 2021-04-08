@@ -223,6 +223,8 @@ var serviceProvider = new ServiceCollection()
 ````
 ***Note**: see also in `examples/SharpBrick.PoweredUp.Examples/BaseExample.cs` and `examples/SharpBrick.PoweredUp.Examples/Program.cs` for getting an idea of how to switch to BlueGiga-adapter by using program-arguments.*
 
+For more details on using BlueGiga-adapter, also on Raspberry Pi or Ubuntu, see [here.](docs/bleadapters/BlueGigaBLED112.md)
+
 # Command Line Experience
 
 The `poweredup` command line utility intends to allow the inspection of LEGO Wireless Protocol / Powered UP hubs and devices for their properties. It has utilities for ...
@@ -237,7 +239,7 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
   ````
 - **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
 
-- **Use of other Bluetooth LE stack (default is WinRT on Windows)
+- **Use of other Bluetooth LE stack** (default is WinRT on Windows)
   ````
    poweredup device list --usebluegiga COM4 --tracebluegiga
   ````
@@ -298,6 +300,8 @@ DI Container Elements
   - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version v3.4.0 and consider upgrading to .NET 5
   - [X] .NET 5 (on Windows 10 using WinRT Bluetooth) (⚠ v4.0 or later)
   - [X] .NET 5 (on Windows 10 using BlueGiga-adapter) (⚠ v4.0 or later)
+  - [X] .NET 5 (on Raspberry Pi 3 or 4 using BlueGiga-adapter) (⚠ v4.0 or later)
+  - [X] .NET 5 (on Ubuntu 20.04 using BlueGiga-adapter) (⚠ v4.0 or later)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
   - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)
   - [X] Xamarin 5 (on Android using BLE.Plugin) (⚠ v4.0 or later)
