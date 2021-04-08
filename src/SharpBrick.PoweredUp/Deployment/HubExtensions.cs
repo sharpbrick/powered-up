@@ -24,6 +24,18 @@ namespace SharpBrick.PoweredUp
 
             var model = BuildModel(configure);
 
+            await VerifyDeploymentModelAsync(self, model);
+        }
+
+        /// <summary>
+        /// Verifies the deployment model and waits till it reaches zero deployment errors.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="configure">Builder infrastructure for the deployment model</param>
+        /// <returns></returns>
+        public static async Task VerifyDeploymentModelAsync(this Hub self, DeploymentModel model)
+        {
+
             var awaitable = self.VerifyObservable(model)
                 .Do(LogErrors(self))
                 .Where(x => x.Length == 0)
