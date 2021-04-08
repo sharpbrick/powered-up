@@ -25,6 +25,7 @@ namespace SharpBrick.PoweredUp.TestScript
 
             IEnumerable<ITestScript> scripts = new ITestScript[] {
                 new TechnicMotorTestScript<TechnicLargeLinearMotor>(),
+                new MindstormsSensorsTestScript(),
             };
 
             var context = new TestScriptExecutionContext(serviceProvider.GetService<ILogger<TestScriptExecutionContext>>());
