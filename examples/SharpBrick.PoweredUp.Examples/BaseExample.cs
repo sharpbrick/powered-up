@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.Functions;
 
@@ -20,14 +22,11 @@ namespace Example
 
         public virtual void Configure(IServiceCollection serviceCollection)
         {
-            serviceCollection
+            _ = serviceCollection
                 .AddPoweredUp();
-                
-
-                
         }
 
-        public async Task InitHostAndDiscoverAsync(bool enableTrace , string bluetoothStackPort="WINRT", bool enableTraceBlueGiga = false)
+        public async Task InitHostAndDiscoverAsync(bool enableTrace, string bluetoothStackPort = "WINRT", bool enableTraceBlueGiga = false)
         {
             InitHost(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
@@ -65,7 +64,7 @@ namespace Example
             }, cts.Token);
 
             Log.LogInformation("Press RETURN to cancel Scanning");
-            Console.ReadLine();
+            _ = Console.ReadLine();
 
             cts.Cancel();
 
@@ -74,27 +73,27 @@ namespace Example
             return Task.CompletedTask;
         }
 
-        public void InitHost(bool enableTrace, string bluetoothStackPort="WINRT", bool enableTraceBlueGiga=false)
+        public void InitHost(bool enableTrace, string bluetoothStackPort = "WINRT", bool enableTraceBlueGiga = false)
         {
             var serviceCollection = new ServiceCollection()
                 // configure your favourite level of logging.
                 .AddLogging(builder =>
                 {
-                    builder
+                    _ = builder
                         .AddConsole();
 
                     if (enableTrace)
                     {
-                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
+                        _ = builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                     }
                     if (enableTraceBlueGiga)
                     {
-                        builder.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
+                        _ = builder.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
                     }
                 });
-            if (bluetoothStackPort.Equals("WINRT" , StringComparison.OrdinalIgnoreCase))
+            if (bluetoothStackPort.Equals("WINRT", StringComparison.OrdinalIgnoreCase))
             {
-                serviceCollection.AddWinRTBluetooth();
+                _ = serviceCollection.AddWinRTBluetooth();
             }
             else
             {
@@ -111,7 +110,7 @@ namespace Example
             }
             //can be easily extended here by taking another implementation (for example BlueZ for Raspberry) into the BluetoothImplementation-enum and then
             //do the needed Addxxx and options here:
-            
+
 
             Configure(serviceCollection);
 

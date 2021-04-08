@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 
 namespace SharpBrick.PoweredUp.Examples
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            var enableTrace = (args.Length > 0 && args[0] == "--trace");
-            string bluetoothStackPort = "WINRT";
-            bool enableTraceBlueGiga = false;
+            var enableTrace = args.Length > 0 && args[0] == "--trace";
+            var bluetoothStackPort = "WINRT";
+            var enableTraceBlueGiga = false;
             if (args.Any(x => x.Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase)))
             {
-                for (int i = 0; i < args.Length; i++)
+                for (var i = 0; i < args.Length; i++)
                 {
                     if (args[i].Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase))
                     {
@@ -76,10 +76,8 @@ namespace SharpBrick.PoweredUp.Examples
             example = new Example.ExampleColorDistanceSensor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
-            // this uses the WinRT-bluetooth-implementation by default
-            await example.InitHostAndDiscoverAsync(enableTrace);
-            //for using BlueGiga-Bluetoothadapter:
-            //await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
+            // this uses the WinRT-bluetooth-implementation by default (because bluetoothStackPort defaults to "WinRT" & enableTraceBlueGiga defaults to false)
+            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
             if (example.SelectedHub is not null)
             {
