@@ -76,10 +76,8 @@ namespace SharpBrick.PoweredUp.Examples
             example = new Example.ExampleColorDistanceSensor();
 
             // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
-            // this uses the WinRT-bluetooth-implementation by default
-            await example.InitHostAndDiscoverAsync(enableTrace);
-            //for using BlueGiga-Bluetoothadapter:
-            //await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
+            // InitHostAndDiscoverAsync uses the WinRT-bluetooth-implementation by default (bluetoothStackPort defaults to "WinRT" and enableTraceBlueGiga defaults to false)
+            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
 
             if (example.SelectedHub is not null)
             {
