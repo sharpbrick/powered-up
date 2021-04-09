@@ -30,6 +30,14 @@ namespace SharpBrick.PoweredUp.TestScript
             await TestCase3_TechnicDistanceSensorShortDistanceAsync(context, distanceSensor);
 
             await TestCase4_TechnicDistanceSensorDistanceAsync(context, distanceSensor);
+
+            context.Log.LogInformation("Start Testing ColorSensor");
+
+            await TestCase5_TechnicColorIndexColorSensorAsync(context, colorSensor);
+
+            await TestCase6_TechnicColorSectorLightsAsync(context, colorSensor);
+
+            await TestCase7_TechnicColorHsvSensorAsync(context, colorSensor);
         }
 
         private async Task TestCase1_TechnicDistanceSensorLightsAsync(TestScriptExecutionContext context, TechnicDistanceSensor distanceSensor)
@@ -56,6 +64,8 @@ namespace SharpBrick.PoweredUp.TestScript
 
                 await Task.Delay(500);
             }
+
+            await distanceSensor.SetEyeLightAsync(0, 0, 0, 0);
 
             await context.ConfirmAsync("TechnicDistanceSensor.SetEyeLightAsync: Did the right side brighten up?");
         }
@@ -87,5 +97,77 @@ namespace SharpBrick.PoweredUp.TestScript
 
             await context.ConfirmAsync("Are the distances measured accurately?");
         }
+
+        private async Task TestCase5_TechnicColorIndexColorSensorAsync(TestScriptExecutionContext context, TechnicColorSensor colorSensor)
+        {
+            context.Log.LogInformation("Testing known Colors");
+
+            await colorSensor.SetupNotificationAsync(colorSensor.ModeIndexColor, true, 1);
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.Black).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.Black)}");
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.Blue).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.Blue)}");
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.Teal).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.Teal)}");
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.Green).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.Green)}");
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.Yellow).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.Yellow)}");
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.Red).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.Red)}");
+
+            await colorSensor.ColorObservable.Where(c => c == TechnicColor.White).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] {nameof(TechnicColor.White)}");
+
+
+            await colorSensor.SetupNotificationAsync(colorSensor.ModeIndexColor, false);
+
+            context.Log.LogInformation("All known colors recognized.");
+        }
+
+        private async Task TestCase6_TechnicColorSectorLightsAsync(TestScriptExecutionContext context, TechnicColorSensor colorSensor)
+        {
+            await colorSensor.SetSectorLightAsync(100, 0, 0);
+
+            await context.ConfirmAsync("TechnicColorSensor.SetSectorLightAsync: Light on Sector 1?");
+
+            await colorSensor.SetSectorLightAsync(0, 100, 0);
+
+            await context.ConfirmAsync("TechnicColorSensor.SetSectorLightAsync: Light on Sector 2?");
+
+            await colorSensor.SetSectorLightAsync(0, 0, 100);
+
+            await context.ConfirmAsync("TechnicColorSensor.SetSectorLightAsync: Light on Sector 3?");
+
+            await colorSensor.SetSectorLightAsync(0, 0, 0);
+        }
+
+        private async Task TestCase7_TechnicColorHsvSensorAsync(TestScriptExecutionContext context, TechnicColorSensor colorSensor)
+        {
+            context.Log.LogInformation("Testing HSV");
+
+            await colorSensor.SetupNotificationAsync(colorSensor.ModeIndexHSV, true, 1);
+
+            await colorSensor.HsvObservable.Where(c => (c.hue is > 340 and < 360 || c.hue is > 0 and < 20) && c.saturation > 90 && c.value > 90).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] Reached Significant Red");
+
+            await colorSensor.HsvObservable.Where(c => (c.hue is > 100 and < 140) && c.saturation > 90 && c.value > 90).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] Reached Significant Green");
+
+            await colorSensor.HsvObservable.Where(c => (c.hue is > 220 and < 260) && c.saturation > 90 && c.value > 90).FirstAsync().GetAwaiter();
+            context.Log.LogInformation($"[OK] Reached Significant Blue");
+
+
+            await colorSensor.SetupNotificationAsync(colorSensor.ModeIndexHSV, false);
+
+            context.Log.LogInformation("All known colors recognized.");
+        }
+
     }
 }
