@@ -20,8 +20,8 @@ namespace Example
 
             // measure distances (only single subscription)
             using var m1 = technicDistanceSensor.DistanceObservable.Subscribe(x => Log.LogWarning($"Distl: {x}"));
-            using var m2 = technicDistanceSensor.DistsObservable.Subscribe(x => Log.LogWarning($"Dists: {x}"));
-            using var m3 = technicDistanceSensor.SinglObservable.Subscribe(x => Log.LogWarning($"Singl: {x}"));
+            using var m2 = technicDistanceSensor.ShortOnlyDistanceObservable.Subscribe(x => Log.LogWarning($"Dists: {x}"));
+            using var m3 = technicDistanceSensor.SingleObservable.Subscribe(x => Log.LogWarning($"Singl: {x}"));
 
             await technicDistanceSensor.SetupNotificationAsync(technicDistanceSensor.ModeIndexDistance, true);
 

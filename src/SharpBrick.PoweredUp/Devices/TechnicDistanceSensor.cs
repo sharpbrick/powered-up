@@ -23,9 +23,9 @@ namespace SharpBrick.PoweredUp
         public short Distance => _distlMode.SI;
         public IObservable<short> DistanceObservable => _distlMode.Observable.Select(x => x.SI);
         public short ShortOnlyDistance => _distsMode.SI;
-        public IObservable<short> DistsObservable => _distsMode.Observable.Select(x => x.SI);
-        public short SingleDistanceMeasurementResult => _singlMode.SI;
-        public IObservable<short> SinglObservable => _singlMode.Observable.Select(x => x.SI);
+        public IObservable<short> ShortOnlyDistanceObservable => _distsMode.Observable.Select(x => x.SI);
+        public short Single => _singlMode.SI;
+        public IObservable<short> SingleObservable => _singlMode.Observable.Select(x => x.SI);
 
         public TechnicDistanceSensor()
         { }
@@ -39,7 +39,7 @@ namespace SharpBrick.PoweredUp
 
             ObserveForPropertyChanged(_distlMode.Observable, nameof(Distance));
             ObserveForPropertyChanged(_distsMode.Observable, nameof(ShortOnlyDistance));
-            ObserveForPropertyChanged(_singlMode.Observable, nameof(SingleDistanceMeasurementResult));
+            ObserveForPropertyChanged(_singlMode.Observable, nameof(Single));
         }
 
         public Task SetEyeLightAsync(byte leftTop = 0x00, byte rightTop = 0x00, byte leftBottom = 0x00, byte rightBottom = 0x00)
