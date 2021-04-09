@@ -434,4 +434,3 @@ $RECYCLE.BIN/
 /src/SharpBrick.PoweredUp.BlueGigaBLE/.editorconfig
 /examples/SharpBrick.PoweredUp.Examples/Properties/launchSettings.json
 src/SharpBrick.PoweredUp.Cli/Properties/launchSettings.json
-.editorconfig
