@@ -67,15 +67,23 @@ namespace SharpBrick.PoweredUp
             }, token);
         }
 
-        public async Task<THub> DiscoverAsync<THub>(CancellationToken token = default)
+        public async Task<THub> DiscoverAsync<THub>(CancellationToken token = default) where THub : class
+                    => await DiscoverInternalAsync(typeof(THub), token) as THub;
+
+        public async Task<Hub> DiscoverAsync(Type hubType, CancellationToken token = default)
+            => await DiscoverInternalAsync(hubType, token);
+
+        private async Task<Hub> DiscoverInternalAsync(Type hubType, CancellationToken token)
         {
-            var tcs = new TaskCompletionSource<THub>();
+            var tcs = new TaskCompletionSource<Hub>();
 
             Discover(hub =>
             {
-                if (hub is THub tHub)
+                var currentHubType = hub.GetType();
+
+                if (currentHubType == hubType)
                 {
-                    tcs.SetResult(tHub);
+                    tcs.SetResult(hub);
                 }
 
                 return Task.CompletedTask;
@@ -83,8 +91,7 @@ namespace SharpBrick.PoweredUp
 
             var hub = await tcs.Task;
 
-            _logger.LogInformation($"End DiscoveryAsync for {typeof(THub).Name}");
-
+            _logger.LogInformation($"End DiscoveryAsync for {hubType.Name}");
             return hub;
         }
 
