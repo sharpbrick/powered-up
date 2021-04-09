@@ -193,37 +193,9 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
 }
 ````
 ## Connecting with a BlueGiga-Bluetooth-adapter
-If not yet installed, install the nuget-package `SharpBrick.PoweredUp.BlueGigaBLE` .
 
-In the above examples replace
-````csharp
-var serviceProvider = new ServiceCollection()
-    .AddLogging()
-    .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
-    .BuildServiceProvider();
-````
-with
-````csharp
-var serviceProvider = new ServiceCollection()
-    .AddLogging()
-    .AddPoweredUp()
-    .AddBlueGigaBLEBluetooth(options =>
-    {
-      // enter the COMPort-Name here
-      // on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) 
-      // --> Bluegiga Bluetooth Low Energy (COM#) (where # is a number)
-      options.COMPortName = "COM4";
-      // setting this option to false supresses the complete LogDebug()-commands
-      // of the Bluegiga-stack; so they will not generated at all
-      // this produces A LOT trace-messages :-)
-      options.TraceDebug = true;
-    })
-    .BuildServiceProvider();
-````
-***Note**: see also in `examples/SharpBrick.PoweredUp.Examples/BaseExample.cs` and `examples/SharpBrick.PoweredUp.Examples/Program.cs` for getting an idea of how to switch to BlueGiga-adapter by using program-arguments.*
 
-For more details on using BlueGiga-adapter, also on Raspberry Pi or Ubuntu, see [here.](docs/bleadapters/BlueGigaBLED112.md)
+For details on using BlueGiga-adapter, also on Raspberry Pi or Ubuntu, see [here.](docs/bleadapters/BlueGigaBLED112.md)
 
 # Command Line Experience
 
@@ -240,10 +212,8 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
 - **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
 
 - **Use of other Bluetooth LE stack** (default is WinRT on Windows)
-  ````
-   poweredup device list --usebluegiga COM4 --tracebluegiga
-  ````
-  Use the COM-port of your Windows-instance where the BlueGiga-adapter is attached to; so replace `COM4` with COMx whatever x is used on your system. `--tracebluegiga`  emits a lot of additional trace-information of the BleuGiga-implementation. 
+
+    - For BlueGiga-adapter, also on Raspberry Pi or Ubuntu, see [here.](docs/bleadapters/BlueGigaBLED112.md)
 
 ## Installation Instruction
 

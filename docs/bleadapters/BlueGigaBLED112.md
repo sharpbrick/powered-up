@@ -49,6 +49,15 @@ For a full working example using commandline-parameters to switch to BlueGiga se
  [examples/SharpBrick.PoweredUp.Examples/BaseExample.cs](../../examples/SharpBrick.PoweredUp.Examples/BaseExample.cs).
 On windows-systems you can debug or run from inside Visual Studio / your IDE without any need for adaption in the build-process.
 
+## Command Line Experience ##
+
+````
+   poweredup device list --usebluegiga COM4 --tracebluegiga
+````
+``--usebluegiga`` is the parameter that tells the cli-tool to use the BleuGiga-implementation. It has to be followed by the name of the serial port to use.
+Use the name of the serial port as described above; so replace `COM4` with COMx whatever x is used on your Windows-system or e.g. /dev/ttyACM0 for Linux-based OS.   
+`--tracebluegiga` is an optional parameter; when used the cli emits **a lot** of additional trace-information of the BleuGiga-implementation. Default: no additional trace.
+
 ## Using / Building for Linux-based OS ##
 At the time of this writing you've got to make sure that you don't include/depend on the SharpBrick.PoweredUp.WinRT-project, because this doesn't build for Linux-platforms. So change your project-dependencies accordingly.
 The following instructions assume that you've got installed at least the .NET 5 runtime on your Linux-based OS. See under Resources below for help on that.
