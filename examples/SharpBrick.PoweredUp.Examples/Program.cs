@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-
+using Example;
+using Microsoft.Extensions.Configuration;
 
 namespace SharpBrick.PoweredUp.Examples
 {
@@ -9,76 +11,23 @@ namespace SharpBrick.PoweredUp.Examples
     {
         static async Task Main(string[] args)
         {
-            var enableTrace = (args.Length > 0 && args[0] == "--trace");
-            string bluetoothStackPort = "WINRT";
-            bool enableTraceBlueGiga = false;
-            if (args.Any(x => x.Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase)))
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (args[i].Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (args.Length > i)
-                        {
-                            bluetoothStackPort = args[i + 1];
-                        }
-                        break;
-                    }
-                }
-            }
-            if (args.Any(x => x.Equals("--tracebluegiga", StringComparison.OrdinalIgnoreCase)))
-            {
-                enableTraceBlueGiga = true;
-            }
+            // load a configuration object to be used when dynamically loading bluetooth adapters
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("poweredup.json", true)
+                .AddCommandLine(args)
+                .Build();
 
-            // NOTE: Examples are in their own root namespace to make namespace usage clear
-            Example.BaseExample example;
+            // select the example to execute
+            var exampleToExecute = configuration["Example"] ?? "Colors";
 
-            //example = new Example.ExampleColors();
-            //example = new Example.ExampleMotorControl();
-            //example = new Example.ExampleMotorInputAbsolutePosition();
-            //example = new Example.ExampleMotorVirtualPort();
-            //example = new Example.ExampleHubActions();
-            //example = new Example.ExampleTechnicMediumHubAccelerometer();
-            //example = new Example.ExampleTechnicMediumHubGyroSensor();
-            //example = new Example.ExampleVoltage();
-            //example = new Example.ExampleTechnicMediumTemperatureSensor();
-            //example = new Example.ExampleMotorInputCombinedMode();
-            //example = new Example.ExampleMixedBag();
-            //example = new Example.ExampleHubAlert();
-            //example = new Example.ExampleTechnicMediumHubTiltSensor();
-            //example = new Example.ExampleTechnicMediumHubTiltSensorImpacts();
-            //example = new Example.ExampleDynamicDevice();
-            //example = new Example.ExampleBluetoothByKnownAddress();
-            //example = new Example.ExampleBluetoothByName();
-            //example = new Example.ExampleSetHubProperty();
-            //example = new Example.ExampleHubPropertyObserving();
-            //example = new Example.ExampleDiscoverByType();
-            //example = new Example.ExampleCalibrationSteering();
-            //example = new Example.ExampleRampUp();
-            //example = new Example.ExampleTechnicMediumHubGestSensor();
-            //example = new Example.ExampleRemoteControlButton();
-            //example = new Example.ExampleRemoteControlRssi();
-            //example = new Example.ExampleTechnicMediumAngularMotorGrey();
-            //example = new Example.ExampleMarioBarcode();
-            //example = new Example.ExampleMarioPants();
-            //example = new Example.ExampleMarioAccelerometer();
-            //example = new Example.ExampleDuploTrainBase();
-            //example = new Example.ExampleTechnicColorSensor();
-            //example = new Example.ExampleTechnicDistanceSensor();
-            //example = new Example.ExampleTechnicMediumHubGestSensor();
-            //example = new Example.ExampleMoveHubInternalTachoMotorControl();
-            //example = new Example.ExampleMoveHubExternalMediumLinearMotorControl();
-            //example = new Example.ExampleMoveHubColors();
-            //example = new Example.ExampleMoveHubTiltSensor();
-            //example = new ExampleTwoHubsMotorControl();
-            //example = new ExampleTwoPortHubMediumLinearMotor();
-            example = new Example.ExampleColorDistanceSensor();
+            var typeToExecute = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.FullName.StartsWith($"Example.Example{exampleToExecute}"));
 
-            // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
-            // InitHostAndDiscoverAsync uses the WinRT-bluetooth-implementation by default (bluetoothStackPort defaults to "WinRT" and enableTraceBlueGiga defaults to false)
-            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
+            var example = Activator.CreateInstance(typeToExecute) as BaseExample;
 
+            // initialize powered up and discover hub
+            await example.InitHostAndDiscoverAsync(configuration);
+
+            // execute example
             if (example.SelectedHub is not null)
             {
                 await example.ExecuteAsync();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
@@ -22,17 +23,15 @@ namespace Example
         {
             serviceCollection
                 .AddPoweredUp();
-                
-
-                
         }
 
-        public async Task InitHostAndDiscoverAsync(bool enableTrace , string bluetoothStackPort="WINRT", bool enableTraceBlueGiga = false)
+        public async Task InitHostAndDiscoverAsync(IConfigurationRoot configuration)
         {
-            InitHost(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
+            InitHost(configuration);
 
             Log = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
 
+            bool.TryParse(configuration["EnableTrace"], out var enableTrace);
             await DiscoverAsync(enableTrace);
         }
 
@@ -74,7 +73,7 @@ namespace Example
             return Task.CompletedTask;
         }
 
-        public void InitHost(bool enableTrace, string bluetoothStackPort="WINRT", bool enableTraceBlueGiga=false)
+        public void InitHost(IConfigurationRoot configuration)
         {
             var serviceCollection = new ServiceCollection()
                 // configure your favourite level of logging.
@@ -83,35 +82,13 @@ namespace Example
                     builder
                         .AddConsole();
 
-                    if (enableTrace)
+                    if (bool.TryParse(configuration["EnableTrace"], out var enableTrace) && enableTrace)
                     {
                         builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
-                    }
-                    if (enableTraceBlueGiga)
-                    {
                         builder.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
                     }
-                });
-            if (bluetoothStackPort.Equals("WINRT" , StringComparison.OrdinalIgnoreCase))
-            {
-                serviceCollection.AddWinRTBluetooth();
-            }
-            else
-            {
-                //this adds the BlueGiga-implementation instead of the WinRT-implementation
-                //the value of the parameter bluetoothStackPort is taken for the COM-Port on which the BlueGiga-adapter is connected
-                _ = serviceCollection.AddBlueGigaBLEBluetooth(options =>
-                  {
-                      //enter the COMPort-Name here
-                      //on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
-                      options.COMPortName = bluetoothStackPort;
-                      //setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
-                      options.TraceDebug = enableTraceBlueGiga;
-                  });
-            }
-            //can be easily extended here by taking another implementation (for example BlueZ for Raspberry) into the BluetoothImplementation-enum and then
-            //do the needed Addxxx and options here:
-            
+                })
+                .AddPoweredUpBluetooth(configuration);
 
             Configure(serviceCollection);
 

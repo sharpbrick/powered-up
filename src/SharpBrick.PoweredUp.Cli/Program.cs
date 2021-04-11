@@ -6,8 +6,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Functions;
 
@@ -22,12 +22,24 @@ namespace SharpBrick.PoweredUp.Cli
 
         static async Task<int> Main(string[] args)
         {
+            // load a configuration object to be used when dynamically loading bluetooth adapters
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("poweredup.json", true)
+                .AddCommandLine(args)
+                .Build();
+
+            bool enableTrace = bool.TryParse(configuration["EnableTrace"], out var enableTraceInConfig) && enableTraceInConfig;
+
             var app = new CommandLineApplication
             {
                 Name = "poweredup",
                 Description = "A command line interface to investigate LEGO Powered UP hubs and devices.",
                 UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.CollectAndContinue,
             };
+
+            // pseudo options. will be handled via DI Container initialization.
+            app.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.NoValue);
+            app.Option("--BluetoothAdapter", "Use a specified BLE adapter (e.g. WinRT or BlueGigaBLE). Defaults to WinRT. Some adapter might require additional parameters.", CommandOptionType.SingleValue);
 
             app.HelpOption();
             app.OnExecute(() =>
@@ -51,18 +63,12 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     deviceListApp.Description = "Inspect all devices declared on the Hub by using information gathered using the LEGO Wireless Protocol";
                     deviceListApp.HelpOption();
-                    var traceOption = deviceListApp.Option("--trace", "Enable Tracing (default: no trace)", CommandOptionType.NoValue);
-                    var blueGigaOption = deviceListApp.Option("--usebluegiga", "Use BlueGiga-Bluetooth adapter-stack (default is WindowsRT-Bluetooth-Stack) and give the port (for example 'COM4') as parameter", CommandOptionType.SingleValue);
-                    var traceBlueGigaOption = deviceListApp.Option("--tracebluegiga", "Emmit extra trace from Bluegiga-communication (default: no extra trace)", CommandOptionType.NoValue);
                     deviceListApp.OnExecuteAsync(async cts =>
                     {
                         try
                         {
                             //for a boolean parameter it is just enough to test wether it has been given at all; HasValue() is true, if the parameter has been given:
-                            var enableTrace = traceOption.HasValue();
-                            var bluetoothStackPort = blueGigaOption.HasValue() ? blueGigaOption.Value() : "WINRT";
-                            var enableBlueGigaTrace = traceBlueGigaOption.HasValue();
-                            var serviceProvider = CreateServiceProvider(enableTrace, bluetoothStackPort, enableBlueGigaTrace);
+                            var serviceProvider = CreateServiceProvider(configuration);
                             (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                             if (bluetoothAddress == 0)
@@ -96,25 +102,17 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     deviceDumpStaticPortApp.Description = "Inspect a specific device on a Hub Port by using (non-dynamic) information gathered using the LEGO Wireless Protocol. Emits a binary dump (use list for human readable output).";
                     deviceDumpStaticPortApp.HelpOption();
-                    var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing (default: no trace)", CommandOptionType.NoValue);
-                    var blueGigaOption = deviceDumpStaticPortApp.Option("--usebluegiga", "Use BlueGiga-Bluetooth adapter-stack (default is WindowsRT-Bluetooth-Stack) and give the port (for example 'COM4') as parameter", CommandOptionType.SingleValue);
-                    var traceBlueGigaOption = deviceDumpStaticPortApp.Option("--tracebluegiga", "Emmit extra trace from Bluegiga-communication", CommandOptionType.NoValue);
-
 
                     var portOption = deviceDumpStaticPortApp.Option("-p", "Port to Dump", CommandOptionType.SingleValue);
                     var headerOption = deviceDumpStaticPortApp.Option("-f", "Add Hub and IOType Header", CommandOptionType.NoValue);
-                    
+
                     deviceDumpStaticPortApp.OnExecuteAsync(async cts =>
                     {
                         try
                         {
-
-                            var enableTrace = traceOption.HasValue();
                             var headerEnabled = headerOption.Values.Count > 0;
-                            var bluetoothStackPort = blueGigaOption.HasValue() ? blueGigaOption.Value() : "WINRT";
-                            var enableBlueGigaTrace = traceBlueGigaOption.HasValue();
 
-                            var serviceProvider = CreateServiceProvider(enableTrace, bluetoothStackPort, enableBlueGigaTrace);
+                            var serviceProvider = CreateServiceProvider(configuration);
                             (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                             if (bluetoothAddress == 0)
@@ -151,7 +149,6 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     prettyPrintApp.Description = "Pretty prints a previously recorded binary dump collected using dump-static-ports";
                     prettyPrintApp.HelpOption();
-                    var traceOption = prettyPrintApp.Option("--trace", "Enable Tracing (default: no trace) ", CommandOptionType.NoValue);
                     var systemTypeOption = prettyPrintApp.Option("--t", "System Type (parsable number)", CommandOptionType.SingleValue);
                     var hubOption = prettyPrintApp.Option("--h", "Hub Id (decimal number)", CommandOptionType.SingleValue);
                     var portOption = prettyPrintApp.Option("--p", "Port Id (decimal number)", CommandOptionType.SingleValue);
@@ -164,7 +161,6 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         try
                         {
-                            var enableTrace = traceOption.HasValue();
                             var systemType = byte.TryParse(systemTypeOption.Value(), out var x1) ? x1 : (byte)0;
                             var hubId = byte.TryParse(hubOption.Value(), out var x2) ? x2 : (byte)0;
                             var portId = byte.TryParse(portOption.Value(), out var x3) ? x3 : (byte)0;
@@ -173,7 +169,7 @@ namespace SharpBrick.PoweredUp.Cli
                             var swVersion = Version.TryParse(swVersionOption.Value(), out var x6) ? x6 : new Version("0.0.0.0");
                             var file = fileOption.Value();
 
-                            var serviceProvider = CreateServiceProviderWithMock(enableTrace);
+                            var serviceProvider = CreateServiceProviderWithMock(configuration);
 
                             using (var scope = serviceProvider.CreateScope())
                             {
@@ -209,48 +205,24 @@ namespace SharpBrick.PoweredUp.Cli
             return await app.ExecuteAsync(args);
         }
 
-        private static IServiceCollection CreateServiceProviderInternal(bool enableTrace)
+        private static IServiceCollection CreateServiceProviderInternal(IConfiguration configuration)
             => new ServiceCollection()
-                .AddLogging(builder =>
-                {
-                    builder.ClearProviders();
-
-                    if (enableTrace)
-                    {
-                        builder.AddConsole();
-
-                        builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
-                        builder.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
-                    }
-                })
                 .AddPoweredUp()
+                .AddPoweredUpConsoleLogging(configuration)
 
                 // Add CLI Commands
                 .AddTransient<DumpStaticPortInfo>()
                 .AddTransient<DevicesList>()
                 .AddTransient<PrettyPrint>();
-        private static IServiceProvider CreateServiceProviderWithMock(bool enableTrace)
-            => CreateServiceProviderInternal(enableTrace)
+        private static IServiceProvider CreateServiceProviderWithMock(IConfiguration configuration)
+            => CreateServiceProviderInternal(configuration)
                 .AddMockBluetooth()
                 .BuildServiceProvider();
-        private static IServiceProvider CreateServiceProvider(bool enableTrace, string bluetoothStackPort = "WINRT", bool enableBlueGigaTrace=false)
-        {
-            var serviceCollection = CreateServiceProviderInternal(enableTrace);
-            if (bluetoothStackPort.Equals("WINRT", StringComparison.OrdinalIgnoreCase))
-            {
 
-                serviceCollection.AddWinRTBluetooth();
-            } 
-            else
-            {
-                serviceCollection.AddBlueGigaBLEBluetooth(options =>
-                {
-                    options.COMPortName = bluetoothStackPort;
-                    options.TraceDebug = enableBlueGigaTrace;
-                });
-            }
-            return serviceCollection.BuildServiceProvider();
-        }
+        private static IServiceProvider CreateServiceProvider(IConfiguration configuration)
+            => CreateServiceProviderInternal(configuration)
+                .AddPoweredUpBluetooth(configuration)
+                .BuildServiceProvider();
 
         public static async Task AddTraceWriterAsync(IServiceProvider serviceProvider, bool enableTrace)
         {

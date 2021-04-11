@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
-using SharpBrick.PoweredUp.BlueGigaBLE;
 
 namespace Example
 {

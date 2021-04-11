@@ -5,7 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
+    <ProjectReference Include="..\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" >
+        <Private>false</Private>
+        <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpBrick.PoweredUp.CliBase\SharpBrick.PoweredUp.CliBase.csproj" >
+        <Private>false</Private>
+        <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
