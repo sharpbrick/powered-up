@@ -13,6 +13,7 @@ namespace SharpBrick.PoweredUp.Examples
         {
             // load a configuration object to be used when dynamically loading bluetooth adapters
             var configuration = new ConfigurationBuilder()
+                .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("poweredup.json", true)
                 .AddCommandLine(args)
                 .Build();
