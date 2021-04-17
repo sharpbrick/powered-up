@@ -10,7 +10,6 @@ namespace SharpBrick.PoweredUp
     {
         public const string BluetoothAdapterConfigKey = "BluetoothAdapter";
         public const string DefaultBluetoothAdapter = "WinRT";
-        public const string BluetoothConfigConfigKey = "BluetoothConfig";
 
         public static IServiceCollection AddPoweredUpBluetooth(this IServiceCollection self, IConfiguration configuration)
         {
