@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Bluetooth;
@@ -22,6 +23,14 @@ namespace SharpBrick.PoweredUp.Cli
 
         static async Task<int> Main(string[] args)
         {
+            // load a configuration object
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("poweredup.json", true)
+                .AddCommandLine(args)
+                .Build();
+
+            var enableTrace = bool.TryParse(configuration["EnableTrace"], out var enableTraceInConfig) && enableTraceInConfig;
+
             var app = new CommandLineApplication
             {
                 Name = "poweredup",
@@ -51,18 +60,18 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     deviceListApp.Description = "Inspect all devices declared on the Hub by using information gathered using the LEGO Wireless Protocol";
                     deviceListApp.HelpOption();
-                    var traceOption = deviceListApp.Option("--trace", "Enable Tracing (default: no trace)", CommandOptionType.NoValue);
-                    var blueGigaOption = deviceListApp.Option("--usebluegiga", "Use BlueGiga-Bluetooth adapter-stack (default is WindowsRT-Bluetooth-Stack) and give the port (for example 'COM4') as parameter", CommandOptionType.SingleValue);
-                    var traceBlueGigaOption = deviceListApp.Option("--tracebluegiga", "Emmit extra trace from Bluegiga-communication (default: no extra trace)", CommandOptionType.NoValue);
+
+                    // pseudo option for configuration to create documentation
+                    deviceListApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
+                    deviceListApp.Option("--BluetoothAdapter", "Use a specified BLE adapter (e.g. WinRT or BlueGigaBLE). Defaults to WinRT. Some adapter might require additional parameters.", CommandOptionType.SingleValue);
+                    deviceListApp.Option("--COMPortName", "Name of the COM port to connect the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
+                    deviceListApp.Option("--TraceDebug", "Create detailed tracing of the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
+
                     deviceListApp.OnExecuteAsync(async cts =>
                     {
                         try
                         {
-                            //for a boolean parameter it is just enough to test wether it has been given at all; HasValue() is true, if the parameter has been given:
-                            var enableTrace = traceOption.HasValue();
-                            var bluetoothStackPort = blueGigaOption.HasValue() ? blueGigaOption.Value() : "WINRT";
-                            var enableBlueGigaTrace = traceBlueGigaOption.HasValue();
-                            var serviceProvider = CreateServiceProvider(enableTrace, bluetoothStackPort, enableBlueGigaTrace);
+                            var serviceProvider = CreateServiceProvider(configuration);
                             (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                             if (bluetoothAddress == 0)
@@ -96,25 +105,23 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     deviceDumpStaticPortApp.Description = "Inspect a specific device on a Hub Port by using (non-dynamic) information gathered using the LEGO Wireless Protocol. Emits a binary dump (use list for human readable output).";
                     deviceDumpStaticPortApp.HelpOption();
-                    var traceOption = deviceDumpStaticPortApp.Option("--trace", "Enable Tracing (default: no trace)", CommandOptionType.NoValue);
-                    var blueGigaOption = deviceDumpStaticPortApp.Option("--usebluegiga", "Use BlueGiga-Bluetooth adapter-stack (default is WindowsRT-Bluetooth-Stack) and give the port (for example 'COM4') as parameter", CommandOptionType.SingleValue);
-                    var traceBlueGigaOption = deviceDumpStaticPortApp.Option("--tracebluegiga", "Emmit extra trace from Bluegiga-communication", CommandOptionType.NoValue);
 
+                    // pseudo option for configuration to create documentation
+                    deviceDumpStaticPortApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
+                    deviceDumpStaticPortApp.Option("--BluetoothAdapter", "Use a specified BLE adapter (e.g. WinRT or BlueGigaBLE). Defaults to WinRT. Some adapter might require additional parameters.", CommandOptionType.SingleValue);
+                    deviceDumpStaticPortApp.Option("--COMPortName", "Name of the COM port to connect the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
+                    deviceDumpStaticPortApp.Option("--TraceDebug", "Create detailed tracing of the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
 
                     var portOption = deviceDumpStaticPortApp.Option("-p", "Port to Dump", CommandOptionType.SingleValue);
                     var headerOption = deviceDumpStaticPortApp.Option("-f", "Add Hub and IOType Header", CommandOptionType.NoValue);
-                    
+
                     deviceDumpStaticPortApp.OnExecuteAsync(async cts =>
                     {
                         try
                         {
-
-                            var enableTrace = traceOption.HasValue();
                             var headerEnabled = headerOption.Values.Count > 0;
-                            var bluetoothStackPort = blueGigaOption.HasValue() ? blueGigaOption.Value() : "WINRT";
-                            var enableBlueGigaTrace = traceBlueGigaOption.HasValue();
 
-                            var serviceProvider = CreateServiceProvider(enableTrace, bluetoothStackPort, enableBlueGigaTrace);
+                            var serviceProvider = CreateServiceProvider(configuration);
                             (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
                             if (bluetoothAddress == 0)
@@ -151,7 +158,9 @@ namespace SharpBrick.PoweredUp.Cli
                 {
                     prettyPrintApp.Description = "Pretty prints a previously recorded binary dump collected using dump-static-ports";
                     prettyPrintApp.HelpOption();
-                    var traceOption = prettyPrintApp.Option("--trace", "Enable Tracing (default: no trace) ", CommandOptionType.NoValue);
+
+                    prettyPrintApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
+
                     var systemTypeOption = prettyPrintApp.Option("--t", "System Type (parsable number)", CommandOptionType.SingleValue);
                     var hubOption = prettyPrintApp.Option("--h", "Hub Id (decimal number)", CommandOptionType.SingleValue);
                     var portOption = prettyPrintApp.Option("--p", "Port Id (decimal number)", CommandOptionType.SingleValue);
@@ -164,7 +173,6 @@ namespace SharpBrick.PoweredUp.Cli
                     {
                         try
                         {
-                            var enableTrace = traceOption.HasValue();
                             var systemType = byte.TryParse(systemTypeOption.Value(), out var x1) ? x1 : (byte)0;
                             var hubId = byte.TryParse(hubOption.Value(), out var x2) ? x2 : (byte)0;
                             var portId = byte.TryParse(portOption.Value(), out var x3) ? x3 : (byte)0;
@@ -233,22 +241,35 @@ namespace SharpBrick.PoweredUp.Cli
             => CreateServiceProviderInternal(enableTrace)
                 .AddMockBluetooth()
                 .BuildServiceProvider();
-        private static IServiceProvider CreateServiceProvider(bool enableTrace, string bluetoothStackPort = "WINRT", bool enableBlueGigaTrace=false)
+        private static IServiceProvider CreateServiceProvider(IConfiguration configuration)
         {
-            var serviceCollection = CreateServiceProviderInternal(enableTrace);
-            if (bluetoothStackPort.Equals("WINRT", StringComparison.OrdinalIgnoreCase))
-            {
+            var enableTrace = bool.TryParse(configuration["EnableTrace"], out var v) && v;
 
-                serviceCollection.AddWinRTBluetooth();
-            } 
-            else
+            var serviceCollection = CreateServiceProviderInternal(enableTrace);
+
+            var bluetoothAdapter = configuration["BluetoothAdapter"] ?? "WinRT";
+#if WINDOWS
+            if (bluetoothAdapter == "WinRT")
             {
+                serviceCollection.AddWinRTBluetooth();
+            }
+#endif
+
+#if NET5_0_OR_GREATER
+            if (bluetoothAdapter == "BlueGigaBLE")
+            {
+                // config for "COMPortName" and "TraceDebug" (either via command line or poweredup.json)
                 serviceCollection.AddBlueGigaBLEBluetooth(options =>
                 {
-                    options.COMPortName = bluetoothStackPort;
-                    options.TraceDebug = enableBlueGigaTrace;
+                    // on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
+                    // "COMPortName": "COM4",
+
+                    // setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
+                    // "TraceDebug": true
+                    configuration.Bind(options);
                 });
             }
+#endif
             return serviceCollection.BuildServiceProvider();
         }
 

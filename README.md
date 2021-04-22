@@ -21,7 +21,7 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 - **Virtual Port Creation**: Combine multiple devices of the same type into a virtual combined port. This allows synchronous access to multiple devices using the same message (e.g. using two motors for driving).
 - **Deployment Model Verification**: The SDK includes a model builder and a verification method to ensure that the wired devies are correctly reflecting the expectations in the program.
 - **Tools**: The `poweredup` CLI includes a device list feature, enumerating the metadata properties of the LEGO Wireless Protocol.
-- **Support for multiple Bluetooth Stacks**: Use any of Microsoft WinRT, BlueGiga Bluetooth (Silicon's Lab BlueGiga-adapter (for example BLED112) and Xamarin using BLE.Plugin to talk to your Lego hubs.
+- **Support for multiple Bluetooth Stacks**: Use either Microsoft WinRT, BlueGiga Bluetooth (Silicon's Lab BlueGiga-adapter, for example BLED112) or Xamarin using BLE.Plugin to talk to your Lego hubs.
 
 # Examples
 
@@ -29,6 +29,9 @@ Additional to code fragments below, look into the `examples/SharpBrick.PoweredUp
 
 ````csharp
 using SharpBrick.PoweredUp;
+
+using Microsoft.Extensions.DependencyInjection; // SharpBrick.PoweredUp uses the DI system
+using Microsoft.Extensions.Logging; // SharpBrick.PoweredUp also logs stuff
 ````
 
 ## Discovering Hubs
@@ -37,7 +40,7 @@ using SharpBrick.PoweredUp;
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
+    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT; others are available)
     .BuildServiceProvider();
     
 var host = serviceProvider.GetService<PoweredUpHost>();
@@ -192,10 +195,9 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
     await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
 }
 ````
-## Connecting with a BlueGiga-Bluetooth-adapter
+## Connecting with other Bluetooth Adapters
 
-
-For details on using BlueGiga-adapter, also on Raspberry Pi or Ubuntu, see [here.](docs/bleadapters/BlueGigaBLED112.md)
+- **BlueGiga Adapter**: Find more details in the [docs](docs/bleadapters/BlueGigaBLED112.md) about the needed configuration and the setup on Windows, Ubuntu or the Raspberry Pi.
 
 # Command Line Experience
 
@@ -211,16 +213,22 @@ The `poweredup` command line utility intends to allow the inspection of LEGO Wir
   ````
 - **Pretty Print Binary Dumps**: Help to convert a binary dump in a nice representation.
 
-- **Use of other Bluetooth LE stack** (default is WinRT on Windows)
+- **Use of other Bluetooth LE stack** By default the CLI tools assumes the usage of WinRT. If used on another operating system or with another Bluetooth Adapter on Windows, the Bluetooth Adapter needs to be specified. Adapter might need additional configuration, see their details documentation.
 
-    - For BlueGiga-adapter, also on Raspberry Pi or Ubuntu, see [here.](docs/bleadapters/BlueGigaBLED112.md)
+  ````
+  poweredup device list --BluetoothAdapter BlueGigaBLE
+  ````
 
 ## Installation Instruction
 
 1. Install the [latest .NET](https://dotnet.microsoft.com/download) on your machine (e.g. .NET 5).
 2. Install the `poweredup` dotnet utility using the following instruction
    ````
-   dotnet tool install -g SharpBrick.PoweredUp.Cli
+   // On Windows
+   dotnet tool install --framework net5.0-windows10.0.19041.0 -g SharpBrick.PoweredUp.Cli
+
+   // On Linux
+   dotnet tool install --framework net5.0 -g SharpBrick.PoweredUp.Cli
    ````
 3. Start using the tool
    ````
@@ -269,9 +277,8 @@ DI Container Elements
 - Bluetooth Adapter
   - [X] .NET Core 3.1 (on Windows 10 using WinRT Bluetooth). Please use version v3.4.0 and consider upgrading to .NET 5
   - [X] .NET 5 (on Windows 10 using WinRT Bluetooth) (⚠ v4.0 or later)
-  - [X] .NET 5 (on Windows 10 using BlueGiga-adapter) (⚠ v4.0 or later)
-  - [X] .NET 5 (on Raspberry Pi 3 or 4 using BlueGiga-adapter) (⚠ v4.0 or later)
-  - [X] .NET 5 (on Ubuntu 20.04 using BlueGiga-adapter) (⚠ v4.0 or later)
+  - [X] .NET 5 (on Windows 10 using BlueGiga Adapter) (⚠ v4.0 or later)
+  - [X] .NET 5 (on Linux using BlueGiga Adapter) (tested on Raspberry Pi 3, 4 and Ubuntu 20.04; ⚠ v4.0 or later)
   - [ ] UWP (most likely December 2021; UWP currently does not support .NET Standard 2.1 and C# 8.0+)
   - [ ] .NET Framework 4.8 (will never be supported; .NET Framework does not and will never support .NET Standard 2.1 and C# 8.0+)
   - [X] Xamarin 5 (on Android using BLE.Plugin) (⚠ v4.0 or later)
@@ -358,7 +365,6 @@ DI Container Elements
 ## Resources
 
 - [Lego Wireless Protocol Specification](https://lego.github.io/lego-ble-wireless-protocol-docs) ([GitHub](https://github.com/lego/lego-ble-wireless-protocol-docs))
-- [BlueGiga BLE protcol](https://www.silabs.com/documents/public/reference-manuals/Bluetooth-LE-Software-API%20Reference-Manual-for-BLE-Version-1.10.pdf)
 
 ## Contribution
 

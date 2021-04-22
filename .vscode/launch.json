@@ -9,9 +9,10 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Examples.dll",
+            "program": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples/bin/Debug/net5.0-windows10.0.19041.0/SharpBrick.PoweredUp.Examples.dll",
             "args": [
-                "--trace"
+                "--TraceDebug",
+                "true"
             ],
             "cwd": "${workspaceFolder}/examples/SharpBrick.PoweredUp.Examples",
             "console": "integratedTerminal",
@@ -22,7 +23,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Cli.dll",
+            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/net5.0-windows10.0.19041.0/SharpBrick.PoweredUp.Cli.dll",
             "args": [
                 "device",
                 "list"
@@ -36,7 +37,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Cli.dll",
+            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/net5.0-windows10.0.19041.0/SharpBrick.PoweredUp.Cli.dll",
             "args": [
                 "device",
                 "dump-static-port",
@@ -52,7 +53,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/netcoreapp3.1/SharpBrick.PoweredUp.Cli.dll",
+            "program": "${workspaceFolder}/src/SharpBrick.PoweredUp.Cli/bin/Debug/net5.0-windows10.0.19041.0/SharpBrick.PoweredUp.Cli.dll",
             "args": [
                 "device",
                 "pretty-print",
