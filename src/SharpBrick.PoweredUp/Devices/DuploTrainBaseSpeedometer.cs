@@ -10,15 +10,15 @@ namespace SharpBrick.PoweredUp
 {
     public class DuploTrainBaseSpeedometer : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<short> _speedMode;
-        protected SingleValueMode<int> _countMode;
+        protected SingleValueMode<short, short> _speedMode;
+        protected SingleValueMode<int, int> _countMode;
 
         public byte ModeIndexSpeed { get; protected set; } = 0;
         public byte ModeIndexCount { get; protected set; } = 1;
 
         public short Speed => _speedMode.SI;
         public short SpeedPct => _speedMode.Pct;
-        public IObservable<Value<short>> SpeedObservable => _speedMode.Observable;
+        public IObservable<Value<short, short>> SpeedObservable => _speedMode.Observable;
 
         public int Count => _countMode.SI;
         public IObservable<int> CountObservable => _countMode.Observable.Select(v => v.SI);
@@ -29,8 +29,8 @@ namespace SharpBrick.PoweredUp
         public DuploTrainBaseSpeedometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _speedMode = SingleValueMode<short>(ModeIndexSpeed);
-            _countMode = SingleValueMode<int>(ModeIndexCount);
+            _speedMode = SingleValueMode<short, short>(ModeIndexSpeed);
+            _countMode = SingleValueMode<int, int>(ModeIndexCount);
 
             ObserveForPropertyChanged(_speedMode.Observable, nameof(Speed), nameof(SpeedPct));
             ObserveForPropertyChanged(_countMode.Observable, nameof(Count));

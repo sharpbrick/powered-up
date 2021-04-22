@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp
 {
     public class TechnicMediumHubGestureSensor : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<sbyte> _gestureMode;
+        protected SingleValueMode<sbyte, sbyte> _gestureMode;
         public byte ModeIndexGesture { get; protected set; } = 0;
 
         public Gesture Gesture => (Gesture)_gestureMode.SI;
@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubGestureSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _gestureMode = SingleValueMode<sbyte>(ModeIndexGesture);
+            _gestureMode = SingleValueMode<sbyte, sbyte>(ModeIndexGesture);
 
             ObserveForPropertyChanged(_gestureMode.Observable, nameof(Gesture));
         }

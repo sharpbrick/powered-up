@@ -11,15 +11,15 @@ namespace SharpBrick.PoweredUp
 {
     public class TechnicColorSensor : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<sbyte> _colorMode;
-        protected SingleValueMode<sbyte> _reflectionMode;
-        protected SingleValueMode<sbyte> _ambientLightMode;
-        protected MultiValueMode<sbyte> _lightMode;
+        protected SingleValueMode<sbyte, sbyte> _colorMode;
+        protected SingleValueMode<sbyte, sbyte> _reflectionMode;
+        protected SingleValueMode<sbyte, sbyte> _ambientLightMode;
+        protected MultiValueMode<sbyte, sbyte> _lightMode;
 
-        protected MultiValueMode<short> _rawReflectionMode;
-        protected MultiValueMode<short> _rgbMode;
-        protected MultiValueMode<short> _hsvMode;
-        protected MultiValueMode<short> _shsvMode;
+        protected MultiValueMode<short, short> _rawReflectionMode;
+        protected MultiValueMode<short, short> _rgbMode;
+        protected MultiValueMode<short, short> _hsvMode;
+        protected MultiValueMode<short, short> _shsvMode;
 
         public byte ModeIndexColor { get; protected set; } = 0;
         public byte ModeIndexReflection { get; protected set; } = 1;
@@ -48,12 +48,12 @@ namespace SharpBrick.PoweredUp
         public TechnicColorSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _colorMode = SingleValueMode<sbyte>(ModeIndexColor);
-            _reflectionMode = SingleValueMode<sbyte>(ModeIndexReflection);
-            _ambientLightMode = SingleValueMode<sbyte>(ModeIndexAmbientLight);
-            _lightMode = MultiValueMode<sbyte>(ModeIndexLight);
-            _rgbMode = MultiValueMode<short>(ModeIndexRgbIntern);
-            _hsvMode = MultiValueMode<short>(ModeIndexHSV);
+            _colorMode = SingleValueMode<sbyte, sbyte>(ModeIndexColor);
+            _reflectionMode = SingleValueMode<sbyte, sbyte>(ModeIndexReflection);
+            _ambientLightMode = SingleValueMode<sbyte, sbyte>(ModeIndexAmbientLight);
+            _lightMode = MultiValueMode<sbyte, sbyte>(ModeIndexLight);
+            _rgbMode = MultiValueMode<short, short>(ModeIndexRgbIntern);
+            _hsvMode = MultiValueMode<short, short>(ModeIndexHSV);
         }
 
         public async Task SetSectorLightAsync(byte sector1, byte sector2, byte sector3)

@@ -46,15 +46,15 @@ namespace SharpBrick.PoweredUp.Protocol.Formatter
                 Assert.Equal(expectedDataType[pos], portValueData.DataType);
                 Assert.Equal(expectedDataType[pos], portValueData.DataType);
 
-                if (portValueData is PortValueData<sbyte> actual)
+                if (portValueData is PortValueData<sbyte, sbyte> actual)
                 {
                     Assert.Equal(expectedData[pos], actual.InputValues[0]);
                 }
-                if (portValueData is PortValueData<short> actual2)
+                if (portValueData is PortValueData<short, short> actual2)
                 {
                     Assert.Equal(expectedData[pos], actual2.InputValues[0]);
                 }
-                if (portValueData is PortValueData<int> actual3)
+                if (portValueData is PortValueData<int, int> actual3)
                 {
                     Assert.Equal(expectedData[pos], actual3.InputValues[0]);
                 }

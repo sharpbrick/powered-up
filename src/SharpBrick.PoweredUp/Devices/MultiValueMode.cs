@@ -6,13 +6,13 @@ using SharpBrick.PoweredUp.Protocol.Messages;
 
 namespace SharpBrick.PoweredUp
 {
-    public class MultiValueMode<TPayload> : Mode
+    public class MultiValueMode<TDatasetType, TOutputType> : Mode
     {
-        public TPayload[] Raw { get; private set; }
-        public TPayload[] SI { get; private set; }
-        public TPayload[] Pct { get; private set; }
+        public TDatasetType[] Raw { get; private set; }
+        public TOutputType[] SI { get; private set; }
+        public TOutputType[] Pct { get; private set; }
 
-        public IObservable<Value<TPayload[]>> Observable { get; }
+        public IObservable<Value<TDatasetType[], TOutputType[]>> Observable { get; }
 
         public MultiValueMode(ILegoWirelessProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
                 : base(protocol, modeInfo, modeValueObservable)
@@ -21,10 +21,10 @@ namespace SharpBrick.PoweredUp
             ObserveOnLocalProperty(Observable, v => Raw = v.Raw, v => SI = v.SI, v => Pct = v.Pct);
             ObserveForPropertyChanged(Observable, nameof(Raw), nameof(SI), nameof(Pct));
         }
-        protected IObservable<Value<TPayload[]>> CreateObservable()
+        protected IObservable<Value<TDatasetType[], TOutputType[]>> CreateObservable()
             => _modeValueObservable
-                .Cast<PortValueData<TPayload>>()
-                .Select(pvd => new Value<TPayload[]>()
+                .Cast<PortValueData<TDatasetType, TOutputType>>()
+                .Select(pvd => new Value<TDatasetType[], TOutputType[]>()
                 {
                     Raw = pvd.InputValues,
                     SI = pvd.SIInputValues,

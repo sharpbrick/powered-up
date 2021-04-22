@@ -11,7 +11,7 @@ namespace SharpBrick.PoweredUp
 
     public class DuploTrainBaseSpeaker : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<sbyte> _soundMode;
+        protected SingleValueMode<sbyte, sbyte> _soundMode;
 
         public byte ModeIndexTone { get; protected set; } = 0;
         public byte ModeIndexSound { get; protected set; } = 1;
@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public DuploTrainBaseSpeaker(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _soundMode = SingleValueMode<sbyte>(ModeIndexSound);
+            _soundMode = SingleValueMode<sbyte, sbyte>(ModeIndexSound);
         }
 
         public async Task<PortFeedback> PlaySoundAsync(DuploTrainBaseSound sound)

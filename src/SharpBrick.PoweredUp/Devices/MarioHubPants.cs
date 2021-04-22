@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp
     // https://github.com/bricklife/LEGO-Mario-Reveng/blob/master/IOType-0x4a.md
     public class MarioHubPants : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<sbyte> _pantsMode;
+        protected SingleValueMode<sbyte, sbyte> _pantsMode;
 
         public byte ModeIndexPants { get; protected set; } = 0;
 
@@ -23,7 +23,7 @@ namespace SharpBrick.PoweredUp
         public MarioHubPants(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _pantsMode = SingleValueMode<sbyte>(ModeIndexPants);
+            _pantsMode = SingleValueMode<sbyte, sbyte>(ModeIndexPants);
 
             ObserveForPropertyChanged(_pantsMode.Observable, nameof(Pants));
         }

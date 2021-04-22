@@ -12,7 +12,7 @@ namespace SharpBrick.PoweredUp
 {
     public class DuploTrainBaseMotor : Device, IPoweredUpDevice
     {
-        public SingleValueMode<int> _onSecMode;
+        public SingleValueMode<int, int> _onSecMode;
 
         public byte ModeIndexMotor { get; protected set; } = 0;
         public byte ModeIndexOnSec { get; protected set; } = 1;
@@ -26,7 +26,7 @@ namespace SharpBrick.PoweredUp
         public DuploTrainBaseMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _onSecMode = SingleValueMode<int>(ModeIndexOnSec);
+            _onSecMode = SingleValueMode<int, int>(ModeIndexOnSec);
 
             ObserveForPropertyChanged(_onSecMode.Observable, nameof(OnSeconds));
         }
