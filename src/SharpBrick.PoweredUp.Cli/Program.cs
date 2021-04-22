@@ -259,15 +259,7 @@ namespace SharpBrick.PoweredUp.Cli
             if (bluetoothAdapter == "BlueGigaBLE")
             {
                 // config for "COMPortName" and "TraceDebug" (either via command line or poweredup.json)
-                serviceCollection.AddBlueGigaBLEBluetooth(options =>
-                {
-                    // on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
-                    // "COMPortName": "COM4",
-
-                    // setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
-                    // "TraceDebug": true
-                    configuration.Bind(options);
-                });
+                serviceCollection.AddBlueGigaBLEBluetooth(configuration);
             }
 #endif
             return serviceCollection.BuildServiceProvider();
