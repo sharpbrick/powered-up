@@ -9,8 +9,8 @@ namespace SharpBrick.PoweredUp
 {
     public class MarioHubAccelerometer : Device, IPoweredUpDevice
     {
-        protected MultiValueMode<sbyte> _rawMode;
-        protected MultiValueMode<short> _gestMode;
+        protected MultiValueMode<sbyte, sbyte> _rawMode;
+        protected MultiValueMode<short, short> _gestMode;
 
         public byte ModeIndexRaw { get; protected set; } = 0;
         public byte ModeIndexGesture { get; protected set; } = 1;
@@ -26,8 +26,8 @@ namespace SharpBrick.PoweredUp
         public MarioHubAccelerometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _rawMode = MultiValueMode<sbyte>(ModeIndexRaw);
-            _gestMode = MultiValueMode<short>(ModeIndexGesture);
+            _rawMode = MultiValueMode<sbyte, sbyte>(ModeIndexRaw);
+            _gestMode = MultiValueMode<short, short>(ModeIndexGesture);
 
             //ObserveForPropertyChanged(_rawMode.Observable, nameof(Coins));
         }

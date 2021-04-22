@@ -8,12 +8,12 @@ namespace SharpBrick.PoweredUp
 {
     public class TechnicMediumHubTemperatureSensor : Device, IPoweredUpDevice
     {
-        protected SingleValueMode<short> _temperatureMode;
+        protected SingleValueMode<short, short> _temperatureMode;
         public byte ModeIndexTemperature { get; protected set; } = 0;
 
         public short Temperature => _temperatureMode.SI;
         public short TemperaturePct => _temperatureMode.Pct;
-        public IObservable<Value<short>> TemperatureObservable => _temperatureMode.Observable;
+        public IObservable<Value<short, short>> TemperatureObservable => _temperatureMode.Observable;
 
         public TechnicMediumHubTemperatureSensor()
         { }
@@ -21,7 +21,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubTemperatureSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _temperatureMode = SingleValueMode<short>(ModeIndexTemperature);
+            _temperatureMode = SingleValueMode<short, short>(ModeIndexTemperature);
 
             ObserveForPropertyChanged(_temperatureMode.Observable, nameof(Temperature), nameof(TemperaturePct));
         }

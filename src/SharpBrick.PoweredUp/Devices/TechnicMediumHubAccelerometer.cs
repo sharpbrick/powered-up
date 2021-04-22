@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp
     // accelerometers measure translation
     public class TechnicMediumHubAccelerometer : Device, IPoweredUpDevice
     {
-        protected MultiValueMode<short> _gravityMode;
+        protected MultiValueMode<short, short> _gravityMode;
 
         public byte ModeIndexGravity { get; protected set; } = 0;
         public byte ModeIndexCalibration { get; protected set; } = 1;
@@ -24,7 +24,7 @@ namespace SharpBrick.PoweredUp
         public TechnicMediumHubAccelerometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _gravityMode = MultiValueMode<short>(ModeIndexGravity);
+            _gravityMode = MultiValueMode<short, short>(ModeIndexGravity);
 
             ObserveForPropertyChanged(_gravityMode.Observable, nameof(Gravity));
         }

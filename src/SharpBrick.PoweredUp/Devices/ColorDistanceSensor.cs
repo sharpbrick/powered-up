@@ -9,62 +9,62 @@ using System.Threading.Tasks;
 
 namespace SharpBrick.PoweredUp
 {
-	public class ColorDistanceSensor : Device, IPoweredUpDevice
-	{
-		protected SingleValueMode<sbyte> _colorMode;
-		protected SingleValueMode<sbyte> _proximityMode;
-		protected SingleValueMode<int> _countMode;
-		protected SingleValueMode<sbyte> _reflectionMode;
-		protected SingleValueMode<sbyte> _ambientLightMode;
-		protected SingleValueMode<sbyte> _lightMode;
-		protected MultiValueMode<short> _rgbMode;
+    public class ColorDistanceSensor : Device, IPoweredUpDevice
+    {
+        protected SingleValueMode<sbyte, sbyte> _colorMode;
+        protected SingleValueMode<sbyte, sbyte> _proximityMode;
+        protected SingleValueMode<int, int> _countMode;
+        protected SingleValueMode<sbyte, sbyte> _reflectionMode;
+        protected SingleValueMode<sbyte, sbyte> _ambientLightMode;
+        protected SingleValueMode<sbyte, sbyte> _lightMode;
+        protected MultiValueMode<short, short> _rgbMode;
 
-		public byte ModeIndexColor { get; protected set; } = 0;
-		public byte ModeIndexProximity { get; protected set; } = 1;
-		public byte ModeIndexCount { get; protected set; } = 2;
-		public byte ModeIndexReflection { get; protected set; } = 3;
-		public byte ModeIndexAmbientLight { get; protected set; } = 4;
-		public byte ModeIndexLight { get; protected set; } = 5;
-		public byte ModeIndexRgb { get; protected set; } = 6;
-		public byte ModeIndexIRTx { get; protected set; } = 7;
-		public byte ModeIndexSPEC1 { get; protected set; } = 8;
-		public byte ModeIndexDebug { get; protected set; } = 9;
-		public byte ModeIndexCalibration { get; protected set; } = 10;
+        public byte ModeIndexColor { get; protected set; } = 0;
+        public byte ModeIndexProximity { get; protected set; } = 1;
+        public byte ModeIndexCount { get; protected set; } = 2;
+        public byte ModeIndexReflection { get; protected set; } = 3;
+        public byte ModeIndexAmbientLight { get; protected set; } = 4;
+        public byte ModeIndexLight { get; protected set; } = 5;
+        public byte ModeIndexRgb { get; protected set; } = 6;
+        public byte ModeIndexIRTx { get; protected set; } = 7;
+        public byte ModeIndexSPEC1 { get; protected set; } = 8;
+        public byte ModeIndexDebug { get; protected set; } = 9;
+        public byte ModeIndexCalibration { get; protected set; } = 10;
 
-		public TechnicColor Color => (TechnicColor)_colorMode.SI;
-		public IObservable<TechnicColor> ColorObservable => _colorMode.Observable.Select(v => (TechnicColor)v.SI);
-		public IObservable<sbyte> ProximityObservable => _proximityMode.Observable.Select(v => v.SI);
-		public IObservable<int> CountObservable => _countMode.Observable.Select(v => v.SI);
-		public IObservable<sbyte> ReflectionObservable => _reflectionMode.Observable.Select(v => v.SI);
-		public IObservable<sbyte> AmbientLightObservable => _ambientLightMode.Observable.Select(v => v.SI);
-		public IObservable<(short red, short green, short blue)> RgbObservable => _rgbMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
+        public TechnicColor Color => (TechnicColor)_colorMode.SI;
+        public IObservable<TechnicColor> ColorObservable => _colorMode.Observable.Select(v => (TechnicColor)v.SI);
+        public IObservable<sbyte> ProximityObservable => _proximityMode.Observable.Select(v => v.SI);
+        public IObservable<int> CountObservable => _countMode.Observable.Select(v => v.SI);
+        public IObservable<sbyte> ReflectionObservable => _reflectionMode.Observable.Select(v => v.SI);
+        public IObservable<sbyte> AmbientLightObservable => _ambientLightMode.Observable.Select(v => v.SI);
+        public IObservable<(short red, short green, short blue)> RgbObservable => _rgbMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
 
-		public ColorDistanceSensor()
-		{ }
-		public ColorDistanceSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-			: base(protocol, hubId, portId)
-		{
-			_colorMode = SingleValueMode<sbyte>(ModeIndexColor);
-			_proximityMode = SingleValueMode<sbyte>(ModeIndexProximity);
-			_countMode = SingleValueMode<int>(ModeIndexCount);
-			_reflectionMode = SingleValueMode<sbyte>(ModeIndexReflection);
-			_ambientLightMode = SingleValueMode<sbyte>(ModeIndexAmbientLight);
-			_lightMode = SingleValueMode<sbyte>(ModeIndexLight);
-			_rgbMode = MultiValueMode<short>(ModeIndexRgb);
-		}
+        public ColorDistanceSensor()
+        { }
+        public ColorDistanceSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+            : base(protocol, hubId, portId)
+        {
+            _colorMode = SingleValueMode<sbyte, sbyte>(ModeIndexColor);
+            _proximityMode = SingleValueMode<sbyte, sbyte>(ModeIndexProximity);
+            _countMode = SingleValueMode<int, int>(ModeIndexCount);
+            _reflectionMode = SingleValueMode<sbyte, sbyte>(ModeIndexReflection);
+            _ambientLightMode = SingleValueMode<sbyte, sbyte>(ModeIndexAmbientLight);
+            _lightMode = SingleValueMode<sbyte, sbyte>(ModeIndexLight);
+            _rgbMode = MultiValueMode<short, short>(ModeIndexRgb);
+        }
 
-		protected override uint GetDefaultDeltaInterval(byte modeIndex)
-		   => modeIndex switch
-		   {
-			   0 => 1,
-			   2 => 1,
-			   _ => base.GetDefaultDeltaInterval(modeIndex),
-		   };
+        protected override uint GetDefaultDeltaInterval(byte modeIndex)
+           => modeIndex switch
+           {
+               0 => 1,
+               2 => 1,
+               _ => base.GetDefaultDeltaInterval(modeIndex),
+           };
 
-		public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-			=> ((softwareVersion, hardwareVersion, systemType) switch
-				{
-					(_, _, _) => @"
+        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+            => ((softwareVersion, hardwareVersion, systemType) switch
+            {
+                (_, _, _) => @"
 0B-00-43-01-01-07-0B-5F-06-A0-00
 07-00-43-01-02-4F-00
 12-00-44-01-00-00-43-4F-4C-4F-52-00-00-00-00-00-00-00
@@ -145,6 +145,6 @@ namespace SharpBrick.PoweredUp
 08-00-44-01-0A-05-10-00
 0A-00-44-01-0A-80-08-01-05-00
 "
-				}).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-	}
+            }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
+    }
 }

@@ -54,9 +54,9 @@ namespace Example
             await dynamicDeviceWhichIsAMotor.UnlockFromCombinedModeNotificationSetupAsync(true);
 
             // get the individual modes for input and output
-            var powerMode = dynamicDeviceWhichIsAMotor.SingleValueMode<sbyte>(0);
-            var posMode = dynamicDeviceWhichIsAMotor.SingleValueMode<int>(2);
-            var aposMode = dynamicDeviceWhichIsAMotor.SingleValueMode<short>(3);
+            var powerMode = dynamicDeviceWhichIsAMotor.SingleValueMode<sbyte, sbyte>(0);
+            var posMode = dynamicDeviceWhichIsAMotor.SingleValueMode<int, int>(2);
+            var aposMode = dynamicDeviceWhichIsAMotor.SingleValueMode<short, short>(3);
 
             // use their observables to report values
             using var disposable = posMode.Observable.Subscribe(x => Log.LogWarning($"Position: {x.SI} / {x.Pct}"));

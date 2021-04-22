@@ -1,9 +1,9 @@
 namespace SharpBrick.PoweredUp
 {
-    public class Value<TPayload>
+    public class Value<TDatasetType, TOutputType>
     {
-        public TPayload Raw { get; set; }
-        public TPayload SI { get; set; }
-        public TPayload Pct { get; set; }
+        public TDatasetType Raw { get; set; }
+        public TOutputType SI { get; set; }
+        public TOutputType Pct { get; set; }
     }
 }

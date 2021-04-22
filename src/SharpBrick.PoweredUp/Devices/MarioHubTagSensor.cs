@@ -10,8 +10,8 @@ namespace SharpBrick.PoweredUp
 {
     public class MarioHubTagSensor : Device, IPoweredUpDevice
     {
-        protected MultiValueMode<short> _tagMode;
-        protected MultiValueMode<sbyte> _rgbMode;
+        protected MultiValueMode<short, short> _tagMode;
+        protected MultiValueMode<sbyte, sbyte> _rgbMode;
 
         public byte ModeIndexTag { get; protected set; } = 0;
         public byte ModeIndexRgb { get; protected set; } = 1;
@@ -31,8 +31,8 @@ namespace SharpBrick.PoweredUp
         public MarioHubTagSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
             : base(protocol, hubId, portId)
         {
-            _tagMode = MultiValueMode<short>(ModeIndexTag);
-            _rgbMode = MultiValueMode<sbyte>(ModeIndexRgb);
+            _tagMode = MultiValueMode<short, short>(ModeIndexTag);
+            _rgbMode = MultiValueMode<sbyte, sbyte>(ModeIndexRgb);
 
             ObserveForPropertyChanged(_tagMode.Observable, nameof(Barcode));
             ObserveForPropertyChanged(_tagMode.Observable, nameof(ColorNo));
