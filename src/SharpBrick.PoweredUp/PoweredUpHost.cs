@@ -53,7 +53,7 @@ namespace SharpBrick.PoweredUp
 
                         _hubs.Add((deviceInfo, hub));
 
-                        var text = (deviceInfo is IPoweredUpBluetoothDeviceInfoWithMacAddress mac) ? mac.MacAddress[0].ToString() : "not revealed";
+                        var text = (deviceInfo is IPoweredUpBluetoothDeviceInfoWithMacAddress mac) ? mac.ToIdentificationString() : "not revealed";
 
                         _logger.LogInformation($"Discovered log of type {hub.GetType().Name} with name '{deviceInfo.Name}' on Bluetooth Address '{text}'");
 

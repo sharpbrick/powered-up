@@ -296,7 +296,7 @@ namespace SharpBrick.PoweredUp.Cli
                     var deviceType = (PoweredUpHubManufacturerData)info.ManufacturerData[1];
                     devices.Add((idx, info, deviceType));
 
-                    var text = (info is IPoweredUpBluetoothDeviceInfoWithMacAddress mac) ? mac.MacAddress[0].ToString() : "not revealed";
+                    var text = (info is IPoweredUpBluetoothDeviceInfoWithMacAddress mac) ? mac.ToIdentificationString() : "not revealed";
 
                     Console.WriteLine($"{idx}: {(PoweredUpHubManufacturerData)info.ManufacturerData[1]} (with address {text})");
 
