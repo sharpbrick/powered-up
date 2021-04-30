@@ -10,7 +10,7 @@ namespace SharpBrick.PoweredUp.WinRT
 {
     public class WinRTPoweredUpBluetoothAdapter : IPoweredUpBluetoothAdapter
     {
-        public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
+        public void Discover(Func<IPoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
             var watcher = new BluetoothLEAdvertisementWatcher
             {
@@ -31,7 +31,7 @@ namespace SharpBrick.PoweredUp.WinRT
 
             async void ReceivedHandler(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
             {
-                var info = new PoweredUpBluetoothDeviceInfo();
+                var info = new PoweredUpBluetoothDeviceInfoWithMacAddress();
 
                 if (eventArgs.Advertisement.ManufacturerData.Count > 0)
                 {
@@ -46,18 +46,27 @@ namespace SharpBrick.PoweredUp.WinRT
                     info.Name = device.Name;
                 }
 
-                info.BluetoothAddress = eventArgs.BluetoothAddress;
+                info.MacAddressAsUInt64 = eventArgs.BluetoothAddress;
 
                 await discoveryHandler(info);
             }
         }
 
-        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
+        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo)
         {
+            var bluetoothAddress = (bluetoothDeviceInfo is PoweredUpBluetoothDeviceInfoWithMacAddress local) ? local.MacAddressAsUInt64 : throw new ArgumentException("DeviceInfo not created by adapter", nameof(bluetoothDeviceInfo));
+
             var device = await BluetoothLEDevice.FromBluetoothAddressAsync(bluetoothAddress);
 
             return new WinRTPoweredUpBluetoothDevice(device);
         }
-    }
 
+
+        public Task<IPoweredUpBluetoothDeviceInfo> CreateDeviceInfoByKnownStateAsync(object state)
+            => Task.FromResult<IPoweredUpBluetoothDeviceInfo>(state switch
+            {
+                ulong address => new PoweredUpBluetoothDeviceInfoWithMacAddress() { MacAddressAsUInt64 = address },
+                _ => null,
+            });
+    }
 }

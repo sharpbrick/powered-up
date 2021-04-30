@@ -11,7 +11,7 @@ namespace Example
         // device needs to be switched on!
         public override async Task DiscoverAsync(bool enableTrace)
         {
-            var hub = Host.Create<TechnicMediumHub>(ChangeMe_BluetoothAddress);
+            var hub = await Host.CreateByStateAsync<TechnicMediumHub>(ChangeMe_BluetoothAddress);
 
             SelectedHub = DirectlyConnectedHub = hub;
 

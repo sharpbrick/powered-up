@@ -19,8 +19,8 @@ namespace Example
         // devices need to be switched on!
         public override async Task DiscoverAsync(bool enableTrace)
         {
-            var hub1 = Host.Create<TechnicMediumHub>(BluetoothAddressHub1);
-            var hub2 = Host.Create<TwoPortHub>(BluetoothAddressHub2);
+            var hub1 = await Host.CreateByStateAsync<TechnicMediumHub>(BluetoothAddressHub1);
+            var hub2 = await Host.CreateByStateAsync<TwoPortHub>(BluetoothAddressHub2);
             Log.LogInformation($"Press button on first Hub with address {BluetoothAddressHub1}");
             await hub1.ConnectAsync();
             Log.LogInformation($"Press button on second Hub with address {BluetoothAddressHub2}");

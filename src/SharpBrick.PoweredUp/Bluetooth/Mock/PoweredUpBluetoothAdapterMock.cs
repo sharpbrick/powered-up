@@ -17,12 +17,17 @@ namespace SharpBrick.PoweredUp.Bluetooth.Mock
         public PoweredUpBluetoothServiceMock MockService { get; }
         public PoweredUpBluetoothCharacteristicMock MockCharacteristic { get; }
 
-        public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
+        public Task<IPoweredUpBluetoothDeviceInfo> CreateDeviceInfoByKnownStateAsync(object state)
+        {
+            return Task.FromResult<IPoweredUpBluetoothDeviceInfo>(new PoweredUpBluetoothDeviceInfoWithMacAddress());
+        }
+
+        public void Discover(Func<IPoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
+        public Task<IPoweredUpBluetoothDevice> GetDeviceAsync(IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo)
         {
             return Task.FromResult<IPoweredUpBluetoothDevice>(MockDevice);
         }
