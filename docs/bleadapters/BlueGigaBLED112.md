@@ -52,11 +52,12 @@ On windows-systems you can debug or run from inside Visual Studio / your IDE wit
 ## Command Line Experience ##
 
 ````
-   poweredup device list --usebluegiga COM4 --tracebluegiga
+   poweredup device list --BluetoothAdapter BlueGigaBLE --COMPortName COM4 --TraceDebug true
 ````
-``--usebluegiga`` is the parameter that tells the cli-tool to use the BleuGiga-implementation. It has to be followed by the name of the serial port to use.
+`--BluetoothAdapter` switches the BluetoothAdapter to use BlueGigaBLE.
+`--COMPortName` is the parameter that tells the cli-tool to use the given serial port.
 Use the name of the serial port as described above; so replace `COM4` with COMx whatever x is used on your Windows-system or e.g. /dev/ttyACM0 for Linux-based OS.   
-`--tracebluegiga` is an optional parameter; when used the cli emits **a lot** of additional trace-information of the BleuGiga-implementation. Default: no additional trace.
+`--TraceDebug` is an optional parameter; when used the cli emits **a lot** of additional trace-information of the BlueGiga-implementation. Default: no additional trace.
 
 ## Using / Building for Linux-based OS ##
 At the time of this writing you've got to make sure that you don't include/depend on the SharpBrick.PoweredUp.WinRT-project, because this doesn't build for Linux-platforms. So change your project-dependencies accordingly.
@@ -71,7 +72,7 @@ The following instructions assume that you've got installed at least the .NET 5 
 - Change the mod of the executable (the file which is named like your project) to "executable" by using ``chmod +x (filename)`` on the Raspberry Pi
 - Open a terminal-windows on the Pi and enter
   - ``cd ~/powered-up``
-  - ``./SharpBrick.PoweredUp.Examples --usebluegiga /dev/ttyACM0``
+  - ``./SharpBrick.PoweredUp.Examples --BluetoothAdapter BlueGigaBLE --COMPortName /dev/ttyACM0``
 
 ### Build and run for Ubuntu 20.04 ###
 - open a command prompt on your dev-machine (Windows)
@@ -81,7 +82,7 @@ The following instructions assume that you've got installed at least the .NET 5 
 - Change the mod of the executable (the file which is named like your project) to "executable" by using ``chmod +x (filename)`` on Ubuntu
 - Open a terminal-windows on Ubuntu and enter
   - ``cd ~/powered-up``
-  - ``./SharpBrick.PoweredUp.Examples --usebluegiga /dev/ttyACM0``
+  - ``./SharpBrick.PoweredUp.Examples --BluetoothAdapter BlueGigaBLE --COMPortName /dev/ttyACM0``
 - In case you receive a permission-denied error for /dev/ttyACM0:
   - sudo chmod +rw /dev/ttyACM0
   - sudo chmod o+rw /dev/ttyACM0

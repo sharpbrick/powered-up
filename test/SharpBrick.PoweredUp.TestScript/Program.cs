@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Deployment;
@@ -12,14 +13,37 @@ namespace SharpBrick.PoweredUp.TestScript
     {
         static async Task Main(string[] args)
         {
-            var serviceProvider = new ServiceCollection()
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Environment.CurrentDirectory)
+                .AddJsonFile("poweredup.json", true)
+                .AddCommandLine(args)
+                .Build();
+
+            var serviceCollection = new ServiceCollection()
                 .AddLogging(builder =>
                 {
                     builder.AddConsole();
                 })
-                .AddPoweredUp()
-                .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
-                .BuildServiceProvider();
+                .AddPoweredUp();
+
+            var bluetoothAdapter = configuration["BluetoothAdapter"] ?? "WinRT";
+
+#if WINDOWS
+            if (bluetoothAdapter == "WinRT")
+            {
+                serviceCollection.AddWinRTBluetooth();
+            }
+#endif
+
+#if NET5_0_OR_GREATER
+            if (bluetoothAdapter == "BlueGigaBLE")
+            {
+                // config for "COMPortName" and "TraceDebug" (either via command line or poweredup.json)
+                serviceCollection.AddBlueGigaBLEBluetooth(configuration);
+            }
+#endif
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var host = serviceProvider.GetService<PoweredUpHost>();
 

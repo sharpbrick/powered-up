@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using BGLibExt;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 namespace SharpBrick.PoweredUp.BlueGigaBLE
 {
@@ -39,13 +40,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         #endregion
 
         #region Constructor
-        public BlueGigaBLEPoweredUpBluetoothAdapater(string comPortName, bool traceDebug, ILogger logger = default)
+        public BlueGigaBLEPoweredUpBluetoothAdapater(IOptions<BlueGigaBLEOptions> options, ILogger<BlueGigaBLEPoweredUpBluetoothAdapater> logger = default)
         {
             Logger = logger;
-            TraceDebug = traceDebug;
+            TraceDebug = options.Value.TraceDebug;
             BgLib = new Bluegiga.BGLibDebug();
             BleModuleConnection = new BleModuleConnection(BgLib);
-            BleModuleConnection.Start(comPortName, 0);
+            BleModuleConnection.Start(options.Value.COMPortName, 0);
             Devices = new ConcurrentDictionary<ulong, BlueGigaBLEPoweredUpBluetoothDevice>();
             DevicesInfo = new ConcurrentDictionary<ulong, PoweredUpBluetoothDeviceInfo>();
         }

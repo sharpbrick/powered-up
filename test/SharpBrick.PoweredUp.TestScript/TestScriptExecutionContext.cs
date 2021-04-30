@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.TestScript
         public ILogger Log { get; }
         public Hub CurrentHub { get; set; }
 
-        public async Task<bool> ConfirmAsync(string question)
+        public Task<bool> ConfirmAsync(string question)
         {
             Console.Write(question + " (Y/n)");
 
@@ -29,7 +29,7 @@ namespace SharpBrick.PoweredUp.TestScript
                 Log.LogError($"[FAIL] by User {question}");
             }
 
-            return confirm;
+            return Task.FromResult(confirm);
         }
 
         public void Assert(int value, int min, int max)

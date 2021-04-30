@@ -1,84 +1,104 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace SharpBrick.PoweredUp.Examples
 {
     class Program
     {
+        // invoke (due to multi-targeting) with ...
+        // dotnet run -f net5.0 --
+        // dotnet run -f net5.0-windows10.0.19041.0 --
+
+        // use command line parameters
+        // --EnableTrace true
+        // --BluetoothAdapter WinRT|BlueGigaBLE
+        // --COMPortName COM4
+        // -- TraceDebug true
+        // or configure in poweredup.json
         static async Task Main(string[] args)
         {
-            var enableTrace = (args.Length > 0 && args[0] == "--trace");
-            string bluetoothStackPort = "WINRT";
-            bool enableTraceBlueGiga = false;
-            if (args.Any(x => x.Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase)))
+            // (1) load a configuration
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Environment.CurrentDirectory)
+                .AddJsonFile("poweredup.json", true)
+                .AddCommandLine(args)
+                .Build();
+
+            // Example Selection: select the example to execute
+            var exampleToExecute = configuration["Example"] ?? "Colors";
+
+            var typeToExecute = Assembly
+                .GetExecutingAssembly()
+                .GetTypes()
+                .FirstOrDefault(x => x.FullName.StartsWith($"Example.Example{exampleToExecute}"));
+
+            if (typeToExecute is null)
             {
-                for (int i = 0; i < args.Length; i++)
+                Console.WriteLine("Could not find example.");
+
+                return;
+            }
+
+            var example = Activator.CreateInstance(typeToExecute) as Example.BaseExample;
+
+
+            // (2) build the DI container
+            var serviceCollection = new ServiceCollection();
+
+            // (2a) configure your favourite level of logging.
+            serviceCollection.AddLogging(builder =>
+            {
+                builder
+                    .AddConsole();
+
+                if (bool.TryParse(configuration["EnableTrace"], out var enableTrace) && enableTrace)
                 {
-                    if (args[i].Equals("--usebluegiga", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (args.Length > i)
-                        {
-                            bluetoothStackPort = args[i + 1];
-                        }
-                        break;
-                    }
+                    builder.AddFilter("SharpBrick.PoweredUp.Bluetooth.BluetoothKernel", LogLevel.Debug);
                 }
-            }
-            if (args.Any(x => x.Equals("--tracebluegiga", StringComparison.OrdinalIgnoreCase)))
+                if (bool.TryParse(configuration["TraceDebug"], out var traceDebug) && traceDebug)
+                {
+                    builder.AddFilter("SharpBrick.PoweredUp.BlueGigaBLE.BlueGigaBLEPoweredUpBluetoothAdapater", LogLevel.Debug);
+                }
+            });
+
+            // (2b) add .AddPoweredUp() (we delegate this into the example because some examples need a different setup)
+            example.Configure(serviceCollection);
+
+
+            // (2c) add your favourite Bluetooth Adapter
+            var bluetoothAdapter = configuration["BluetoothAdapter"] ?? "WinRT";
+
+#if WINDOWS
+            if (bluetoothAdapter == "WinRT")
             {
-                enableTraceBlueGiga = true;
+                serviceCollection.AddWinRTBluetooth();
             }
+#endif
 
-            // NOTE: Examples are in their own root namespace to make namespace usage clear
-            Example.BaseExample example;
+#if NET5_0_OR_GREATER
+            if (bluetoothAdapter == "BlueGigaBLE")
+            {
+                // config for "COMPortName" and "TraceDebug" (either via command line or poweredup.json)
+                // on Windows-PCs you can find it under Device Manager --> Ports (COM & LPT) --> Bleugiga Bluetooth Low Energy (COM#) (where # is a number)
+                // "COMPortName": "COM4",
 
-            //example = new Example.ExampleColors();
-            //example = new Example.ExampleMotorControl();
-            //example = new Example.ExampleMotorInputAbsolutePosition();
-            //example = new Example.ExampleMotorVirtualPort();
-            //example = new Example.ExampleHubActions();
-            //example = new Example.ExampleTechnicMediumHubAccelerometer();
-            //example = new Example.ExampleTechnicMediumHubGyroSensor();
-            //example = new Example.ExampleVoltage();
-            //example = new Example.ExampleTechnicMediumTemperatureSensor();
-            //example = new Example.ExampleMotorInputCombinedMode();
-            //example = new Example.ExampleMixedBag();
-            //example = new Example.ExampleHubAlert();
-            //example = new Example.ExampleTechnicMediumHubTiltSensor();
-            //example = new Example.ExampleTechnicMediumHubTiltSensorImpacts();
-            //example = new Example.ExampleDynamicDevice();
-            //example = new Example.ExampleBluetoothByKnownAddress();
-            //example = new Example.ExampleBluetoothByName();
-            //example = new Example.ExampleSetHubProperty();
-            //example = new Example.ExampleHubPropertyObserving();
-            //example = new Example.ExampleDiscoverByType();
-            //example = new Example.ExampleCalibrationSteering();
-            //example = new Example.ExampleRampUp();
-            //example = new Example.ExampleTechnicMediumHubGestSensor();
-            //example = new Example.ExampleRemoteControlButton();
-            //example = new Example.ExampleRemoteControlRssi();
-            //example = new Example.ExampleTechnicMediumAngularMotorGrey();
-            //example = new Example.ExampleMarioBarcode();
-            //example = new Example.ExampleMarioPants();
-            //example = new Example.ExampleMarioAccelerometer();
-            //example = new Example.ExampleDuploTrainBase();
-            //example = new Example.ExampleTechnicColorSensor();
-            //example = new Example.ExampleTechnicDistanceSensor();
-            //example = new Example.ExampleTechnicMediumHubGestSensor();
-            //example = new Example.ExampleMoveHubInternalTachoMotorControl();
-            //example = new Example.ExampleMoveHubExternalMediumLinearMotorControl();
-            //example = new Example.ExampleMoveHubColors();
-            //example = new Example.ExampleMoveHubTiltSensor();
-            //example = new ExampleTwoHubsMotorControl();
-            //example = new ExampleTwoPortHubMediumLinearMotor();
-            example = new Example.ExampleColorDistanceSensor();
+                // setting this option to false supresses the complete LogDebug()-commands; so they will not generated at all
+                // "TraceDebug": true
+                serviceCollection.AddBlueGigaBLEBluetooth(configuration);
+            }
+#endif
 
-            // NOTE: Examples are programmed object oriented style. Base class implements methods Configure, DiscoverAsync and ExecuteAsync to be overwriten on demand.
-            // InitHostAndDiscoverAsync uses the WinRT-bluetooth-implementation by default (bluetoothStackPort defaults to "WinRT" and enableTraceBlueGiga defaults to false)
-            await example.InitHostAndDiscoverAsync(enableTrace, bluetoothStackPort, enableTraceBlueGiga);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
 
+            // Examples Initialization
+            await example.InitExampleAndDiscoverAsync(serviceProvider, configuration);
+
+            // Example Execution
             if (example.SelectedHub is not null)
             {
                 await example.ExecuteAsync();
