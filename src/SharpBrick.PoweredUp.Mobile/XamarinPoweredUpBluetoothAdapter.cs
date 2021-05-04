@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Mobile
     {
         private readonly IAdapter _bluetoothAdapter;
         private readonly INativeDeviceInfoProvider _deviceInfoProvider;
-        private readonly Dictionary<ulong, IDevice> _discoveredDevices = new Dictionary<ulong, IDevice>();
+        private readonly Dictionary<string, IDevice> _discoveredDevices = new Dictionary<string, IDevice>();
 
         public XamarinPoweredUpBluetoothAdapter(IBluetoothLE bluetooth, INativeDeviceInfoProvider deviceInfoProvider)
         {
@@ -48,8 +48,12 @@ namespace SharpBrick.PoweredUp.Mobile
                     data.RemoveRange(0, 2);
                     info.ManufacturerData = data.ToArray();
 
+                    var nativeDeviceInfo = _deviceInfoProvider.GetNativeDeviceInfo(args.Device.NativeDevice);
+
                     info.Name = args.Device.Name;
-                    info.MacAddressAsUInt64 = _deviceInfoProvider.GetNativeDeviceInfo(args.Device.NativeDevice).MacAddressNumeric;
+                    info.MacAddressAsUInt64 = nativeDeviceInfo.MacAddressNumeric;
+                    info.MacAddress = nativeDeviceInfo.MacAddress;
+                    info.DeviceIdentifier= nativeDeviceInfo.DeviceIdentifier;
 
                     AddInternalDevice(args.Device, info);
                     await discoveryHandler(info).ConfigureAwait(false);
@@ -59,13 +63,13 @@ namespace SharpBrick.PoweredUp.Mobile
 
         private void AddInternalDevice(IDevice device, XamarinBluetoothDeviceInfo info)
         {
-            if (!_discoveredDevices.ContainsKey(info.MacAddressAsUInt64))
+            if (!_discoveredDevices.ContainsKey(info.DeviceIdentifier))
             {
-                _discoveredDevices.Add(info.MacAddressAsUInt64, device);
+                _discoveredDevices.Add(info.DeviceIdentifier, device);
             }
             else
             {
-                _discoveredDevices[info.MacAddressAsUInt64] = device;
+                _discoveredDevices[info.DeviceIdentifier] = device;
             }
         }
 
@@ -92,9 +96,9 @@ namespace SharpBrick.PoweredUp.Mobile
 
         public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo)
         {
-            var bluetoothAddress = (bluetoothDeviceInfo is XamarinBluetoothDeviceInfo local) ? local.MacAddressAsUInt64 : throw new ArgumentException("DeviceInfo not created by adapter", nameof(bluetoothDeviceInfo));
+            var deviceId = (bluetoothDeviceInfo is XamarinBluetoothDeviceInfo local) ? local.DeviceIdentifier : throw new ArgumentException("DeviceInfo not created by adapter", nameof(bluetoothDeviceInfo));
 
-            if (!_discoveredDevices.ContainsKey(bluetoothAddress))
+            if (!_discoveredDevices.ContainsKey(deviceId))
             {
                 CancellationTokenSource cts = new CancellationTokenSource(10000);
 
@@ -111,19 +115,20 @@ namespace SharpBrick.PoweredUp.Mobile
                 // 60 seconds will be ignored here, because the cancelation will happen after 10 seconds
                 await Task.Delay(60000, cts.Token).ContinueWith(task => { });
 
-                if (!_discoveredDevices.ContainsKey(bluetoothAddress))
+                if (!_discoveredDevices.ContainsKey(deviceId))
                 {
                     throw new NotSupportedException("Given bt address does not belong to a discovered device");
                 }
             }
 
-            return new XamarinPoweredUpBluetoothDevice(_discoveredDevices[bluetoothAddress], _bluetoothAdapter);
+            return new XamarinPoweredUpBluetoothDevice(_discoveredDevices[deviceId], _bluetoothAdapter);
         }
 
         public Task<IPoweredUpBluetoothDeviceInfo> CreateDeviceInfoByKnownStateAsync(object state)
             => Task.FromResult<IPoweredUpBluetoothDeviceInfo>(state switch
             {
                 ulong address => new XamarinBluetoothDeviceInfo() { MacAddressAsUInt64 = address },
+                string id => new XamarinBluetoothDeviceInfo() { DeviceIdentifier = id },
                 _ => null,
             });
     }
