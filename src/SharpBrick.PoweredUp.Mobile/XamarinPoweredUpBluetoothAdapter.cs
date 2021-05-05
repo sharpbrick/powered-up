@@ -51,8 +51,6 @@ namespace SharpBrick.PoweredUp.Mobile
                     var nativeDeviceInfo = _deviceInfoProvider.GetNativeDeviceInfo(args.Device.NativeDevice);
 
                     info.Name = args.Device.Name;
-                    info.MacAddressAsUInt64 = nativeDeviceInfo.MacAddressNumeric;
-                    info.MacAddress = nativeDeviceInfo.MacAddress;
                     info.DeviceIdentifier= nativeDeviceInfo.DeviceIdentifier;
 
                     AddInternalDevice(args.Device, info);
@@ -127,7 +125,7 @@ namespace SharpBrick.PoweredUp.Mobile
         public Task<IPoweredUpBluetoothDeviceInfo> CreateDeviceInfoByKnownStateAsync(object state)
             => Task.FromResult<IPoweredUpBluetoothDeviceInfo>(state switch
             {
-                ulong address => new XamarinBluetoothDeviceInfo() { MacAddressAsUInt64 = address },
+                ulong address => new XamarinBluetoothDeviceInfo() { DeviceIdentifier = address.ToString() },
                 string id => new XamarinBluetoothDeviceInfo() { DeviceIdentifier = id },
                 _ => null,
             });
