@@ -31,7 +31,7 @@ jobs:
         path: ./artifacts
   publish-nuget:
     if: github.event_name == 'release'
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: [ build ]
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -48,4 +48,4 @@ jobs:
         name: artifacts
         path: ./artifacts
     - name: Upload to NuGet
-      run:  dotnet nuget push ./artifacts/**/*.nupkg --skip-duplicate -n true -k $NUGET_AUTH_TOKEN
+      run:  dotnet nuget push ./artifacts/**/*.nupkg --skip-duplicate -n true -k $env:NUGET_AUTH_TOKEN
