@@ -18,15 +18,15 @@ jobs:
         dotnet-version: 5.0.100
     - name: Build Version
       # run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11}) // deprecated
-      run: echo "RELEASE_VERSION=${GITHUB_REF:11}" >> $GITHUB_ENV
-    - run: echo Version $RELEASE_VERSION
-    - run: echo INPUT $GITHUB_REF
+      run: echo "RELEASE_VERSION=$($env:GITHUB_REF.SubString(11))" >> $env:GITHUB_ENV
+    - run: echo Version $env:RELEASE_VERSION
+    - run: echo INPUT $env:GITHUB_REF
     - name: Build Project
-      run: dotnet build --configuration Release -p:Version=$RELEASE_VERSION
+      run: dotnet build --configuration Release -p:Version=$env:RELEASE_VERSION
     - name: Test Project
       run: dotnet test --no-build --configuration Release --logger trx
     - name: Pack Project
-      run: dotnet pack --no-build --output ./artifacts --configuration Release -p:Version=$RELEASE_VERSION
+      run: dotnet pack --no-build --output ./artifacts --configuration Release -p:Version=$env:RELEASE_VERSION
     - uses: actions/upload-artifact@v1
       with:
         name: artifacts
