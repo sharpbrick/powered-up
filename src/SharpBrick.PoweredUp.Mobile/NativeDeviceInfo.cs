@@ -2,8 +2,10 @@
 {
     public class NativeDeviceInfo
     {
-        public string MacAddress { get; set; }
-
-        public ulong MacAddressNumeric { get; set; }
+        /// <summary>
+        /// In Android, the MacAddressString will be returned
+        /// In iOS the unique identifier is used
+        /// </summary>
+        public string DeviceIdentifier { get; set; }
     }
 }
