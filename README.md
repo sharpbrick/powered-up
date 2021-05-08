@@ -201,6 +201,8 @@ using (var scope = serviceProvider.CreateScope()) // create a scoped DI containe
 
 # Command Line Experience
 
+***Note**: Due to upstream issues in the `dotnet/sdk` we are currently not providing the NuGet distributed `dotnet tool`. The CLI itself can be used by `dotnet run --` when compiling this project directly.*
+
 The `poweredup` command line utility intends to allow the inspection of LEGO Wireless Protocol / Powered UP hubs and devices for their properties. It has utilities for ...
 
 - **Enumerating all connected Devices** including hub internal devices and emit their static self-description as they expose using the LEGO Wireless Protocol.
