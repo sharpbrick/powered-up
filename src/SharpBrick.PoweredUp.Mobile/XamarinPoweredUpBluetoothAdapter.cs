@@ -14,7 +14,7 @@ namespace SharpBrick.PoweredUp.Mobile
     {
         private readonly IAdapter _bluetoothAdapter;
         private readonly INativeDeviceInfoProvider _deviceInfoProvider;
-        private readonly Dictionary<ulong, IDevice> _discoveredDevices = new Dictionary<ulong, IDevice>();
+        private readonly Dictionary<string, IDevice> _discoveredDevices = new Dictionary<string, IDevice>();
 
         public XamarinPoweredUpBluetoothAdapter(IBluetoothLE bluetooth, INativeDeviceInfoProvider deviceInfoProvider)
         {
@@ -22,7 +22,7 @@ namespace SharpBrick.PoweredUp.Mobile
             _deviceInfoProvider = deviceInfoProvider;
         }
 
-        public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
+        public void Discover(Func<IPoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
             _bluetoothAdapter.ScanMode = ScanMode.Balanced;
 
@@ -38,7 +38,7 @@ namespace SharpBrick.PoweredUp.Mobile
 
             async void ReceivedHandler(object sender, DeviceEventArgs args)
             {
-                var info = new PoweredUpBluetoothDeviceInfo();
+                var info = new XamarinBluetoothDeviceInfo();
 
                 var advertisementRecord = args.Device.AdvertisementRecords.FirstOrDefault(x => x.Type == AdvertisementRecordType.ManufacturerSpecificData);
 
@@ -48,8 +48,10 @@ namespace SharpBrick.PoweredUp.Mobile
                     data.RemoveRange(0, 2);
                     info.ManufacturerData = data.ToArray();
 
+                    var nativeDeviceInfo = _deviceInfoProvider.GetNativeDeviceInfo(args.Device.NativeDevice);
+
                     info.Name = args.Device.Name;
-                    info.BluetoothAddress = _deviceInfoProvider.GetNativeDeviceInfo(args.Device.NativeDevice).MacAddressNumeric;
+                    info.DeviceIdentifier= nativeDeviceInfo.DeviceIdentifier;
 
                     AddInternalDevice(args.Device, info);
                     await discoveryHandler(info).ConfigureAwait(false);
@@ -57,21 +59,21 @@ namespace SharpBrick.PoweredUp.Mobile
             }
         }
 
-        private void AddInternalDevice(IDevice device, PoweredUpBluetoothDeviceInfo info)
+        private void AddInternalDevice(IDevice device, XamarinBluetoothDeviceInfo info)
         {
-            if (!_discoveredDevices.ContainsKey(info.BluetoothAddress))
+            if (!_discoveredDevices.ContainsKey(info.DeviceIdentifier))
             {
-                _discoveredDevices.Add(info.BluetoothAddress, device);
+                _discoveredDevices.Add(info.DeviceIdentifier, device);
             }
             else
             {
-                _discoveredDevices[info.BluetoothAddress] = device;
+                _discoveredDevices[info.DeviceIdentifier] = device;
             }
         }
 
         private bool DeviceFilter(IDevice arg)
         {
-            if (arg == null) 
+            if (arg == null)
             {
                 return false;
             }
@@ -86,16 +88,18 @@ namespace SharpBrick.PoweredUp.Mobile
             // https://lego.github.io/lego-ble-wireless-protocol-docs/index.html#advertising
             // Length and Data Type Name seems to be already trimmed away
             // Manufacturer ID should be 0x0397 but seems in little endian encoding. I found no notice for this in the documentation except in version number encoding
-            
+
             return manufacturerData.Data[0] == 0x97 && manufacturerData.Data[1] == 0x03;
         }
 
-        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
+        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo)
         {
-            if (!_discoveredDevices.ContainsKey(bluetoothAddress))
+            var deviceId = (bluetoothDeviceInfo is XamarinBluetoothDeviceInfo local) ? local.DeviceIdentifier : throw new ArgumentException("DeviceInfo not created by adapter", nameof(bluetoothDeviceInfo));
+
+            if (!_discoveredDevices.ContainsKey(deviceId))
             {
                 CancellationTokenSource cts = new CancellationTokenSource(10000);
-                
+
                 // trigger scan for 10 seconds
                 Discover((deviceInfo) =>
                 {
@@ -103,20 +107,27 @@ namespace SharpBrick.PoweredUp.Mobile
                     {
                         cts.Cancel(false);
                     });
-                    
+
                 }, cts.Token);
 
                 // 60 seconds will be ignored here, because the cancelation will happen after 10 seconds
                 await Task.Delay(60000, cts.Token).ContinueWith(task => { });
 
-                if (!_discoveredDevices.ContainsKey(bluetoothAddress))
+                if (!_discoveredDevices.ContainsKey(deviceId))
                 {
                     throw new NotSupportedException("Given bt address does not belong to a discovered device");
                 }
             }
 
-            return new XamarinPoweredUpBluetoothDevice(_discoveredDevices[bluetoothAddress], _bluetoothAdapter);
+            return new XamarinPoweredUpBluetoothDevice(_discoveredDevices[deviceId], _bluetoothAdapter);
         }
-    }
 
+        public Task<IPoweredUpBluetoothDeviceInfo> CreateDeviceInfoByKnownStateAsync(object state)
+            => Task.FromResult<IPoweredUpBluetoothDeviceInfo>(state switch
+            {
+                ulong address => new XamarinBluetoothDeviceInfo() { DeviceIdentifier = address.ToString() },
+                string id => new XamarinBluetoothDeviceInfo() { DeviceIdentifier = id },
+                _ => null,
+            });
+    }
 }

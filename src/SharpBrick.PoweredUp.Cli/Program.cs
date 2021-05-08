@@ -72,10 +72,12 @@ namespace SharpBrick.PoweredUp.Cli
                         try
                         {
                             var serviceProvider = CreateServiceProvider(configuration);
-                            (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
+                            var (bluetoothDeviceInfo, systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
-                            if (bluetoothAddress == 0)
+                            if (bluetoothDeviceInfo == null)
+                            {
                                 return Program.BluetoothNoSelectedDeviceExitCode;
+                            }
 
                             // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
                             using (var scope = serviceProvider.CreateScope())
@@ -84,7 +86,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                                 await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                                scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+                                scopedServiceProvider.GetService<BluetoothKernel>().BluetoothDeviceInfo = bluetoothDeviceInfo;
 
                                 var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
 
@@ -122,10 +124,12 @@ namespace SharpBrick.PoweredUp.Cli
                             var headerEnabled = headerOption.Values.Count > 0;
 
                             var serviceProvider = CreateServiceProvider(configuration);
-                            (ulong bluetoothAddress, SystemType systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
+                            var (bluetoothDeviceInfo, systemType) = FindAndSelectHub(serviceProvider.GetService<IPoweredUpBluetoothAdapter>());
 
-                            if (bluetoothAddress == 0)
+                            if (bluetoothDeviceInfo == null)
+                            {
                                 return Program.BluetoothNoSelectedDeviceExitCode;
+                            }
 
                             // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
                             using (var scope = serviceProvider.CreateScope())
@@ -134,7 +138,7 @@ namespace SharpBrick.PoweredUp.Cli
 
                                 await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                                scopedServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
+                                scopedServiceProvider.GetService<BluetoothKernel>().BluetoothDeviceInfo = bluetoothDeviceInfo;
 
                                 var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
 
@@ -275,11 +279,11 @@ namespace SharpBrick.PoweredUp.Cli
             }
         }
 
-        private static (ulong bluetoothAddress, SystemType systemType) FindAndSelectHub(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
+        private static (IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo, SystemType systemType) FindAndSelectHub(IPoweredUpBluetoothAdapter poweredUpBluetoothAdapter)
         {
-            ulong resultBluetooth = 0;
+            IPoweredUpBluetoothDeviceInfo resultDeviceInfo = default;
             SystemType resultSystemType = default;
-            var devices = new ConcurrentBag<(int key, ulong bluetoothAddresss, PoweredUpHubManufacturerData deviceType)>();
+            var devices = new ConcurrentBag<(int key, IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo, PoweredUpHubManufacturerData deviceType)>();
             var cts = new CancellationTokenSource();
             int idx = 1;
 
@@ -287,12 +291,14 @@ namespace SharpBrick.PoweredUp.Cli
 
             poweredUpBluetoothAdapter.Discover(info =>
             {
-                if (devices.FirstOrDefault(kv => kv.bluetoothAddresss == info.BluetoothAddress) == default)
+                if (devices.FirstOrDefault(kv => kv.bluetoothDeviceInfo.Equals(info)) == default)
                 {
                     var deviceType = (PoweredUpHubManufacturerData)info.ManufacturerData[1];
-                    devices.Add((idx, info.BluetoothAddress, deviceType));
+                    devices.Add((idx, info, deviceType));
 
-                    Console.WriteLine($"{idx}: {(PoweredUpHubManufacturerData)info.ManufacturerData[1]} (with address {info.BluetoothAddress})");
+                    var text = (info is IPoweredUpBluetoothDeviceInfoWithMacAddress mac) ? mac.ToIdentificationString() : "not revealed";
+
+                    Console.WriteLine($"{idx}: {(PoweredUpHubManufacturerData)info.ManufacturerData[1]} (with address {text})");
 
                     idx++;
                 }
@@ -309,16 +315,16 @@ namespace SharpBrick.PoweredUp.Cli
             {
                 var selected = devices.FirstOrDefault(kv => kv.key == key);
 
-                resultBluetooth = selected.bluetoothAddresss; // default is 0
+                resultDeviceInfo = selected.bluetoothDeviceInfo;
                 resultSystemType = (SystemType)selected.deviceType;
 
-                if (resultBluetooth != default)
+                if (resultDeviceInfo != default)
                 {
                     Console.WriteLine($"Selected {selected.deviceType} with key {selected.key}");
                 }
             }
 
-            return (resultBluetooth, resultSystemType);
+            return (resultDeviceInfo, resultSystemType);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// The devices this adapter knows about (by Discovery or direct Connect)
         /// </summary>
         private ConcurrentDictionary<ulong, BlueGigaBLEPoweredUpBluetoothDevice> Devices { get; }
-        private ConcurrentDictionary<ulong, PoweredUpBluetoothDeviceInfo> DevicesInfo { get; }
+        private ConcurrentDictionary<ulong, PoweredUpBluetoothDeviceInfoWithMacAddress> DevicesInfo { get; }
         #endregion
 
         #region Constructor
@@ -48,7 +48,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             BleModuleConnection = new BleModuleConnection(BgLib);
             BleModuleConnection.Start(options.Value.COMPortName, 0);
             Devices = new ConcurrentDictionary<ulong, BlueGigaBLEPoweredUpBluetoothDevice>();
-            DevicesInfo = new ConcurrentDictionary<ulong, PoweredUpBluetoothDeviceInfo>();
+            DevicesInfo = new ConcurrentDictionary<ulong, PoweredUpBluetoothDeviceInfoWithMacAddress>();
         }
         #endregion
 
@@ -61,7 +61,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="discoveryHandler">The handler form the SharpBrick.PoweredUp-core which shall be called when a device has been discovered</param>
         /// <param name="cancellationToken">Cancelation-token to handle a cancel of the discovery</param>
-        public void Discover(Func<PoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
+        public void Discover(Func<IPoweredUpBluetoothDeviceInfo, Task> discoveryHandler, CancellationToken cancellationToken = default)
         {
             var bleDeviceDiscovery = new BleDeviceDiscovery(BgLib, BleModuleConnection);
             var bleParsedData = new ConcurrentDictionary<ulong, List<BleAdvertisingData>>();
@@ -99,13 +99,13 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     && actualListAdvertisingData.Any(y => y.Type == BleAdvertisingDataType.ManufacturerSpecificData)
                     && actualListAdvertisingData.Any(z => z.Type == BleAdvertisingDataType.CompleteLocalName))
                 {
-                    var deviceInfo = new PoweredUpBluetoothDeviceInfo
+                    var deviceInfo = new PoweredUpBluetoothDeviceInfoWithMacAddress
                     {
-                        BluetoothAddress = BlueGigaBLEHelper.ByteArrayToUlong(e.Address),
+                        MacAddressAsUInt64 = BlueGigaBLEHelper.ByteArrayToUlong(e.Address),
                         ManufacturerData = actualListAdvertisingData.First(y => y.Type == BleAdvertisingDataType.ManufacturerSpecificData).Data.Skip(2).ToArray(), //PoweredUp only wants to have data starting with the button state (see 2. advertising in [Lego]
                         Name = actualListAdvertisingData.First(z => z.Type == BleAdvertisingDataType.CompleteLocalName).ToAsciiString()
                     };
-                    _ = DevicesInfo.AddOrUpdate(deviceInfo.BluetoothAddress, deviceInfo, (key, oldvalue) => oldvalue = deviceInfo);
+                    _ = DevicesInfo.AddOrUpdate(deviceInfo.MacAddressAsUInt64, deviceInfo, (key, oldvalue) => oldvalue = deviceInfo);
                     actualListAdvertisingData.Clear();
                     await discoveryHandler(deviceInfo);
                 }
@@ -135,8 +135,10 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
         /// </summary>
         /// <param name="bluetoothAddress"></param>
         /// <returns></returns>
-        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(ulong bluetoothAddress)
+        public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo)
         {
+            var bluetoothAddress = (bluetoothDeviceInfo is PoweredUpBluetoothDeviceInfoWithMacAddress local) ? local.MacAddressAsUInt64 : throw new ArgumentException("DeviceInfo not created by adapter", nameof(bluetoothDeviceInfo));
+
             var bleDeviceManager = new BleDeviceManager(BgLib, BleModuleConnection);
             var bluetoothAdressBytes = BlueGigaBLEHelper.UlongTo6ByteArray(bluetoothAddress);
             var bleDevice = await bleDeviceManager.ConnectAsync(bluetoothAdressBytes, BleAddressType.Public);
@@ -148,6 +150,16 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
             await Devices.AddOrUpdate(device.DeviceAdress, device, (key, oldvalue) => oldvalue = device).LogInfosAsync();
             return await Task.FromResult(Devices[bluetoothAddress]);
         }
+
+        public Task<IPoweredUpBluetoothDeviceInfo> CreateDeviceInfoByKnownStateAsync(object state)
+            => Task.FromResult<IPoweredUpBluetoothDeviceInfo>(state switch
+            {
+                ulong address => new PoweredUpBluetoothDeviceInfoWithMacAddress
+                {
+                    MacAddressAsUInt64 = address,
+                },
+                _ => null,
+            });
         #endregion
         #region IDisposable
         private bool disposedValue = false;
@@ -227,7 +239,7 @@ namespace SharpBrick.PoweredUp.BlueGigaBLE
                     var innerindentStr = indentStr + "\t";
                     foreach (var device in DevicesInfo)
                     {
-                        _ = stringToLog.Append($"{innerindentStr}Bluetooth-Adress (ulong): {device.Value.BluetoothAddress}" + Environment.NewLine + $"{innerindentStr}Bluetooth-Name: {device.Value.Name}" + Environment.NewLine + $"{innerindentStr}Bluetooth-ManufacturerData (decimal): {BlueGigaBLEHelper.ByteArrayToNumberString(device.Value.ManufacturerData)}" + Environment.NewLine + $"{innerindentStr}Bluetooth-ManufacturerData (hex): {BlueGigaBLEHelper.ByteArrayToHexString(device.Value.ManufacturerData)}" + Environment.NewLine);
+                        _ = stringToLog.Append($"{innerindentStr}Bluetooth-Adress (ulong): {device.Value.MacAddressAsUInt64}" + Environment.NewLine + $"{innerindentStr}Bluetooth-Name: {device.Value.Name}" + Environment.NewLine + $"{innerindentStr}Bluetooth-ManufacturerData (decimal): {BlueGigaBLEHelper.ByteArrayToNumberString(device.Value.ManufacturerData)}" + Environment.NewLine + $"{innerindentStr}Bluetooth-ManufacturerData (hex): {BlueGigaBLEHelper.ByteArrayToHexString(device.Value.ManufacturerData)}" + Environment.NewLine);
                     }
                     _ = stringToLog.Append($"{indentStr}End of devices which have been found by Discovery (not neccessarily connected){Environment.NewLine}");
                 }
