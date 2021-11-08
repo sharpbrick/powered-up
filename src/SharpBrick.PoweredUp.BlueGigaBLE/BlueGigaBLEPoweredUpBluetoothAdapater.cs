@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO.Ports;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO.Ports;
-using SharpBrick.PoweredUp.Bluetooth;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
-using System.Text;
 using BGLibExt;
-using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SharpBrick.PoweredUp.Bluetooth;
 
 namespace SharpBrick.PoweredUp.BlueGigaBLE;
 

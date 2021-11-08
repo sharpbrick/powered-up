@@ -46,8 +46,8 @@ public abstract class BaseExample
         var cts = new CancellationTokenSource();
         Host.Discover(async hub =>
         {
-                // add this when you are interested in a tracing of the message ("human readable")
-                if (enableTrace)
+            // add this when you are interested in a tracing of the message ("human readable")
+            if (enableTrace)
             {
                 var tracer = hub.ServiceProvider.GetService<TraceMessages>();
                 await tracer.ExecuteAsync();

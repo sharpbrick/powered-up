@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-
+﻿using System;
+using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp.Devices;
 using SharpBrick.PoweredUp.Protocol;
-
-using System;
 
 namespace SharpBrick.PoweredUp;
 

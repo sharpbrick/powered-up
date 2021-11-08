@@ -693,8 +693,8 @@ class Program
                 deviceListApp.Description = "Inspect all devices declared on the Hub by using information gathered using the LEGO Wireless Protocol";
                 deviceListApp.HelpOption();
 
-                    // pseudo option for configuration to create documentation
-                    deviceListApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
+                // pseudo option for configuration to create documentation
+                deviceListApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
                 deviceListApp.Option("--BluetoothAdapter", "Use a specified BLE adapter (e.g. WinRT or BlueGigaBLE). Defaults to WinRT. Some adapter might require additional parameters.", CommandOptionType.SingleValue);
                 deviceListApp.Option("--COMPortName", "Name of the COM port to connect the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
                 deviceListApp.Option("--TraceDebug", "Create detailed tracing of the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
@@ -711,8 +711,8 @@ class Program
                             return Program.BluetoothNoSelectedDeviceExitCode;
                         }
 
-                            // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
-                            using (var scope = serviceProvider.CreateScope())
+                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                        using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServiceProvider = scope.ServiceProvider;
 
@@ -722,7 +722,7 @@ class Program
 
                             var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
 
-                                await deviceListCli.ExecuteAsync(systemType);
+                            await deviceListCli.ExecuteAsync(systemType);
                         }
 
                         return Program.SuccessExitCode;
@@ -740,8 +740,8 @@ class Program
                 deviceDumpStaticPortApp.Description = "Inspect a specific device on a Hub Port by using (non-dynamic) information gathered using the LEGO Wireless Protocol. Emits a binary dump (use list for human readable output).";
                 deviceDumpStaticPortApp.HelpOption();
 
-                    // pseudo option for configuration to create documentation
-                    deviceDumpStaticPortApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
+                // pseudo option for configuration to create documentation
+                deviceDumpStaticPortApp.Option("--EnableTrace", "Enable Tracing (default: no trace)", CommandOptionType.SingleValue);
                 deviceDumpStaticPortApp.Option("--BluetoothAdapter", "Use a specified BLE adapter (e.g. WinRT or BlueGigaBLE). Defaults to WinRT. Some adapter might require additional parameters.", CommandOptionType.SingleValue);
                 deviceDumpStaticPortApp.Option("--COMPortName", "Name of the COM port to connect the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
                 deviceDumpStaticPortApp.Option("--TraceDebug", "Create detailed tracing of the BluetoothAdapter (if applicable; e.g. BlueGigaBLE)", CommandOptionType.SingleValue);
@@ -763,8 +763,8 @@ class Program
                             return Program.BluetoothNoSelectedDeviceExitCode;
                         }
 
-                            // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
-                            using (var scope = serviceProvider.CreateScope())
+                        // initialize a DI scope per bluetooth connection / protocol (e.g. protocol is a per-bluetooth connection service)
+                        using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServiceProvider = scope.ServiceProvider;
 
@@ -774,7 +774,7 @@ class Program
 
                             var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
 
-                                var port = byte.Parse(portOption.Value());
+                            var port = byte.Parse(portOption.Value());
 
                             await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port, headerEnabled);
                         }
@@ -827,7 +827,7 @@ class Program
 
                             var prettyPrintCommand = scopedServiceProvider.GetService<PrettyPrint>(); // ServiceLocator ok: transient factory
 
-                                TextReader reader = Console.In;
+                            TextReader reader = Console.In;
 
                             if (!string.IsNullOrWhiteSpace(file))
                             {

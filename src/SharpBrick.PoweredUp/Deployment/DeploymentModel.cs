@@ -73,8 +73,8 @@ public class DeploymentModel
             .Select(t => t switch
             {
                 (var Device, var PortInfo) when !PortInfo.IsDeviceConnected => (Error: 1000, t.Device, t.PortInfo), // no device connected
-                    (var Device, var PortInfo) when Device.DeviceType is not null && PortInfo.IOTypeId != Device.DeviceType => (Error: 1001, t.Device, t.PortInfo), // wrong device connected
-                    _ => (Error: 0, t.Device, t.PortInfo),
+                (var Device, var PortInfo) when Device.DeviceType is not null && PortInfo.IOTypeId != Device.DeviceType => (Error: 1001, t.Device, t.PortInfo), // wrong device connected
+                _ => (Error: 0, t.Device, t.PortInfo),
             })
             .Where(t => t.Error != 0)
             .Select(t => new DeploymentModelError(

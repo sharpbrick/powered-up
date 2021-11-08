@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Bluetooth.Mock;
+using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 
 namespace SharpBrick.PoweredUp.Cli;

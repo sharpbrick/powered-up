@@ -1,12 +1,12 @@
 using System;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.Devices;
-using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Hubs;
+using SharpBrick.PoweredUp.Protocol;
 
 namespace Example;
 
