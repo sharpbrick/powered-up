@@ -1,8 +1,7 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp.Protocol.Messages;
+
+public enum VirtualPortSubCommand : byte
 {
-    public enum VirtualPortSubCommand : byte
-    {
-        Disconnected = 0x00,
-        Connected = 0x01,
-    }
+    Disconnected = 0x00,
+    Connected = 0x01,
 }

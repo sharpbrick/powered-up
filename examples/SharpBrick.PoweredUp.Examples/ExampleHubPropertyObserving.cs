@@ -3,31 +3,30 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleHubPropertyObserving : BaseExample
 {
-    public class ExampleHubPropertyObserving : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-            using var d1 = technicMediumHub.ButtonObservable.Subscribe(x => Log.LogInformation($"Buttom: {x}"));
-            technicMediumHub.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
+        using var d1 = technicMediumHub.ButtonObservable.Subscribe(x => Log.LogInformation($"Buttom: {x}"));
+        technicMediumHub.PropertyChanged += (sender, ea) => { Log.LogInformation($"Change on Property {ea.PropertyName}"); };
 
-            // optionally: trigger explicit request (like done during initialization)
-            await technicMediumHub.RequestHubPropertySingleUpdate(HubProperty.Button);
+        // optionally: trigger explicit request (like done during initialization)
+        await technicMediumHub.RequestHubPropertySingleUpdate(HubProperty.Button);
 
-            // and then observe it
-            await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, true);
+        // and then observe it
+        await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, true);
 
-            await Task.Delay(5_000);
+        await Task.Delay(5_000);
 
-            await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, false);
-            Log.LogInformation("Button no longer observed");
+        await technicMediumHub.SetupHubPropertyNotificationAsync(HubProperty.Button, false);
+        Log.LogInformation("Button no longer observed");
 
-            await Task.Delay(5_000);
+        await Task.Delay(5_000);
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

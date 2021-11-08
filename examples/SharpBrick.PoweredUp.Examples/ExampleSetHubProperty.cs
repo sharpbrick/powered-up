@@ -3,33 +3,32 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleSetHubProperty : BaseExample
 {
-    public class ExampleSetHubProperty : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
-            using var d1 = technicMediumHub.AdvertisementNameObservable.Subscribe(x => Log.LogInformation($"From Observable for AdvertisementName: {x}"));
-            using var d2 = technicMediumHub.PropertyChangedObservable.Subscribe(x => Log.LogInformation($"Property Changed: {x}"));
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var d1 = technicMediumHub.AdvertisementNameObservable.Subscribe(x => Log.LogInformation($"From Observable for AdvertisementName: {x}"));
+        using var d2 = technicMediumHub.PropertyChangedObservable.Subscribe(x => Log.LogInformation($"Property Changed: {x}"));
 
-            var originalName = technicMediumHub.AdvertisingName;
+        var originalName = technicMediumHub.AdvertisingName;
 
-            Log.LogInformation($"Original Name: {originalName}");
+        Log.LogInformation($"Original Name: {originalName}");
 
-            await technicMediumHub.SetAdvertisingNameAsync("Hello World");
+        await technicMediumHub.SetAdvertisingNameAsync("Hello World");
 
-            Log.LogInformation($"New Name is: {technicMediumHub.AdvertisingName}");
+        Log.LogInformation($"New Name is: {technicMediumHub.AdvertisingName}");
 
-            await technicMediumHub.ResetAdvertisingNameAsync();
+        await technicMediumHub.ResetAdvertisingNameAsync();
 
-            Log.LogInformation($"Resetted Name is: {technicMediumHub.AdvertisingName}");
+        Log.LogInformation($"Resetted Name is: {technicMediumHub.AdvertisingName}");
 
-            await technicMediumHub.SetAdvertisingNameAsync(originalName);
+        await technicMediumHub.SetAdvertisingNameAsync(originalName);
 
-            Log.LogInformation($"Name Cleanup to: {originalName}");
+        Log.LogInformation($"Name Cleanup to: {originalName}");
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

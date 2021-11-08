@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
 
-namespace SharpBrick.PoweredUp.Bluetooth
+namespace SharpBrick.PoweredUp.Bluetooth;
+
+public interface IPoweredUpBluetoothCharacteristic
 {
-    public interface IPoweredUpBluetoothCharacteristic
-    {
-        Guid Uuid { get; }
-        Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler);
-        Task<bool> WriteValueAsync(byte[] data);
-    }
+    Guid Uuid { get; }
+    Task<bool> NotifyValueChangeAsync(Func<byte[], Task> notificationHandler);
+    Task<bool> WriteValueAsync(byte[] data);
 }

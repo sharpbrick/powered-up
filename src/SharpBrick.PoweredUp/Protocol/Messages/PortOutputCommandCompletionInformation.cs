@@ -1,8 +1,7 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
+namespace SharpBrick.PoweredUp.Protocol.Messages;
+
+public enum PortOutputCommandCompletionInformation : byte
 {
-    public enum PortOutputCommandCompletionInformation : byte
-    {
-        NoAction = 0x00,
-        CommandFeedback = 0x01,
-    }
+    NoAction = 0x00,
+    CommandFeedback = 0x01,
 }

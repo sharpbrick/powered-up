@@ -4,31 +4,30 @@ using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class SingleValueMode<TDatasetType, TOutputType> : Mode
 {
-    public class SingleValueMode<TDatasetType, TOutputType> : Mode
+    public TDatasetType Raw { get; private set; }
+    public TOutputType SI { get; private set; }
+    public TOutputType Pct { get; private set; }
+
+    public IObservable<Value<TDatasetType, TOutputType>> Observable { get; }
+
+    public SingleValueMode(ILegoWirelessProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
+            : base(protocol, modeInfo, modeValueObservable)
     {
-        public TDatasetType Raw { get; private set; }
-        public TOutputType SI { get; private set; }
-        public TOutputType Pct { get; private set; }
-
-        public IObservable<Value<TDatasetType, TOutputType>> Observable { get; }
-
-        public SingleValueMode(ILegoWirelessProtocol protocol, PortModeInfo modeInfo, IObservable<PortValueData> modeValueObservable)
-                : base(protocol, modeInfo, modeValueObservable)
-        {
-            Observable = CreateObservable();
-            ObserveOnLocalProperty(Observable, v => Raw = v.Raw, v => SI = v.SI, v => Pct = v.Pct);
-            ObserveForPropertyChanged(Observable, nameof(Raw), nameof(SI), nameof(Pct));
-        }
-        protected IObservable<Value<TDatasetType, TOutputType>> CreateObservable()
-            => _modeValueObservable
-                .Cast<PortValueData<TDatasetType, TOutputType>>()
-                .Select(pvd => new Value<TDatasetType, TOutputType>()
-                {
-                    Raw = pvd.InputValues[0],
-                    SI = pvd.SIInputValues[0],
-                    Pct = pvd.PctInputValues[0],
-                });
+        Observable = CreateObservable();
+        ObserveOnLocalProperty(Observable, v => Raw = v.Raw, v => SI = v.SI, v => Pct = v.Pct);
+        ObserveForPropertyChanged(Observable, nameof(Raw), nameof(SI), nameof(Pct));
     }
+    protected IObservable<Value<TDatasetType, TOutputType>> CreateObservable()
+        => _modeValueObservable
+            .Cast<PortValueData<TDatasetType, TOutputType>>()
+            .Select(pvd => new Value<TDatasetType, TOutputType>()
+            {
+                Raw = pvd.InputValues[0],
+                SI = pvd.SIInputValues[0],
+                Pct = pvd.PctInputValues[0],
+            });
 }

@@ -6,68 +6,68 @@ using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class RgbLight : Device, IPoweredUpDevice
 {
-    public class RgbLight : Device, IPoweredUpDevice
+    public RgbLight()
+    { }
+
+    public RgbLight(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
+    { }
+
+    /// <summary>
+    /// Show the Color specified by ColorNo
+    /// </summary>
+    /// <param name="color">A color no from the enum.</param>
+    /// <returns></returns>
+    public async Task SetRgbColorNoAsync(PoweredUpColor color)
     {
-        public RgbLight()
-        { }
+        AssertIsConnected();
 
-        public RgbLight(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        { }
-
-        /// <summary>
-        /// Show the Color specified by ColorNo
-        /// </summary>
-        /// <param name="color">A color no from the enum.</param>
-        /// <returns></returns>
-        public async Task SetRgbColorNoAsync(PoweredUpColor color)
+        await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            color
+        )
         {
-            AssertIsConnected();
+            HubId = _hubId,
+        });
+    }
 
-            await _protocol.SendMessageAsync(new PortOutputCommandSetRgbColorNoMessage(
-                _portId,
-                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                color
-            )
-            {
-                HubId = _hubId,
-            });
-        }
+    /// <summary>
+    /// Show a color mixed off the individual RGB values.
+    /// </summary>
+    /// <param name="red"></param>
+    /// <param name="green"></param>
+    /// <param name="blue"></param>
+    /// <returns></returns>
+    public async Task<PortFeedback> SetRgbColorsAsync(byte red, byte green, byte blue)
+    {
+        AssertIsConnected();
 
-        /// <summary>
-        /// Show a color mixed off the individual RGB values.
-        /// </summary>
-        /// <param name="red"></param>
-        /// <param name="green"></param>
-        /// <param name="blue"></param>
-        /// <returns></returns>
-        public async Task<PortFeedback> SetRgbColorsAsync(byte red, byte green, byte blue)
+        await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(_portId, 0x01, 10000, false)
         {
-            AssertIsConnected();
+            HubId = _hubId,
+        });
 
-            await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(_portId, 0x01, 10000, false)
-            {
-                HubId = _hubId,
-            });
+        var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetRgbColorNo2Message(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            red, green, blue
+        )
+        {
+            HubId = _hubId,
+        });
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandSetRgbColorNo2Message(
-                _portId,
-                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                red, green, blue
-            )
-            {
-                HubId = _hubId,
-            });
+        return response;
+    }
 
-            return response;
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => ((softwareVersion, hardwareVersion, systemType) switch
-            {
-                (_, _, SystemType.LegoTechnic_MediumHub) => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => ((softwareVersion, hardwareVersion, systemType) switch
+        {
+            (_, _, SystemType.LegoTechnic_MediumHub) => @"
 0B-00-43-32-01-01-02-00-00-03-00
 05-00-43-32-02
 11-00-44-32-00-00-43-4F-4C-20-4F-00-00-00-00-00-00
@@ -85,7 +85,7 @@ namespace SharpBrick.PoweredUp
 08-00-44-32-01-05-00-10
 0A-00-44-32-01-80-03-00-03-00
 ",
-                (_, _, SystemType.LegoSystem_TwoPortHub) => @"
+            (_, _, SystemType.LegoSystem_TwoPortHub) => @"
 0B-00-43-32-01-01-02-00-00-03-00
 05-00-43-32-02
 12-00-44-32-00-00-43-4F-4C-20-4F-00-00-00-00-00-00-00
@@ -104,7 +104,7 @@ namespace SharpBrick.PoweredUp
 0A-00-44-32-01-80-03-00-03-00
 ",
 
-                (_, _, SystemType.LegoSystem_TwoPortHandset) => @"
+            (_, _, SystemType.LegoSystem_TwoPortHandset) => @"
 0B-00-43-34-01-01-02-00-00-03-00
 0C-00-44-34-00-00-43-4F-4C-20-30-00
 0E-00-44-34-00-01-00-00-00-00-00-00-20-41
@@ -121,7 +121,7 @@ namespace SharpBrick.PoweredUp
 08-00-44-34-01-05-00-50
 0A-00-44-34-01-80-03-00-03-00
 ",
-                (_, _, SystemType.LegoDuplo_DuploTrain) => @"
+            (_, _, SystemType.LegoDuplo_DuploTrain) => @"
 0B-00-43-11-01-01-02-00-00-03-00
 05-00-43-11-02
 11-00-44-11-00-00-43-4F-4C-20-4F-00-00-00-00-00-00
@@ -139,7 +139,7 @@ namespace SharpBrick.PoweredUp
 08-00-44-11-01-05-00-10
 0A-00-44-11-01-80-03-00-03-00
 ",
-                (_, _, SystemType.LegoSystem_MoveHub) => @"
+            (_, _, SystemType.LegoSystem_MoveHub) => @"
 0B-00-43-32-01-01-02-00-00-03-00
 05-00-43-32-02
 11-00-44-32-00-00-43-4F-4C-20-4F-00-00-00-00-00-00
@@ -157,7 +157,6 @@ namespace SharpBrick.PoweredUp
 08-00-44-32-01-05-00-10
 0A-00-44-32-01-80-03-00-03-00
 ",
-                _ => throw new NotSupportedException(),
-            }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
+            _ => throw new NotSupportedException(),
+        }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
 }

@@ -2,23 +2,22 @@ using System;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleHubAlert : BaseExample
 {
-    public class ExampleHubAlert : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-            technicMediumHub.AlertObservable.Subscribe(x => Console.WriteLine($"Alert: {x}"));
+        technicMediumHub.AlertObservable.Subscribe(x => Console.WriteLine($"Alert: {x}"));
 
-            await technicMediumHub.EnableAlertNotificationAsync(HubAlert.LowSignalStrength);
+        await technicMediumHub.EnableAlertNotificationAsync(HubAlert.LowSignalStrength);
 
-            await Task.Delay(60_000); // run
+        await Task.Delay(60_000); // run
 
-            await technicMediumHub.DisableAlertNotification(HubAlert.LowSignalStrength);
+        await technicMediumHub.DisableAlertNotification(HubAlert.LowSignalStrength);
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

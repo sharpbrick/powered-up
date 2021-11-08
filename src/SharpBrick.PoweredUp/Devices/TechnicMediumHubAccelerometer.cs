@@ -5,32 +5,32 @@ using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+// accelerometers measure translation
+public class TechnicMediumHubAccelerometer : Device, IPoweredUpDevice
 {
-    // accelerometers measure translation
-    public class TechnicMediumHubAccelerometer : Device, IPoweredUpDevice
+    protected MultiValueMode<short, short> _gravityMode;
+
+    public byte ModeIndexGravity { get; protected set; } = 0;
+    public byte ModeIndexCalibration { get; protected set; } = 1;
+
+    public (short x, short y, short z) Gravity => (_gravityMode.SI[0], _gravityMode.SI[1], _gravityMode.SI[2]);
+    public IObservable<(short x, short y, short z)> GravityObservable => _gravityMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
+
+    public TechnicMediumHubAccelerometer()
+    { }
+
+    public TechnicMediumHubAccelerometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        protected MultiValueMode<short, short> _gravityMode;
+        _gravityMode = MultiValueMode<short, short>(ModeIndexGravity);
 
-        public byte ModeIndexGravity { get; protected set; } = 0;
-        public byte ModeIndexCalibration { get; protected set; } = 1;
+        ObserveForPropertyChanged(_gravityMode.Observable, nameof(Gravity));
+    }
 
-        public (short x, short y, short z) Gravity => (_gravityMode.SI[0], _gravityMode.SI[1], _gravityMode.SI[2]);
-        public IObservable<(short x, short y, short z)> GravityObservable => _gravityMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
-
-        public TechnicMediumHubAccelerometer()
-        { }
-
-        public TechnicMediumHubAccelerometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        {
-            _gravityMode = MultiValueMode<short, short>(ModeIndexGravity);
-
-            ObserveForPropertyChanged(_gravityMode.Observable, nameof(Gravity));
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-61-01-02-02-03-00-00-00
 05-00-43-61-02
 11-00-44-61-00-00-47-52-56-00-00-00-00-00-00-00-00
@@ -48,5 +48,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-61-01-05-50-00
 0A-00-44-61-01-80-01-00-00-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

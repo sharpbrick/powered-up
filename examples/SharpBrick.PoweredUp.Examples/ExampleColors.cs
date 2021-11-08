@@ -1,19 +1,18 @@
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleColors : BaseExample
 {
-    public class ExampleColors : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-            await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+        await technicMediumHub.RgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
 
-            await Task.Delay(2000);
+        await Task.Delay(2000);
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

@@ -4,25 +4,24 @@ using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleTechnicMediumHubTiltSensor : BaseExample
 {
-    public class ExampleTechnicMediumHubTiltSensor : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-            var device = technicMediumHub.TiltSensor;
+        var device = technicMediumHub.TiltSensor;
 
-            // await device.TiltConfigOrientationAsync(TiltConfigOrientation.Front); // does not work on technic medium hub
+        // await device.TiltConfigOrientationAsync(TiltConfigOrientation.Front); // does not work on technic medium hub
 
-            await device.SetupNotificationAsync(device.ModeIndexPosition, true);
+        await device.SetupNotificationAsync(device.ModeIndexPosition, true);
 
-            using var disposable = device.PositionObservable.Subscribe(x => Log.LogWarning($"Tilt: {x.x} / {x.y} / {x.z}"));
+        using var disposable = device.PositionObservable.Subscribe(x => Log.LogWarning($"Tilt: {x.x} / {x.y} / {x.z}"));
 
-            await Task.Delay(10_000);
+        await Task.Delay(10_000);
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

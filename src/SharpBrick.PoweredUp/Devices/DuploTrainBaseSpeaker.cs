@@ -6,36 +6,35 @@ using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class DuploTrainBaseSpeaker : Device, IPoweredUpDevice
 {
+    protected SingleValueMode<sbyte, sbyte> _soundMode;
 
-    public class DuploTrainBaseSpeaker : Device, IPoweredUpDevice
+    public byte ModeIndexTone { get; protected set; } = 0;
+    public byte ModeIndexSound { get; protected set; } = 1;
+    public byte ModeIndexUiSound { get; protected set; } = 2;
+
+    public DuploTrainBaseSpeaker()
+    { }
+
+    public DuploTrainBaseSpeaker(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        protected SingleValueMode<sbyte, sbyte> _soundMode;
+        _soundMode = SingleValueMode<sbyte, sbyte>(ModeIndexSound);
+    }
 
-        public byte ModeIndexTone { get; protected set; } = 0;
-        public byte ModeIndexSound { get; protected set; } = 1;
-        public byte ModeIndexUiSound { get; protected set; } = 2;
+    public async Task<PortFeedback> PlaySoundAsync(DuploTrainBaseSound sound)
+    {
+        await this.SetupNotificationAsync(ModeIndexSound, false);
+        var response = await _soundMode.WriteDirectModeDataAsync((byte)sound);
 
-        public DuploTrainBaseSpeaker()
-        { }
+        return response;
+    }
 
-        public DuploTrainBaseSpeaker(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        {
-            _soundMode = SingleValueMode<sbyte, sbyte>(ModeIndexSound);
-        }
-
-        public async Task<PortFeedback> PlaySoundAsync(DuploTrainBaseSound sound)
-        {
-            await this.SetupNotificationAsync(ModeIndexSound, false);
-            var response = await _soundMode.WriteDirectModeDataAsync((byte)sound);
-
-            return response;
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-01-01-01-03-00-00-07-00
 05-00-43-01-02
 11-00-44-01-00-00-54-4F-4E-45-00-00-00-00-00-00-00
@@ -60,5 +59,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-01-02-05-00-04
 0A-00-44-01-02-80-01-00-03-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

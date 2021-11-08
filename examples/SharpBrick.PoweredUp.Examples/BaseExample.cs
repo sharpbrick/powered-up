@@ -7,73 +7,72 @@ using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 using SharpBrick.PoweredUp.Functions;
 
-namespace Example
+namespace Example;
+
+public abstract class BaseExample
 {
-    public abstract class BaseExample
+    protected PoweredUpHost Host { get; set; }
+    protected IServiceProvider ServiceProvider { get; set; }
+    public Hub SelectedHub { get; set; }
+
+    public ILogger Log { get; private set; }
+
+    public abstract Task ExecuteAsync();
+
+    public virtual void Configure(IServiceCollection serviceCollection)
     {
-        protected PoweredUpHost Host { get; set; }
-        protected IServiceProvider ServiceProvider { get; set; }
-        public Hub SelectedHub { get; set; }
+        serviceCollection
+            .AddPoweredUp();
+    }
 
-        public ILogger Log { get; private set; }
+    public async Task InitExampleAndDiscoverAsync(IServiceProvider serviceProvider, IConfiguration configuration)
+    {
+        ServiceProvider = serviceProvider;
 
-        public abstract Task ExecuteAsync();
+        Host = serviceProvider.GetService<PoweredUpHost>();
 
-        public virtual void Configure(IServiceCollection serviceCollection)
+        Log = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
+
+        var enableTrace = bool.TryParse(configuration["EnableTrace"], out var x) && x;
+
+        await DiscoverAsync(enableTrace);
+    }
+
+    public virtual Task DiscoverAsync(bool enableTrace)
+    {
+        Hub result = null;
+
+        Log.LogInformation("Finding Service");
+        var cts = new CancellationTokenSource();
+        Host.Discover(async hub =>
         {
-            serviceCollection
-                .AddPoweredUp();
-        }
-
-        public async Task InitExampleAndDiscoverAsync(IServiceProvider serviceProvider, IConfiguration configuration)
-        {
-            ServiceProvider = serviceProvider;
-
-            Host = serviceProvider.GetService<PoweredUpHost>();
-
-            Log = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
-
-            var enableTrace = bool.TryParse(configuration["EnableTrace"], out var x) && x;
-
-            await DiscoverAsync(enableTrace);
-        }
-
-        public virtual Task DiscoverAsync(bool enableTrace)
-        {
-            Hub result = null;
-
-            Log.LogInformation("Finding Service");
-            var cts = new CancellationTokenSource();
-            Host.Discover(async hub =>
-            {
                 // add this when you are interested in a tracing of the message ("human readable")
                 if (enableTrace)
-                {
-                    var tracer = hub.ServiceProvider.GetService<TraceMessages>();
-                    await tracer.ExecuteAsync();
-                }
+            {
+                var tracer = hub.ServiceProvider.GetService<TraceMessages>();
+                await tracer.ExecuteAsync();
+            }
 
-                Log.LogInformation("Connecting to Hub");
-                await hub.ConnectAsync();
+            Log.LogInformation("Connecting to Hub");
+            await hub.ConnectAsync();
 
-                result = hub;
+            result = hub;
 
-                Log.LogInformation(hub.AdvertisingName);
-                Log.LogInformation(hub.SystemType.ToString());
-
-                cts.Cancel();
-
-                Log.LogInformation("Press RETURN to continue to the action");
-            }, cts.Token);
-
-            Log.LogInformation("Press RETURN to cancel Scanning");
-            Console.ReadLine();
+            Log.LogInformation(hub.AdvertisingName);
+            Log.LogInformation(hub.SystemType.ToString());
 
             cts.Cancel();
 
-            SelectedHub = result;
+            Log.LogInformation("Press RETURN to continue to the action");
+        }, cts.Token);
 
-            return Task.CompletedTask;
-        }
+        Log.LogInformation("Press RETURN to cancel Scanning");
+        Console.ReadLine();
+
+        cts.Cancel();
+
+        SelectedHub = result;
+
+        return Task.CompletedTask;
     }
 }

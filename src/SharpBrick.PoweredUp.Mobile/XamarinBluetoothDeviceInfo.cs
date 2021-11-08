@@ -20,7 +20,7 @@ namespace SharpBrick.PoweredUp.Mobile
         }
 
         public string Name { get; set; }
-        
+
         public byte[] ManufacturerData { get; set; }
 
         public byte[] MacAddress { get; private set; } = new byte[0];
@@ -63,7 +63,7 @@ namespace SharpBrick.PoweredUp.Mobile
                 _deviceIdentifier = BytesStringUtil.ByteArrayToHexString(MacAddress);
             }
         }
-        
+
     }
 
 }

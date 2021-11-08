@@ -4,19 +4,19 @@ using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
-{
-    public class TechnicLargeAngularMotorGrey : AbsoluteMotor, IPoweredUpDevice
-    {
-        public TechnicLargeAngularMotorGrey()
-            : base()
-        { }
-        public TechnicLargeAngularMotorGrey(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        { }
+namespace SharpBrick.PoweredUp;
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+public class TechnicLargeAngularMotorGrey : AbsoluteMotor, IPoweredUpDevice
+{
+    public TechnicLargeAngularMotorGrey()
+        : base()
+    { }
+    public TechnicLargeAngularMotorGrey(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
+    { }
+
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-00-01-0F-06-0E-00-0F-00
 07-00-43-00-02-0E-00
 11-00-44-00-00-00-50-4F-57-45-52-00-00-00-00-00-00
@@ -62,5 +62,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-00-05-05-00-00
 0A-00-44-00-05-80-0E-01-05-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

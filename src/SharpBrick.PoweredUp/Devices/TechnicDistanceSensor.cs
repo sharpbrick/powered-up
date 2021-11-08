@@ -6,49 +6,49 @@ using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class TechnicDistanceSensor : Device, IPoweredUpDevice
 {
-    public class TechnicDistanceSensor : Device, IPoweredUpDevice
+    protected SingleValueMode<short, short> _distlMode;
+    protected SingleValueMode<short, short> _distsMode;
+    protected SingleValueMode<short, short> _singlMode;
+    protected MultiValueMode<sbyte, sbyte> _lightMode;
+
+    public byte ModeIndexDistance { get; protected set; } = 0;
+    public byte ModeIndexShortOnlyDistance { get; protected set; } = 1;
+    public byte ModeIndexSingleMeasurement { get; protected set; } = 2;
+    public byte ModeIndexLight { get; protected set; } = 5;
+
+    public short Distance => _distlMode.SI;
+    public IObservable<short> DistanceObservable => _distlMode.Observable.Select(x => x.SI);
+    public short ShortOnlyDistance => _distsMode.SI;
+    public IObservable<short> ShortOnlyDistanceObservable => _distsMode.Observable.Select(x => x.SI);
+    public short Single => _singlMode.SI;
+    public IObservable<short> SingleObservable => _singlMode.Observable.Select(x => x.SI);
+
+    public TechnicDistanceSensor()
+    { }
+    public TechnicDistanceSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        protected SingleValueMode<short, short> _distlMode;
-        protected SingleValueMode<short, short> _distsMode;
-        protected SingleValueMode<short, short> _singlMode;
-        protected MultiValueMode<sbyte, sbyte> _lightMode;
+        _distlMode = SingleValueMode<short, short>(ModeIndexDistance);
+        _distsMode = SingleValueMode<short, short>(ModeIndexShortOnlyDistance);
+        _singlMode = SingleValueMode<short, short>(ModeIndexSingleMeasurement);
+        _lightMode = MultiValueMode<sbyte, sbyte>(ModeIndexLight);
 
-        public byte ModeIndexDistance { get; protected set; } = 0;
-        public byte ModeIndexShortOnlyDistance { get; protected set; } = 1;
-        public byte ModeIndexSingleMeasurement { get; protected set; } = 2;
-        public byte ModeIndexLight { get; protected set; } = 5;
+        ObserveForPropertyChanged(_distlMode.Observable, nameof(Distance));
+        ObserveForPropertyChanged(_distsMode.Observable, nameof(ShortOnlyDistance));
+        ObserveForPropertyChanged(_singlMode.Observable, nameof(Single));
+    }
 
-        public short Distance => _distlMode.SI;
-        public IObservable<short> DistanceObservable => _distlMode.Observable.Select(x => x.SI);
-        public short ShortOnlyDistance => _distsMode.SI;
-        public IObservable<short> ShortOnlyDistanceObservable => _distsMode.Observable.Select(x => x.SI);
-        public short Single => _singlMode.SI;
-        public IObservable<short> SingleObservable => _singlMode.Observable.Select(x => x.SI);
+    public Task SetEyeLightAsync(byte leftTop = 0x00, byte rightTop = 0x00, byte leftBottom = 0x00, byte rightBottom = 0x00)
+        => _lightMode.WriteDirectModeDataAsync(new byte[] { leftTop, rightTop, leftBottom, rightBottom });
 
-        public TechnicDistanceSensor()
-        { }
-        public TechnicDistanceSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => ((softwareVersion, hardwareVersion, systemType) switch
         {
-            _distlMode = SingleValueMode<short, short>(ModeIndexDistance);
-            _distsMode = SingleValueMode<short, short>(ModeIndexShortOnlyDistance);
-            _singlMode = SingleValueMode<short, short>(ModeIndexSingleMeasurement);
-            _lightMode = MultiValueMode<sbyte, sbyte>(ModeIndexLight);
-
-            ObserveForPropertyChanged(_distlMode.Observable, nameof(Distance));
-            ObserveForPropertyChanged(_distsMode.Observable, nameof(ShortOnlyDistance));
-            ObserveForPropertyChanged(_singlMode.Observable, nameof(Single));
-        }
-
-        public Task SetEyeLightAsync(byte leftTop = 0x00, byte rightTop = 0x00, byte leftBottom = 0x00, byte rightBottom = 0x00)
-            => _lightMode.WriteDirectModeDataAsync(new byte[] { leftTop, rightTop, leftBottom, rightBottom });
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => ((softwareVersion, hardwareVersion, systemType) switch
-            {
-                (_, _, _) => @"
+            (_, _, _) => @"
 0B-00-43-00-01-03-09-9F-00-60-00
 05-00-43-00-02
 11-00-44-00-00-00-44-49-53-54-4C-00-00-00-00-00-00
@@ -115,6 +115,5 @@ namespace SharpBrick.PoweredUp
 08-00-44-00-08-05-00-00
 0A-00-44-00-08-80-07-00-03-00
 "
-            }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
+        }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
 }

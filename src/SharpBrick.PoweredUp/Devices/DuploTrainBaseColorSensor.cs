@@ -5,51 +5,51 @@ using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class DuploTrainBaseColorSensor : Device, IPoweredUpDevice
 {
-    public class DuploTrainBaseColorSensor : Device, IPoweredUpDevice
+    protected SingleValueMode<sbyte, sbyte> _colorMode;
+    protected SingleValueMode<sbyte, sbyte> _colorTagMode;
+    protected SingleValueMode<sbyte, sbyte> _reflectionMode;
+    protected MultiValueMode<short, short> _rgbMode;
+
+    public byte ModeIndexColor { get; protected set; } = 0;
+    public byte ModeIndexColorTag { get; protected set; } = 1;
+    public byte ModeIndexReflection { get; protected set; } = 2;
+    public byte ModeIndexRgb { get; protected set; } = 3;
+
+    public sbyte Color => _colorMode.SI;
+    public DuploColorTag ColorTag => (DuploColorTag)_colorTagMode.SI;
+    public sbyte Reflection => _reflectionMode.SI;
+    public (short red, short green, short blue) Rgb => (_rgbMode.SI[0], _rgbMode.SI[1], _rgbMode.SI[2]);
+    public (short red, short green, short blue) RgbPct => (_rgbMode.Pct[0], _rgbMode.Pct[1], _rgbMode.Pct[2]);
+
+    public IObservable<sbyte> ColorObservable => _colorMode.Observable.Select(v => v.SI);
+    public IObservable<DuploColorTag> ColorTagObservable => _colorTagMode.Observable.Select(v => (DuploColorTag)v.SI);
+    public IObservable<sbyte> ReflectionObservable => _reflectionMode.Observable.Select(v => v.SI);
+    public IObservable<(short red, short green, short blue)> RgbObservable => _rgbMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
+    public IObservable<(short red, short green, short blue)> RgbPctObservable => _rgbMode.Observable.Select(v => (v.Pct[0], v.Pct[1], v.Pct[2]));
+
+    public DuploTrainBaseColorSensor()
+    { }
+
+    public DuploTrainBaseColorSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        protected SingleValueMode<sbyte, sbyte> _colorMode;
-        protected SingleValueMode<sbyte, sbyte> _colorTagMode;
-        protected SingleValueMode<sbyte, sbyte> _reflectionMode;
-        protected MultiValueMode<short, short> _rgbMode;
+        _colorMode = SingleValueMode<sbyte, sbyte>(ModeIndexColor);
+        _colorTagMode = SingleValueMode<sbyte, sbyte>(ModeIndexColorTag);
+        _reflectionMode = SingleValueMode<sbyte, sbyte>(ModeIndexReflection);
+        _rgbMode = MultiValueMode<short, short>(ModeIndexRgb);
 
-        public byte ModeIndexColor { get; protected set; } = 0;
-        public byte ModeIndexColorTag { get; protected set; } = 1;
-        public byte ModeIndexReflection { get; protected set; } = 2;
-        public byte ModeIndexRgb { get; protected set; } = 3;
+        ObserveForPropertyChanged(_colorMode.Observable, nameof(Color));
+        ObserveForPropertyChanged(_colorTagMode.Observable, nameof(ColorTag));
+        ObserveForPropertyChanged(_reflectionMode.Observable, nameof(Reflection));
+        ObserveForPropertyChanged(_rgbMode.Observable, nameof(Rgb), nameof(RgbPct));
+    }
 
-        public sbyte Color => _colorMode.SI;
-        public DuploColorTag ColorTag => (DuploColorTag)_colorTagMode.SI;
-        public sbyte Reflection => _reflectionMode.SI;
-        public (short red, short green, short blue) Rgb => (_rgbMode.SI[0], _rgbMode.SI[1], _rgbMode.SI[2]);
-        public (short red, short green, short blue) RgbPct => (_rgbMode.Pct[0], _rgbMode.Pct[1], _rgbMode.Pct[2]);
-
-        public IObservable<sbyte> ColorObservable => _colorMode.Observable.Select(v => v.SI);
-        public IObservable<DuploColorTag> ColorTagObservable => _colorTagMode.Observable.Select(v => (DuploColorTag)v.SI);
-        public IObservable<sbyte> ReflectionObservable => _reflectionMode.Observable.Select(v => v.SI);
-        public IObservable<(short red, short green, short blue)> RgbObservable => _rgbMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
-        public IObservable<(short red, short green, short blue)> RgbPctObservable => _rgbMode.Observable.Select(v => (v.Pct[0], v.Pct[1], v.Pct[2]));
-
-        public DuploTrainBaseColorSensor()
-        { }
-
-        public DuploTrainBaseColorSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        {
-            _colorMode = SingleValueMode<sbyte, sbyte>(ModeIndexColor);
-            _colorTagMode = SingleValueMode<sbyte, sbyte>(ModeIndexColorTag);
-            _reflectionMode = SingleValueMode<sbyte, sbyte>(ModeIndexReflection);
-            _rgbMode = MultiValueMode<short, short>(ModeIndexRgb);
-
-            ObserveForPropertyChanged(_colorMode.Observable, nameof(Color));
-            ObserveForPropertyChanged(_colorTagMode.Observable, nameof(ColorTag));
-            ObserveForPropertyChanged(_reflectionMode.Observable, nameof(Reflection));
-            ObserveForPropertyChanged(_rgbMode.Observable, nameof(Rgb), nameof(RgbPct));
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-12-01-06-05-1F-00-00-00
 07-00-43-12-02-0F-00
 11-00-44-12-00-00-43-4F-4C-4F-52-00-00-00-00-00-00
@@ -88,5 +88,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-12-04-05-10-00
 0A-00-44-12-04-80-03-01-05-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

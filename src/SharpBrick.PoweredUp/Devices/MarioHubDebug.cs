@@ -5,20 +5,20 @@ using System.Reactive.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class MarioHubDebug : Device, IPoweredUpDevice
 {
-    public class MarioHubDebug : Device, IPoweredUpDevice
+    public MarioHubDebug()
+    { }
+
+    public MarioHubDebug(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        public MarioHubDebug()
-        { }
+    }
 
-        public MarioHubDebug(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        {
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-03-01-02-04-0F-00-00-00
 05-00-43-03-02
 11-00-44-03-00-00-43-48-41-4C-00-00-00-00-00-00-00
@@ -50,5 +50,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-03-03-05-84-00
 0A-00-44-03-03-80-04-02-0A-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

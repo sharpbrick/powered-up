@@ -8,167 +8,167 @@ using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class MoveHubTiltSensor : Device, IPoweredUpDevice
 {
-    public class MoveHubTiltSensor : Device, IPoweredUpDevice
+    protected MultiValueMode<sbyte, sbyte> _twoAxisFullMode;
+    protected SingleValueMode<sbyte, sbyte> _twoAxisStateMode;
+    protected SingleValueMode<sbyte, sbyte> _threeAxisStateMode;
+    protected SingleValueMode<int, int> _impactsMode;
+    protected MultiValueMode<sbyte, sbyte> _threeAxisFullMode;
+
+    /// <summary>
+    /// Two axis full values
+    /// </summary>
+    public byte ModeIndexTwoAxisFull { get; protected set; } = 0;
+    /// <summary>
+    /// Two Axis simple state of orientation
+    /// </summary>
+    public byte ModeIndexTwoAxisState { get; protected set; } = 1;
+    /// <summary>
+    /// Three Axis simple state of orientation which provides more states than <see cref="ModeIndexTwoAxisState"/>
+    /// </summary>
+    public byte ModeIndexThreeAxisState { get; protected set; } = 2;
+    /// <summary>
+    /// Count of impacts
+    /// </summary>
+    public byte ModeIndexImpacts { get; protected set; } = 3;
+    /// <summary>
+    /// Three axis full values
+    /// </summary>
+    public byte ModeIndexThreeAxisFull { get; protected set; } = 4;
+    public byte ModeIndexOrientationConfig { get; protected set; } = 5;
+    public byte ModeIndexImpactsConfig { get; protected set; } = 6;
+    public byte ModeIndexCalibration { get; protected set; } = 7;
+
+    public (sbyte roll, sbyte pitch) TwoAxisFull => (_twoAxisFullMode.SI[0], _twoAxisFullMode.SI[1]);
+    public MoveHubTiltSimpleOrientation TwoAxisState => (MoveHubTiltSimpleOrientation)_twoAxisStateMode.SI;
+    public MoveHubTiltOrientation ThreeAxisState => (MoveHubTiltOrientation)_threeAxisStateMode.SI;
+    public int Impacts => _impactsMode.SI;
+    public (sbyte roll, sbyte pitch, sbyte yaw) ThreeAxisFull => (_threeAxisFullMode.SI[0], _threeAxisFullMode.SI[1], _threeAxisFullMode.SI[2]);
+
+    public IObservable<(sbyte roll, sbyte pitch)> TwoAxisFullObservable => _twoAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1]));
+    public IObservable<MoveHubTiltSimpleOrientation> TwoAxisStateObservable => _twoAxisStateMode.Observable.Select(x => (MoveHubTiltSimpleOrientation)x.SI);
+    public IObservable<MoveHubTiltOrientation> ThreeAxisStateObservable => _threeAxisStateMode.Observable.Select(x => (MoveHubTiltOrientation)x.SI);
+    public IObservable<Value<int, int>> ImpactsObservable => _impactsMode.Observable;
+    public IObservable<(sbyte roll, sbyte pitch, sbyte yaw)> ThreeAxisFullObservable => _threeAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
+
+    public MoveHubTiltSensor()
+    { }
+
+    public MoveHubTiltSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        protected MultiValueMode<sbyte, sbyte> _twoAxisFullMode;
-        protected SingleValueMode<sbyte, sbyte> _twoAxisStateMode;
-        protected SingleValueMode<sbyte, sbyte> _threeAxisStateMode;
-        protected SingleValueMode<int, int> _impactsMode;
-        protected MultiValueMode<sbyte, sbyte> _threeAxisFullMode;
+        _twoAxisFullMode = MultiValueMode<sbyte, sbyte>(ModeIndexTwoAxisFull);
+        _twoAxisStateMode = SingleValueMode<sbyte, sbyte>(ModeIndexTwoAxisState);
+        _threeAxisStateMode = SingleValueMode<sbyte, sbyte>(ModeIndexThreeAxisState);
+        _impactsMode = SingleValueMode<int, int>(ModeIndexImpacts);
+        _threeAxisFullMode = MultiValueMode<sbyte, sbyte>(ModeIndexThreeAxisFull);
 
-        /// <summary>
-        /// Two axis full values
-        /// </summary>
-        public byte ModeIndexTwoAxisFull { get; protected set; } = 0;
-        /// <summary>
-        /// Two Axis simple state of orientation
-        /// </summary>
-        public byte ModeIndexTwoAxisState { get; protected set; } = 1;
-        /// <summary>
-        /// Three Axis simple state of orientation which provides more states than <see cref="ModeIndexTwoAxisState"/>
-        /// </summary>
-        public byte ModeIndexThreeAxisState { get; protected set; } = 2;
-        /// <summary>
-        /// Count of impacts
-        /// </summary>
-        public byte ModeIndexImpacts { get; protected set; } = 3;
-        /// <summary>
-        /// Three axis full values
-        /// </summary>
-        public byte ModeIndexThreeAxisFull { get; protected set; } = 4;
-        public byte ModeIndexOrientationConfig { get; protected set; } = 5;
-        public byte ModeIndexImpactsConfig { get; protected set; } = 6;
-        public byte ModeIndexCalibration { get; protected set; } = 7;
+        ObserveForPropertyChanged(_twoAxisFullMode.Observable, nameof(TwoAxisFull));
+        ObserveForPropertyChanged(_twoAxisStateMode.Observable, nameof(TwoAxisState));
+        ObserveForPropertyChanged(_threeAxisStateMode.Observable, nameof(ThreeAxisState));
+        ObserveForPropertyChanged(_impactsMode.Observable, nameof(Impacts));
+        ObserveForPropertyChanged(_threeAxisFullMode.Observable, nameof(ThreeAxisFull));
+    }
 
-        public (sbyte roll, sbyte pitch) TwoAxisFull => (_twoAxisFullMode.SI[0], _twoAxisFullMode.SI[1]);
-        public MoveHubTiltSimpleOrientation TwoAxisState => (MoveHubTiltSimpleOrientation)_twoAxisStateMode.SI;
-        public MoveHubTiltOrientation ThreeAxisState => (MoveHubTiltOrientation)_threeAxisStateMode.SI;
-        public int Impacts => _impactsMode.SI;
-        public (sbyte roll, sbyte pitch, sbyte yaw) ThreeAxisFull => (_threeAxisFullMode.SI[0], _threeAxisFullMode.SI[1], _threeAxisFullMode.SI[2]);
-
-        public IObservable<(sbyte roll, sbyte pitch)> TwoAxisFullObservable => _twoAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1]));
-        public IObservable<MoveHubTiltSimpleOrientation> TwoAxisStateObservable => _twoAxisStateMode.Observable.Select(x => (MoveHubTiltSimpleOrientation)x.SI);
-        public IObservable<MoveHubTiltOrientation> ThreeAxisStateObservable => _threeAxisStateMode.Observable.Select(x => (MoveHubTiltOrientation)x.SI);
-        public IObservable<Value<int, int>> ImpactsObservable => _impactsMode.Observable;
-        public IObservable<(sbyte roll, sbyte pitch, sbyte yaw)> ThreeAxisFullObservable => _threeAxisFullMode.Observable.Select(v => (v.SI[0], v.SI[1], v.SI[2]));
-
-        public MoveHubTiltSensor()
-        { }
-
-        public MoveHubTiltSensor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
+    public void ExtendPortMode(PortModeInfo modeInfo)
+    {
+        // Percentage is disabled for three axis full (ACCEL) since in some cases the hub 
+        // can report a larger than expected value which makes the percentage go beyond an sbyte min/max values and generate an exception
+        // TODO: This can be removed when #126 is implemented
+        if (modeInfo.ModeIndex == ModeIndexThreeAxisFull)
         {
-            _twoAxisFullMode = MultiValueMode<sbyte, sbyte>(ModeIndexTwoAxisFull);
-            _twoAxisStateMode = SingleValueMode<sbyte, sbyte>(ModeIndexTwoAxisState);
-            _threeAxisStateMode = SingleValueMode<sbyte, sbyte>(ModeIndexThreeAxisState);
-            _impactsMode = SingleValueMode<int, int>(ModeIndexImpacts);
-            _threeAxisFullMode = MultiValueMode<sbyte, sbyte>(ModeIndexThreeAxisFull);
+            modeInfo.DisablePercentage = true;
+        }
+    }
 
-            ObserveForPropertyChanged(_twoAxisFullMode.Observable, nameof(TwoAxisFull));
-            ObserveForPropertyChanged(_twoAxisStateMode.Observable, nameof(TwoAxisState));
-            ObserveForPropertyChanged(_threeAxisStateMode.Observable, nameof(ThreeAxisState));
-            ObserveForPropertyChanged(_impactsMode.Observable, nameof(Impacts));
-            ObserveForPropertyChanged(_threeAxisFullMode.Observable, nameof(ThreeAxisFull));
+    /// <summary>
+    /// Set the Tilt into ImpactCount mode and change (preset) the value to the given PresetValue.
+    /// </summary>
+    /// <param name="presetValue">Value between 0 and int.MaxValue</param>
+    /// <returns></returns>
+    public async Task<PortFeedback> TiltImpactPresetAsync(int presetValue)
+    {
+        AssertIsConnected();
+
+        if (presetValue < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(presetValue), "PresetValue has to be between 0 and int.MaxValue");
         }
 
-        public void ExtendPortMode(PortModeInfo modeInfo)
+        var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltImpactPresetMessage(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            presetValue
+        )
         {
-            // Percentage is disabled for three axis full (ACCEL) since in some cases the hub 
-            // can report a larger than expected value which makes the percentage go beyond an sbyte min/max values and generate an exception
-            // TODO: This can be removed when #126 is implemented
-            if (modeInfo.ModeIndex == ModeIndexThreeAxisFull)
-            {
-                modeInfo.DisablePercentage = true;
-            }
+            HubId = _hubId,
+            ModeIndex = ModeIndexImpacts,
+        });
+
+        return response;
+    }
+
+    /// <summary>
+    /// Setup Tilt ImpactThreshold and BumpHoldoff
+    /// </summary>
+    /// <param name="impactThreshold">Impact Threshold between 0 and 127.</param>
+    /// <param name="bumpHoldoffInMs">Bump Holdoff between 10ms and 1270ms.</param>
+    /// <returns></returns>
+    public async Task<PortFeedback> TiltConfigImpactAsync(sbyte impactThreshold, short bumpHoldoffInMs)
+    {
+        AssertIsConnected();
+
+        if (impactThreshold < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(impactThreshold), "Impact Threshold has to be between 0 and 127");
         }
 
-        /// <summary>
-        /// Set the Tilt into ImpactCount mode and change (preset) the value to the given PresetValue.
-        /// </summary>
-        /// <param name="presetValue">Value between 0 and int.MaxValue</param>
-        /// <returns></returns>
-        public async Task<PortFeedback> TiltImpactPresetAsync(int presetValue)
+        if (bumpHoldoffInMs < 10 || bumpHoldoffInMs > 1270)
         {
-            AssertIsConnected();
-
-            if (presetValue < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(presetValue), "PresetValue has to be between 0 and int.MaxValue");
-            }
-
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltImpactPresetMessage(
-                _portId,
-                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                presetValue
-            )
-            {
-                HubId = _hubId,
-                ModeIndex = ModeIndexImpacts,
-            });
-
-            return response;
+            throw new ArgumentOutOfRangeException(nameof(bumpHoldoffInMs), "Hold off has to be between 10 and 1270 ms (in steps of 10ms)");
         }
 
-        /// <summary>
-        /// Setup Tilt ImpactThreshold and BumpHoldoff
-        /// </summary>
-        /// <param name="impactThreshold">Impact Threshold between 0 and 127.</param>
-        /// <param name="bumpHoldoffInMs">Bump Holdoff between 10ms and 1270ms.</param>
-        /// <returns></returns>
-        public async Task<PortFeedback> TiltConfigImpactAsync(sbyte impactThreshold, short bumpHoldoffInMs)
+        var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigImpactMessage(
+            _portId,
+             PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+             impactThreshold,
+             (sbyte)((float)bumpHoldoffInMs / 10)
+        )
         {
-            AssertIsConnected();
+            HubId = _hubId,
+            ModeIndex = ModeIndexImpactsConfig,
+        });
 
-            if (impactThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(impactThreshold), "Impact Threshold has to be between 0 and 127");
-            }
+        return response;
+    }
 
-            if (bumpHoldoffInMs < 10 || bumpHoldoffInMs > 1270)
-            {
-                throw new ArgumentOutOfRangeException(nameof(bumpHoldoffInMs), "Hold off has to be between 10 and 1270 ms (in steps of 10ms)");
-            }
+    /// <summary>
+    /// Set the Tilt into Orientation mode and set the Orientation value to Orientation.
+    /// </summary>
+    /// <param name="orientation">orientation of the tilt for 0 values.</param>
+    /// <returns></returns>
+    public async Task<PortFeedback> TiltConfigOrientationAsync(TiltConfigOrientation orientation)
+    {
+        AssertIsConnected();
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigImpactMessage(
-                _portId,
-                 PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                 impactThreshold,
-                 (sbyte)((float)bumpHoldoffInMs / 10)
-            )
-            {
-                HubId = _hubId,
-                ModeIndex = ModeIndexImpactsConfig,
-            });
-
-            return response;
-        }
-
-        /// <summary>
-        /// Set the Tilt into Orientation mode and set the Orientation value to Orientation.
-        /// </summary>
-        /// <param name="orientation">orientation of the tilt for 0 values.</param>
-        /// <returns></returns>
-        public async Task<PortFeedback> TiltConfigOrientationAsync(TiltConfigOrientation orientation)
+        var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigOrientationMessage(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            orientation
+        )
         {
-            AssertIsConnected();
+            HubId = _hubId,
+            ModeIndex = ModeIndexOrientationConfig,
+        });
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandTiltConfigOrientationMessage(
-                _portId,
-                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                orientation
-            )
-            {
-                HubId = _hubId,
-                ModeIndex = ModeIndexOrientationConfig,
-            });
+        return response;
+    }
 
-            return response;
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            =>
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        =>
 @"
 0B-00-43-3A-01-06-08-FF-00-00-00
 07-00-43-3A-02-1F-00
@@ -229,5 +229,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-3A-07-05-10-00
 0A-00-44-3A-07-80-03-00-03-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

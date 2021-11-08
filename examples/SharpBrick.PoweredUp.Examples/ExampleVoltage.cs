@@ -4,25 +4,24 @@ using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleVoltage : BaseExample
 {
-    public class ExampleVoltage : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-            var device = technicMediumHub.Voltage;
+        var device = technicMediumHub.Voltage;
 
-            await device.SetupNotificationAsync(device.ModeIndexVoltageL, true);
+        await device.SetupNotificationAsync(device.ModeIndexVoltageL, true);
 
-            var disposable = device.VoltageLObservable.Subscribe(x => Log.LogWarning($"Voltage L: {x.SI}mV ({x.Pct}%)"));
+        var disposable = device.VoltageLObservable.Subscribe(x => Log.LogWarning($"Voltage L: {x.SI}mV ({x.Pct}%)"));
 
-            await Task.Delay(10_000);
+        await Task.Delay(10_000);
 
-            disposable.Dispose();
+        disposable.Dispose();
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

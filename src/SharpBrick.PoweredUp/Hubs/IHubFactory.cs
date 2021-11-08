@@ -1,8 +1,7 @@
-namespace SharpBrick.PoweredUp.Hubs
+namespace SharpBrick.PoweredUp.Hubs;
+
+public interface IHubFactory
 {
-    public interface IHubFactory
-    {
-        Hub CreateByBluetoothManufacturerData(byte[] manufacturerData);
-        THub Create<THub>() where THub : Hub;
-    }
+    Hub CreateByBluetoothManufacturerData(byte[] manufacturerData);
+    THub Create<THub>() where THub : Hub;
 }

@@ -6,47 +6,47 @@ using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class DuploTrainBaseSpeedometer : Device, IPoweredUpDevice
 {
-    public class DuploTrainBaseSpeedometer : Device, IPoweredUpDevice
+    protected SingleValueMode<short, short> _speedMode;
+    protected SingleValueMode<int, int> _countMode;
+
+    public byte ModeIndexSpeed { get; protected set; } = 0;
+    public byte ModeIndexCount { get; protected set; } = 1;
+
+    public short Speed => _speedMode.SI;
+    public short SpeedPct => _speedMode.Pct;
+    public IObservable<Value<short, short>> SpeedObservable => _speedMode.Observable;
+
+    public int Count => _countMode.SI;
+    public IObservable<int> CountObservable => _countMode.Observable.Select(v => v.SI);
+
+    public DuploTrainBaseSpeedometer()
+    { }
+
+    public DuploTrainBaseSpeedometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        protected SingleValueMode<short, short> _speedMode;
-        protected SingleValueMode<int, int> _countMode;
+        _speedMode = SingleValueMode<short, short>(ModeIndexSpeed);
+        _countMode = SingleValueMode<int, int>(ModeIndexCount);
 
-        public byte ModeIndexSpeed { get; protected set; } = 0;
-        public byte ModeIndexCount { get; protected set; } = 1;
+        ObserveForPropertyChanged(_speedMode.Observable, nameof(Speed), nameof(SpeedPct));
+        ObserveForPropertyChanged(_countMode.Observable, nameof(Count));
+    }
 
-        public short Speed => _speedMode.SI;
-        public short SpeedPct => _speedMode.Pct;
-        public IObservable<Value<short, short>> SpeedObservable => _speedMode.Observable;
-
-        public int Count => _countMode.SI;
-        public IObservable<int> CountObservable => _countMode.Observable.Select(v => v.SI);
-
-        public DuploTrainBaseSpeedometer()
-        { }
-
-        public DuploTrainBaseSpeedometer(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
+    public void ExtendPortMode(PortModeInfo portModeInfo)
+    {
+        if (portModeInfo.ModeIndex == ModeIndexCount)
         {
-            _speedMode = SingleValueMode<short, short>(ModeIndexSpeed);
-            _countMode = SingleValueMode<int, int>(ModeIndexCount);
-
-            ObserveForPropertyChanged(_speedMode.Observable, nameof(Speed), nameof(SpeedPct));
-            ObserveForPropertyChanged(_countMode.Observable, nameof(Count));
+            portModeInfo.DisableScaling = true;
+            portModeInfo.DisablePercentage = true;
         }
+    }
 
-        public void ExtendPortMode(PortModeInfo portModeInfo)
-        {
-            if (portModeInfo.ModeIndex == ModeIndexCount)
-            {
-                portModeInfo.DisableScaling = true;
-                portModeInfo.DisablePercentage = true;
-            }
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-13-01-06-03-07-00-00-00
 07-00-43-13-02-03-00
 11-00-44-13-00-00-53-50-45-45-44-00-00-00-00-00-00
@@ -71,5 +71,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-13-02-05-08-00
 0A-00-44-13-02-80-04-01-05-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }
