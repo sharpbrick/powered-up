@@ -1,4 +1,3 @@
-namespace SharpBrick.PoweredUp.Protocol.Messages
-{
-    public record PortOutputCommandFeedback(byte PortId, PortFeedback Feedback);
-}
+namespace SharpBrick.PoweredUp.Protocol.Messages;
+
+public record PortOutputCommandFeedback(byte PortId, PortFeedback Feedback);

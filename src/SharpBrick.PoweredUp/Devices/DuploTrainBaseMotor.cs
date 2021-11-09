@@ -8,123 +8,123 @@ using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public class DuploTrainBaseMotor : Device, IPoweredUpDevice
 {
-    public class DuploTrainBaseMotor : Device, IPoweredUpDevice
+    public SingleValueMode<int, int> _onSecMode;
+
+    public byte ModeIndexMotor { get; protected set; } = 0;
+    public byte ModeIndexOnSec { get; protected set; } = 1;
+
+    public int OnSeconds => _onSecMode.SI;
+    public IObservable<int> OnSecondsObservable => _onSecMode.Observable.Select(x => x.SI);
+
+    public DuploTrainBaseMotor()
+    { }
+
+    public DuploTrainBaseMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
     {
-        public SingleValueMode<int, int> _onSecMode;
+        _onSecMode = SingleValueMode<int, int>(ModeIndexOnSec);
 
-        public byte ModeIndexMotor { get; protected set; } = 0;
-        public byte ModeIndexOnSec { get; protected set; } = 1;
+        ObserveForPropertyChanged(_onSecMode.Observable, nameof(OnSeconds));
+    }
 
-        public int OnSeconds => _onSecMode.SI;
-        public IObservable<int> OnSecondsObservable => _onSecMode.Observable.Select(x => x.SI);
-
-        public DuploTrainBaseMotor()
-        { }
-
-        public DuploTrainBaseMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
+    public void ExtendPortMode(PortModeInfo modeInfo)
+    {
+        if (modeInfo.ModeIndex == ModeIndexOnSec)
         {
-            _onSecMode = SingleValueMode<int, int>(ModeIndexOnSec);
-
-            ObserveForPropertyChanged(_onSecMode.Observable, nameof(OnSeconds));
+            modeInfo.DisablePercentage = true;
         }
+    }
 
-        public void ExtendPortMode(PortModeInfo modeInfo)
+    /// <summary>
+    /// Starts the motor with full speed at the given power level.
+    /// </summary>
+    /// <param name="power">
+    /// - Power levels in percentage: 1 - 100 (CW), -1 - -100 (CCW)
+    /// - Stop Motor (floating): 0 
+    /// - Stop Motor (breaking): 127
+    /// </param>
+    /// <returns>An awaitable Task.</returns>
+    public async Task<PortFeedback> StartPowerAsync(sbyte power)
+    {
+        AssertValidPower(power, nameof(power));
+        AssertIsConnected();
+
+        var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPowerMessage(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            power
+        )
         {
-            if (modeInfo.ModeIndex == ModeIndexOnSec)
-            {
-                modeInfo.DisablePercentage = true;
-            }
-        }
+            HubId = _hubId,
+        });
 
-        /// <summary>
-        /// Starts the motor with full speed at the given power level.
-        /// </summary>
-        /// <param name="power">
-        /// - Power levels in percentage: 1 - 100 (CW), -1 - -100 (CCW)
-        /// - Stop Motor (floating): 0 
-        /// - Stop Motor (breaking): 127
-        /// </param>
-        /// <returns>An awaitable Task.</returns>
-        public async Task<PortFeedback> StartPowerAsync(sbyte power)
+        return response;
+    }
+
+    /// <summary>
+    /// Stops the motor (brake; no movement afterwards)
+    /// </summary>
+    /// <returns></returns>
+    public Task StopByBrakeAsync()
+        => StartPowerAsync((sbyte)SpecialSpeed.Brake);
+
+    /// <summary>
+    /// Stops the motor (float; freely floating by inertia)
+    /// </summary>
+    /// <returns></returns>
+    public Task StopByFloatAsync()
+        => StartPowerAsync((sbyte)SpecialSpeed.Float);
+
+    /// <summary>
+    /// Start the pair on motors with full speed on given power values.
+    /// </summary>
+    /// <param name="powerOnMotor1">
+    /// - Power levels in percentage: 1 - 100 (CW), -1 - -100 (CCW)
+    /// - Stop Motor (floating): 0 
+    /// - Stop Motor (breaking): 127
+    /// </param>
+    /// <param name="powerOnMotor2">
+    /// - Power levels in percentage: 1 - 100 (CW), -1 - -100 (CCW)
+    /// - Stop Motor (floating): 0 
+    /// - Stop Motor (breaking): 127
+    /// </param>
+    /// <returns></returns>
+    public async Task<PortFeedback> StartPowerAsync(sbyte powerOnMotor1, sbyte powerOnMotor2)
+    {
+        AssertValidPower(powerOnMotor1, nameof(powerOnMotor1));
+        AssertValidPower(powerOnMotor2, nameof(powerOnMotor2));
+        AssertIsConnected();
+        AssertIsVirtualPort();
+
+        var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPower2Message(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            powerOnMotor1, powerOnMotor2
+        )
         {
-            AssertValidPower(power, nameof(power));
-            AssertIsConnected();
+            HubId = _hubId,
+        });
 
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPowerMessage(
-                _portId,
-                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                power
-            )
-            {
-                HubId = _hubId,
-            });
+        return response;
+    }
 
-            return response;
-        }
-
-        /// <summary>
-        /// Stops the motor (brake; no movement afterwards)
-        /// </summary>
-        /// <returns></returns>
-        public Task StopByBrakeAsync()
-            => StartPowerAsync((sbyte)SpecialSpeed.Brake);
-
-        /// <summary>
-        /// Stops the motor (float; freely floating by inertia)
-        /// </summary>
-        /// <returns></returns>
-        public Task StopByFloatAsync()
-            => StartPowerAsync((sbyte)SpecialSpeed.Float);
-
-        /// <summary>
-        /// Start the pair on motors with full speed on given power values.
-        /// </summary>
-        /// <param name="powerOnMotor1">
-        /// - Power levels in percentage: 1 - 100 (CW), -1 - -100 (CCW)
-        /// - Stop Motor (floating): 0 
-        /// - Stop Motor (breaking): 127
-        /// </param>
-        /// <param name="powerOnMotor2">
-        /// - Power levels in percentage: 1 - 100 (CW), -1 - -100 (CCW)
-        /// - Stop Motor (floating): 0 
-        /// - Stop Motor (breaking): 127
-        /// </param>
-        /// <returns></returns>
-        public async Task<PortFeedback> StartPowerAsync(sbyte powerOnMotor1, sbyte powerOnMotor2)
+    protected void AssertValidPower(sbyte power, string argumentName)
+    {
+        if (
+              power < -100 ||
+              (power > 100 && power != 127)
+          )
         {
-            AssertValidPower(powerOnMotor1, nameof(powerOnMotor1));
-            AssertValidPower(powerOnMotor2, nameof(powerOnMotor2));
-            AssertIsConnected();
-            AssertIsVirtualPort();
-
-            var response = await _protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPower2Message(
-                _portId,
-                PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
-                powerOnMotor1, powerOnMotor2
-            )
-            {
-                HubId = _hubId,
-            });
-
-            return response;
+            throw new ArgumentOutOfRangeException(argumentName);
         }
+    }
 
-        protected void AssertValidPower(sbyte power, string argumentName)
-        {
-            if (
-                  power < -100 ||
-                  (power > 100 && power != 127)
-              )
-            {
-                throw new ArgumentOutOfRangeException(argumentName);
-            }
-        }
-
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-00-01-03-02-02-00-01-00
 05-00-43-00-02
 11-00-44-00-00-00-54-20-4D-4F-54-00-00-00-00-00-00
@@ -142,5 +142,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-00-01-05-08-00
 0A-00-44-00-01-80-01-02-04-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

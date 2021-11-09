@@ -1,21 +1,20 @@
 using System;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp.Protocol.Formatter
+namespace SharpBrick.PoweredUp.Protocol.Formatter;
+
+public class HubActionEncoder : IMessageContentEncoder
 {
-    public class HubActionEncoder : IMessageContentEncoder
+    public ushort CalculateContentLength(LegoWirelessMessage message)
+        => 1;
+
+    public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
+        => new HubActionMessage((HubAction)data[0]);
+
+    public void Encode(LegoWirelessMessage message, in Span<byte> data)
     {
-        public ushort CalculateContentLength(LegoWirelessMessage message)
-            => 1;
+        var hubActionMessage = message as HubActionMessage ?? throw new ArgumentException("message is null or not HubActionMessage", nameof(message));
 
-        public LegoWirelessMessage Decode(byte hubId, in Span<byte> data)
-            => new HubActionMessage((HubAction)data[0]);
-
-        public void Encode(LegoWirelessMessage message, in Span<byte> data)
-        {
-            var hubActionMessage = message as HubActionMessage ?? throw new ArgumentException("message is null or not HubActionMessage", nameof(message));
-
-            data[0] = (byte)hubActionMessage.Action;
-        }
+        data[0] = (byte)hubActionMessage.Action;
     }
 }

@@ -1,10 +1,9 @@
 using System;
 
-namespace SharpBrick.PoweredUp.Bluetooth
+namespace SharpBrick.PoweredUp.Bluetooth;
+
+public interface IPoweredUpBluetoothDeviceInfo : IEquatable<IPoweredUpBluetoothDeviceInfo>
 {
-    public interface IPoweredUpBluetoothDeviceInfo : IEquatable<IPoweredUpBluetoothDeviceInfo>
-    {
-        string Name { get; }
-        byte[] ManufacturerData { get; }
-    }
+    string Name { get; }
+    byte[] ManufacturerData { get; }
 }

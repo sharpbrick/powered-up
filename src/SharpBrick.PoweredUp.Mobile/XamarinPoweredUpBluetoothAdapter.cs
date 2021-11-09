@@ -51,7 +51,7 @@ namespace SharpBrick.PoweredUp.Mobile
                     var nativeDeviceInfo = _deviceInfoProvider.GetNativeDeviceInfo(args.Device.NativeDevice);
 
                     info.Name = args.Device.Name;
-                    info.DeviceIdentifier= nativeDeviceInfo.DeviceIdentifier;
+                    info.DeviceIdentifier = nativeDeviceInfo.DeviceIdentifier;
 
                     AddInternalDevice(args.Device, info);
                     await discoveryHandler(info).ConfigureAwait(false);

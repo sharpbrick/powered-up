@@ -4,19 +4,19 @@ using System.Linq;
 using SharpBrick.PoweredUp.Protocol;
 using SharpBrick.PoweredUp.Utils;
 
-namespace SharpBrick.PoweredUp
-{
-    public class MoveHubInternalMotor : TachoMotor, IPoweredUpDevice
-    {
-        public MoveHubInternalMotor()
-            : base()
-        { }
-        public MoveHubInternalMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
-            : base(protocol, hubId, portId)
-        { }
+namespace SharpBrick.PoweredUp;
 
-        public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-            => @"
+public class MoveHubInternalMotor : TachoMotor, IPoweredUpDevice
+{
+    public MoveHubInternalMotor()
+        : base()
+    { }
+    public MoveHubInternalMotor(ILegoWirelessProtocol protocol, byte hubId, byte portId)
+        : base(protocol, hubId, portId)
+    { }
+
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        => @"
 0B-00-43-00-01-0F-03-06-00-07-00
 07-00-43-00-02-06-00
 11-00-44-00-00-00-50-4F-57-45-52-00-00-00-00-00-00
@@ -41,5 +41,4 @@ namespace SharpBrick.PoweredUp
 08-00-44-00-02-05-08-08
 0A-00-44-00-02-80-01-02-04-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
-    }
 }

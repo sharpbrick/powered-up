@@ -29,7 +29,7 @@ namespace SharpBrick.PoweredUp.Mobile
         }
 
         #endregion
-        
+
         public async Task<IPoweredUpBluetoothCharacteristic> GetCharacteristicAsync(Guid guid)
         {
             var characteristic = await _service.GetCharacteristicAsync(guid);

@@ -1,23 +1,22 @@
-namespace SharpBrick.PoweredUp.Deployment
+namespace SharpBrick.PoweredUp.Deployment;
+
+public class DeploymentDeviceModel
 {
-    public class DeploymentDeviceModel
+    /// <summary>
+    /// Expected PortId
+    /// </summary>
+    /// <value></value>
+    public byte PortId { get; }
+
+    /// <summary>
+    /// Expected Device Type
+    /// </summary>
+    /// <value></value>
+    public DeviceType? DeviceType { get; }
+
+    public DeploymentDeviceModel(byte portId, DeviceType? deviceType)
     {
-        /// <summary>
-        /// Expected PortId
-        /// </summary>
-        /// <value></value>
-        public byte PortId { get; }
-
-        /// <summary>
-        /// Expected Device Type
-        /// </summary>
-        /// <value></value>
-        public DeviceType? DeviceType { get; }
-
-        public DeploymentDeviceModel(byte portId, DeviceType? deviceType)
-        {
-            PortId = portId;
-            DeviceType = deviceType;
-        }
+        PortId = portId;
+        DeviceType = deviceType;
     }
 }

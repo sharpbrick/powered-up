@@ -5,34 +5,33 @@ using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Hubs;
 using SharpBrick.PoweredUp.Protocol;
 
-namespace SharpBrick.PoweredUp
+namespace SharpBrick.PoweredUp;
+
+public static class IServiceCollectionExtensions
 {
-    public static class IServiceCollectionExtensions
-    {
-        public static IServiceCollection AddPoweredUp(this IServiceCollection self)
-            => self
-                // global infrastructure
-                .AddSingleton<PoweredUpHost>()
+    public static IServiceCollection AddPoweredUp(this IServiceCollection self)
+        => self
+            // global infrastructure
+            .AddSingleton<PoweredUpHost>()
 
-                // per connection infrastructure
-                .AddScoped<BluetoothKernel>()
-                .AddScoped<IHubFactory, HubFactory>()
-                .AddScoped<IDeviceFactory, DeviceFactory>()
-                .AddScoped<ILegoWirelessProtocol, LegoWirelessProtocol>()
+            // per connection infrastructure
+            .AddScoped<BluetoothKernel>()
+            .AddScoped<IHubFactory, HubFactory>()
+            .AddScoped<IDeviceFactory, DeviceFactory>()
+            .AddScoped<ILegoWirelessProtocol, LegoWirelessProtocol>()
 
-                // hubs
-                .AddTransient<TwoPortHub>()
-                .AddTransient<TwoPortHandset>()
-                .AddTransient<TechnicMediumHub>()
-                .AddTransient<MarioHub>()
-                .AddTransient<DuploTrainBaseHub>()
-                .AddTransient<MoveHub>()
+            // hubs
+            .AddTransient<TwoPortHub>()
+            .AddTransient<TwoPortHandset>()
+            .AddTransient<TechnicMediumHub>()
+            .AddTransient<MarioHub>()
+            .AddTransient<DuploTrainBaseHub>()
+            .AddTransient<MoveHub>()
 
-                // functions
-                .AddTransient<DiscoverPorts>()
-                .AddTransient<TraceMessages>()
-                .AddTransient<LinearMidCalibration>()
-                .AddTransient<LinearSpeedChange>()
-                ;
-    }
+            // functions
+            .AddTransient<DiscoverPorts>()
+            .AddTransient<TraceMessages>()
+            .AddTransient<LinearMidCalibration>()
+            .AddTransient<LinearSpeedChange>()
+            ;
 }

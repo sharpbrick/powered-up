@@ -3,19 +3,18 @@ using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol.Knowledge;
 using SharpBrick.PoweredUp.Protocol.Messages;
 
-namespace SharpBrick.PoweredUp.Protocol
+namespace SharpBrick.PoweredUp.Protocol;
+
+public interface ILegoWirelessProtocol : IDisposable
 {
-    public interface ILegoWirelessProtocol : IDisposable
-    {
-        Task ConnectAsync(SystemType initialSystemType = default);
-        Task DisconnectAsync();
+    Task ConnectAsync(SystemType initialSystemType = default);
+    Task DisconnectAsync();
 
-        Task SendMessageAsync(LegoWirelessMessage message);
-        IObservable<LegoWirelessMessage> UpstreamMessages { get; }
-        IObservable<(byte[] data, LegoWirelessMessage message)> UpstreamRawMessages { get; }
+    Task SendMessageAsync(LegoWirelessMessage message);
+    IObservable<LegoWirelessMessage> UpstreamMessages { get; }
+    IObservable<(byte[] data, LegoWirelessMessage message)> UpstreamRawMessages { get; }
 
-        ProtocolKnowledge Knowledge { get; }
+    ProtocolKnowledge Knowledge { get; }
 
-        IServiceProvider ServiceProvider { get; }
-    }
+    IServiceProvider ServiceProvider { get; }
 }

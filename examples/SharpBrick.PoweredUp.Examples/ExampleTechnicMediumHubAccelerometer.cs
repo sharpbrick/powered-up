@@ -1,28 +1,27 @@
 using System;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SharpBrick.PoweredUp;
 
-namespace Example
+namespace Example;
+
+public class ExampleTechnicMediumHubAccelerometer : BaseExample
 {
-    public class ExampleTechnicMediumHubAccelerometer : BaseExample
+    public override async Task ExecuteAsync()
     {
-        public override async Task ExecuteAsync()
-        {
-            using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
+        using var technicMediumHub = Host.FindByType<TechnicMediumHub>();
 
-            var device = technicMediumHub.Accelerometer;
+        var device = technicMediumHub.Accelerometer;
 
-            await device.SetupNotificationAsync(device.ModeIndexGravity, true);
+        await device.SetupNotificationAsync(device.ModeIndexGravity, true);
 
-            var disposable = device.GravityObservable.Subscribe(x => Log.LogWarning($"Gravity: {x.x} / {x.y} / {x.z}"));
+        var disposable = device.GravityObservable.Subscribe(x => Log.LogWarning($"Gravity: {x.x} / {x.y} / {x.z}"));
 
-            await Task.Delay(10_000);
+        await Task.Delay(10_000);
 
-            disposable.Dispose();
+        disposable.Dispose();
 
-            await technicMediumHub.SwitchOffAsync();
-        }
+        await technicMediumHub.SwitchOffAsync();
     }
 }

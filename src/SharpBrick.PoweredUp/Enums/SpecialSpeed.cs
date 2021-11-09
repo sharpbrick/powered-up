@@ -1,9 +1,8 @@
-﻿namespace SharpBrick.PoweredUp
+﻿namespace SharpBrick.PoweredUp;
+
+public enum SpecialSpeed : byte
 {
-    public enum SpecialSpeed : byte
-    {
-        Float = 0,
-        Hold = 126,
-        Brake = 127,
-    }
+    Float = 0,
+    Hold = 126,
+    Brake = 127,
 }
