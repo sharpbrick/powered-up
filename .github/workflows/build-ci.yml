@@ -18,11 +18,11 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 8.0.100
     - name: Build SharpBrick.PoweredUp
       run: dotnet build --configuration Release
     - name: Test SharpBrick.PoweredUp
@@ -43,7 +43,7 @@ jobs:
         verbosity: 'Info' # The verbosity level of the log messages. Values: Verbose, Info, Warning, Error, Off
         title: '' # Optional title.
         tag: '${{ github.run_number }}_${{ github.run_id }}' # Optional tag or build version.
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v4
       with:
         name: artifacts
         path: ./artifacts
