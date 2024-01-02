@@ -12,10 +12,10 @@ jobs:
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 8.0.100
     - name: Build Version
       # run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11}) // deprecated
       run: echo "RELEASE_VERSION=$($env:GITHUB_REF.SubString(11))" >> $env:GITHUB_ENV
@@ -25,7 +25,7 @@ jobs:
       run: dotnet test --no-build --configuration Release --logger trx
     - name: Pack Project
       run: dotnet pack --no-build --output ./artifacts --configuration Release -p:Version=$env:RELEASE_VERSION
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v4
       with:
         name: artifacts
         path: ./artifacts
@@ -37,13 +37,13 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       NUGET_AUTH_TOKEN: ${{ secrets.NUGET_APIKEY }}
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 8.0.100
         source-url: https://api.nuget.org/v3/index.json
-    - uses: actions/download-artifact@v1
+    - uses: actions/download-artifact@v4
       with:
         name: artifacts
         path: ./artifacts
