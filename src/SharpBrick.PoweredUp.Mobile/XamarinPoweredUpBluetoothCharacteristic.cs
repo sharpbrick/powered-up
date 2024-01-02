@@ -45,7 +45,7 @@ namespace SharpBrick.PoweredUp.Mobile
                 throw new ArgumentNullException(nameof(data));
             }
 
-            return await _characteristic.WriteAsync(data);
+            return await _characteristic.WriteAsync(data) == 0;
         }
     }
 }
