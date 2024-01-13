@@ -157,6 +157,6 @@ public class RgbLight : Device, IPoweredUpDevice
 08-00-44-32-01-05-00-10
 0A-00-44-32-01-80-03-00-03-00
 ",
-            _ => throw new NotSupportedException(),
+            _ => throw BuildNotSupportedException(softwareVersion, hardwareVersion, systemType)
         }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
 }

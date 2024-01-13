@@ -91,6 +91,6 @@ public class Current : Device, IPoweredUpDevice
 08-00-44-3B-01-05-10-00
 0A-00-44-3B-01-80-01-01-04-00
 ",
-            _ => throw new NotSupportedException(),
+            _ => throw BuildNotSupportedException(softwareVersion, hardwareVersion, systemType),
         }).Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
 }
