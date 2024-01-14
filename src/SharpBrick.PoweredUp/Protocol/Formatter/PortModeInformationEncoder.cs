@@ -18,7 +18,8 @@ public class PortModeInformationEncoder : IMessageContentEncoder
 
         var message = informationType switch
         {
-            PortModeInformationType.Name => new PortModeInformationForNameMessage(portId, mode, Encoding.ASCII.GetString(payload.Slice(0, payload.IndexOf<byte>(0x00)))),
+            // Here the specs say to use the length field and just pick the remainder of the bytes, no termination.
+            PortModeInformationType.Name => new PortModeInformationForNameMessage(portId, mode, ParseStringIgnoringTrainingNullCharacters(payload)),
             PortModeInformationType.Raw => new PortModeInformationForRawMessage(portId, mode, RawMin: BitConverter.ToSingle(payload.Slice(0, 4)), RawMax: BitConverter.ToSingle(payload.Slice(4, 4))),
             PortModeInformationType.Pct => new PortModeInformationForPctMessage(portId, mode, PctMin: BitConverter.ToSingle(payload.Slice(0, 4)), PctMax: BitConverter.ToSingle(payload.Slice(4, 4))),
             PortModeInformationType.SI => new PortModeInformationForSIMessage(portId, mode, SIMin: BitConverter.ToSingle(payload.Slice(0, 4)), SIMax: BitConverter.ToSingle(payload.Slice(4, 4))),
@@ -34,6 +35,18 @@ public class PortModeInformationEncoder : IMessageContentEncoder
         return message;
     }
 
+    private static string ParseStringIgnoringTrainingNullCharacters(Span<byte> data)
+    {
+        // Most devices pad the name with 0x00
+        var firstNullCharIndex = data.IndexOf<byte>(0x00);
+        var dataToDecode = data;
+        if (firstNullCharIndex != -1) {
+            // Trim everything after the last 0x00.
+            dataToDecode = data.Slice(0, firstNullCharIndex);
+        }
+
+        return Encoding.ASCII.GetString(dataToDecode);
+    }
     private PortModeInformationMessage DecodeMapping(byte portId, byte mode, in Span<byte> data)
         => new PortModeInformationForMappingMessage(
             portId,
