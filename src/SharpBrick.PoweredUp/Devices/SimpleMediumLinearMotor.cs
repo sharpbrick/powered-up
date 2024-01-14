@@ -16,7 +16,8 @@ public class SimpleMediumLinearMotor : BasicMotor, IPoweredUpDevice
         : base(protocol, hubId, portId)
     { }
 
-    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType) 
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+      // Dump taken from LEGO 6290182 - 21980 - Electric, Motor WeDo 2.0 Medium which reports as 'LPF2-MMOTOR'.
       => @"
 0B-00-43-02-01-01-01-00-00-01-00
 05-00-43-02-02
