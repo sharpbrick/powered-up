@@ -81,7 +81,7 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
         {
             _logger.LogError(e, "Exception in LegoWirelessProtocol Encode/Knowledge");
 
-          // throw;
+            throw;
         }
     }
 
