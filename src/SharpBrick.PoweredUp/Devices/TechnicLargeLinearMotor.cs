@@ -15,7 +15,8 @@ public class TechnicLargeLinearMotor : AbsoluteMotor, IPoweredUpDevice
         : base(protocol, hubId, portId)
     { }
 
-    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType) 
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+        // Captured using TechnicLargeLinearMotor(HW: 0.0.0.1000 / SW: 0.0.0.1000) 
       => @"
 0B-00-43-00-01-0F-05-1E-00-1F-00
 07-00-43-00-02-0E-00
