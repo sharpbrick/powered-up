@@ -15,9 +15,9 @@ public class TechnicLargeLinearMotor : AbsoluteMotor, IPoweredUpDevice
         : base(protocol, hubId, portId)
     { }
 
-    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
-        => @"
-0B-00-43-00-01-0F-06-1E-00-1F-00
+    public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType) 
+      => @"
+0B-00-43-00-01-0F-05-1E-00-1F-00
 07-00-43-00-02-0E-00
 11-00-44-00-00-00-50-4F-57-45-52-00-00-00-00-00-00
 0E-00-44-00-00-01-00-00-C8-C2-00-00-C8-42
@@ -41,9 +41,9 @@ public class TechnicLargeLinearMotor : AbsoluteMotor, IPoweredUpDevice
 08-00-44-00-02-05-08-08
 0A-00-44-00-02-80-01-02-04-00
 11-00-44-00-03-00-41-50-4F-53-00-00-00-00-00-00-00
-0E-00-44-00-03-01-00-00-B4-C3-00-00-B4-43
-0E-00-44-00-03-02-00-00-C8-C2-00-00-C8-42
-0E-00-44-00-03-03-00-00-B4-C3-00-00-B4-43
+0E-00-44-00-03-01-00-00-34-C3-00-00-33-43
+0E-00-44-00-03-02-00-00-48-C3-00-00-48-43
+0E-00-44-00-03-03-00-00-34-C3-00-00-33-43
 0A-00-44-00-03-04-44-45-47-00
 08-00-44-00-03-05-08-08
 0A-00-44-00-03-80-01-01-03-00
@@ -54,12 +54,5 @@ public class TechnicLargeLinearMotor : AbsoluteMotor, IPoweredUpDevice
 0A-00-44-00-04-04-50-43-54-00
 08-00-44-00-04-05-08-08
 0A-00-44-00-04-80-01-00-01-00
-11-00-44-00-05-00-43-41-4C-49-42-00-00-00-00-00-00
-0E-00-44-00-05-01-00-00-00-00-00-00-00-44
-0E-00-44-00-05-02-00-00-00-00-00-00-C8-42
-0E-00-44-00-05-03-00-00-00-00-00-00-00-44
-0A-00-44-00-05-04-52-41-57-00
-08-00-44-00-05-05-00-00
-0A-00-44-00-05-80-03-01-03-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s));
 }
