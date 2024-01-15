@@ -6,7 +6,9 @@ using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp;
 
-// TODO which motor to extend here. ?
+/// <summary>
+/// SimpleMediumLinearMotor, advertised as Motor, only supports power mode, this works for the WoDo 2.0 Medium (LPF2-MMOTOR)
+/// </summary>
 public class SimpleMediumLinearMotor : BasicMotor, IPoweredUpDevice
 {
     public SimpleMediumLinearMotor()

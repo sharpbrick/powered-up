@@ -66,6 +66,7 @@ public class DeviceFactory : IDeviceFactory
     public static DeviceType GetDeviceTypeFromType(Type type)
         => type.Name switch // fuzzy but will work
         {
+            nameof(SimpleMediumLinearMotor) => DeviceType.Motor,
             nameof(Voltage) => DeviceType.Voltage,
             nameof(Current) => DeviceType.Current,
             nameof(RgbLight) => DeviceType.RgbLight,
