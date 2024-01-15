@@ -186,6 +186,11 @@ public abstract class Device : IDisposable, INotifyPropertyChanged
         }
     }
 
+    protected NotSupportedException BuildNotSupportedException(Version softwareVersion, Version hardwareVersion, SystemType systemType)
+    {
+        return new NotSupportedException($"Device '{this.GetType().Name}' does not support Systemtype '{systemType}' on Hardware '{hardwareVersion}' and Software '{ softwareVersion }'");
+    }
+
     #region INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged(string propertyName)

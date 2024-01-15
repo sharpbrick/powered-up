@@ -148,6 +148,6 @@ public class TechnicMediumHubTiltSensor : Device, IPoweredUpDevice
 08-00-44-63-02-05-00-10
 0A-00-44-63-02-80-02-00-03-00
 ".Trim().Split("\n").Select(s => BytesStringUtil.StringToData(s)),
-            _ => throw new NotSupportedException("SharpBrick.PoweredUp currently does not support this version of the sensor."),
+            _ => throw BuildNotSupportedException(softwareVersion, hardwareVersion, systemType),
         };
 }
