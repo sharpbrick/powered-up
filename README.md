@@ -338,6 +338,7 @@ DI Container Elements
     - [X] Technic Large Angular Motor (Grey)
     - [X] Technic Color Sensor
     - [X] Technic Distance Sensor
+    - [X] Motor WeDo 2.0 Medium (21980)
     - .. other devices depend on availability of hardware / contributions
 - Protocol
   - [X] Message Encoding (98% [spec coverage](docs/specification/coverage.md))
