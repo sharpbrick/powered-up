@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Protocol;

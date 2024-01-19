@@ -18,7 +18,6 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
     private readonly IDeviceFactory _deviceFactory;
     private readonly Subject<(byte[] data, LegoWirelessMessage message)> _upstreamSubject;
     
-
     public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
 
     public IObservable<(byte[] data, LegoWirelessMessage message)> UpstreamRawMessages => _upstreamSubject;
@@ -93,6 +92,7 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
     {
         return !DiscoveryMode;
     }
+
     #region Disposable Pattern
     private bool disposedValue;
 
