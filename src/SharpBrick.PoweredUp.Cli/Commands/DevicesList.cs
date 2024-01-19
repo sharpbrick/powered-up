@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Functions;
 using SharpBrick.PoweredUp.Protocol;
@@ -23,6 +24,7 @@ public class DevicesList
     public async Task ExecuteAsync(SystemType knownSystemType)
     {
         Console.WriteLine("Discover Ports. Receiving Messages ...");
+        protocol.DiscoveryMode = true;
 
         await protocol.ConnectAsync(knownSystemType); // registering to bluetooth notification
 

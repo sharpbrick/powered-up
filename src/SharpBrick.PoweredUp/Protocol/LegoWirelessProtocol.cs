@@ -17,6 +17,7 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
     private readonly ILogger<LegoWirelessProtocol> _logger;
     private readonly IDeviceFactory _deviceFactory;
     private readonly Subject<(byte[] data, LegoWirelessMessage message)> _upstreamSubject;
+    
 
     public ProtocolKnowledge Knowledge { get; } = new ProtocolKnowledge();
 
@@ -24,6 +25,9 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
     public IObservable<LegoWirelessMessage> UpstreamMessages => _upstreamSubject.Select(x => x.message);
     public IServiceProvider ServiceProvider { get; }
 
+    /// <inheritdoc/>
+    public bool DiscoveryMode { get; set; } = false;
+    
     public LegoWirelessProtocol(BluetoothKernel kernel, ILogger<LegoWirelessProtocol> logger, IDeviceFactory deviceFactory, IServiceProvider serviceProvider)
     {
         ServiceProvider = serviceProvider;
@@ -39,7 +43,7 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
         await KnowledgeManager.ApplyDynamicProtocolKnowledge(new HubPropertyMessage<SystemType>(HubProperty.SystemTypeId, HubPropertyOperation.Update, knownSystemType)
         {
             HubId = 0x00,
-        }, Knowledge, _deviceFactory);
+        }, Knowledge, _deviceFactory, UseCachedInformation());
 
         await _kernel.ConnectAsync();
 
@@ -49,7 +53,7 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
             {
                 var message = MessageEncoder.Decode(data, Knowledge);
 
-                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, _deviceFactory);
+                await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, _deviceFactory, UseCachedInformation());
 
                 _upstreamSubject.OnNext((data, message));
             }
@@ -73,7 +77,7 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
         {
             var data = MessageEncoder.Encode(message, Knowledge);
 
-            await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, _deviceFactory);
+            await KnowledgeManager.ApplyDynamicProtocolKnowledge(message, Knowledge, _deviceFactory, UseCachedInformation());
 
             await _kernel.SendBytesAsync(data);
         }
@@ -84,7 +88,11 @@ public class LegoWirelessProtocol : ILegoWirelessProtocol
             throw;
         }
     }
-
+    
+    private bool UseCachedInformation()
+    {
+        return !DiscoveryMode;
+    }
     #region Disposable Pattern
     private bool disposedValue;
 

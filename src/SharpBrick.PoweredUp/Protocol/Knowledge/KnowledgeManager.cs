@@ -103,7 +103,17 @@ public static class KnowledgeManager
 
         return applicableMessage;
     }
-    public static Task ApplyDynamicProtocolKnowledge(LegoWirelessMessage message, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory)
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="knowledge"></param>
+    /// <param name="deviceFactory"></param>
+    /// <param name="useCachedInformation">Indicates to apply known information about reported devices. 
+    /// On normal operation this should be used a discovery can takes tens of seconds. Don't use this on discovery as the cached information will be mixed with received information.</param>
+    /// <returns></returns>
+    public static Task ApplyDynamicProtocolKnowledge(LegoWirelessMessage message, ProtocolKnowledge knowledge, IDeviceFactory deviceFactory, bool useCachedInformation = true)
     {
         HubInfo hub;
         PortInfo port;
@@ -125,7 +135,10 @@ public static class KnowledgeManager
                 port.HardwareRevision = msg.HardwareRevision;
                 port.SoftwareRevision = msg.SoftwareRevision;
 
-                AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, hub, port, knowledge, deviceFactory);
+                if (useCachedInformation)
+                {
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, msg.HardwareRevision, msg.SoftwareRevision, hub, port, knowledge, deviceFactory);
+                }
                 break;
             case HubAttachedIOForDetachedDeviceMessage msg:
                 port = knowledge.Port(msg.HubId, msg.PortId);
@@ -144,7 +157,10 @@ public static class KnowledgeManager
                 port.HardwareRevision = partOfVirtual.HardwareRevision;
                 port.SoftwareRevision = partOfVirtual.SoftwareRevision;
 
-                AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, hub, port, knowledge, deviceFactory);
+                if (useCachedInformation)
+                {
+                    AddCachePortAndPortModeInformation(msg.IOTypeId, partOfVirtual.HardwareRevision, partOfVirtual.SoftwareRevision, hub, port, knowledge, deviceFactory);
+                }
 
                 port.IsVirtual = true;
                 port.PortAId = msg.PortAId;

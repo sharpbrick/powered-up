@@ -17,4 +17,10 @@ public interface ILegoWirelessProtocol : IDisposable
     ProtocolKnowledge Knowledge { get; }
 
     IServiceProvider ServiceProvider { get; }
+
+    /// <summary>
+    /// Indicates if this is running in normal mode, using known configurations/behavior of hub and devices (default). 
+    /// Or in discovery mode where all hub and devices are queried for their knowledge and any known configuration is ignored.
+    /// </summary>
+    bool DiscoveryMode { get; set; }
 }

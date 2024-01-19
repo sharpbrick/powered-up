@@ -22,6 +22,7 @@ public class DumpStaticPortInfo
     public async Task ExecuteAsync(SystemType knownSystemType, byte portId, bool headerEnabled)
     {
         Console.WriteLine($"Discover Port {portId}. Receiving Messages ...");
+        protocol.DiscoveryMode = true;
 
         await protocol.ConnectAsync(knownSystemType); // registering to bluetooth notification
 
