@@ -49,7 +49,7 @@ public class ProtocolKnowledge
 
         if (!(port.Modes.TryGetValue(modeIndex, out var result)))
         {
-            throw new ArgumentException("modeIndex is null", nameof(modeIndex));
+            throw new ArgumentException($"Unknown modeIndex {modeIndex}, on portId {portId} for hubId {hubId}", nameof(modeIndex));
         }
 
         return result;

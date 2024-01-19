@@ -14,6 +14,8 @@ public class PortModeInformationEncoderTest
     [InlineData("11-00-44-00-03-00-41-50-4F-53-00-00-00-00-00-00-00", 0x00, 0x03, PortModeInformationType.Name, "APOS")]
     [InlineData("11-00-44-00-04-00-4C-4F-41-44-00-00-00-00-00-00-00", 0x00, 0x04, PortModeInformationType.Name, "LOAD")]
     [InlineData("11-00-44-00-05-00-43-41-4C-49-42-00-00-00-00-00-00", 0x00, 0x05, PortModeInformationType.Name, "CALIB")]
+    // WeDo 2.0 actually uses full name length
+    [InlineData("11-00-44-00-00-00-4C-50-46-32-2D-4D-4D-4F-54-4F-52", 0x00, 0x00, PortModeInformationType.Name, "LPF2-MMOTOR")]
     public void PortModeInformationEncoder_Decode_Name(string data, byte expectedPort, byte expectedMode, PortModeInformationType expectedType, string expectedText)
     {
         var message = Decode<PortModeInformationForNameMessage>(data);
