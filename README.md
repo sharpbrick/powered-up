@@ -150,50 +150,48 @@ Console.WriteLine($"Or directly read the latest value: {aposMode.SI} / {aposMode
 
 ## Connect to Hub and Send a Message and retrieving answers (directly on protocol layer)
 
-***Note**: The `ILegoWirelessProtocol` class was renamed in 3.0. Previously it is known as `IPoweredUpProtocol`.*
-
 ````csharp
-
 var serviceProvider = new ServiceCollection()
     .AddLogging()
     .AddPoweredUp()
-    .AddWinRTBluetooth() // using WinRT Bluetooth on Windows (separate NuGet SharpBrick.PoweredUp.WinRT)
+    .AddWinRTBluetooth()
     .BuildServiceProvider();
 
-using (var scope = serviceProvider.CreateScope()) // create a scoped DI container per intented active connection/protocol. If disposed, disposes all disposable artifacts.
+// getting utilities
+var bt = serviceProvider.GetService<IPoweredUpBluetoothAdapter>();
+var host = serviceProvider.GetService<PoweredUpHost>();
+
+// discover a LWP bluetooth device 
+var tcs = new TaskCompletionSource<ILegoWirelessProtocol>();
+
+bt.Discover(async deviceInfo =>
 {
-    // init BT layer with right bluetooth address
-    scope.ServiceProvider.GetService<BluetoothKernel>().BluetoothAddress = bluetoothAddress;
-
-    var protocol = scope.GetService<ILegoWirelessProtocol>();
-
-    await protocol.ConnectAsync(); // also connects underlying BT connection
-    
-    using disposable = protocol.UpstreamMessages.Subscribe(message =>
+    if (!tcs.Task.IsCompleted)
     {
-        if (message is HubPropertyMessage<string> msg)
-        {
-            Console.WriteLine($"Hub Property - {msg.Property}: {msg.Payload}");
-        }
-    });
+        var p = host.CreateProtocol(deviceInfo);
 
-    await protocol.SendMessageAsync(new HubPropertyMessage() { 
-        Property = HubProperty.AdvertisingName, 
-        Operation = HubPropertyOperation.RequestUpdate
-    });
+        tcs.SetResult(p);
+    }
+});
 
-    Console.Readline(); // allow the messages to be processed and displayed. (alternative: SendMessageReceiveResultAsync, SendPortOutputCommandAsync, ..)
+var protocol = await tcs.Task;
 
-    // fun with light on hub 0 and built-in LED on port 50
-    var rgbLight = new RgbLight(protocol, 0, 50);
-    await rgbLight.SetRgbColorsAsync(0x00, 0xff, 0x00);
+// connect the protocol
+await protocol.ConnectAsync();
 
-    // fun with motor on hub 0 and port 0
-    var motor = new TechnicXLargeLinearMotor(protocol, 0, 0);
-    await motor.GotoPositionAsync(45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
-    await Task.Delay(2000);
-    await motor.GotoPositionAsync(-45, 10, 100, PortOutputCommandSpecialSpeed.Brake);
-}
+// send a raw message which should work with ANY motor connected to a hub
+var response = await protocol.SendPortOutputCommandAsync(new PortOutputCommandStartPowerMessage(
+    0, // PORT A
+    PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+    100
+)
+{
+    HubId = 0, // as if we ever see another one
+});
+
+await Task.Delay(2000);
+
+await protocol.DisconnectAsync();
 ````
 ## Connecting with other Bluetooth Adapters
 
