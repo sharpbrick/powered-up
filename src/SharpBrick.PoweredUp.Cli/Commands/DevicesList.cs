@@ -23,6 +23,7 @@ public class DevicesList
     public async Task ExecuteAsync(SystemType knownSystemType)
     {
         Console.WriteLine("Discover Ports. Receiving Messages ...");
+        protocol.DiscoveryMode = true;
 
         await protocol.ConnectAsync(knownSystemType); // registering to bluetooth notification
 
