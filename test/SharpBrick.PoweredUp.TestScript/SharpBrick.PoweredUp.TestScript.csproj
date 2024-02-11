@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net6.0-windows10.0.19041.0;net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net8.0-windows10.0.19041.0;net8.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">net8.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -12,20 +12,20 @@
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp\SharpBrick.PoweredUp.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.BlueGigaBLE\SharpBrick.PoweredUp.BlueGigaBLE.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0-windows10.0.19041.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows10.0.19041.0' ">
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.WinRT\SharpBrick.PoweredUp.WinRT.csproj" />
     <ProjectReference Include="..\..\src\SharpBrick.PoweredUp.BlueGigaBLE\SharpBrick.PoweredUp.BlueGigaBLE.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
