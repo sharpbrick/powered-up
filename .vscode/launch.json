@@ -19,6 +19,17 @@
             "stopAtEntry": false
         },
         {
+            "name": "example app - protocol",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/examples/SharpBrick.PoweredUp.ExampplesOnProtocol/bin/Debug/net8.0-windows10.0.19041.0/SharpBrick.PoweredUp.ExampplesOnProtocol.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/SharpBrick.PoweredUp.ExampplesOnProtocol",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
             "name": "poweredup device list",
             "type": "coreclr",
             "request": "launch",
