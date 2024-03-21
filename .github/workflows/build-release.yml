@@ -48,4 +48,4 @@ jobs:
         name: artifacts
         path: ./artifacts
     - name: Upload to NuGet
-      run:  dotnet nuget push ./artifacts/**/*.nupkg --skip-duplicate -n true -k $env:NUGET_AUTH_TOKEN
+      run:  dotnet nuget push ./artifacts/**/*.nupkg --skip-duplicate -n -k $env:NUGET_AUTH_TOKEN
