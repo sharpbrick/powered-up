@@ -16,6 +16,13 @@ public class ExampleColorDistanceSensor : BaseExample
         {
             var colorDistSensor = twoPortHub.B.GetDevice<ColorDistanceSensor>();
 
+            foreach (var color in Enum.GetValues<ColorDistanceSensorColor>())
+            {
+                await colorDistSensor.SetColorAsync(color);
+
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+
             var observers = new[] {
                     colorDistSensor.ColorObservable
                         .Subscribe(color => Log.LogInformation("Color: {0}", color)),

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SharpBrick.PoweredUp.Protocol;
+using SharpBrick.PoweredUp.Protocol.Messages;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp;
@@ -60,6 +60,27 @@ public class ColorDistanceSensor : Device, IPoweredUpDevice
            2 => 1,
            _ => base.GetDefaultDeltaInterval(modeIndex),
        };
+
+    public async Task<PortFeedback> SetColorAsync(ColorDistanceSensorColor colorLedMode)
+    {
+        AssertIsConnected();
+
+        await _protocol.SendMessageAsync(new PortInputFormatSetupSingleMessage(_portId, ModeIndexLight, 10000, false)
+        {
+            HubId = _hubId,
+        });
+
+        var response = await _protocol.SendPortOutputCommandAsync(new GenericWriteDirectModeDataMessage(
+            _portId,
+            PortOutputCommandStartupInformation.ExecuteImmediately, PortOutputCommandCompletionInformation.CommandFeedback,
+            ModeIndexLight,
+            new byte[] { (byte)colorLedMode })
+        {
+            HubId = _hubId,
+        });
+
+        return response;
+    }
 
     public IEnumerable<byte[]> GetStaticPortInfoMessages(Version softwareVersion, Version hardwareVersion, SystemType systemType)
         => ((softwareVersion, hardwareVersion, systemType) switch
