@@ -21,7 +21,7 @@ SharpBrick.PoweredUp is a .NET implementation of the Bluetooth Low Energy Protoc
 - **Virtual Port Creation**: Combine multiple devices of the same type into a virtual combined port. This allows synchronous access to multiple devices using the same message (e.g. using two motors for driving).
 - **Deployment Model Verification**: The SDK includes a model builder and a verification method to ensure that the wired devies are correctly reflecting the expectations in the program.
 - **Tools**: The `poweredup` CLI includes a device list feature, enumerating the metadata properties of the LEGO Wireless Protocol.
-- **Support for multiple Bluetooth Stacks**: Use either Microsoft WinRT, BlueGiga Bluetooth (Silicon's Lab BlueGiga-adapter, for example BLED112) or Xamarin using BLE.Plugin to talk to your Lego hubs.
+- **Support for multiple Bluetooth Stacks**: Use either Microsoft WinRT, BlueGiga Bluetooth (Silicon's Lab BlueGiga-adapter, for example BLED112) or MAUI using [Plugin.BLE](https://github.com/dotnet-bluetooth-le/dotnet-bluetooth-le) to talk to your Lego hubs.
 
 # Examples
 
