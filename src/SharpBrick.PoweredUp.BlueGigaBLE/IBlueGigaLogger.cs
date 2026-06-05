@@ -18,6 +18,8 @@ public interface IBlueGigaLogger
     /// Writes the indented information of this object into the configured ILogger
     /// </summary>
     /// <param name="indent"></param>
+    /// <param name="header"></param>
+    /// <param name="footer"></param>
     public Task LogInfosAsync(int indent = 0, string header = "", string footer = "");
     /// <summary>
     /// Shall the LogInfoAsync really log

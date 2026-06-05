@@ -43,6 +43,8 @@ public class BlueGigaBLEPoweredUpBluetoothService : IPoweredUpBluetoothService, 
     /// <param name="serviceUuid">The service-UUID of this service</param>
     /// <param name="firstCharacterHandle">The first handle under which the service has a characteristic</param>
     /// <param name="lastCharacterHandle">The last handle under which the service has a characteristic</param>
+    /// <param name="logger"></param>
+    /// <param name="traceDebug"></param>
     public BlueGigaBLEPoweredUpBluetoothService(BlueGigaBLEPoweredUpBluetoothDevice device, Guid serviceUuid, ushort firstCharacterHandle, ushort lastCharacterHandle, ILogger logger, bool traceDebug)
     {
         Device = device ?? throw new ArgumentNullException(nameof(device));

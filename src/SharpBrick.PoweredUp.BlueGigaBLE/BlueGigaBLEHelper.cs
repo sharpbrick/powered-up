@@ -107,7 +107,7 @@ public class BlueGigaBLEHelper
     /// <summary>
     /// Convert a ulong into a BYte-Array
     /// </summary>
-    /// <param name="myulong">the ulong to be converted</param>
+    /// <param name="mybytes">the byte[] to be converted</param>
     /// <returns></returns>
     public static ulong ByteArrayToUlong(byte[] mybytes)
     {

@@ -133,7 +133,7 @@ public class BlueGigaBLEPoweredUpBluetoothAdapater : IPoweredUpBluetoothAdapter,
     /// <summary>
     /// Get the device given by the bluetooth-address (ulong) and discover all services and their characteristics. The  device is connected after this call!
     /// </summary>
-    /// <param name="bluetoothAddress"></param>
+    /// <param name="bluetoothDeviceInfo"></param>
     /// <returns></returns>
     public async Task<IPoweredUpBluetoothDevice> GetDeviceAsync(IPoweredUpBluetoothDeviceInfo bluetoothDeviceInfo)
     {
