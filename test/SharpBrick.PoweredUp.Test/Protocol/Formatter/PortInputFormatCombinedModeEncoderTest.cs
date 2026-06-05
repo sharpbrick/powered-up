@@ -16,12 +16,13 @@ public class PortInputFormatCombinedModeEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, null) as PortInputFormatCombinedModeMessage;
+        var message = MessageEncoder.Decode(data, null);
 
         // assert
-        Assert.Equal(expectedPortId, message.PortId);
-        Assert.Equal(expectedCombinationIndex, message.UsedCombinationIndex);
-        Assert.Equal(expectedEnabled, message.MultiUpdateEnabled);
-        Assert.Collection(message.ConfiguredModeDataSetIndex, expectedIndexes.Select<int, Action<int>>(exp => (act) => Assert.Equal(exp, act)).ToArray());
+        var portInputFormatCombinedModeMessage = Assert.IsType<PortInputFormatCombinedModeMessage>(message);
+        Assert.Equal(expectedPortId, portInputFormatCombinedModeMessage.PortId);
+        Assert.Equal(expectedCombinationIndex, portInputFormatCombinedModeMessage.UsedCombinationIndex);
+        Assert.Equal(expectedEnabled, portInputFormatCombinedModeMessage.MultiUpdateEnabled);
+        Assert.Collection(portInputFormatCombinedModeMessage.ConfiguredModeDataSetIndex, expectedIndexes.Select<int, Action<int>>(exp => (act) => Assert.Equal(exp, act)).ToArray());
     }
 }

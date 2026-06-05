@@ -15,8 +15,8 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 // getting utilities
-var bt = serviceProvider.GetService<IPoweredUpBluetoothAdapter>();
-var host = serviceProvider.GetService<PoweredUpHost>();
+var bt = serviceProvider.GetRequiredService<IPoweredUpBluetoothAdapter>();
+var host = serviceProvider.GetRequiredService<PoweredUpHost>();
 
 // discover a LWP bluetooth device 
 var tcs = new TaskCompletionSource<ILegoWirelessProtocol>();

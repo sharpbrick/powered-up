@@ -29,6 +29,6 @@ public static class ILegoWirelessProtocolExtensions
 
         var response = await self.SendMessageReceiveResultAsync<PortOutputCommandFeedbackMessage>(message, msg => msg.Feedbacks.Any(f => f.PortId == portId));
 
-        return response.Feedbacks.FirstOrDefault(f => f.PortId == portId).Feedback;
+        return response.Feedbacks.First(f => f.PortId == portId).Feedback;
     }
 }

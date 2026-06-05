@@ -39,8 +39,9 @@ public class PortValueCombinedModeEncoderTest
         var message = MessageEncoder.Decode(data, knowledge) as PortValueCombinedModeMessage;
 
         // assert
-        Assert.Equal(expectedPortId, message.PortId);
-        Assert.Collection(message.Data, Enumerable.Range(0, expectedModes.Length).Select<int, Action<PortValueData>>(pos => portValueData =>
+        var portValueCombinedModeMessage = Assert.IsType<PortValueCombinedModeMessage>(message);
+        Assert.Equal(expectedPortId, portValueCombinedModeMessage.PortId);
+        Assert.Collection(portValueCombinedModeMessage.Data, Enumerable.Range(0, expectedModes.Length).Select<int, Action<PortValueData>>(pos => portValueData =>
         {
             Assert.Equal(expectedPortId, portValueData.PortId);
             Assert.Equal(expectedDataType[pos], portValueData.DataType);

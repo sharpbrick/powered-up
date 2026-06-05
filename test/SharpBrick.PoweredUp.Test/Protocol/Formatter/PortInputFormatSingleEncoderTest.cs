@@ -14,13 +14,14 @@ public class PortInputFormatSingleEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, null) as PortInputFormatSingleMessage;
+        var message = MessageEncoder.Decode(data, null);
 
         // assert
-        Assert.Equal(expectedPortId, message.PortId);
-        Assert.Equal(expectedMode, message.ModeIndex);
-        Assert.Equal(expectedDeltaInterval, message.DeltaInterval);
-        Assert.Equal(expectedNotificationEnabled, message.NotificationEnabled);
+        var portInputFormatSingleMessage = Assert.IsType<PortInputFormatSingleMessage>(message);
+        Assert.Equal(expectedPortId, portInputFormatSingleMessage.PortId);
+        Assert.Equal(expectedMode, portInputFormatSingleMessage.ModeIndex);
+        Assert.Equal(expectedDeltaInterval, portInputFormatSingleMessage.DeltaInterval);
+        Assert.Equal(expectedNotificationEnabled, portInputFormatSingleMessage.NotificationEnabled);
 
         // reverse
         var reverseMessage = new PortInputFormatSingleMessage(expectedPortId, expectedMode, expectedDeltaInterval, expectedNotificationEnabled)

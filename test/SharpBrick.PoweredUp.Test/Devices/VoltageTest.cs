@@ -76,7 +76,7 @@ public class VoltageTest
 
         var poweredUpBluetoothAdapterMock = serviceProvider.GetMockBluetoothAdapter();
 
-        var protocol = serviceProvider.GetService<ILegoWirelessProtocol>();
+        var protocol = serviceProvider.GetRequiredService<ILegoWirelessProtocol>();
 
         protocol.ConnectAsync(knownSystemType).Wait();
 

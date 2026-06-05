@@ -85,8 +85,7 @@ public class BlueGigaBLEPoweredUpBluetoothAdapater : IPoweredUpBluetoothAdapter,
             //we only want to discover Lego-devices
             //filter for correct service-GUID for LEGO-Hub, containing manufacturerData and the name
             var addressNumber = BlueGigaBLEHelper.ByteArrayToUlong(e.Address);
-            var bleAdvertisingListFound = bleParsedData.TryGetValue(addressNumber, out var actualListAdvertisingData);
-            if (!bleAdvertisingListFound)
+            if (!bleParsedData.TryGetValue(addressNumber, out var actualListAdvertisingData))
             {
                 actualListAdvertisingData = bleParsedData.AddOrUpdate(addressNumber, new List<BleAdvertisingData>(), (oldkey, oldvalue) => oldvalue = new List<BleAdvertisingData>());
             }

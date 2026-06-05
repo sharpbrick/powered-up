@@ -86,9 +86,9 @@ class Program
 
                             await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothDeviceInfo = bluetoothDeviceInfo;
+                            scopedServiceProvider.GetRequiredService<BluetoothKernel>().BluetoothDeviceInfo = bluetoothDeviceInfo;
 
-                            var deviceListCli = scopedServiceProvider.GetService<DevicesList>(); // ServiceLocator ok: transient factory
+                            var deviceListCli = scopedServiceProvider.GetRequiredService<DevicesList>(); // ServiceLocator ok: transient factory
 
                             await deviceListCli.ExecuteAsync(systemType);
                         }
@@ -138,11 +138,11 @@ class Program
 
                             await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                            scopedServiceProvider.GetService<BluetoothKernel>().BluetoothDeviceInfo = bluetoothDeviceInfo;
+                            scopedServiceProvider.GetRequiredService<BluetoothKernel>().BluetoothDeviceInfo = bluetoothDeviceInfo;
 
-                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
+                            var dumpStaticPortInfoCommand = scopedServiceProvider.GetRequiredService<DumpStaticPortInfo>(); // ServiceLocator ok: transient factory
 
-                            var port = byte.Parse(portOption.Value());
+                            var port = byte.TryParse(portOption.Value(), out var parsedPort) ? parsedPort : (byte)0;
 
                             await dumpStaticPortInfoCommand.ExecuteAsync(systemType, port, headerEnabled);
                         }
@@ -193,7 +193,7 @@ class Program
 
                             await AddTraceWriterAsync(scopedServiceProvider, enableTrace);
 
-                            var prettyPrintCommand = scopedServiceProvider.GetService<PrettyPrint>(); // ServiceLocator ok: transient factory
+                            var prettyPrintCommand = scopedServiceProvider.GetRequiredService<PrettyPrint>(); // ServiceLocator ok: transient factory
 
                             TextReader reader = Console.In;
 
@@ -273,7 +273,7 @@ class Program
     {
         if (enableTrace)
         {
-            var traceMessages = serviceProvider.GetService<TraceMessages>(); // ServiceLocator ok: transient factory
+            var traceMessages = serviceProvider.GetRequiredService<TraceMessages>(); // ServiceLocator ok: transient factory
 
             await traceMessages.ExecuteAsync();
         }

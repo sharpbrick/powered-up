@@ -45,7 +45,7 @@ class Program
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
-        var host = serviceProvider.GetService<PoweredUpHost>();
+        var host = serviceProvider.GetRequiredService<PoweredUpHost>();
 
         IEnumerable<ITestScript> scripts = new ITestScript[] {
                 new TechnicMotorTestScript<TechnicLargeLinearMotor>(),

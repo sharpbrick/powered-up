@@ -83,7 +83,7 @@ public class MessageEncoder
 
         if (encoder is not null)
         {
-            var message = encoder?.Decode(hubId, content);
+            var message = encoder.Decode(hubId, content);
 
             message.Length = length;
             message.HubId = hubId;

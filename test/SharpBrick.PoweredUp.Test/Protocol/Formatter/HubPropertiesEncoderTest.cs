@@ -25,12 +25,13 @@ public class HubPropertiesEncoderTest
         var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
         // act
-        var message = new HubPropertiesEncoder().Decode(0x00, data) as HubPropertyMessage<T>;
+        var message = new HubPropertiesEncoder().Decode(0x00, data);
 
         // assert
-        Assert.Equal(expectedProperty, message.Property);
-        Assert.Equal(expectedPropertyOperation, message.Operation);
-        Assert.Equal(payload, message.Payload);
+        var hubPropertyMessage = Assert.IsType<HubPropertyMessage<T>>(message);
+        Assert.Equal(expectedProperty, hubPropertyMessage.Property);
+        Assert.Equal(expectedPropertyOperation, hubPropertyMessage.Operation);
+        Assert.Equal(payload, hubPropertyMessage.Payload);
     }
 
     [Theory]

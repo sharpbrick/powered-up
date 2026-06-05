@@ -18,7 +18,7 @@ public class ExampleRampUp : BaseExample
         var motor = technicMediumHub.A.GetDevice<TechnicLargeLinearMotor>();
 
         // ramp up with linear speed
-        var rampUp = ServiceProvider.GetService<LinearSpeedChange>();
+        var rampUp = ServiceProvider.GetRequiredService<LinearSpeedChange>();
 
         await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Red);
 
@@ -33,7 +33,7 @@ public class ExampleRampUp : BaseExample
         await technicMediumHub.RgbLight.SetRgbColorNoAsync(PoweredUpColor.Orange);
 
         // ramp down with linear speed
-        var rampDown = ServiceProvider.GetService<LinearSpeedChange>();
+        var rampDown = ServiceProvider.GetRequiredService<LinearSpeedChange>();
 
         var beforeOrangePhase = stopWatch.ElapsedMilliseconds;
         await rampDown.ExecuteAsync(motor, 100, 0, 100, 20_000);

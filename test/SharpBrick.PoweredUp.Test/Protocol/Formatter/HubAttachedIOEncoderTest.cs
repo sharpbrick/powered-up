@@ -23,13 +23,14 @@ public class HubAttachedIOEncoderTest
         var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
         // act
-        var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedDeviceMessage;
+        var message = new HubAttachedIOEncoder().Decode(0x00, data);
 
         // assert
-        Assert.Equal(expectedPortId, message.PortId);
-        Assert.Equal(expectedType, message.IOTypeId);
-        Assert.Equal(new Version(expectedHwVersion), message.HardwareRevision);
-        Assert.Equal(new Version(expectedSwVersion), message.SoftwareRevision);
+        var hubAttachedIOForAttachedDeviceMessage = Assert.IsType<HubAttachedIOForAttachedDeviceMessage>(message);
+        Assert.Equal(expectedPortId, hubAttachedIOForAttachedDeviceMessage.PortId);
+        Assert.Equal(expectedType, hubAttachedIOForAttachedDeviceMessage.IOTypeId);
+        Assert.Equal(new Version(expectedHwVersion), hubAttachedIOForAttachedDeviceMessage.HardwareRevision);
+        Assert.Equal(new Version(expectedSwVersion), hubAttachedIOForAttachedDeviceMessage.SoftwareRevision);
 
         // reverse test
         var reverseMessage = new HubAttachedIOForAttachedDeviceMessage(expectedPortId, expectedType, Version.Parse(expectedHwVersion), Version.Parse(expectedSwVersion));
@@ -50,12 +51,13 @@ public class HubAttachedIOEncoderTest
         var data = BytesStringUtil.StringToData(messageAsString).AsSpan()[3..];
 
         // act
-        var message = new HubAttachedIOEncoder().Decode(0x00, data) as HubAttachedIOForAttachedVirtualDeviceMessage;
+        var message = new HubAttachedIOEncoder().Decode(0x00, data);
 
         // assert
-        Assert.Equal(expectedPortId, message.PortId);
-        Assert.Equal(expectedType, message.IOTypeId);
-        Assert.Equal(portA, message.PortAId);
-        Assert.Equal(portB, message.PortBId);
+        var hubAttachedIOForAttachedVirtualDeviceMessage = Assert.IsType<HubAttachedIOForAttachedVirtualDeviceMessage>(message);
+        Assert.Equal(expectedPortId, hubAttachedIOForAttachedVirtualDeviceMessage.PortId);
+        Assert.Equal(expectedType, hubAttachedIOForAttachedVirtualDeviceMessage.IOTypeId);
+        Assert.Equal(portA, hubAttachedIOForAttachedVirtualDeviceMessage.PortAId);
+        Assert.Equal(portB, hubAttachedIOForAttachedVirtualDeviceMessage.PortBId);
     }
 }

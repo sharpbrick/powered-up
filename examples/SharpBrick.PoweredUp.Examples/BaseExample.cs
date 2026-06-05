@@ -31,7 +31,7 @@ public abstract class BaseExample
 
         Host = serviceProvider.GetService<PoweredUpHost>();
 
-        Log = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Example");
+        Log = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Example");
 
         var enableTrace = bool.TryParse(configuration["EnableTrace"], out var x) && x;
 
@@ -49,7 +49,7 @@ public abstract class BaseExample
             // add this when you are interested in a tracing of the message ("human readable")
             if (enableTrace)
             {
-                var tracer = hub.ServiceProvider.GetService<TraceMessages>();
+                var tracer = hub.ServiceProvider.GetRequiredService<TraceMessages>();
                 await tracer.ExecuteAsync();
             }
 
