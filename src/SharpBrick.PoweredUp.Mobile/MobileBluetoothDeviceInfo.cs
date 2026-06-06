@@ -1,11 +1,10 @@
 using System;
-using System.Runtime.InteropServices;
 using SharpBrick.PoweredUp.Bluetooth;
 using SharpBrick.PoweredUp.Utils;
 
 namespace SharpBrick.PoweredUp.Mobile
 {
-    public class XamarinBluetoothDeviceInfo : IPoweredUpBluetoothDeviceInfo, IPoweredUpBluetoothDeviceInfoWithMacAddress
+    public class MobileBluetoothDeviceInfo : IPoweredUpBluetoothDeviceInfo, IPoweredUpBluetoothDeviceInfoWithMacAddress
     {
         private string _deviceIdentifier;
 
@@ -29,9 +28,9 @@ namespace SharpBrick.PoweredUp.Mobile
 
         public bool Equals(IPoweredUpBluetoothDeviceInfo other)
         {
-            if (other != null && other is XamarinBluetoothDeviceInfo otherXamarin)
+            if (other != null && other is MobileBluetoothDeviceInfo otherDeviceInfo)
             {
-                return this.DeviceIdentifier == otherXamarin.DeviceIdentifier;
+                return this.DeviceIdentifier == otherDeviceInfo.DeviceIdentifier;
             }
             else
             {
