@@ -123,7 +123,7 @@ public class PoweredUpHost
         var scopedServiceProvider = scope.ServiceProvider;
 
         // initialize scoped bluetooth kernel to bluetooth address.
-        var kernel = scopedServiceProvider.GetService<BluetoothKernel>();
+        var kernel = scopedServiceProvider.GetRequiredService<BluetoothKernel>();
         kernel.BluetoothDeviceInfo = bluetoothDeviceInfo;
 
         return scope;

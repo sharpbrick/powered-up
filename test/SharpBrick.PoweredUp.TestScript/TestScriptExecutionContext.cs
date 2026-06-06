@@ -18,7 +18,7 @@ public class TestScriptExecutionContext
     {
         Console.Write(question + " (Y/n)");
 
-        var confirm = Console.ReadLine().Trim().ToUpperInvariant() != "N";
+        var confirm = Console.ReadLine()?.Trim().ToUpperInvariant() != "N";
 
         if (confirm)
         {

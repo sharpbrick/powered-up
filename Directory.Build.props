@@ -8,5 +8,6 @@
    <PackageLicenseExpression>MIT</PackageLicenseExpression>
    <GenerateDocumentationFile>true</GenerateDocumentationFile>
    <NoWarn>$(NoWarn);CS1591</NoWarn>
+   <Nullable>warnings</Nullable>
  </PropertyGroup>
 </Project>

@@ -42,11 +42,12 @@ public class HubAlertEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, null) as HubAlertMessage;
+        var message = MessageEncoder.Decode(data, null);
 
         // assert
-        Assert.Equal(expectedAlert, message.Alert);
-        Assert.Equal(expectedOperation, message.Operation);
-        Assert.Equal(expectedPayload, message.DownstreamPayload);
+        var hubAlertMessage = Assert.IsType<HubAlertMessage>(message);
+        Assert.Equal(expectedAlert, hubAlertMessage.Alert);
+        Assert.Equal(expectedOperation, hubAlertMessage.Operation);
+        Assert.Equal(expectedPayload, hubAlertMessage.DownstreamPayload);
     }
 }

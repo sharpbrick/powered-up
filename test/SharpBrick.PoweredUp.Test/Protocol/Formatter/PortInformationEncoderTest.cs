@@ -18,18 +18,19 @@ public class PortInformationEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, null) as PortInformationForModeInfoMessage;
+        var message = MessageEncoder.Decode(data, null);
 
         // assert
-        Assert.Equal(expectedPort, message.PortId);
-        Assert.Equal(expectedType, message.InformationType);
-        Assert.Equal(expectedOutput, message.OutputCapability);
-        Assert.Equal(expectedInput, message.InputCapability);
-        Assert.Equal(expectedLogicalCombinable, message.LogicalCombinableCapability);
-        Assert.Equal(expectedLogicalSynchronizable, message.LogicalSynchronizableCapability);
-        Assert.Equal(expectedTotalCount, message.TotalModeCount);
-        Assert.Equal(expectedInputModes, message.InputModes);
-        Assert.Equal(expectedOutputModes, message.OutputModes);
+        var portInformationForModeInfoMessage = Assert.IsType<PortInformationForModeInfoMessage>(message);
+        Assert.Equal(expectedPort, portInformationForModeInfoMessage.PortId);
+        Assert.Equal(expectedType, portInformationForModeInfoMessage.InformationType);
+        Assert.Equal(expectedOutput, portInformationForModeInfoMessage.OutputCapability);
+        Assert.Equal(expectedInput, portInformationForModeInfoMessage.InputCapability);
+        Assert.Equal(expectedLogicalCombinable, portInformationForModeInfoMessage.LogicalCombinableCapability);
+        Assert.Equal(expectedLogicalSynchronizable, portInformationForModeInfoMessage.LogicalSynchronizableCapability);
+        Assert.Equal(expectedTotalCount, portInformationForModeInfoMessage.TotalModeCount);
+        Assert.Equal(expectedInputModes, portInformationForModeInfoMessage.InputModes);
+        Assert.Equal(expectedOutputModes, portInformationForModeInfoMessage.OutputModes);
     }
 
 
@@ -43,11 +44,12 @@ public class PortInformationEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, null) as PortInformationForPossibleModeCombinationsMessage;
+        var message = MessageEncoder.Decode(data, null);
 
         // assert
-        Assert.Equal(expectedPort, message.PortId);
-        Assert.Equal(expectedType, message.InformationType);
-        Assert.Collection(message.ModeCombinations, expectedCombinations.Select<ushort, Action<ushort>>(combination => { return (item) => Assert.Equal(combination, item); }).ToArray());
+        var portInformationForPossibleModeCombinationsMessage = Assert.IsType<PortInformationForPossibleModeCombinationsMessage>(message);
+        Assert.Equal(expectedPort, portInformationForPossibleModeCombinationsMessage.PortId);
+        Assert.Equal(expectedType, portInformationForPossibleModeCombinationsMessage.InformationType);
+        Assert.Collection(portInformationForPossibleModeCombinationsMessage.ModeCombinations, expectedCombinations.Select<ushort, Action<ushort>>(combination => { return (item) => Assert.Equal(combination, item); }).ToArray());
     }
 }

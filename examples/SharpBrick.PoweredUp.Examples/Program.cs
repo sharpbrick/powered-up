@@ -35,7 +35,7 @@ class Program
         var typeToExecute = Assembly
             .GetExecutingAssembly()
             .GetTypes()
-            .FirstOrDefault(x => x.FullName.StartsWith($"Example.Example{exampleToExecute}"));
+            .FirstOrDefault(x => x.FullName?.StartsWith($"Example.Example{exampleToExecute}") == true);
 
         if (typeToExecute is null)
         {
@@ -45,7 +45,11 @@ class Program
         }
 
         var example = Activator.CreateInstance(typeToExecute) as Example.BaseExample;
-
+        if (example is null)
+        {
+            Console.WriteLine("Could not create example instance.");
+            return;
+        }
 
         // (2) build the DI container
         var serviceCollection = new ServiceCollection();

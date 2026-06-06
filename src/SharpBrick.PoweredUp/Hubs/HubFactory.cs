@@ -14,7 +14,16 @@ public class HubFactory : IHubFactory
 
     public Hub CreateByBluetoothManufacturerData(byte[] manufacturerData)
     {
-        var hub = (manufacturerData is null || manufacturerData.Length < 3) ? null : Create(GetTypeFromSystemType(GetSystemTypeFromManufacturerData((PoweredUpHubManufacturerData)manufacturerData[1])));
+        if (manufacturerData is null)
+        {
+            throw new ArgumentNullException(nameof(manufacturerData));
+        }
+        if (manufacturerData.Length < 3)
+        {
+            throw new ArgumentException("Manufacturer data must be at least 3 bytes long.", nameof(manufacturerData));
+        }
+
+        var hub = Create(GetTypeFromSystemType(GetSystemTypeFromManufacturerData((PoweredUpHubManufacturerData)manufacturerData[1])));
         hub.Configure(0x00);
 
         return hub;
@@ -22,7 +31,7 @@ public class HubFactory : IHubFactory
 
     public THub Create<THub>() where THub : Hub
     {
-        var hub = Create(typeof(THub)) as THub;
+        var hub = (THub)Create(typeof(THub));
         hub.Configure(0x00);
 
         return hub;

@@ -105,7 +105,7 @@ public static class HubExtensions
     {
         return errors =>
         {
-            var logger = self.ServiceProvider.GetService<ILoggerFactory>().CreateLogger<Hub>();
+            var logger = self.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<Hub>();
             if (errors.Length > 0)
             {
 

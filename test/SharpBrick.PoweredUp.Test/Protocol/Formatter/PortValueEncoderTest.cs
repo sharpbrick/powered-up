@@ -31,10 +31,11 @@ public class PortValueSingleEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, knowledge) as PortValueSingleMessage;
+        var message = MessageEncoder.Decode(data, knowledge);
 
         // assert
-        Assert.Collection(message.Data,
+        var portValueSingleMessage = Assert.IsType<PortValueSingleMessage>(message);
+        Assert.Collection(portValueSingleMessage.Data,
             d =>
             {
                 Assert.Equal(d.PortId, expectedPortId);

@@ -46,9 +46,10 @@ public class HubActionsEncoderTest
         var data = BytesStringUtil.StringToData(dataAsString);
 
         // act
-        var message = MessageEncoder.Decode(data, null) as HubActionMessage;
+        var message = MessageEncoder.Decode(data, null);
 
         // assert
-        Assert.Equal(expectedAction, message.Action);
+        var hubActionMessage = Assert.IsType<HubActionMessage>(message);
+        Assert.Equal(expectedAction, hubActionMessage.Action);
     }
 }

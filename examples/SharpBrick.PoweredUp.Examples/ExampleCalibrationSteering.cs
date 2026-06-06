@@ -14,7 +14,7 @@ public class ExampleCalibrationSteering : BaseExample
 
         var motor = technicMediumHub.A.GetDevice<TechnicLargeLinearMotor>();
 
-        var calibration = ServiceProvider.GetService<LinearMidCalibration>();
+        var calibration = ServiceProvider.GetRequiredService<LinearMidCalibration>();
         await calibration.ExecuteAsync(motor);
         await technicMediumHub.WaitButtonClickAsync();
 
