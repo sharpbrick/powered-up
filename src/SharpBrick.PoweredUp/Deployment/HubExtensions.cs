@@ -31,7 +31,7 @@ public static class HubExtensions
     /// Verifies the deployment model and waits till it reaches zero deployment errors.
     /// </summary>
     /// <param name="self"></param>
-    /// <param name="configure">Builder infrastructure for the deployment model</param>
+    /// <param name="model">Deployment Model</param>
     /// <returns></returns>
     public static async Task VerifyDeploymentModelAsync(this Hub self, DeploymentModel model)
     {

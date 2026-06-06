@@ -6,5 +6,7 @@
    <PackageProjectUrl>https://github.com/sharpbrick/powered-up</PackageProjectUrl>
    <RepositoryUrl>https://github.com/sharpbrick/powered-up</RepositoryUrl>
    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+   <GenerateDocumentationFile>true</GenerateDocumentationFile>
+   <NoWarn>$(NoWarn);CS1591</NoWarn>
  </PropertyGroup>
 </Project>

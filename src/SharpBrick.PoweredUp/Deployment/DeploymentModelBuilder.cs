@@ -53,8 +53,7 @@ public class DeploymentModelBuilder
     /// <summary>
     /// Adds a hub to the model
     /// </summary>
-    /// <param name="hubType"></param>
-    /// <param name="devices"></param>
+    /// <param name="hubModel"></param>
     /// <returns></returns>
     private DeploymentModelBuilder AddHub(DeploymentHubModel hubModel)
     {
